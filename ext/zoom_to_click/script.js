@@ -1,43 +1,49 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let img = document.querySelector("img#main_image");
+    if (!img) return;
+
+    let image_width = parseInt(img.dataset.width, 10);
+    let image_height = parseInt(img.dataset.height, 10);
+    let parent = img.parentElement;
+    parent.style.boxSizing = "border-box";
+
+    // if the image is smaller than the parent's internal area, don't enable zoom
+    if (
+        image_width <= parent.clientWidth &&
+        image_height <= parent.clientHeight
+    )
+        return;
+
+    let zoomed = false;
+    img.style.cursor = "zoom-in";
+
     function zoom(point = {}) {
-        let $img = $("#main_image");
-        let image_width = $img.data("width");
-        let image_height = $img.data("height");
+        // Lock parent to existing size
+        parent.style.width = parent.offsetWidth + "px";
+        parent.style.height = parent.offsetHeight + "px";
 
-        if (
-            window.innerWidth * 0.9 >= image_width &&
-            window.innerHeight * 0.9 >= image_height
-        ) {
-            $img.css("cursor", "");
-            if ($img.hasClass("zoom-point")) {
-                $img.removeClass();
-                $img.parent().removeClass("zoom-container");
-            }
-            return;
-        }
-        if ($img.hasClass("zoom-point")) {
-            $img.removeClass();
-            $img.parent().removeClass("zoom-container");
-            $img.css("cursor", "zoom-in");
-        } else {
-            let width = $img.width();
-            let height = $img.height();
-            $img.removeClass();
-            $img.addClass("zoom-point");
-            $img.css("cursor", "zoom-out");
+        let width = img.offsetWidth;
+        let height = img.offsetHeight;
 
-            let $parent = $img.parent();
-            $parent.addClass("zoom-container");
-            $parent.scrollLeft(
-                (image_width * point.x) / width - $parent.width() / 2,
-            );
-            $parent.scrollTop(
-                (image_height * point.y) / height - $parent.height() / 2,
-            );
-        }
+        parent.classList.add("zoom-container");
+        parent.scrollLeft =
+            (image_width * point.x) / width - parent.offsetWidth / 2;
+        parent.scrollTop =
+            (image_height * point.y) / height - parent.offsetHeight / 2;
+
+        img.style.cursor = "zoom-out";
     }
 
-    $("img#main_image").on("click", function (e) {
-        zoom({ x: e.offsetX, y: e.offsetY });
+    function unzoom() {
+        parent.classList.remove("zoom-container");
+        parent.style.width = "";
+        parent.style.height = "";
+        img.style.cursor = "zoom-in";
+    }
+
+    img.addEventListener("click", function (e) {
+        if (zoomed) unzoom();
+        else zoom({ x: e.offsetX, y: e.offsetY });
+        zoomed = !zoomed;
     });
 });
