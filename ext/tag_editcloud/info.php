@@ -12,5 +12,5 @@ final class TagEditCloudInfo extends ExtensionInfo
     public string $name = "Tag EditCloud";
     public array $authors = ["AtomicDryad" => null, "Luana Latte" => "luana.latte.cat@gmail.com"];
     public ExtensionCategory $category = ExtensionCategory::METADATA;
-    public string $description = "Add or remove tags to the editor via clicking.";
+    public string $description = "Add or remove tags to the editor via clicking";
 }

@@ -14,5 +14,5 @@ final class TestCaptchaInfo extends ExtensionInfo
     public array $authors = self::SHISH_AUTHOR;
     public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
-    public string $description = "A very simple captcha for testing.";
+    public string $description = "A very simple captcha for testing";
 }
