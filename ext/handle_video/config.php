@@ -24,15 +24,6 @@ final class VideoFileHandlerConfig extends ConfigGroup
     public const PLAYBACK_MUTE = "video_playback_mute";
 
     #[ConfigMeta(
-        "Serve mode",
-        ConfigType::STRING,
-        default: "auto",
-        options: ["Automatic" => "auto", "ILink" => "ilink", "Shimmie" => "shimmie"],
-        advanced: true,
-    )]
-    public const SERVE_MODE = "video_playback_mute";
-
-    #[ConfigMeta(
         "Enabled formats",
         ConfigType::ARRAY,
         default: [MimeType::FLASH_VIDEO, MimeType::MP4_VIDEO, MimeType::OGG_VIDEO, MimeType::WEBM],
