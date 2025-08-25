@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use PHPUnit\Framework\TestCase;
-
-final class PageRequestEventTest extends TestCase
+final class PageRequestEventTest extends ShimmiePHPUnitTestCase
 {
     // Event::__toString() is only for debugging and nothing else tests it
     public function testToString(): void
@@ -57,5 +55,19 @@ final class PageRequestEventTest extends TestCase
         self::assertEquals(4, $e->get_iarg('page_num', 1));
         self::assertFalse($e->page_matches("qux/{thing}", paged: true));
         self::assertFalse($e->page_matches("foo/{thing}/long", paged: true));
+    }
+
+    public function testGetArgs(): void
+    {
+        $e = new PageRequestEvent("GET", "foo/bar/4/baz");
+
+        self::assertTrue($e->page_matches("foo/bar/{a}/{b}"));
+        self::assertEquals("4", $e->get_arg('a'));
+        self::assertEquals("baz", $e->get_arg('b'));
+        self::assertException(UserError::class, fn () => $e->get_arg('c'));
+
+        self::assertEquals(4, $e->get_iarg('a'));
+        self::assertException(UserError::class, fn () => $e->get_iarg('b'));
+        self::assertException(UserError::class, fn () => $e->get_iarg('c'));
     }
 }
