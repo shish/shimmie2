@@ -10,22 +10,9 @@ class VideoFileHandlerTheme extends Themelet
 {
     public function build_media(Image $image): \MicroHTML\HTMLElement
     {
-        $width = "auto";
-        if ($image->width > 1) {
-            $width = $image->width."px";
-        }
-        $height = "auto";
-        if ($image->height > 1) {
-            $height = $image->height."px";
-        }
-
         $src = $image->get_image_link();
 
         return emptyHTML(
-            "Video not playing? ",
-            A(['href' => $src], "Click here"),
-            " to download the file.",
-            BR(),
             VIDEO(
                 [
                     'controls' => true,
@@ -36,14 +23,17 @@ class VideoFileHandlerTheme extends Themelet
                     'autoplay' => Ctx::$config->get(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY),
                     'loop' => Ctx::$config->get(VideoFileHandlerConfig::PLAYBACK_LOOP),
                     'muted' => Ctx::$config->get(VideoFileHandlerConfig::PLAYBACK_MUTE),
-                    'style' => "height: $height; width: $width; max-width: 100%; object-fit: contain; background-color: black;",
                     'onloadstart' => 'this.volume = 0.25',
                 ],
                 SOURCE([
                     'src' => $src,
                     'type' => $image->get_mime()
                 ])
-            )
+            ),
+            BR(),
+            "Video not playing? ",
+            A(['href' => $src], "Click here"),
+            " to download the file.",
         );
     }
 }
