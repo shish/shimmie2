@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-final class PixelFileHandler extends DataHandlerExtension
+final class ImageFileHandler extends DataHandlerExtension
 {
-    public const KEY = "handle_pixel";
+    public const KEY = "handle_image";
     public const SUPPORTED_MIME = [
         MimeType::JPEG,
         MimeType::GIF,

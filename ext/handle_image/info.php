@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-final class PixelFileHandlerInfo extends ExtensionInfo
+final class ImageFileHandlerInfo extends ExtensionInfo
 {
-    public const KEY = "handle_pixel";
+    public const KEY = "handle_image";
 
     public string $key = self::KEY;
     public string $name = "Handle Pixel";

@@ -20,5 +20,5 @@ final class RotateImageInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Allows admins to rotate images.";
-    public array $dependencies = [PixelFileHandlerInfo::KEY];
+    public array $dependencies = [ImageFileHandlerInfo::KEY];
 }

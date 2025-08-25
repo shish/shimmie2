@@ -101,7 +101,7 @@ final class TranscodeImage extends Extension
 
     public function onDataUpload(DataUploadEvent $event): void
     {
-        // this onDataUpload happens earlier (or could happen earlier) than handle_pixel.onDataUpload
+        // this onDataUpload happens earlier (or could happen earlier) than handle_image.onDataUpload
         // it mutates the image such that the incorrect mime type is not checked (checking against
         // the post-transcode mime type instead). This is to  give user feedback on what the mime type
         // was before potential transcoding (the original) at the time of upload, and that it failed if not allowed.
@@ -114,7 +114,7 @@ final class TranscodeImage extends Extension
         }
 
         if (Ctx::$config->get(TranscodeImageConfig::UPLOAD)) {
-            if ($event->mime->base === MimeType::GIF && PixelFileHandler::is_animated_gif($event->tmpname)) {
+            if ($event->mime->base === MimeType::GIF && ImageFileHandler::is_animated_gif($event->tmpname)) {
                 return;
             }
 
