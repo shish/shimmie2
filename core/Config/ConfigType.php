@@ -15,19 +15,6 @@ enum ConfigType
     case ARRAY;
 
     /**
-     * @param ConfigValue $value
-     */
-    public function toString(mixed $value): string
-    {
-        return match ($this) {
-            self::BOOL => $value ? "Y" : "N",
-            self::INT => (string)$value,  // @phpstan-ignore-line
-            self::STRING => $value,
-            self::ARRAY => implode(",", $value),  // @phpstan-ignore-line
-        };
-    }
-
-    /**
      * @return ConfigValue
      */
     public function fromString(string $value): mixed
