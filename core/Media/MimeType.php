@@ -19,6 +19,7 @@ final class MimeType
     public const BZIP2 = 'application/x-bzip2';
     public const CSS = 'text/css';
     public const CSV = 'text/csv';
+    public const FLAC = 'audio/flac';
     public const FLASH = 'application/x-shockwave-flash';
     public const FLASH_VIDEO = 'video/x-flv';
     public const GIF = 'image/gif';
