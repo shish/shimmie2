@@ -16,7 +16,7 @@ final class ZoomToFit extends Extension
             if ($event->context === "view") {
                 $event->add_part(FORM(
                     SELECT(
-                        ["class" => "shm-zoomer"],
+                        ["id" => "shm-zoomer"],
                         OPTION(["value" => "full"], "Full Size"),
                         OPTION(["value" => "width"], "Fit Width"),
                         OPTION(["value" => "both"], "Fit Both"),
