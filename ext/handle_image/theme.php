@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\{BR, IMG, joinHTML};
 
-class PixelFileHandlerTheme extends Themelet
+class ImageFileHandlerTheme extends Themelet
 {
     public function build_media(Image $image): \MicroHTML\HTMLElement
     {

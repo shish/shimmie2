@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class PixelFileHandlerTest extends ShimmiePHPUnitTestCase
+final class ImageFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testPixelHander(): void
     {

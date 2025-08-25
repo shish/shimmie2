@@ -55,7 +55,7 @@
 	AddOutputFilterByType DEFLATE application/x-javascript application/javascript
 </IfModule>
 
-#EXT: handle_pixel
+#EXT: handle_image
 AddType image/jpeg  jpg jpeg
 AddType image/gif   gif
 AddType image/png   png
