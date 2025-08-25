@@ -1,22 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-    function resize(type) {
-        let $img = $("#main_image");
-        let image_width = $img.data("width");
-        let image_height = $img.data("height");
+    let zoomer = document.getElementById("shm-zoomer");
+    let img = document.getElementById("main_image");
+    if (!zoomer || !img) return;
 
-        $img.removeClass();
-        $img.addClass(`fit-${type}`);
-        if (
-            window.innerWidth * 0.9 < image_width ||
-            window.innerHeight * 0.9 < image_height
-        ) {
-            $img.css("cursor", "zoom-in");
-        }
+    /**
+     * @param {"full"|"width"|"both"} type
+     */
+    function resize(type) {
+        img.classList.remove("fit-full", "fit-width", "fit-both");
+        img.classList.add(`fit-${type}`);
         shm_cookie_set("ui-image-zoom", type);
-        $(".shm-zoomer").val(type);
+        zoomer.value = type;
     }
 
-    $(".shm-zoomer").on("change", function (e) {
+    zoomer.addEventListener("change", function () {
         resize(this.options[this.selectedIndex].value);
     });
 
