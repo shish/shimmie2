@@ -30,10 +30,10 @@ final class EventBus
         $ver = \Safe\preg_replace("/[^a-zA-Z0-9\.]/", "_", SysConfig::getVersion());
         $key = md5(Extension::get_enabled_extensions_as_string());
 
-        $speed_hax = (Ctx::$config->get(SetupConfig::CACHE_EVENT_LISTENERS));
+        $speed_hax = Ctx::$config->get(SetupConfig::CACHE_EVENT_LISTENERS);
         $cache_path = Filesystem::data_path("cache/event_listeners/el.$ver.$key.php");
         if ($speed_hax && $cache_path->exists()) {
-            $this->event_listeners = require_once($cache_path->str());
+            $this->event_listeners = require($cache_path->str());
         } else {
             $this->event_listeners = $this->calc_event_listeners();
 
@@ -113,7 +113,7 @@ final class EventBus
 
         $classes_str = "";
         foreach (array_unique($classes) as $scn) {
-            $classes_str .= "\$$scn = new $scn(); ";
+            $classes_str .= "\$$scn = new $scn();\n";
         }
         $classes_str .= "\n";
 
