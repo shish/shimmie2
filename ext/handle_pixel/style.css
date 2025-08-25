@@ -1,8 +1,8 @@
-#main_image.fit-width {
+#handle_pixel_media IMG.fit-width {
     max-width: 100%;
 }
 
-#main_image.fit-both {
+#handle_pixel_media IMG.fit-both {
     max-height: 95vh;
     max-width: 100%;
 }

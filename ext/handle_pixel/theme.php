@@ -8,19 +8,18 @@ use function MicroHTML\{BR, IMG, joinHTML};
 
 class PixelFileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image): void
+    public function build_media(Image $image): \MicroHTML\HTMLElement
     {
-        $html = IMG([
-            'alt' => 'main image',
-            'class' => 'shm-main-image shm-click-to-scale',
+        return IMG([
             'id' => 'main_image',
+            'class' => 'shm-main-image',
+            'alt' => 'main image',
             'src' => $image->get_image_link(),
             'data-width' => $image->width,
             'data-height' => $image->height,
             'data-mime' => $image->get_mime(),
             'onerror' => "shm_log('Error loading >>{$image->id}')",
         ]);
-        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 
     public function display_metadata(Image $image): void

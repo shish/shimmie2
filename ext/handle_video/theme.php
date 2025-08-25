@@ -8,7 +8,7 @@ use function MicroHTML\{A, BR, SOURCE, VIDEO, emptyHTML};
 
 class VideoFileHandlerTheme extends Themelet
 {
-    public function display_image(Image $image): void
+    public function build_media(Image $image): \MicroHTML\HTMLElement
     {
         $width = "auto";
         if ($image->width > 1) {
@@ -21,7 +21,7 @@ class VideoFileHandlerTheme extends Themelet
 
         $src = $image->get_image_link();
 
-        $html = emptyHTML(
+        return emptyHTML(
             "Video not playing? ",
             A(['href' => $src], "Click here"),
             " to download the file.",
@@ -29,8 +29,8 @@ class VideoFileHandlerTheme extends Themelet
             VIDEO(
                 [
                     'controls' => true,
-                    'class' => 'shm-main-image',
                     'id' => 'main_image',
+                    'class' => 'shm-main-image',
                     'alt' => 'main image',
                     'poster' => $image->get_thumb_link()->asAbsolute(),
                     'autoplay' => Ctx::$config->get(VideoFileHandlerConfig::PLAYBACK_AUTOPLAY),
@@ -45,7 +45,5 @@ class VideoFileHandlerTheme extends Themelet
                 ])
             )
         );
-
-        Ctx::$page->add_block(new Block(null, $html, "main", 10));
     }
 }
