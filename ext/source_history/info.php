@@ -12,6 +12,6 @@ final class SourceHistoryInfo extends ExtensionInfo
     public string $name = "Source History";
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $description = "Keep a record of source changes, and allows you to revert changes.";
+    public string $description = "Keep a record of source changes, and allows you to revert changes";
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
 }

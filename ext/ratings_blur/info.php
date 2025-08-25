@@ -12,6 +12,6 @@ final class RatingsBlurInfo extends ExtensionInfo
     public string $name = "Ratings Blur";
     public array $authors = ["Discomrade" => ""];
     public string $license = self::LICENSE_WTFPL;
-    public string $description = "Blurs thumbs based on rating, users can override. Requires 'Post Ratings'.";
+    public string $description = "Blurs thumbnails for explicit images";
     public array $dependencies = [RatingsInfo::KEY, UserConfigEditorInfo::KEY];
 }

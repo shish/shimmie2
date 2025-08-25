@@ -13,6 +13,6 @@ final class BulkDownloadInfo extends ExtensionInfo
     public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
-    public string $description = "Allows bulk downloading images.";
+    public string $description = "Allows bulk downloading images";
     public array $dependencies = [BulkActionsInfo::KEY];
 }

@@ -13,5 +13,5 @@ final class ApprovalInfo extends ExtensionInfo
     public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
-    public string $description = "Adds an approval step to the upload/import process.";
+    public string $description = "Adds an approval step to the upload/import process";
 }
