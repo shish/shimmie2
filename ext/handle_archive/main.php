@@ -46,10 +46,6 @@ final class ArchiveFileHandler extends DataHandlerExtension
         }
     }
 
-    public function onDisplayingImage(DisplayingImageEvent $event): void
-    {
-    }
-
     protected function media_check_properties(Image $image): ?MediaProperties
     {
         return null;
