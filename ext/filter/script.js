@@ -162,7 +162,7 @@ Filter.enable_all = function () {
 };
 
 Filter.initialize_disable_all_filters = function () {
-    if (shm_cookie_get("ui-disable-filters") === "1") {
+    if (ui_cookie_get("disable-filters") === "1") {
         Filter.disable_all();
     } else {
         // The filter has already been processed by this point
@@ -172,7 +172,7 @@ Filter.initialize_disable_all_filters = function () {
     document
         .getElementById("disable-all-filters")
         .addEventListener("click", function (e) {
-            shm_cookie_set("ui-disable-filters", "1");
+            ui_cookie_set("disable-filters", "1");
             Filter.disable_all();
             e.preventDefault();
         });
@@ -180,7 +180,7 @@ Filter.initialize_disable_all_filters = function () {
     document
         .getElementById("re-enable-all-filters")
         .addEventListener("click", function (e) {
-            shm_cookie_set("ui-disable-filters", "0");
+            ui_cookie_set("disable-filters", "0");
             Filter.enable_all();
             e.preventDefault();
         });

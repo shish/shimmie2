@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /** sidebar toggle **/
     let sidebar_hidden = [];
     try {
-        sidebar_hidden = (shm_cookie_get("ui-sidebar-hidden") || "").split("|");
+        sidebar_hidden = (ui_cookie_get("sidebar-hidden") || "").split("|");
         for (let i = 0; i < sidebar_hidden.length; i++) {
             if (sidebar_hidden[i].length > 0) {
                 document
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             }
-            shm_cookie_set("ui-sidebar-hidden", sidebar_hidden.join("|"));
+            ui_cookie_set("sidebar-hidden", sidebar_hidden.join("|"));
         });
     });
 
