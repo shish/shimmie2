@@ -42,7 +42,7 @@ final class CommandBuilder
         Log::debug('command_builder', "Command `$cmd` returned $ret and outputted $log_output");
 
         if ($ret !== 0) {
-            throw new ServerError("Command `$cmd` failed, returning $ret and outputting $log_output");
+            throw new CommandException(command: $cmd, exit_code: $ret, output: $log_output);
         }
 
         return $output;
