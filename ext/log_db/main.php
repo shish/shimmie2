@@ -9,6 +9,9 @@ use MicroCRUD\{ActionColumn, Column, Table, TextColumn};
 use function MicroHTML\{A, BR, INPUT, OPTION, SELECT, SPAN, emptyHTML};
 
 use MicroHTML\HTMLElement;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\{InputInterface};
+use Symfony\Component\Console\Output\OutputInterface;
 
 final class ActorColumn extends Column
 {
@@ -141,25 +144,22 @@ final class MessageColumn extends Column
     public function display(array $row): HTMLElement
     {
         $c = match ($row['priority']) {
-            LogLevel::DEBUG->value => "#999",
-            LogLevel::INFO->value => "#000",
-            LogLevel::WARNING->value => "#800",
-            LogLevel::ERROR->value => "#C00",
-            LogLevel::CRITICAL->value => "#F00",
-            default => "#000",
+            LogLevel::DEBUG->value => "debug",
+            LogLevel::INFO->value => "info",
+            LogLevel::WARNING->value => "warning",
+            LogLevel::ERROR->value => "error",
+            LogLevel::CRITICAL->value => "critical",
+            default => "",
         };
-        return SPAN(["style" => "color: $c"], \MicroHTML\rawHTML($this->scan_entities($row[$this->name])));
-    }
-
-    protected function scan_entities(string $line): string
-    {
+        $line = $row[$this->name];
+        $line = html_escape($line);
         $line = preg_replace_callback(
-            "/(Image #|Post #|>>)(\d+)/s",
+            "/(Image #|Post #|&gt;&gt;)(\d+)/s",
             $this->link_image(...),
             $line
         );
         assert(is_string($line));
-        return $line;
+        return SPAN(["class" => "level-$c"], \MicroHTML\rawHTML($line));
     }
 
     /**
@@ -244,6 +244,20 @@ final class LogDatabase extends Extension
         if (Ctx::$user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
             $event->add_link("Event Log", make_link("log/view"));
         }
+    }
+
+    public function onCliGen(CliGenEvent $event): void
+    {
+        $event->app->register('log:test')
+            ->setDescription("Log a test message at each level")
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                Log::debug(self::KEY, "This is a debug message");
+                Log::info(self::KEY, "This is an info message");
+                Log::warning(self::KEY, "This is a warning message");
+                Log::error(self::KEY, "This is an error message");
+                Log::critical(self::KEY, "This is a critical message");
+                return Command::SUCCESS;
+            });
     }
 
     public function onLog(LogEvent $event): void
