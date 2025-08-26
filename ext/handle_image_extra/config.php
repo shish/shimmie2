@@ -7,7 +7,13 @@ namespace Shimmie2;
 final class ExtraImageFileHandlerConfig extends ConfigGroup
 {
     public const KEY = "handle_image_extra";
-    public ?string $title = "Exotic Images";
+    public ?string $title = "Extra Image Formats";
+
+    #[ConfigMeta("Lossy format quality", ConfigType::INT, default: 80)]
+    public const QUALITY = "handle_image_extra_quality";
+
+    #[ConfigMeta("Alpha conversion color", ConfigType::STRING, default: "#00000000", input: ConfigInput::COLOR)]
+    public const ALPHA_COLOR = "handle_image_extra_alpha_color";
 
     /**
      * @return array<string, ConfigMeta>
