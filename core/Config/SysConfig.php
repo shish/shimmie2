@@ -41,11 +41,6 @@ final class SysConfig
         return defined("DEBUG") ? constant("DEBUG") : false;
     }
 
-    public static function getNiceUrls(): bool
-    {
-        return getenv("SHM_NICE_URLS") === "true" || Ctx::$config->get(SetupConfig::NICE_URLS);
-    }
-
     public static function getCookiePrefix(): string
     {
         return defined("COOKIE_PREFIX") ? constant("COOKIE_PREFIX") : 'shm';

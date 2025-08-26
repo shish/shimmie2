@@ -274,6 +274,6 @@ final readonly class Url
 
     public static function are_niceurls_enabled(): bool
     {
-        return SysConfig::getNiceUrls() || Ctx::$config->get(SetupConfig::NICE_URLS);
+        return getenv("SHM_NICE_URLS") === "true" || Ctx::$config->get(SetupConfig::NICE_URLS);
     }
 }
