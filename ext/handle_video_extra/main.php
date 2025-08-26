@@ -66,7 +66,7 @@ final class ExtraVideoFileHandler extends Extension
             $target_name = shm_tempnam("handle_video_extra");
 
             $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFMPEG_PATH));
-            $command->add_args("-y");
+            $command->add_args("-y", "-hide_banner", "-loglevel", "quiet");
             $command->add_args("-i", $source_name->str());
             if (Ctx::$config->get(ExtraVideoFileHandlerConfig::FAST_ONLY)) {
                 $command->add_args("-c", "copy");

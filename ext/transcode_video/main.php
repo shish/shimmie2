@@ -153,7 +153,7 @@ final class TranscodeVideo extends Extension
         }
 
         $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFMPEG_PATH));
-        $command->add_args("-y"); // Bypass y/n prompts
+        $command->add_args("-y", "-hide_banner", "-loglevel", "quiet");
         $command->add_args("-i", $source_file->str()); // input file
 
         // TODO: Implement transcoding the codec as well. This will be much more advanced than just picking a container.
