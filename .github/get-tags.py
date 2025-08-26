@@ -13,11 +13,11 @@ image_name = f"{docker_username}/{docker_image}"
 
 if branch == "main":
     print(f"tags={image_name}:latest")
+elif "-" not in describe:
+    print(f"tags={image_name}:{a},{image_name}:{a}.{b},{image_name}:{a}.{b}.{c}")
 elif branch.startswith("branch-2."):
-    if "-" in describe:
-        print(f"tags={image_name}:{a},{image_name}:{a}.{b}")
+    print(f"tags={image_name}:{a},{image_name}:{a}.{b}")
     else:
-        print(f"tags={image_name}:{a},{image_name}:{a}.{b},{image_name}:{a}.{b}.{c}")
 else:
-    print("Only run from main or branch-2.X")
+    print(f"Only run from main, branch-2.X, or a tag (branch={branch}, describe={describe})")
     sys.exit(1)
