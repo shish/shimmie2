@@ -68,7 +68,7 @@ final class SetupConfig extends ConfigGroup
 
         // If niceurls are force-enabled at the system level, don't show the option
         foreach ($fields as $key => $field) {
-            if (SysConfig::getNiceUrls() && $key === SetupConfig::NICE_URLS) {
+            if ($key === SetupConfig::NICE_URLS && getenv("SHM_NICE_URLS") === "true") {
                 unset($fields[$key]);
             }
         }
