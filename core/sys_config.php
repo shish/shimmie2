@@ -31,7 +31,7 @@ _d("DEBUG", false);             // boolean  print various debugging details
 _d("COOKIE_PREFIX", 'shm');     // string   if you run multiple galleries with non-shared logins, give them different prefixes
 _d("SPEED_HAX", false);         // boolean  do some questionable things in the name of performance
 _d("WH_SPLITS", 1);             // int      how many levels of subfolders to put in the warehouse
-_d("VERSION", "2.11.4");        // string   shimmie version
+_d("VERSION", "2.11.5");        // string   shimmie version
 _d("TIMEZONE", null);           // string   timezone
 _d("EXTRA_EXTS", "");           // string   optional extra extensions
 _d("BASE_HREF", null);          // string   force a specific base URL (default is auto-detect)
