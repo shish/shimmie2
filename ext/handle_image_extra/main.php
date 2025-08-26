@@ -1,0 +1,110 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shimmie2;
+
+final class ExtraImageFileHandler extends Extension
+{
+    public const KEY = "handle_image_extra";
+
+    public const INPUT_MIMES = [
+        "BMP" => MimeType::BMP,
+        "GIF" => MimeType::GIF,
+        "ICO" => MimeType::ICO,
+        "JPG" => MimeType::JPEG,
+        "PNG" => MimeType::PNG,
+        "PPM" => MimeType::PPM,
+        "PSD" => MimeType::PSD,
+        "TIFF" => MimeType::TIFF,
+        "WEBP" => MimeType::WEBP,
+        "TGA" => MimeType::TGA
+    ];
+
+    public const OUTPUT_MIMES = [
+        "Don't convert" => "",
+        "JPEG (lossy)" => MimeType::JPEG,
+        "PNG (lossless)" => MimeType::PNG,
+        "WEBP (lossy)" => MimeType::WEBP,
+        "WEBP (lossless)" => MimeType::WEBP_LOSSLESS,
+    ];
+
+    /**
+     * Needs to be after upload, but before the processing extensions
+     */
+    public function get_priority(): int
+    {
+        return 45;
+    }
+
+    public static function get_mapping_name(MimeType $mime): string
+    {
+        $mime = $mime->base;
+        $mime = str_replace(".", "_", $mime);
+        $mime = str_replace("/", "_", $mime);
+        return "handle_image_extra_conversion_".$mime;
+    }
+
+    private static function get_mapping(MimeType $mime): ?MimeType
+    {
+        $val = Ctx::$config->get(self::get_mapping_name($mime));
+        assert(is_string($val) || is_null($val));
+        return ($val === null || $val === "") ? null : new MimeType($val);
+    }
+
+    public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
+    {
+        $output = [];
+        foreach (array_values(self::INPUT_MIMES) as $mime) {
+            $mime = new MimeType($mime);
+            if (!is_null(self::get_mapping($mime))) {
+                $output[] = $mime;
+            }
+        }
+        $event->add_mimes($output);
+    }
+
+    public function onDataUpload(DataUploadEvent $event): void
+    {
+        $target_mime = self::get_mapping($event->mime);
+        if (!empty($target_mime)) {
+            $source_name = $event->tmpname;
+            $source_mime = $event->mime;
+
+            $command = new CommandBuilder(Ctx::$config->get(MediaConfig::MAGICK_PATH));
+
+            // load file
+            $source_type = FileExtension::get_for_mime($source_mime);
+            $command->add_args("$source_type:{$source_name->str()}");
+
+            // flatten with optional solid background color
+            $command->add_args(
+                "-background",
+                Media::supports_alpha($target_mime)
+                    ? "none"
+                    : Ctx::$config->get(TranscodeImageConfig::ALPHA_COLOR)
+            );
+            $command->add_args("-flatten");
+
+            // format-specific compression options
+            if ($target_mime->base === MimeType::PNG) {
+                $command->add_args("-define", "png:compression-level=9");
+            } elseif ($target_mime->base === MimeType::WEBP && $target_mime->parameters === MimeType::LOSSLESS_PARAMETER) {
+                $command->add_args("-define", "webp:lossless=true");
+                $command->add_args("-quality", "100");
+            } else {
+                $command->add_args("-quality", (string)Ctx::$config->get(TranscodeImageConfig::QUALITY));
+            }
+
+            // write file
+            $new_image = shm_tempnam("transcode");
+            $ext = FileExtension::get_for_mime($target_mime);
+            $command->add_args("$ext:{$new_image->str()}");
+
+            // go
+            $command->execute();
+
+            $event->set_tmpname($new_image, $target_mime);
+        }
+    }
+}

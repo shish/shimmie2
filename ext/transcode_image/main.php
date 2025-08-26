@@ -61,18 +61,6 @@ final class TranscodeImage extends Extension
         return ($val === null || $val === "") ? null : new MimeType($val);
     }
 
-    public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
-    {
-        $output = [];
-        foreach (array_values(self::INPUT_MIMES) as $mime) {
-            $mime = new MimeType($mime);
-            if (!is_null(self::get_mapping($mime))) {
-                $output[] = $mime;
-            }
-        }
-        $event->add_mimes($output);
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         if ($this->get_version() < 1) {
@@ -92,42 +80,6 @@ final class TranscodeImage extends Extension
             if ($this->can_convert_mime($engine, $event->image->get_mime())) {
                 $options = self::get_supported_output_mimes($engine, $event->image->get_mime());
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
-            }
-        }
-    }
-
-    public function onDataUpload(DataUploadEvent $event): void
-    {
-        // this onDataUpload happens earlier (or could happen earlier) than handle_image.onDataUpload
-        // it mutates the image such that the incorrect mime type is not checked (checking against
-        // the post-transcode mime type instead). This is to  give user feedback on what the mime type
-        // was before potential transcoding (the original) at the time of upload, and that it failed if not allowed.
-        // does it break bulk image importing? ZIP? SVG? there are a few flows that are untested!
-        if (Ctx::$config->get(TranscodeImageConfig::MIME_CHECK_ENABLED)) {
-            $allowed_mimes = Ctx::$config->get(TranscodeImageConfig::ALLOWED_MIME_STRINGS);
-            if (!MimeType::matches_array($event->mime, $allowed_mimes)) {
-                throw new UploadException("MIME type not supported: " . $event->mime);
-            }
-        }
-
-        if (Ctx::$config->get(TranscodeImageConfig::UPLOAD)) {
-            if ($event->mime->base === MimeType::GIF && ImageFileHandler::is_animated_gif($event->tmpname)) {
-                return;
-            }
-
-            if (in_array($event->mime->base, array_values(self::INPUT_MIMES))) {
-                $target_mime = self::get_mapping($event->mime);
-                if (empty($target_mime)) {
-                    return;
-                }
-                try {
-                    $new_image = $this->transcode_image($event->tmpname, $event->mime, $target_mime);
-                    $event->set_tmpname($new_image, $target_mime);
-                } catch (\Exception $e) {
-                    Log::error("transcode", "Error while performing upload transcode: ".$e->getMessage());
-                    // We don't want to interfere with the upload process,
-                    // so if something goes wrong the untranscoded image jsut continues
-                }
             }
         }
     }

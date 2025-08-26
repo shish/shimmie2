@@ -14,7 +14,7 @@ final class MimeType
     // Went with mime types from http://fileformats.archiveteam.org/wiki/Comic_Book_Archive
     public const COMIC_ZIP = 'application/vnd.comicbook+zip';
     public const COMIC_RAR = 'application/vnd.comicbook-rar';
-    public const BMP = 'image/x-ms-bmp';
+    public const BMP = 'image/bmp';
     public const BZIP = 'application/x-bzip';
     public const BZIP2 = 'application/x-bzip2';
     public const CSS = 'text/css';
