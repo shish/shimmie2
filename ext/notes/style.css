@@ -1,12 +1,6 @@
-.blockbody:has(#main_image) {
-    position: relative;
-}
-
 .notes-container {
-	position: absolute;
 	pointer-events: none;
-	top: 0px;
-	left: 0px;
+	position: absolute;
 }
 
 .notes-container .note {
