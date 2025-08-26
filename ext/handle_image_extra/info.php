@@ -9,7 +9,7 @@ final class ExtraImageFileHandlerInfo extends ExtensionInfo
     public const KEY = "handle_image_extra";
 
     public string $key = self::KEY;
-    public string $name = "Handle Image Files (++)";
+    public string $name = "Image Files (++)";
     public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
     public ExtensionCategory $category = ExtensionCategory::FORMAT_SUPPORT;

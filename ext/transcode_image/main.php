@@ -38,26 +38,6 @@ final class TranscodeImage extends Extension
         "WEBP (lossless)" => MimeType::WEBP_LOSSLESS,
     ];
 
-    /**
-     * Needs to be after upload, but before the processing extensions
-     */
-    public function get_priority(): int
-    {
-        return 45;
-    }
-
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
-    {
-        if ($this->get_version() < 1) {
-            // Used to be a realllllly old migration to change the config from eg
-            // transcode_upload_bmp=png to transcode_upload_image_bmp=image/png,
-            // but it used a load of ancient APIs - if people are upgrading from
-            // older versions of Shimmie2, they may need to manually migrate their
-            // configuration settings.
-            $this->set_version(1);
-        }
-    }
-
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::EDIT_FILES) && $event->context !== "report") {

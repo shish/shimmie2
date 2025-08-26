@@ -23,8 +23,8 @@ final class ExtraImageFileHandler extends Extension
 
     public const OUTPUT_MIMES = [
         "Don't convert" => "",
-        "JPEG (lossy)" => MimeType::JPEG,
-        "PNG (lossless)" => MimeType::PNG,
+        "JPEG" => MimeType::JPEG,
+        "PNG" => MimeType::PNG,
         "WEBP (lossy)" => MimeType::WEBP,
         "WEBP (lossless)" => MimeType::WEBP_LOSSLESS,
     ];
@@ -39,10 +39,8 @@ final class ExtraImageFileHandler extends Extension
 
     public static function get_mapping_name(MimeType $mime): string
     {
-        $mime = $mime->base;
-        $mime = str_replace(".", "_", $mime);
-        $mime = str_replace("/", "_", $mime);
-        return "handle_image_extra_conversion_".$mime;
+        $flat = preg_replace('/[\.\/]/', '_', $mime->base);
+        return "handle_image_extra_conversion_$flat";
     }
 
     private static function get_mapping(MimeType $mime): ?MimeType
@@ -82,7 +80,7 @@ final class ExtraImageFileHandler extends Extension
                 "-background",
                 Media::supports_alpha($target_mime)
                     ? "none"
-                    : Ctx::$config->get(TranscodeImageConfig::ALPHA_COLOR)
+                    : Ctx::$config->get(ExtraImageFileHandlerConfig::ALPHA_COLOR)
             );
             $command->add_args("-flatten");
 
@@ -93,18 +91,18 @@ final class ExtraImageFileHandler extends Extension
                 $command->add_args("-define", "webp:lossless=true");
                 $command->add_args("-quality", "100");
             } else {
-                $command->add_args("-quality", (string)Ctx::$config->get(TranscodeImageConfig::QUALITY));
+                $command->add_args("-quality", (string)Ctx::$config->get(ExtraImageFileHandlerConfig::QUALITY));
             }
 
             // write file
-            $new_image = shm_tempnam("transcode");
+            $target_name = shm_tempnam("transcode");
             $ext = FileExtension::get_for_mime($target_mime);
-            $command->add_args("$ext:{$new_image->str()}");
+            $command->add_args("$ext:{$target_name->str()}");
 
             // go
             $command->execute();
 
-            $event->set_tmpname($new_image, $target_mime);
+            $event->set_tmpname($target_name, $target_mime);
         }
     }
 }
