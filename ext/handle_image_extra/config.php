@@ -7,7 +7,7 @@ namespace Shimmie2;
 final class ExtraImageFileHandlerConfig extends ConfigGroup
 {
     public const KEY = "handle_image_extra";
-    public ?string $title = "Extra Image Formats";
+    public ?string $title = "Image File Conversion";
 
     #[ConfigMeta("Lossy format quality", ConfigType::INT, default: 80)]
     public const QUALITY = "handle_image_extra_quality";
