@@ -31,6 +31,8 @@ function renderNotes() {
     // render a container full of notes
     notesContainer = document.createElement("div");
     notesContainer.className = "notes-container";
+    notesContainer.style.top = br.top + "px";
+    notesContainer.style.left = br.left + "px";
     notesContainer.style.width = br.width + "px";
     notesContainer.style.height = br.height + "px";
 

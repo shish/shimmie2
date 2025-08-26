@@ -1,5 +1,6 @@
 #handle_image_media .zoom-container {
     overflow: scroll;
+    clip-path: inset(0);
 }
 
 #handle_image_media IMG  {
