@@ -158,7 +158,7 @@ jobs:
       run: |
         echo "BUILD_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
         echo "BUILD_HASH=$GITHUB_SHA" >> $GITHUB_ENV
-        ./.github/get-tags.py ${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_IMAGE }} | tee -a $GITHUB_OUTPUT
+        ./.github/get-tags.py ${{ vars.DOCKER_USERNAME }} ${{ secrets.DOCKER_IMAGE }} | tee -a $GITHUB_OUTPUT
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
@@ -166,7 +166,7 @@ jobs:
     - name: Login to Docker registry
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
+        username: ${{ vars.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build and push to registry
       uses: docker/build-push-action@v6
