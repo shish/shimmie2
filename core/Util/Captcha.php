@@ -14,7 +14,7 @@ final class Captcha
             return null;
         }
 
-        if (SysConfig::getDebug() && Network::get_real_ip()->is_localhost()) {
+        if (Network::get_real_ip()->is_localhost()) {
             return null;
         }
 
@@ -27,7 +27,7 @@ final class Captcha
             return true;
         }
 
-        if (SysConfig::getDebug() && Network::get_real_ip()->is_localhost()) {
+        if (Network::get_real_ip()->is_localhost()) {
             return true;
         }
 
