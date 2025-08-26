@@ -1,9 +1,30 @@
 function shm_cookie_set(name, value) {
-    Cookies.set(name, value, { expires: 365, samesite: "lax", path: "/" });
+    let key = document.body.dataset.cookiePrefix + "_" + name;
+    Cookies.set(key, value, { expires: 365, samesite: "lax", path: "/" });
 }
 function shm_cookie_get(name) {
-    return Cookies.get(name);
+    let key = document.body.dataset.cookiePrefix + "_" + name;
+    return Cookies.get(key);
 }
+
+function ui_cookie_set(name, value) {
+    let key = document.body.dataset.cookiePrefix + "_" + name;
+    localStorage.setItem(key, value);
+}
+function ui_cookie_get(name) {
+    let key = document.body.dataset.cookiePrefix + "_" + name;
+    let val = localStorage.getItem(key);
+    if (val == null) {
+        val = Cookies.get("ui-" + name);
+        if (val) {
+            // migrate old cookie to localstorage
+            ui_cookie_set(name, val);
+            Cookies.remove("ui-" + name, { path: "/" });
+        }
+    }
+    return val;
+}
+
 function shm_make_link(page, query) {
     let base = document.body.getAttribute("data-base-link") ?? "";
     let joiner = base.indexOf("?") === -1 ? "?" : "&";

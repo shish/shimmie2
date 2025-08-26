@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    let blocked_tags = (shm_cookie_get("ui-blocked-tags") || "").split(" ");
+    let blocked_tags = (ui_cookie_get("blocked-tags") || "").split(" ");
     let blocked_css = blocked_tags
         .filter((tag) => tag.length > 0)
         .map((tag) => tag.replace(/\\/g, "\\\\").replace(/"/g, '\\"'))
@@ -52,10 +52,10 @@ document.addEventListener("DOMContentLoaded", () => {
 function select_blocked_tags() {
     var blocked_tags = prompt(
         "Enter tags to ignore",
-        shm_cookie_get("ui-blocked-tags") || "AI-generated",
+        ui_cookie_get("blocked-tags") || "AI-generated",
     );
     if (blocked_tags !== null) {
-        shm_cookie_set("ui-blocked-tags", blocked_tags.toLowerCase());
+        ui_cookie_set("blocked-tags", blocked_tags.toLowerCase());
         location.reload(true);
     }
 }

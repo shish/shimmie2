@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function resize(type) {
         img.classList.remove("fit-full", "fit-width", "fit-both");
         img.classList.add(`fit-${type}`);
-        shm_cookie_set("ui-image-zoom", type);
+        ui_cookie_set("image-zoom", type);
         zoomer.value = type;
     }
 
@@ -17,5 +17,5 @@ document.addEventListener("DOMContentLoaded", () => {
         resize(this.options[this.selectedIndex].value);
     });
 
-    resize(shm_cookie_get("ui-image-zoom") ?? "both");
+    resize(ui_cookie_get("image-zoom") ?? "both");
 });
