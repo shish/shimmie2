@@ -60,12 +60,8 @@ abstract class BaseConfigGroup extends Enablable
     {
         $metas = [];
         foreach (self::get_subclasses(true) as $class) {
-            foreach ($class->getReflectionConstants() as $const) {
-                $attributes = $const->getAttributes(ConfigMeta::class);
-                if (count($attributes) === 1) {
-                    $metas[$const->getValue()] = $attributes[0]->newInstance();
-                }
-            }
+            $obj = $class->newInstance();
+            $metas = array_merge($metas, $obj->get_config_fields());
         }
         return $metas;
     }
