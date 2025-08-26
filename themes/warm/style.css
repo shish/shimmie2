@@ -7,6 +7,9 @@
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
 }
+* {
+    box-sizing: border-box;
+}
 BODY {
 	margin: 0;
 	background: url(bg.png);
@@ -172,7 +175,6 @@ ARTICLE {
 	grid-row: 2;
 	margin-right: 16px;
 	text-align: center;
-	height: 1%;
 }
 ARTICLE TABLE {
 	width: 90%;
