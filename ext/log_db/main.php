@@ -148,18 +148,15 @@ final class MessageColumn extends Column
             LogLevel::CRITICAL->value => "#F00",
             default => "#000",
         };
-        return SPAN(["style" => "color: $c"], \MicroHTML\rawHTML($this->scan_entities($row[$this->name])));
-    }
-
-    protected function scan_entities(string $line): string
-    {
+        $line = $row[$this->name];
+        $line = html_escape($line);
         $line = preg_replace_callback(
-            "/(Image #|Post #|>>)(\d+)/s",
+            "/(Image #|Post #|&gt;&gt;)(\d+)/s",
             $this->link_image(...),
             $line
         );
         assert(is_string($line));
-        return $line;
+        return SPAN(["style" => "color: $c"], \MicroHTML\rawHTML($line));
     }
 
     /**
