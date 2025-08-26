@@ -7,10 +7,25 @@ namespace Shimmie2;
 final class AudioFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_audio";
-    public const SUPPORTED_MIME = [MimeType::MP3, MimeType::OGG, MimeType::FLAC];
+    public const SUPPORTED_MIME = [MimeType::MP3, MimeType::OGG_AUDIO, MimeType::FLAC];
 
     protected function media_check_properties(Image $image): MediaProperties
     {
+        try {
+            $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFPROBE_PATH));
+            $command->add_args("-print_format", "json");
+            $command->add_args("-v", "quiet");
+            $command->add_args("-show_format");
+            $command->add_args($image->get_image_filename()->str());
+            $output = $command->execute();
+            $data = json_decode($output, true);
+
+            $length = (int)floor(floatval($data["format"]["duration"]) * 1000);
+            assert($length >= 0);
+        } catch (\Exception) {
+            $length = null;
+        }
+
         return new MediaProperties(
             width: 0,
             height: 0,
@@ -19,7 +34,7 @@ final class AudioFileHandler extends DataHandlerExtension
             audio: true,
             image: false,
             video_codec: null,
-            length: null, // FIXME
+            length: $length,
         );
     }
 
