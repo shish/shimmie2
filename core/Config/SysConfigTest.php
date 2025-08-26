@@ -13,6 +13,6 @@ final class SysConfigTest extends ShimmiePHPUnitTestCase
         SysConfig::getCacheDsn();
         SysConfig::getTimezone();
         SysConfig::getTraceFile();
-        self::assertEquals(0.0, SysConfig::getTraceThreshold());
+        self::assertEquals(1.0, SysConfig::getTraceThreshold());
     }
 }
