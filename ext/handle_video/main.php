@@ -88,7 +88,7 @@ final class VideoFileHandler extends DataHandlerExtension
             $scaled_size = ThumbnailUtil::get_thumbnail_size($image->width, $image->height, true);
 
             $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFMPEG_PATH));
-            $command->add_args("-y");
+            $command->add_args("-y", "-hide_banner", "-loglevel", "quiet");
             $command->add_args("-i", $inname->str());
             $command->add_args("-vf", "scale=$scaled_size[0]:$scaled_size[1],thumbnail");
             $command->add_args("-f", "image2");
