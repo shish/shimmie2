@@ -9,6 +9,7 @@ enum ExtensionCategory: string
     case GENERAL = "General";
     case ADMIN = "Admin";
     case MODERATION = "Moderation";
+    case FORMAT_SUPPORT = "Format Support";
     case FILE_HANDLING = "File Handling";
     case OBSERVABILITY = "Observability";
     case INTEGRATION = "Integration";
