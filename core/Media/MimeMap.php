@@ -68,6 +68,11 @@ final class MimeMap
             self::MAP_EXT => [FileExtension::CSV],
             self::MAP_MIME => [MimeType::CSV],
         ],
+        MimeType::FLAC => [
+            self::MAP_NAME => "FLAC",
+            self::MAP_EXT => [FileExtension::FLAC],
+            self::MAP_MIME => [MimeType::FLAC],
+        ],
         MimeType::FLASH => [
             self::MAP_NAME => "Flash",
             self::MAP_EXT => [FileExtension::FLASH],

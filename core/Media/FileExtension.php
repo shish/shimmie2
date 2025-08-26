@@ -23,6 +23,7 @@ final class FileExtension
     public const CSS = 'css';
     public const CSV = 'csv';
     public const CUR = 'cur';
+    public const FLAC = 'flac';
     public const FLASH = 'swf';
     public const FLASH_VIDEO = 'flv';
     public const GIF = 'gif';
