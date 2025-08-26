@@ -151,24 +151,17 @@ abstract class DataHandlerExtension extends Extension
         return MimeType::matches_array($mime, $this::SUPPORTED_MIME);
     }
 
+    public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
+    {
+        $event->add_mimes(array_map(fn ($mime) => new MimeType($mime), $this::SUPPORTED_MIME));
+    }
+
     /**
      * @return MimeType[]
      */
     public static function get_all_supported_mimes(): array
     {
-        $arr = [];
-        foreach (DataHandlerExtension::get_subclasses() as $class) {
-            $handler = $class->newInstance();
-            $arr = array_merge($arr, array_map(fn ($mime) => new MimeType($mime), $handler::SUPPORTED_MIME));
-        }
-
-        // Not sure how to handle this otherwise, don't want to set up a whole other event for this one class
-        if (TranscodeImageInfo::is_enabled()) {
-            $arr = array_merge($arr, TranscodeImage::get_enabled_mimes());
-        }
-
-        $arr = array_unique($arr);
-        return $arr;
+        return send_event(new BuildSupportedMimesEvent())->get_mimes();
     }
 
     /**

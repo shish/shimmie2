@@ -61,10 +61,7 @@ final class TranscodeImage extends Extension
         return ($val === null || $val === "") ? null : new MimeType($val);
     }
 
-    /**
-     * @return MimeType[]
-     */
-    public static function get_enabled_mimes(): array
+    public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
     {
         $output = [];
         foreach (array_values(self::INPUT_MIMES) as $mime) {
@@ -73,7 +70,7 @@ final class TranscodeImage extends Extension
                 $output[] = $mime;
             }
         }
-        return $output;
+        $event->add_mimes($output);
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
