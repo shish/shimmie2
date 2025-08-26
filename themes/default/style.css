@@ -61,6 +61,10 @@
 	font-family: sans-serif;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 H1, H2, H3 {
 	margin: 0;
 	text-align: center;
@@ -242,7 +246,6 @@ ARTICLE {
 	grid-column: 2;
 	grid-row: 2;
 	text-align: center;
-	height: 1%;
 }
 ARTICLE TABLE {
 	width: 90%;
