@@ -17,7 +17,6 @@ elif "-" not in describe:
     print(f"tags={image_name}:{a},{image_name}:{a}.{b},{image_name}:{a}.{b}.{c}")
 elif branch.startswith("branch-2."):
     print(f"tags={image_name}:{a},{image_name}:{a}.{b}")
-    else:
 else:
     print(f"Only run from main, branch-2.X, or a tag (branch={branch}, describe={describe})")
     sys.exit(1)
