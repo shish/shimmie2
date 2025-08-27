@@ -257,8 +257,8 @@ class CommentListTheme extends Themelet
             P("Search for posts containing a certain number of comments, or comments by a particular individual."),
             SHM_COMMAND_EXAMPLE("comments>0", "Returns posts with 1 or more comments"),
             P("Can use <, <=, >, >=, or =."),
-            SHM_COMMAND_EXAMPLE("commented_by:username", "Returns posts that have been commented on by \"username\"."),
-            //SHM_COMMAND_EXAMPLE("commented_by_userno:123", "Returns posts that have been commented on by user 123."),
+            SHM_COMMAND_EXAMPLE("commented_by=username", "Returns posts that have been commented on by \"username\"."),
+            //SHM_COMMAND_EXAMPLE("commented_by_userno=123", "Returns posts that have been commented on by user 123."),
         );
     }
 }

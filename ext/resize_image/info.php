@@ -20,5 +20,5 @@ final class ResizeImageInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Allows admins to resize images";
-    public array $dependencies = [ImageFileHandlerInfo::KEY];
+    public array $dependencies = [ImageFileHandlerInfo::KEY, ReplaceFileInfo::KEY];
 }

@@ -10,7 +10,7 @@ final class TermsInfo extends ExtensionInfo
 
     public string $key = self::KEY;
     public string $name = "Terms & Conditions Gate";
-    public array $authors = ["discomrade" => ""];
+    public array $authors = ["discomrade" => null];
     public string $license = "GPLv2";
     public string $description = "Show a page of terms which must be accepted before continuing";
 }

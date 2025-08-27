@@ -101,8 +101,8 @@ class NumericScoreTheme extends Themelet
             P("Can use <, <=, >, >=, or =."),
             SHM_COMMAND_EXAMPLE("upvoted_by=username", "Returns posts upvoted by 'username'"),
             SHM_COMMAND_EXAMPLE("downvoted_by=username", "Returns posts downvoted by 'username'"),
-            SHM_COMMAND_EXAMPLE("order:score_desc", "Returns posts ordered by score in descending order"),
-            SHM_COMMAND_EXAMPLE("order:score_asc", "Returns posts ordered by score in ascending order")
+            SHM_COMMAND_EXAMPLE("order=score_desc", "Returns posts ordered by score in descending order"),
+            SHM_COMMAND_EXAMPLE("order=score_asc", "Returns posts ordered by score in ascending order")
         );
     }
 }
