@@ -15,7 +15,7 @@ final class ResizeImageInfo extends ExtensionInfo
     public const KEY = "resize";
 
     public string $name = "Resize Post";
-    public array $authors = ["jgen" => "jgen.tech@gmail.com"];
+    public array $authors = ["jgen" => "mailto:jgen.tech@gmail.com"];
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Allows admins to resize images";
     public array $dependencies = [ImageFileHandlerInfo::KEY, ReplaceFileInfo::KEY];

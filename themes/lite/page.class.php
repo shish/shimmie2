@@ -12,9 +12,8 @@ use MicroHTML\HTMLElement;
  * Name: Lite Theme
  * Author: Zach Hall <zach@sosguy.net>
  * Link: http://seemslegit.com
- * License: GPLv2
  * Description: A mashup of Default, Danbooru, the interface on qwebirc, and
- * 	       some other sites, packaged in a light blue color.
+ * 	            some other sites, packaged in a light blue color.
  */
 
 class LitePage extends Page

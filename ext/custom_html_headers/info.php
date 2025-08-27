@@ -9,7 +9,7 @@ final class CustomHtmlHeadersInfo extends ExtensionInfo
     public const KEY = "custom_html_headers";
 
     public string $name = "Custom HTML Headers";
-    public array $authors = ["Drudex Software" => "support@drudexsoftware.com"];
+    public array $authors = ["Drudex Software" => "mailto:support@drudexsoftware.com"];
     public ExtensionCategory $category = ExtensionCategory::ADMIN;
     public string $description = "Allows admins to modify & set custom <head> content";
     public ?string $documentation =

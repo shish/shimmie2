@@ -15,7 +15,7 @@ final class RotateImageInfo extends ExtensionInfo
     public const KEY = "rotate";
 
     public string $name = "Rotate Image";
-    public array $authors = ["jgen" => "jgen.tech@gmail.com","Agasa" => "hiroshiagasa@gmail.com"];
+    public array $authors = ["jgen" => "mailto:jgen.tech@gmail.com","Agasa" => "mailto:hiroshiagasa@gmail.com"];
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Allows admins to rotate images";
     public array $dependencies = [ImageFileHandlerInfo::KEY, ReplaceFileInfo::KEY];

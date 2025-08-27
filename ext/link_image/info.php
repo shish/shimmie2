@@ -9,7 +9,7 @@ final class LinkImageInfo extends ExtensionInfo
     public const KEY = "link_image";
 
     public string $name = "Link to Post";
-    public array $authors = ["Artanis" => "artanis.00@gmail.com"];
+    public array $authors = ["Artanis" => "mailto:artanis.00@gmail.com"];
     public string $description = "Show various forms of link to each image, for copy & paste";
     public ?string $documentation = "There is one option in Board Config: Text Link Format.
 It takes the following arguments as well as plain text.

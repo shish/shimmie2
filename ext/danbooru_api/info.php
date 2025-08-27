@@ -9,7 +9,7 @@ final class DanbooruApiInfo extends ExtensionInfo
     public const KEY = "danbooru_api";
 
     public string $name = "Danbooru Client API";
-    public array $authors = ["JJS" => "jsutinen@gmail.com"];
+    public array $authors = ["JJS" => "mailto:jsutinen@gmail.com"];
     public string $description = "Allow Danbooru apps like Danbooru Uploader for Firefox to communicate with Shimmie";
     public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public ?string $documentation =

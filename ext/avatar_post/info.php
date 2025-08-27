@@ -8,8 +8,8 @@ final class AvatarPostInfo extends ExtensionInfo
 {
     public const KEY = "avatar_post";
 
-    public string $name = "Avatar Post";
-    public array $authors = ["Mjokfox" => "mjokfox@findafox.net"];
+    public string $name = "Avatars (Posts)";
+    public array $authors = ["Mjokfox" => "mailto:mjokfox@findafox.net"];
     public string $description = "Lets users set a post as their avatar";
     public ExtensionCategory $category = ExtensionCategory::GENERAL;
     public array $dependencies = [UserConfigEditorInfo::KEY];
