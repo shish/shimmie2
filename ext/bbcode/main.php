@@ -4,9 +4,67 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{B, I, S, SUB, SUP, U};
+use function MicroHTML\{BR, LI, UL, emptyHTML};
+use function MicroHTML\CODE;
+
 final class BBCode extends FormatterExtension
 {
     public const KEY = "bbcode";
+
+    public function onHelpPageListBuilding(HelpPageListBuildingEvent $event): void
+    {
+        $event->add_page("formatting", "Formatting");
+    }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
+    {
+        if ($event->key === "formatting") {
+            $event->add_section(
+                "BBCode",
+                emptyHTML(
+                    "Basic Formatting tags:",
+                    UL(
+                        LI(CODE("[b]", B("bold"), "[/b]")),
+                        LI(CODE("[i]", I("italic"), "[/i]")),
+                        LI(CODE("[u]", U("underline"), "[/u]")),
+                        LI(CODE("[s]", S("strikethrough"), "[/s]")),
+                        LI(CODE("[sup]", SUP("superscript"), "[/sup]")),
+                        LI(CODE("[sub]", SUB("subscript"), "[/sub]")),
+                        LI(CODE("[h1]Heading 1[/h1]")),
+                        LI(CODE("[h2]Heading 2[/h2]")),
+                        LI(CODE("[h3]Heading 3[/h3]")),
+                        LI(CODE("[h4]Heading 4[/h4]")),
+                        LI(CODE("[align=left|center|right]Aligned Text[/align]")),
+                    ),
+                    BR(),
+                    "Link tags:",
+                    UL(
+                        LI(CODE("[img]url[/img]")),
+                        LI(CODE("[img]site://_images/image.jpg[/img]")),
+                        LI(CODE("[url]site://help/formatting[/url]")),
+                        LI(CODE("[url=site://help/formatting]Link to BBCode docs[/url]")),
+                        LI(CODE("[email]webmaster@shishnet.org[/email]")),
+                        LI(CODE("[[wiki article]]")),
+                        LI(CODE("[[wiki article|with some text]]")),
+                        LI(CODE(">>123 (link to post #123)")),
+                        LI(CODE("[anchor=target]Scroll to #bb-target[/anchor]")),
+                    ),
+                    BR(),
+                    "More format tags:",
+                    UL(
+                        LI(CODE("[list]...[/list] or [ul]...[/ul] (unordered list)")),
+                        LI(CODE("[ol]...[/ol] (ordered list)")),
+                        LI(CODE("[li]List Item[/li] or [*]List Item")),
+                        LI(CODE("[code]print(\"Hello World!\");[/code]")),
+                        LI(CODE("[spoiler]Voldemort is bad[/spoiler]")),
+                        LI(CODE("[quote]To be or not to be...[/quote]")),
+                        LI(CODE("[quote=Shakespeare]... That is the question[/quote]")),
+                    )
+                ),
+            );
+        }
+    }
 
     public function format(string $text): string
     {
