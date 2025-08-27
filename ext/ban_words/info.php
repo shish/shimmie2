@@ -8,11 +8,8 @@ final class BanWordsInfo extends ExtensionInfo
 {
     public const KEY = "ban_words";
 
-    public string $key = self::KEY;
     public string $name = "Word Ban";
-    public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $license = self::LICENSE_GPLV2;
     public string $description = "For stopping spam and other abuse in comments, tags and sources";
     public ?string $documentation =
         "Allows an administrator to ban certain words

@@ -8,11 +8,8 @@ final class BulkAddInfo extends ExtensionInfo
 {
     public const KEY = "bulk_add";
 
-    public string $key = self::KEY;
     public string $name = "Bulk Add";
-    public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $license = self::LICENSE_GPLV2;
     public string $description = "Bulk add server-side images";
     public ?string $documentation =
         "Upload the images into a new directory via ftp or similar, go to

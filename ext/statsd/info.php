@@ -8,11 +8,8 @@ final class StatsDInterfaceInfo extends ExtensionInfo
 {
     public const KEY = "statsd";
 
-    public string $key = self::KEY;
     public string $name = "StatsD Interface";
-    public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $license = self::LICENSE_GPLV2;
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
     public string $description = "Sends Shimmie stats to a StatsD server";

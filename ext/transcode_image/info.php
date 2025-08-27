@@ -8,7 +8,6 @@ final class TranscodeImageInfo extends ExtensionInfo
 {
     public const KEY = "transcode";
 
-    public string $key = self::KEY;
     public string $name = "Transcode Image";
     public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;

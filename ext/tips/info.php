@@ -8,7 +8,6 @@ final class TipsInfo extends ExtensionInfo
 {
     public const KEY = "tips";
 
-    public string $key = self::KEY;
     public string $name = "Random Tip";
     public array $authors = ["Sein Kraft" => "mail@seinkraft.info"];
     public string $license = "GPLv2";

@@ -8,7 +8,6 @@ final class OuroborosAPIInfo extends ExtensionInfo
 {
     public const KEY = "ouroboros_api";
 
-    public string $key = self::KEY;
     public string $name = "Ouroboros API";
     public array $authors = ["Diftraku" => "diftraku[at]derpy.me"];
     public string $description = "Ouroboros-like API for Shimmie";

@@ -8,7 +8,6 @@ final class MimeSystemInfo extends ExtensionInfo
 {
     public const KEY = "mime";
 
-    public string $key = self::KEY;
     public string $name = "MIME";
     public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;

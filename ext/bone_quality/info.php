@@ -8,9 +8,8 @@ final class BoneQualityInfo extends ExtensionInfo
 {
     public const KEY = "bone_quality";
 
-    public string $key = self::KEY;
     public string $name = "Bone Quality";
-    public array $authors = ["Discomrade" => ""];
+    public array $authors = ["Discomrade" => null];
     public string $license = self::LICENSE_WTFPL;
     public string $description = "Displays a summary page of booru quality metrics";
     public ?string $documentation =
