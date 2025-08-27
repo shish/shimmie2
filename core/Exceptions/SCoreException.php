@@ -13,7 +13,8 @@ class SCoreException extends \RuntimeException
     public ?\MicroHTML\HTMLElement $html = null;
 
     public function __construct(
-        public string $error
+        public string $error,
+        public ?\MicroHTML\HTMLElement $html = null,
     ) {
         parent::__construct($error);
     }
