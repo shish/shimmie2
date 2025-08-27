@@ -14,8 +14,6 @@ class HelpPagesTheme extends Themelet
     public function display_help_page(string $title, array $pages): void
     {
         $links = emptyHTML(
-            A(["href" => make_link()], "Index"),
-            BR(),
             BR(),
         );
         foreach ($pages as $link => $desc) {
@@ -25,6 +23,6 @@ class HelpPagesTheme extends Themelet
             );
         }
         Ctx::$page->set_title("Help - $title");
-        Ctx::$page->add_block(new Block("Navigation", $links, "left", position: 0));
+        $this->display_navigation(extra: $links);
     }
 }

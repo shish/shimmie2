@@ -14,7 +14,5 @@ final class ImageBanInfo extends ExtensionInfo
     public array $authors = ["ATravelingGeek" => "atg@atravelinggeek.com"];
     public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
-    public string $description = "Ban images based on their hash";
-    public ?string $documentation =
-        "Based on the ResolutionLimit and IPban extensions by Shish";
+    public string $description = "Ban posts based on their hash";
 }
