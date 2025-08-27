@@ -180,19 +180,6 @@ class IndexTheme extends Themelet
             SHM_COMMAND_EXAMPLE("tags>0", "Returns posts with 1 or more tags."),
             //
             BR(),
-            P("Searching for posts by aspect ratio."),
-            P("The relation is calculated as: width / height."),
-            SHM_COMMAND_EXAMPLE("ratio=4:3", "Returns posts with an aspect ratio of 4:3."),
-            SHM_COMMAND_EXAMPLE("ratio>16:9", "Returns posts with an aspect ratio greater than 16:9."),
-            //
-            BR(),
-            P("Searching by dimentions."),
-            SHM_COMMAND_EXAMPLE("size=640x480", "Returns posts exactly 640 pixels wide by 480 pixels high."),
-            SHM_COMMAND_EXAMPLE("size>1920x1080", "Returns posts with a width larger than 1920 and a height larger than 1080."),
-            SHM_COMMAND_EXAMPLE("width=1000", "Returns posts exactly 1000 pixels wide."),
-            SHM_COMMAND_EXAMPLE("height=1000", "Returns posts exactly 1000 pixels high."),
-            //
-            BR(),
             P("Searching by file size."),
             P("Supported suffixes are kb, mb, and gb. Uses multiples of 1024."),
             SHM_COMMAND_EXAMPLE("filesize=1", "Returns posts exactly 1 byte in size"),
@@ -202,13 +189,6 @@ class IndexTheme extends Themelet
             P("Searching by date posted."),
             P("Date format is yyyy-mm-dd. Date posted includes time component, so = will not work unless the time is exact."),
             SHM_COMMAND_EXAMPLE("posted>=2019-07-19", "Returns posts posted on or after 2019-07-19."),
-            //
-            BR(),
-            P("Searching posts by media length."),
-            P("Available suffixes are ms, s, m, h, d, and y. A number by itself will be interpreted as milliseconds. Searches using = are not likely to work unless time is specified down to the millisecond."),
-            SHM_COMMAND_EXAMPLE("length>=1h", "Returns posts that are longer than an hour."),
-            SHM_COMMAND_EXAMPLE("length<=10h15m", "Returns posts that are shorter than 10 hours and 15 minutes."),
-            SHM_COMMAND_EXAMPLE("length>=10000", "Returns posts that are longer than 10,000 milliseconds, or 10 seconds."),
             //
             BR(),
             P("Searching posts by ID."),
@@ -236,8 +216,8 @@ class IndexTheme extends Themelet
             P("Sorting can be done using the pattern order:field_direction."),
             P("Supported fields: id, width, height, filesize, filename."),
             P("Direction can be either asc or desc, indicating ascending (123) or descending (321) order."),
-            SHM_COMMAND_EXAMPLE("order:id_asc", "Returns posts sorted by ID, smallest first."),
-            SHM_COMMAND_EXAMPLE("order:width_desc", "Returns posts sorted by width, largest first."),
+            SHM_COMMAND_EXAMPLE("order=id_asc", "Returns posts sorted by ID, smallest first."),
+            SHM_COMMAND_EXAMPLE("order=width_desc", "Returns posts sorted by width, largest first."),
         );
     }
 }

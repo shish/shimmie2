@@ -32,7 +32,7 @@ class FavoritesTheme extends Themelet
             P('Search for posts that have been favorited a certain number of times, or favorited by a particular individual.'),
             SHM_COMMAND_EXAMPLE('favorites=1', 'Returns posts that have been favorited once'),
             SHM_COMMAND_EXAMPLE('favorites>0', 'Returns posts that have been favorited 1 or more times'),
-            SHM_COMMAND_EXAMPLE('favorited_by:username', 'Returns posts that have been favorited by a user'),
+            SHM_COMMAND_EXAMPLE('favorited_by=username', 'Returns posts that have been favorited by a user'),
         );
     }
 }

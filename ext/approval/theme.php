@@ -15,8 +15,8 @@ class ApprovalTheme extends Themelet
     {
         return emptyHTML(
             P("Search for posts that are approved/not approved."),
-            SHM_COMMAND_EXAMPLE("approved:yes", "Returns posts that have been approved."),
-            SHM_COMMAND_EXAMPLE("approved:no", "Returns posts that have not been approved.")
+            SHM_COMMAND_EXAMPLE("approved=yes", "Returns posts that have been approved."),
+            SHM_COMMAND_EXAMPLE("approved=no", "Returns posts that have not been approved.")
         );
     }
 

@@ -16,5 +16,4 @@ final class UserClassFileInfo extends ExtensionInfo
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public ExtensionCategory $category = ExtensionCategory::ADMIN;
     public string $description = "Load custom user classes from user-classes.conf.php";
-    public ?string $documentation = "";
 }
