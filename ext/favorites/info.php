@@ -9,7 +9,7 @@ final class FavoritesInfo extends ExtensionInfo
     public const KEY = "favorites";
 
     public string $name = "Favorites";
-    public array $authors = ["Daniel Marschall" => "info@daniel-marschall.de"];
+    public array $authors = ["Daniel Marschall" => "mailto:info@daniel-marschall.de"];
     public string $description = "Allow users to favorite images";
     public ?string $documentation =
         "Gives users a \"favorite this image\" button that they can press

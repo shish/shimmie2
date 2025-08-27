@@ -10,7 +10,7 @@ final class ExtManagerTest extends ShimmiePHPUnitTestCase
     {
         self::get_page('ext_doc/ext_manager');
         self::assert_title("Documentation for Extension Manager");
-        self::assert_text("view a list of all extensions");
+        self::assert_text("(This extension has no documentation)");
 
         # test author without email
         self::get_page('ext_doc/user');

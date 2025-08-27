@@ -9,7 +9,7 @@ final class BrowserSearchInfo extends ExtensionInfo
     public const KEY = "browser_search";
 
     public string $name = "Browser Search";
-    public array $authors = ["ATravelingGeek" => "atg@atravelinggeek.com", "Artanis" => "artanis.00@gmail.com"];
+    public array $authors = ["ATravelingGeek" => "mailto:atg@atravelinggeek.com", "Artanis" => "mailto:artanis.00@gmail.com"];
     public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public string $description = "Allows the user to add a browser 'plugin' to search the site with real-time suggestions";
     public ?string $documentation =

@@ -8,7 +8,7 @@ abstract class ExtensionInfo extends Enablable
 {
     // Every credit you get costs us RAM. It stops now.
     public const SHISH_NAME = "Shish";
-    public const SHISH_EMAIL = "webmaster@shishnet.org";
+    public const SHISH_EMAIL = "https://shish.io/";
     public const SHIMMIE_URL = "https://github.com/shish/shimmie2/";
     public const SHISH_AUTHOR = [self::SHISH_NAME => self::SHISH_EMAIL];
 
@@ -22,7 +22,7 @@ abstract class ExtensionInfo extends Enablable
     public string $name;
     public string $license = self::LICENSE_GPLV2;
     public string $description;
-    /** @var array<non-empty-string, non-empty-string|null> */
+    /** @var array<non-empty-string, contact-string|null> */
     public array $authors = [];
     /** @var string[] */
     public array $dependencies = [];

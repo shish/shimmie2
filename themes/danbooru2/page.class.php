@@ -10,45 +10,13 @@ use MicroHTML\HTMLElement;
 
 /**
  * Name: Danbooru 2 Theme
- * Author: Bzchan <bzchan@animemahou.com>, updated by Daniel Oaks <daniel@danieloaks.net>
- * License: GPLv2
+ * Author: Bzchan <bzchan@animemahou.com>
+ *         Updated by Daniel Oaks <daniel@danieloaks.net>
+ *         Small changes added by zshall <http://seemslegit.com>
  * Description: This is a simple theme changing the css to make shimme
  *              look more like danbooru as well as adding a custom links
  *              bar and title to the top of every page.
  */
-//Small changes added by zshall <http://seemslegit.com>
-//Changed CSS and layout to make shimmie look even more like danbooru
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-Danbooru 2 Theme - Notes (Bzchan)
-
-Files: default.php, style.css
-
-How to use a theme
-- Copy the danbooru2 folder with all its contained files into the "themes"
-  directory in your shimmie installation.
-- Log into your shimmie and change the Theme in the Board Config to your
-  desired theme.
-
-Changes in this theme include
-- Adding and editing various elements in the style.css file.
-- $site_name and $front_name retreival from config added.
-- $custom_link and $title_link preparation just before html is outputed.
-- Altered outputed html to include the custom links and removed heading
-  from being displayed (subheading is still displayed)
-- Note that only the sidebar has been left aligned. Could not properly
-  left align the main block because blocks without headers currently do
-  not have ids on there div elements. (this was a problem because
-  paginator block must be centered and everything else left aligned)
-
-Tips
-- You can change custom links to point to whatever pages you want as well as adding
-  more custom links.
-- The main title link points to the Front Page set in your Board Config options.
-- The text of the main title is the Title set in your Board Config options.
-- Themes make no changes to your database or main code files so you can switch
-  back and forward to other themes all you like.
-
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class Danbooru2Page extends Page
 {

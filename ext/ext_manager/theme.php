@@ -101,9 +101,9 @@ class ExtManagerTheme extends Themelet
         if (count($info->authors) > 0) {
             $author->appendChild(BR());
             $author->appendChild(B(count($info->authors) > 1 ? "Authors: " : "Author: "));
-            foreach ($info->authors as $auth => $email) {
-                if (!empty($email)) {
-                    $author->appendChild(A(["href" => "mailto:$email"], $auth));
+            foreach ($info->authors as $auth => $contact) {
+                if (!empty($contact)) {
+                    $author->appendChild(A(["href" => $contact], $auth));
                 } else {
                     $author->appendChild($auth);
                 }
