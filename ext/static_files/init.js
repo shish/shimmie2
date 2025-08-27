@@ -1,9 +1,32 @@
 function shm_cookie_set(name, value) {
-    Cookies.set(name, value, { expires: 365, samesite: "lax", path: "/" });
+    Cookies.set("shm_" + name, value, {
+        expires: 365,
+        samesite: "lax",
+        path: document.body.dataset.baseHref + "/",
+    });
 }
 function shm_cookie_get(name) {
-    return Cookies.get(name);
+    return Cookies.get("shm_" + name);
 }
+
+function ui_cookie_set(name, value) {
+    let key = document.body.dataset.baseHref + "/" + name;
+    localStorage.setItem(key, value);
+}
+function ui_cookie_get(name) {
+    let key = document.body.dataset.baseHref + "/" + name;
+    let val = localStorage.getItem(key);
+    if (val == null) {
+        val = Cookies.get("ui-" + name);
+        if (val) {
+            // migrate old cookie to localstorage
+            ui_cookie_set(name, val);
+            Cookies.remove("ui-" + name, { path: "/" });
+        }
+    }
+    return val;
+}
+
 function shm_make_link(page, query) {
     let base = document.body.getAttribute("data-base-link") ?? "";
     let joiner = base.indexOf("?") === -1 ? "?" : "&";

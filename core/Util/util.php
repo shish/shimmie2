@@ -259,9 +259,7 @@ function _set_up_shimmie_environment(): void
         date_default_timezone_set(SysConfig::getTimezone());
     }
 
-    if (SysConfig::getDebug()) {
-        error_reporting(E_ALL);
-    }
+    error_reporting(E_ALL);
 
     // The trace system has a certain amount of memory consumption every time it is used,
     // so to prevent running out of memory during complex operations code that uses it should

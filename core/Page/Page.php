@@ -82,20 +82,15 @@ class Page
      * setcookie method, but prepends the site-wide cookie prefix to
      * the $name argument before doing anything.
      */
-    public function add_cookie(string $name, string $value, int $time, string $path): void
+    public function add_cookie(string $name, string $value, int $time): void
     {
-        $full_name = SysConfig::getCookiePrefix() . "_" . $name;
-        $this->cookies[] = new Cookie($full_name, $value, $time, $path);
+        $path = ((string)Url::base()) . "/";
+        $this->cookies[] = new Cookie("shm_$name", $value, $time, $path);
     }
 
     public function get_cookie(string $name): ?string
     {
-        $full_name = SysConfig::getCookiePrefix() . "_" . $name;
-        if (isset($_COOKIE[$full_name])) {
-            return $_COOKIE[$full_name];
-        } else {
-            return null;
-        }
+        return $_COOKIE["shm_$name"] ?? null;
     }
 
     public function send_headers(): void
