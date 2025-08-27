@@ -6,10 +6,10 @@ namespace Shimmie2;
 
 class Danbooru2ExtManagerTheme extends ExtManagerTheme
 {
-    public function display_table(array $extensions, bool $editable): void
+    public function display_table(array $extensions): void
     {
         Ctx::$page->set_layout("no-left");
-        parent::display_table($extensions, $editable);
+        parent::display_table($extensions);
     }
 
     public function display_doc(ExtensionInfo $info): void

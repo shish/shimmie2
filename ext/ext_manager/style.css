@@ -1,0 +1,10 @@
+/* checkbox, title, doc link */
+.ext-list TD:nth-child(1) {
+    width: 1em;
+}
+.ext-list TD:nth-child(2) {
+    width: 12em;
+}
+.ext-list TD:nth-child(3) {
+    width: 1em;
+}
