@@ -8,11 +8,8 @@ final class RegenThumbInfo extends ExtensionInfo
 {
     public const KEY = "regen_thumb";
 
-    public string $key = self::KEY;
     public string $name = "Regen Thumb";
-    public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Regenerate a thumbnail image";
     public ?string $documentation =

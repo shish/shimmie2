@@ -8,7 +8,6 @@ final class UserConfigInfo extends ExtensionInfo
 {
     public const KEY = "user_config";
 
-    public string $key = self::KEY;
     public string $name = "User-specific settings";
     public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;

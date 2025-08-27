@@ -8,7 +8,6 @@ final class UserApiKeysInfo extends ExtensionInfo
 {
     public const KEY = "user_api_keys";
 
-    public string $key = self::KEY;
     public string $name = "User API Keys";
     public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;

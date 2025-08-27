@@ -8,11 +8,8 @@ final class EmoticonsInfo extends ExtensionInfo
 {
     public const KEY = "emoticons";
 
-    public string $key = self::KEY;
     public string $name = "Emoticon Filter";
-    public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $license = self::LICENSE_GPLV2;
     public array $dependencies = [EmoticonListInfo::KEY];
     public string $description = "Lets users use graphical smilies";
     public ?string $documentation =

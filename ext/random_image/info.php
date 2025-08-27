@@ -8,11 +8,8 @@ final class RandomImageInfo extends ExtensionInfo
 {
     public const KEY = "random_image";
 
-    public string $key = self::KEY;
     public string $name = "Random Post";
-    public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $license = self::LICENSE_GPLV2;
     public string $description = "Do things with a random post";
     public ?string $documentation =
         "<b>Viewing a random post</b>

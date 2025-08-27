@@ -8,7 +8,6 @@ final class TagEditCloudInfo extends ExtensionInfo
 {
     public const KEY = "tag_editcloud";
 
-    public string $key = self::KEY;
     public string $name = "Tag EditCloud";
     public array $authors = ["AtomicDryad" => null, "Luana Latte" => "luana.latte.cat@gmail.com"];
     public ExtensionCategory $category = ExtensionCategory::METADATA;

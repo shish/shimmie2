@@ -8,7 +8,6 @@ final class TermsInfo extends ExtensionInfo
 {
     public const KEY = "terms";
 
-    public string $key = self::KEY;
     public string $name = "Terms & Conditions Gate";
     public array $authors = ["discomrade" => null];
     public string $license = "GPLv2";

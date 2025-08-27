@@ -8,11 +8,8 @@ final class ImageBanInfo extends ExtensionInfo
 {
     public const KEY = "image_hash_ban";
 
-    public string $key = self::KEY;
     public string $name = "Post Hash Ban";
-    public string $url = "http://atravelinggeek.com/";
     public array $authors = ["ATravelingGeek" => "atg@atravelinggeek.com"];
-    public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
     public string $description = "Ban posts based on their hash";
 }

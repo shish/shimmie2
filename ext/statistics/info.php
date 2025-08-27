@@ -8,9 +8,8 @@ final class StatisticsInfo extends ExtensionInfo
 {
     public const KEY = "statistics";
 
-    public string $key = self::KEY;
     public string $name = "Statistics";
-    public array $authors = ["Discomrade" => ""];
+    public array $authors = ["Discomrade" => null];
     public string $license = self::LICENSE_WTFPL;
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public string $description = "Displays a user statistics page, similar to booru.org. Read the documentation before enabling.";

@@ -8,11 +8,8 @@ final class CustomHtmlHeadersInfo extends ExtensionInfo
 {
     public const KEY = "custom_html_headers";
 
-    public string $key = self::KEY;
     public string $name = "Custom HTML Headers";
-    public string $url = "http://www.drudexsoftware.com";
     public array $authors = ["Drudex Software" => "support@drudexsoftware.com"];
-    public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::ADMIN;
     public string $description = "Allows admins to modify & set custom <head> content";
     public ?string $documentation =

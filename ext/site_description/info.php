@@ -8,11 +8,8 @@ final class SiteDescriptionInfo extends ExtensionInfo
 {
     public const KEY = "site_description";
 
-    public string $key = self::KEY;
     public string $name = "Site Description";
-    public string $url = self::SHIMMIE_URL;
     public array $authors = self::SHISH_AUTHOR;
-    public string $license = self::LICENSE_GPLV2;
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public string $description = "A description for search engines";

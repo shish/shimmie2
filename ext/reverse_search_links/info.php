@@ -8,10 +8,8 @@ final class ReverseSearchLinksInfo extends ExtensionInfo
 {
     public const KEY = "reverse_search_links";
 
-    public string $key = self::KEY;
     public string $name = "Reverse Search Links";
     public array $authors = ['joe' => 'joe@thisisjoes.site'];
-    public string $license = self::LICENSE_GPLV2;
     public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public string $description = "Provides reverse search links for images";
 }
