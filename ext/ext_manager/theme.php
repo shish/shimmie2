@@ -4,109 +4,95 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, B, BR, DIV, IMG, INPUT, LABEL, P, TABLE, TBODY, TD, TFOOT, TR, emptyHTML};
+use function MicroHTML\{A, B, BR, DIV, IMG, INPUT, LABEL, P, TABLE, TBODY, TD, TR, emptyHTML};
 
 class ExtManagerTheme extends Themelet
 {
     /**
      * @param ExtensionInfo[] $extensions
      */
-    public function display_table(array $extensions, bool $editable): void
+    public function display_table(array $extensions): void
     {
-        $tbody = TBODY();
-
-        $form = SHM_SIMPLE_FORM(
+        $form = SHM_FORM(
             make_link("ext_manager/set"),
-            TABLE(
-                ["id" => 'extensions', "class" => 'zebra form'],
-                $tbody,
-                $editable ? TFOOT(TR(TD(["colspan" => '5'], INPUT(["type" => 'submit', "value" => 'Set Extensions'])))) : null
-            )
+            id: "extensions",
+            children: [INPUT(["class" => "setupsubmit", "type" => 'submit', "value" => 'Set Extensions'])],
         );
-
-        $categories = [];
-        $last_cat = null;
         foreach ($extensions as $extension) {
             if (
-                (!$editable && $extension->visibility === ExtensionVisibility::ADMIN)
-                || $extension->visibility === ExtensionVisibility::HIDDEN
+                $extension->visibility === ExtensionVisibility::HIDDEN
+                && !$extension->core
+                && $extension::is_enabled()
             ) {
+                $form->appendChild(INPUT([
+                    "type" => 'hidden',
+                    "name" => "extensions[]",
+                    "value" => $extension::KEY
+                ]));
+            }
+        }
+        Ctx::$page->add_block(new Block(null, $form, position: 99));
+
+        $groups = [];
+        foreach ($extensions as $extension) {
+            if ($extension->visibility === ExtensionVisibility::HIDDEN) {
                 continue;
             }
-
-            if ($extension->category !== $last_cat) {
-                $last_cat = $extension->category;
-                $categories[] = $last_cat;
-                $tbody->appendChild(
-                    TR(
-                        ["class" => 'category', "id" => $extension->category->value],
-                        TD(),
-                        TD(["colspan" => '5'], BR(), B($last_cat->value))
-                    )
-                );
-            }
-
-            $tbody->appendChild(TR(
-                ["data-ext" => $extension->name],
-                $editable ? TD(INPUT([
-                    "type" => 'checkbox',
-                    "name" => "extensions[]",
-                    "id" => "ext_" . $extension::KEY,
-                    "value" => $extension::KEY,
-                    "checked" => ($extension::is_enabled() === true),
-                    "disabled" => ($extension->is_supported() === false || $extension->core === true)
-                ])) : null,
-                TD(LABEL(
-                    ["for" => "ext_" . $extension::KEY],
-                    (
-                        ($extension->beta === true ? "[BETA] " : "").
-                        (empty($extension->name) ? $extension::KEY : $extension->name)
-                    )
-                )),
-                TD(
-                    // TODO: A proper "docs" symbol would be preferred here.
-                    $extension->documentation ?
-                        A(
-                            ["href" => make_link("ext_doc/" . $extension::KEY)],
-                            IMG(["src" => 'ext/ext_manager/baseline_open_in_new_black_18dp.png'])
-                        ) :
-                        null
-                ),
-                TD(
-                    ["style" => 'text-align: left;'],
-                    $extension->description,
-                    " ",
-                    B(["style" => 'color:red'], $extension->get_support_info())
-                ),
-            ));
+            $groups[$extension->category->value][] = $extension;
         }
+        ksort($groups);
 
-        if ($editable) {
-            foreach ($extensions as $extension) {
-                if (
-                    $extension->visibility === ExtensionVisibility::HIDDEN
-                    && !$extension->core
-                    && $extension::is_enabled()
-                ) {
-                    $form->appendChild(INPUT([
-                        "type" => 'hidden',
+        foreach ($groups as $cat => $exts) {
+            $tbody = TBODY();
+            foreach ($exts as $extension) {
+                $tbody->appendChild(TR(
+                    ["data-ext" => $extension->name],
+                    TD(INPUT([
+                        "type" => 'checkbox',
                         "name" => "extensions[]",
-                        "value" => $extension::KEY
-                    ]));
-                }
+                        "form" => "extensions",
+                        "id" => "ext_" . $extension::KEY,
+                        "value" => $extension::KEY,
+                        "checked" => ($extension::is_enabled() === true),
+                        "disabled" => ($extension->is_supported() === false || $extension->core === true)
+                    ])),
+                    TD(LABEL(
+                        ["for" => "ext_" . $extension::KEY],
+                        (
+                            ($extension->beta === true ? "[BETA] " : "").
+                            (empty($extension->name) ? $extension::KEY : $extension->name)
+                        )
+                    )),
+                    TD(
+                        // TODO: A proper "docs" symbol would be preferred here.
+                        $extension->documentation ?
+                            A(
+                                ["href" => make_link("ext_doc/" . $extension::KEY)],
+                                IMG(["src" => 'ext/ext_manager/baseline_open_in_new_black_18dp.png'])
+                            ) :
+                            null
+                    ),
+                    TD(
+                        ["style" => 'text-align: left;'],
+                        $extension->description,
+                        " ",
+                        B(["style" => 'color:red'], $extension->get_support_info())
+                    ),
+                ));
             }
+            $form = TABLE(["class" => 'zebra form ext-list'], $tbody);
+            Ctx::$page->add_block(new Block($cat, $form, position: 10, id: $cat));
         }
 
         $cat_html = [
             " ",
         ];
-        foreach ($categories as $cat) {
-            $cat_html[] = A(["href" => "#".$cat->value], $cat->value);
+        foreach ($groups as $cat => $group) {
+            $cat_html[] = A(["href" => "#".str_replace(" ", "_", $cat)], $cat);
         }
 
         Ctx::$page->set_title("Extensions");
         $this->display_navigation(extra: \MicroHTML\joinHTML(BR(), $cat_html));
-        Ctx::$page->add_block(new Block(null, $form));
     }
 
     public function display_doc(ExtensionInfo $info): void
