@@ -13,6 +13,6 @@ final class TranscodeVideoInfo extends ExtensionInfo
     public array $authors = ["Matthew Barbour" => "matthew@darkholme.net"];
     public string $license = self::LICENSE_WTFPL;
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
-    public string $description = "Allows admins to automatically and manually transcode videos";
-    public array $dependencies = [VideoFileHandlerInfo::KEY];
+    public string $description = "Allows admins to manually transcode videos";
+    public array $dependencies = [VideoFileHandlerInfo::KEY, ReplaceFileInfo::KEY];
 }

@@ -14,7 +14,7 @@ class TrashTheme extends Themelet
     {
         return emptyHTML(
             P("Search for posts in the trash."),
-            SHM_COMMAND_EXAMPLE("in:trash", "Returns posts that are in the trash.")
+            SHM_COMMAND_EXAMPLE("in=trash", "Returns posts that are in the trash.")
         );
     }
 }

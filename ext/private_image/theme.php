@@ -14,8 +14,8 @@ class PrivateImageTheme extends Themelet
     {
         return emptyHTML(
             P("Search for posts that are private/public."),
-            SHM_COMMAND_EXAMPLE("private:yes", "Returns posts that are private, restricted to yourself if you are not an admin."),
-            SHM_COMMAND_EXAMPLE("private:no", "Returns posts that are public.")
+            SHM_COMMAND_EXAMPLE("private=yes", "Returns posts that are private, restricted to yourself if you are not an admin."),
+            SHM_COMMAND_EXAMPLE("private=no", "Returns posts that are public.")
         );
     }
 }
