@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+class HandlerNotFound extends ObjectNotFound
+{
+}
+
 final class FourOhFour extends Extension
 {
     public const KEY = "four_oh_four";
@@ -13,7 +17,7 @@ final class FourOhFour extends Extension
         // hax.
         if (Ctx::$page->mode === PageMode::PAGE && $this->count_main(Ctx::$page->blocks) === 0) {
             Log::debug("four_oh_four", "Hit 404: {$event->path}");
-            throw new ObjectNotFound("No handler could be found for the page '{$event->path}'");
+            throw new HandlerNotFound("No handler could be found for the page '{$event->path}'");
         }
     }
 
