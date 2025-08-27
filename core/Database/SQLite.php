@@ -22,7 +22,7 @@ class SQLite extends DBEngine
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
+        $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY AUTOINCREMENT", $data);
         $data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
         $data = preg_replace(DBEngine::ILIKE_PATTERN, "LOWER($1) LIKE LOWER($2) ESCAPE '\\'", $data);
         assert($data !== null, "preg_replace failed");
