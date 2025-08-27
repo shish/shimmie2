@@ -9,7 +9,7 @@ final class BulkAddCSVInfo extends ExtensionInfo
     public const KEY = "bulk_add_csv";
 
     public string $name = "Bulk Add CSV";
-    public array $authors = ["velocity37" => "velocity37@gmail.com"];
+    public array $authors = ["velocity37" => "mailto:velocity37@gmail.com"];
     public string $description = "Bulk add server-side posts with metadata from CSV file";
     public ?string $documentation =
         "Adds posts from a CSV with the five following values:

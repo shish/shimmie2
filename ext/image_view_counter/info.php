@@ -9,7 +9,7 @@ final class ImageViewCounterInfo extends ExtensionInfo
     public const KEY = "image_view_counter";
 
     public string $name = "Post View Counter";
-    public array $authors = ["Drudex Software" => "support@drudexsoftware.com"];
+    public array $authors = ["Drudex Software" => "mailto:support@drudexsoftware.com"];
     public ExtensionCategory $category = ExtensionCategory::METADATA;
     public string $description = "Tracks & displays how many times a post is viewed";
     public ?string $documentation =

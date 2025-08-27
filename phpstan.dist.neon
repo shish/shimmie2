@@ -39,6 +39,8 @@ parameters:
     noVariableVariables: false
   matchyStrings:
     types:
+      contact-string:
+        regex: '#^(http://|https://|mailto:)#'
       url-string:
         regex: '#^(http://|https://|/|$)#'
       page-string:

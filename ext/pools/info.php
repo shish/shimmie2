@@ -9,7 +9,7 @@ final class PoolsInfo extends ExtensionInfo
     public const KEY = "pools";
 
     public string $name = "Pools";
-    public array $authors = ["Sein Kraft" => "mail@seinkraft.info", "jgen" => "jgen.tech@gmail.com", "Daku" => "admin@codeanimu.net"];
+    public array $authors = ["Sein Kraft" => "mailto:mail@seinkraft.info", "jgen" => "mailto:jgen.tech@gmail.com", "Daku" => "mailto:admin@codeanimu.net"];
     public ExtensionCategory $category = ExtensionCategory::FEATURE;
     public string $description = "Allow users to create groups of images and order them";
     public ?string $documentation =
