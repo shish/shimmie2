@@ -113,7 +113,7 @@ final class AdminPage extends Extension
                 Ctx::$cache->set($key, $value, 60);
                 return Command::SUCCESS;
             });
-        $event->app->register('cache:del')
+        $event->app->register('cache:delete')
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription("Delete a cache value")
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
