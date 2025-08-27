@@ -116,17 +116,17 @@ final class Favorites extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^favorites([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i")) {
+        if ($matches = $event->matches("/^favorites(:|<=|<|=|>|>=)(\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $favorites = $matches[2];
             $event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE favorites $cmp $favorites)"));
-        } elseif ($matches = $event->matches("/^favorited_by[=|:](.*)$/i")) {
+        } elseif ($matches = $event->matches("/^favorited_by[=:](.*)$/i")) {
             $user_id = User::name_to_id($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
-        } elseif ($matches = $event->matches("/^favorited_by_userno[=|:](\d+)$/i")) {
+        } elseif ($matches = $event->matches("/^favorited_by_userno[=:](\d+)$/i")) {
             $user_id = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
-        } elseif ($matches = $event->matches("/^order[=|:](favorites)(?:_(desc|asc))?$/i")) {
+        } elseif ($matches = $event->matches("/^order[=:](favorites)(?:_(desc|asc))?$/i")) {
             $default_order_for_column = "DESC";
             $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
             $event->order = "images.favorites $sort";

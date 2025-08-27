@@ -82,7 +82,7 @@ final class Approval extends Extension
     {
         if ($event->parent === "posts") {
             if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
-                $event->add_nav_link(search_link(['approved:no']), "Pending Approval", order: 60);
+                $event->add_nav_link(search_link(['approved=no']), "Pending Approval", order: 60);
             }
         }
     }
@@ -90,11 +90,11 @@ final class Approval extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
-            $event->add_link("Pending Approval", search_link(["approved:no"]), 60);
+            $event->add_link("Pending Approval", search_link(["approved=no"]), 60);
         }
     }
 
-    public const SEARCH_REGEXP = "/^approved:(yes|no)/i";
+    public const SEARCH_REGEXP = "/^approved[=:](yes|no)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term) && $this->no_approval_query($event->context) && !defined("UNITTEST")) {

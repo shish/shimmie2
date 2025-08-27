@@ -69,7 +69,7 @@ final class TagCategories extends Extension
     {
         global $database;
 
-        if ($matches = $event->matches("/^(.+)_?tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i")) {
+        if ($matches = $event->matches("/^(.+)_?tags(:|<=|<|=|>|>=)([0-9]+)$/i")) {
             $type = strtolower($matches[1]);
             $cmp = ltrim($matches[2], ":") ?: "=";
             $count = $matches[3];

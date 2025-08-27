@@ -64,7 +64,7 @@ final class PrivateImage extends Extension
         }
     }
 
-    public const SEARCH_REGEXP = "/^private:(yes|no|any)/i";
+    public const SEARCH_REGEXP = "/^private[=:](yes|no|any)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         $show_private = Ctx::$user->get_config()->get(PrivateImageUserConfig::VIEW_DEFAULT);
