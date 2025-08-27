@@ -270,13 +270,11 @@ final class User
             "user",
             $this->name,
             time() + 60 * 60 * 24 * 365,
-            '/'
         );
         Ctx::$page->add_cookie(
             "session",
             $this->get_session_id(),
             time() + 60 * 60 * 24 * Ctx::$config->get(UserAccountsConfig::LOGIN_MEMORY),
-            '/'
         );
     }
 

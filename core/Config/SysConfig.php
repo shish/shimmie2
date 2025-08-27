@@ -52,15 +52,6 @@ final class SysConfig
     }
 
     /**
-     * If you have multiple shimmie installs on the same domain,
-     * you can set this to make sure their cookies don't clash.
-     */
-    public static function getCookiePrefix(): string
-    {
-        return defined("COOKIE_PREFIX") ? constant("COOKIE_PREFIX") : 'shm';
-    }
-
-    /**
      * Settings WH_SPLITS to 2 will store files as `images/ab/cd/...`
      * instead of `images/ab/...`, which can reduce filesystem load
      * when you have millions of images. Note that if you use this
