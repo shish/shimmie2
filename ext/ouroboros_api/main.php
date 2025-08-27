@@ -558,12 +558,10 @@ final class OuroborosAPI extends Extension
             $session = $_REQUEST['session'];
             $user = User::by_session($name, $session) ?? User::get_anonymous();
             send_event(new UserLoginEvent($user));
-        } elseif (isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session']) &&
-            isset($_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'])
-        ) {
+        } elseif (isset($_COOKIE['shm_session']) && isset($_COOKIE['shm_user'])) {
             //Auth by session data from cookies
-            $session = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'session'];
-            $user = $_COOKIE[SysConfig::getCookiePrefix() . '_' . 'user'];
+            $session = $_COOKIE['shm_session'];
+            $user = $_COOKIE['shm_user'];
             $user = User::by_session($user, $session) ?? User::get_anonymous();
             send_event(new UserLoginEvent($user));
         }

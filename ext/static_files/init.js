@@ -1,18 +1,20 @@
 function shm_cookie_set(name, value) {
-    let key = document.body.dataset.cookiePrefix + "_" + name;
-    Cookies.set(key, value, { expires: 365, samesite: "lax", path: "/" });
+    Cookies.set("shm_" + name, value, {
+        expires: 365,
+        samesite: "lax",
+        path: document.body.dataset.baseHref + "/",
+    });
 }
 function shm_cookie_get(name) {
-    let key = document.body.dataset.cookiePrefix + "_" + name;
-    return Cookies.get(key);
+    return Cookies.get("shm_" + name);
 }
 
 function ui_cookie_set(name, value) {
-    let key = document.body.dataset.cookiePrefix + "_" + name;
+    let key = document.body.dataset.baseHref + "/" + name;
     localStorage.setItem(key, value);
 }
 function ui_cookie_get(name) {
-    let key = document.body.dataset.cookiePrefix + "_" + name;
+    let key = document.body.dataset.baseHref + "/" + name;
     let val = localStorage.getItem(key);
     if (val == null) {
         val = Cookies.get("ui-" + name);
