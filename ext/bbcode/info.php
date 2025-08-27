@@ -15,46 +15,4 @@ final class BBCodeInfo extends ExtensionInfo
     public string $license = self::LICENSE_GPLV2;
     public bool $core = true;
     public string $description = "Turns BBCode into HTML";
-    public ?string $documentation =
-        "  Basic formatting tags:
-   <ul>
-     <li>[b]<b>bold</b>[/b]
-     <li>[i]<i>italic</i>[/i]
-     <li>[u]<u>underline</u>[/u]
-     <li>[s]<s>strikethrough</s>[/s]
-     <li>[sup]<sup>superscript</sup>[/sup]
-     <li>[sub]<sub>subscript</sub>[/sub]
-     <li>[h1]Heading 1[/h1]
-     <li>[h2]Heading 2[/h2]
-     <li>[h3]Heading 3[/h3]
-     <li>[h4]Heading 4[/h4]
-     <li>[align=left|center|right]Aligned Text[/align]
-   </ul>
-   <br>
-   Link tags:
-   <ul>
-     <li>[img]url[/img]
-     <li>[img]site://_images/image.jpg[/img]
-     <li>[url]<a href=\"{self::SHIMMIE_URL}\">{self::SHIMMIE_URL}</a>[/url]
-     <li>[url=<a href=\"{self::SHIMMIE_URL}\">{self::SHIMMIE_URL}</a>]some text[/url]
-     <li>[url]site://ext_doc/bbcode[/url]
-     <li>[url=site://ext_doc/bbcode]Link to BBCode docs[/url]
-     <li>[email]<a href=\"mailto:{self::SHISH_EMAIL}\">webmaster@shishnet.org</a>[/email]
-     <li>[[wiki article]]
-     <li>[[wiki article|with some text]]
-     <li>&gt;&gt;123 (link to post #123)
-     <li>[anchor=target]Scroll to #bb-target[/anchor]
-   </ul>
-   <br>
-   More format Tags:
-   <ul>
-     <li>[list]Unordered list[/list]
-     <li>[ul]Unordered list[/ul]
-     <li>[ol]Ordered list[/ol]
-     <li>[li]List Item[/li]
-     <li>[code]<pre><code>print(\"Hello World!\");</code></pre>[/code]
-     <li>[spoiler]<span style=\"background-color:#000; color:#000;\">Voldemort is bad</span>[/spoiler]
-     <li>[quote]<blockquote><small>To be or not to be...</small></blockquote>[/quote]
-     <li>[quote=Shakespeare]<blockquote><em>Shakespeare said:</em><br><small>... That is the question</small></blockquote>[/quote]
-   </ul>";
 }

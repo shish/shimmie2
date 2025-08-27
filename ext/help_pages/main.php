@@ -68,12 +68,6 @@ final class HelpPages extends Extension
         }
     }
 
-    public function onHelpPageListBuilding(HelpPageListBuildingEvent $event): void
-    {
-        $event->add_page("search", "Searching");
-        $event->add_page("licenses", "Licenses");
-    }
-
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('help'), "Help", category: "help");
@@ -92,6 +86,12 @@ final class HelpPages extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("Help", make_link("help"), 90);
+    }
+
+    public function onHelpPageListBuilding(HelpPageListBuildingEvent $event): void
+    {
+        $event->add_page("search", "Searching");
+        $event->add_page("licenses", "Licenses");
     }
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
