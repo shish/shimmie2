@@ -30,7 +30,11 @@ trait Page_Error
         $this->set_title("Error");
         $this->blocks = [];
         $this->add_block(new Block("Navigation", \MicroHTML\A(["href" => make_link()], "Index"), "left"));
-        $this->add_block(new Block(null, \MicroHTML\SPAN($error->getMessage())));
+        if ($error->html) {
+            $this->add_block(new Block(null, $error->html));
+        } else {
+            $this->add_block(new Block(null, \MicroHTML\SPAN($error->getMessage())));
+        }
         $this->display_page();
     }
 }
