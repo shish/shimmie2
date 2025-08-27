@@ -35,7 +35,7 @@ final class PostSource extends Extension
             $source = $event->get_param('url');
         }
         if (Ctx::$user->can(PostSourcePermission::EDIT_IMAGE_SOURCE) && !is_null($source)) {
-            if ($event->params['tags'] ? !\Safe\preg_match('/source[=|:]/', $event->params->req("tags")) : true) {
+            if ($event->params['tags'] ? !\Safe\preg_match('/source[=:]/', $event->params->req("tags")) : true) {
                 send_event(new SourceSetEvent($event->image, $source));
             }
         }
@@ -55,7 +55,7 @@ final class PostSource extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^(source)[=|:](.*)$/i")) {
+        if ($matches = $event->matches("/^(source)[=:](.*)$/i")) {
             $source = strtolower($matches[2]);
             $source = \Safe\preg_replace('/^https?:/', '', $source);
 
@@ -70,14 +70,14 @@ final class PostSource extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if ($event->matches("/^source[=|:](.*)$/i")) {
+        if ($event->matches("/^source[=:](.*)$/i")) {
             $event->metatag = true;
         }
     }
 
     public function onTagTermParse(TagTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^source[=|:](.*)$/i")) {
+        if ($matches = $event->matches("/^source[=:](.*)$/i")) {
             $source = ($matches[1] !== "none" ? $matches[1] : "");
             send_event(new SourceSetEvent(Image::by_id_ex($event->image_id), $source));
         }

@@ -315,35 +315,35 @@ final class NumericScore extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^score([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(-?\d+)$/i")) {
+        if ($matches = $event->matches("/^score(:|<=|<|=|>|>=)(-?\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $score = $matches[2];
             $event->add_querylet(new Querylet("numeric_score $cmp $score"));
-        } elseif ($matches = $event->matches("/^upvoted_by[=|:](.*)$/i")) {
+        } elseif ($matches = $event->matches("/^upvoted_by[=:](.*)$/i")) {
             $duser = User::by_name($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
                 ["ns_user_id" => $duser->id]
             ));
-        } elseif ($matches = $event->matches("/^downvoted_by[=|:](.*)$/i")) {
+        } elseif ($matches = $event->matches("/^downvoted_by[=:](.*)$/i")) {
             $duser = User::by_name($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
                 ["ns_user_id" => $duser->id]
             ));
-        } elseif ($matches = $event->matches("/^upvoted_by_id[=|:](\d+)$/i")) {
+        } elseif ($matches = $event->matches("/^upvoted_by_id[=:](\d+)$/i")) {
             $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
                 ["ns_user_id" => $iid]
             ));
-        } elseif ($matches = $event->matches("/^downvoted_by_id[=|:](\d+)$/i")) {
+        } elseif ($matches = $event->matches("/^downvoted_by_id[=:](\d+)$/i")) {
             $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
                 ["ns_user_id" => $iid]
             ));
-        } elseif ($matches = $event->matches("/^order[=|:](?:numeric_)?(score)(?:_(desc|asc))?$/i")) {
+        } elseif ($matches = $event->matches("/^order[=:](?:numeric_)?(score)(?:_(desc|asc))?$/i")) {
             $default_order_for_column = "DESC";
             $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
             $event->order = "images.numeric_score $sort";
@@ -352,14 +352,14 @@ final class NumericScore extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if ($event->matches("/^vote[=|:](up|down|remove)$/i")) {
+        if ($event->matches("/^vote[=:](up|down|remove)$/i")) {
             $event->metatag = true;
         }
     }
 
     public function onTagTermParse(TagTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^vote[=|:](up|down|remove)$/")) {
+        if ($matches = $event->matches("/^vote[=:](up|down|remove)$/")) {
             $score = ($matches[1] === "up" ? 1 : ($matches[1] === "down" ? -1 : 0));
             if (Ctx::$user->can(NumericScorePermission::CREATE_VOTE)) {
                 send_event(new NumericScoreSetEvent($event->image_id, Ctx::$user, $score));

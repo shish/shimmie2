@@ -340,14 +340,14 @@ final class CommentList extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i")) {
+        if ($matches = $event->matches("/^comments(:|<=|<|=|>|>=)(\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $comments = $matches[2];
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM comments GROUP BY image_id HAVING count(image_id) $cmp $comments)"));
-        } elseif ($matches = $event->matches("/^commented_by[=|:](.*)$/i")) {
+        } elseif ($matches = $event->matches("/^commented_by[=:](.*)$/i")) {
             $user_id = User::name_to_id($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
-        } elseif ($matches = $event->matches("/^commented_by_userno[=|:]([0-9]+)$/i")) {
+        } elseif ($matches = $event->matches("/^commented_by_userno[=:]([0-9]+)$/i")) {
             $user_id = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
         }

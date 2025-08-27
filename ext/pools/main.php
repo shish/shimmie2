@@ -426,7 +426,7 @@ final class Pools extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^pool[=|:]([0-9]+|any|none)$/i")) {
+        if ($matches = $event->matches("/^pool[=:]([0-9]+|any|none)$/i")) {
             $poolID = $matches[1];
 
             if (\Safe\preg_match("/^(any|none)$/", $poolID)) {
@@ -435,7 +435,7 @@ final class Pools extends Extension
             } else {
                 $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
             }
-        } elseif ($matches = $event->matches("/^pool_by_name[=|:](.*)$/i")) {
+        } elseif ($matches = $event->matches("/^pool_by_name[=:](.*)$/i")) {
             $poolTitle = str_replace("_", " ", $matches[1]);
 
             $pool = $this->get_single_pool_from_title($poolTitle);
@@ -444,7 +444,7 @@ final class Pools extends Extension
                 $poolID = $pool->id;
             }
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
-        } elseif ($matches = $event->matches("/^pool_id[=|:](.*)$/i")) {
+        } elseif ($matches = $event->matches("/^pool_id[=:](.*)$/i")) {
             $poolID = str_replace("_", " ", $matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
         }
@@ -453,14 +453,14 @@ final class Pools extends Extension
 
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
-        if ($event->matches("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i")) {
+        if ($event->matches("/^pool[=:]([^:]*|lastcreated):?([0-9]*)$/i")) {
             $event->metatag = true;
         }
     }
 
     public function onTagTermParse(TagTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i")) {
+        if ($matches = $event->matches("/^pool[=:]([^:]*|lastcreated):?([0-9]*)$/i")) {
             $poolTag = str_replace("_", " ", $matches[1]);
 
             $pool = null;

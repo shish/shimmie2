@@ -84,7 +84,7 @@ final class PostTitles extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if ($matches = $event->matches("/^(title)[=|:](.*)$/i")) {
+        if ($matches = $event->matches("/^(title)[=:](.*)$/i")) {
             $title = strtolower($matches[2]);
 
             if (\Safe\preg_match("/^(any|none)$/i", $title)) {
