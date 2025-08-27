@@ -51,8 +51,16 @@ final class ViewPost extends Extension
             }
 
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id_ex($image_id);
-            send_event(new DisplayingImageEvent($image));
+            try {
+                $image = Image::by_id_ex($image_id);
+                send_event(new DisplayingImageEvent($image));
+            } catch (PostNotFound $e) {
+                // If tombstones are enabled, then posts being missing
+                // shouldn't be an error, so we just ignore it.
+                if (!TombstonesInfo::is_enabled()) {
+                    throw $e;
+                }
+            }
         } elseif ($event->page_matches("post/set", method: "POST")) {
             $image_id = int_escape($event->POST->req('image_id'));
             $image = Image::by_id_ex($image_id);
