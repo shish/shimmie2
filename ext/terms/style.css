@@ -1,12 +1,25 @@
-.terms-modal-enter {
-	margin: 10px;
-}
 #terms-modal {
 	margin: auto;
 	margin-top: 20vh;
-	padding: 5px 20px;
 	text-align: center;
 	width: fit-content;
+	background: var(--block);
+	border: 1px solid var(--block-border);
+	border-radius: var(--border-radius);
+	padding: 0;
+}
+#terms-modal H3 {
+    background: var(--header);
+    border-bottom: 1px solid var(--header-border);
+    margin: 0;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+#terms-modal>DIV {
+    padding: 1em;
+}
+#terms-modal BUTTON {
+    padding: 0 1em;
+	margin: 1em .5em 0 .5em;
 }
 #terms-modal-bg {
 	position: fixed;
