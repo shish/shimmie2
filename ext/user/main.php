@@ -188,6 +188,7 @@ final class UserPage extends Extension
                 RatingsPermission::EDIT_IMAGE_RATING => true,
                 RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS => true,
                 ReportImagePermission::CREATE_IMAGE_REPORT => true,
+                TermsPermission::SKIP_TERMS => true,
                 UserAccountsPermission::CHANGE_USER_SETTING => true,
             ],
             description: "The default class for people who are logged in",

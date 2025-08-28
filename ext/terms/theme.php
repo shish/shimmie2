@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{BUTTON, DIALOG, DIV, H1, SPAN};
+use function MicroHTML\{BUTTON, DIALOG, DIV, H3, SPAN};
 
 use MicroHTML\HTMLElement;
 
@@ -16,11 +16,14 @@ class TermsTheme extends Themelet
             ["id" => "terms-modal-bg"],
             DIALOG(
                 ["id" => "terms-modal", "class" => "setupblock", "open" => true],
-                H1(SPAN($sitename)),
-                $body,
-                SHM_SIMPLE_FORM(
-                    make_link("accept_terms/$path"),
-                    BUTTON(["class" => "terms-modal-enter", "autofocus" => true], "Enter")
+                H3(SPAN($sitename)),
+                DIV(
+                    $body,
+                    SHM_SIMPLE_FORM(
+                        make_link("accept_terms/$path"),
+                        BUTTON(["class" => "terms-modal-enter", "autofocus" => true], "Enter"),
+                        BUTTON(["formaction" => "https://google.com", "formmethod" => "GET"], "Leave"),
+                    )
                 )
             )
         );
