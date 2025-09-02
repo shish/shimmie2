@@ -55,7 +55,7 @@ final class MimeType
     public const WAV = 'audio/x-wav';
     public const WEBM = 'video/webm';
     public const WEBP = 'image/webp';
-    public const WEBP_LOSSLESS = self::WEBP."; ".self::LOSSLESS_PARAMETER;
+    public const WEBP_LOSSLESS = self::WEBP."; lossless=true";
     public const WIN_BITMAP = 'image/x-win-bitmap';
     public const WMA = 'audio/x-ms-wma';
     public const WMV = 'video/x-ms-wmv';
@@ -64,12 +64,9 @@ final class MimeType
     public const XSL = 'application/xsl+xml';
     public const ZIP = 'application/zip';
 
-    public const LOSSLESS_PARAMETER = "lossless=true";
-
-    public const CHARSET_UTF8 = "charset=utf-8";
-
     public string $base;
-    public string $parameters;
+    /** @var array<string,string> */
+    public array $parameters;
 
     public function __construct(
         string $input
@@ -77,14 +74,33 @@ final class MimeType
         if (\Safe\preg_match("/^([-\w.]+)\/([-\w.\+]+)(;.+)?$/", $input) !== 1) {
             throw new \InvalidArgumentException("Invalid MIME type: $input");
         }
-        $parts = explode('; ', $input);
-        $this->base = strtolower(array_shift($parts));
-        $this->parameters = implode('; ', $parts);
+        $parts = explode(';', $input);
+        $this->base = trim(strtolower(array_shift($parts)));
+        $this->parameters = [];
+        foreach ($parts as $part) {
+            if (strpos($part, '=') !== false) {
+                [$k, $v] = explode('=', $part, 2);
+                $this->parameters[strtolower(trim($k))] = trim($v);
+            } else {
+                $this->parameters[strtolower(trim($part))] = '';
+            }
+        }
     }
 
     public function __toString(): string
     {
-        return $this->base . ($this->parameters ? '; ' . $this->parameters : '');
+        if (empty($this->parameters)) {
+            return $this->base;
+        }
+        $ps = [];
+        foreach ($this->parameters as $k => $v) {
+            if ($v === '') {
+                $ps[] = $k;
+            } else {
+                $ps[] = $k . '=' . $v;
+            }
+        }
+        return $this->base . '; ' . implode('; ', $ps);
     }
 
     /**

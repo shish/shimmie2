@@ -32,7 +32,7 @@ class Page
 
     public function __construct()
     {
-        $this->mime = new MimeType(MimeType::HTML . "; " . MimeType::CHARSET_UTF8);
+        $this->mime = new MimeType(MimeType::HTML . "; charset=utf-8");
         if (@$_GET["flash"]) {
             $this->flash[] = $_GET['flash'];
             unset($_GET["flash"]);
