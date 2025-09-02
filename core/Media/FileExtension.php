@@ -28,6 +28,8 @@ final class FileExtension
     public const FLASH_VIDEO = 'flv';
     public const GIF = 'gif';
     public const GZIP = 'gz';
+    public const HEIC = 'heic';
+    public const HEIF = 'heif';
     public const HTML = 'html';
     public const HTM = 'htm';
     public const ICO = 'ico';
