@@ -12,6 +12,7 @@ final class ExtraImageFileHandler extends Extension
         "AVIF" => MimeType::AVIF,
         "BMP" => MimeType::BMP,
         "GIF" => MimeType::GIF,
+        "HEIC" => MimeType::HEIC,
         "ICO" => MimeType::ICO,
         "JPG" => MimeType::JPEG,
         "PNG" => MimeType::PNG,

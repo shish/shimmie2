@@ -24,6 +24,7 @@ final class MimeType
     public const FLASH_VIDEO = 'video/x-flv';
     public const GIF = 'image/gif';
     public const GZIP = 'application/x-gzip';
+    public const HEIC = 'text/heic';
     public const HTML = 'text/html';
     public const ICO = 'image/x-icon';
     public const ICO_OSX = 'image/vnd.microsoft.icon';

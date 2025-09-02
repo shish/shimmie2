@@ -93,6 +93,11 @@ final class MimeMap
             self::MAP_EXT => [FileExtension::GZIP],
             self::MAP_MIME => [MimeType::TAR],
         ],
+        MimeType::HEIC => [
+            self::MAP_NAME => "HEIC",
+            self::MAP_EXT => [FileExtension::HEIC, FileExtension::HEIF],
+            self::MAP_MIME => [MimeType::HEIC, "image/heif"],
+        ],
         MimeType::HTML => [
             self::MAP_NAME => "HTML",
             self::MAP_EXT => [FileExtension::HTM, FileExtension::HTML],
