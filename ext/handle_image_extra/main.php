@@ -9,6 +9,7 @@ final class ExtraImageFileHandler extends Extension
     public const KEY = "handle_image_extra";
 
     public const INPUT_MIMES = [
+        "AVIF" => MimeType::AVIF,
         "BMP" => MimeType::BMP,
         "GIF" => MimeType::GIF,
         "HEIC" => MimeType::HEIC,
