@@ -13,7 +13,7 @@ final class System extends Extension
         if ($event->page_matches("system")) {
             $e = send_event(new PageSubNavBuildingEvent("system"));
             usort($e->links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
-            $link = $e->links[0]->link;
+            $link = $e->links[0]->link ?? Url::referer_or(Url::parse(Ctx::$config->get(SetupConfig::MAIN_PAGE)));
 
             Ctx::$page->set_redirect($link);
         }
