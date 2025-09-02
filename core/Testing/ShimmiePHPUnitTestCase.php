@@ -258,7 +258,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             "tags" => $tags,
         ])));
         if (count($dae->images) === 0) {
-            throw new \Exception("Upload failed :(");
+            throw new \Exception("No handler found for {$dae->mime}");
         }
         return $dae->images[0]->id;
     }

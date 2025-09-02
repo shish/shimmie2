@@ -51,8 +51,7 @@ final class DataUploadEvent extends Event
         $this->tmpname = $tmpname;
         $this->hash = $tmpname->md5();
         $this->size = $tmpname->filesize();
-        $mime = $mime ?? MimeType::get_for_file($tmpname, pathinfo($this->filename)['extension'] ?? null);
-        $this->mime = $mime;
+        $this->mime = $mime ?? MimeType::get_for_file($tmpname, pathinfo($this->filename)['extension'] ?? null);
     }
 }
 
