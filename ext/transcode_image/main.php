@@ -270,7 +270,7 @@ final class TranscodeImage extends Extension
         // format-specific compression options
         if ($target_mime->base === MimeType::PNG) {
             $command->add_args("-define", "png:compression-level=9");
-        } elseif ($target_mime->base === MimeType::WEBP && $target_mime->parameters === MimeType::LOSSLESS_PARAMETER) {
+        } elseif ($target_mime->base === MimeType::WEBP && ($target_mime->parameters["lossless"] ?? "") === "true") {
             $command->add_args("-define", "webp:lossless=true");
             $command->add_args("-quality", "100");
         } else {
