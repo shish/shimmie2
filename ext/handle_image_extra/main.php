@@ -11,6 +11,7 @@ final class ExtraImageFileHandler extends Extension
     public const INPUT_MIMES = [
         "BMP" => MimeType::BMP,
         "GIF" => MimeType::GIF,
+        "HEIC" => MimeType::HEIC,
         "ICO" => MimeType::ICO,
         "JPG" => MimeType::JPEG,
         "PNG" => MimeType::PNG,
