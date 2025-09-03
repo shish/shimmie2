@@ -285,4 +285,13 @@ final class MimeMap
         }
         return null;
     }
+
+    public static function get_canonical(MimeType $mime): MimeType
+    {
+        $data = self::get_for_mime($mime);
+        if ($data !== null) {
+            return new MimeType($data[self::MAP_MIME][0]);
+        }
+        return $mime;
+    }
 }
