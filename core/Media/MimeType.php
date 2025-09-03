@@ -115,6 +115,18 @@ final class MimeType
         if ($exact) {
             return false;
         }
+
+        // Check for aliases
+        $data = MimeMap::get_for_mime($mime);
+        if ($data !== null) {
+            foreach ($data[MimeMap::MAP_MIME] as $alias) {
+                if (in_array($alias, $mime_array)) {
+                    return true;
+                }
+            }
+        }
+
+        // Check for match without parameters
         return in_array($mime->base, $mime_array);
     }
 
