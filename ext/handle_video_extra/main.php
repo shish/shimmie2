@@ -35,6 +35,7 @@ final class ExtraVideoFileHandler extends Extension
 
     public static function get_mapping_name(MimeType $mime): string
     {
+        $mime = MimeMap::get_canonical($mime);
         $flat = preg_replace('/[\.\/]/', '_', $mime->base);
         return "handle_video_extra_conversion_$flat";
     }

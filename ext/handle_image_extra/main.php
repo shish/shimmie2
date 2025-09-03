@@ -43,6 +43,7 @@ final class ExtraImageFileHandler extends Extension
 
     public static function get_mapping_name(MimeType $mime): string
     {
+        $mime = MimeMap::get_canonical($mime);
         $flat = preg_replace('/[\.\/]/', '_', $mime->base);
         return "handle_image_extra_conversion_$flat";
     }
