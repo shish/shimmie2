@@ -7,11 +7,10 @@ namespace Shimmie2;
 final class IcoFileHandler extends DataHandlerExtension
 {
     public const KEY = "handle_ico";
-    public const SUPPORTED_MIME = [MimeType::ICO, MimeType::ANI, MimeType::WIN_BITMAP, MimeType::ICO_OSX];
+    public const SUPPORTED_MIME = [MimeType::ICO];
 
     protected function media_check_properties(Image $image): MediaProperties
     {
-        $video = $image->get_mime()->base === MimeType::ANI;
         $fp = \Safe\fopen($image->get_image_filename()->str(), "r");
         try {
             fseek($fp, 6); // skip header
@@ -28,9 +27,9 @@ final class IcoFileHandler extends DataHandlerExtension
             width: $width,
             height: $height,
             lossless: true,
-            video: $video,
+            video: false,
             audio: false,
-            image: !$video,
+            image: true,
             video_codec: null,
             length: null,
         );
