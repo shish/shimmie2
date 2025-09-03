@@ -24,6 +24,7 @@ final class ExtraImageFileHandlerConfig extends ConfigGroup
 
         $default_conversions = [
             MimeType::BMP => MimeType::PNG,
+            MimeType::HEIC => MimeType::JPEG,
             MimeType::ICO => MimeType::PNG,
             MimeType::PPM => MimeType::PNG,
             MimeType::PSD => MimeType::PNG,

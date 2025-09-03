@@ -24,7 +24,9 @@ final class ExtraImageFileHandler extends Extension
     ];
 
     public const OUTPUT_MIMES = [
-        "Don't convert" => "",
+        // postToSettings converts empty string to null, and Config::get converts
+        // null to default, so "Don't convert" needs to be its own distinct value
+        "Don't convert" => "-",
         "JPEG" => MimeType::JPEG,
         "PNG" => MimeType::PNG,
         "WEBP (lossy)" => MimeType::WEBP,
@@ -49,7 +51,7 @@ final class ExtraImageFileHandler extends Extension
     {
         $val = Ctx::$config->get(self::get_mapping_name($mime));
         assert(is_string($val) || is_null($val));
-        return ($val === null || $val === "") ? null : new MimeType($val);
+        return ($val === null || $val === "" || $val === "-") ? null : new MimeType($val);
     }
 
     public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
