@@ -16,7 +16,6 @@ final class MimeMap
     // mime's value is an array of all mime types that the file type is known to use, with the current "correct" one being first.
     // name's value is a human-readable name for the file format.
 
-
     private const MAP = [
         MimeType::ANI => [
             self::MAP_NAME => "ANI Cursor",
@@ -41,7 +40,7 @@ final class MimeMap
         MimeType::BMP => [
             self::MAP_NAME => "BMP",
             self::MAP_EXT => [FileExtension::BMP],
-            self::MAP_MIME => [MimeType::BMP],
+            self::MAP_MIME => [MimeType::BMP, "image/x-ms-bmp", "image/x-win-bitmap"],
         ],
         MimeType::BZIP => [
             self::MAP_NAME => "BZIP",
@@ -59,7 +58,7 @@ final class MimeMap
             self::MAP_MIME => [MimeType::COMIC_ZIP],
         ],
         MimeType::CSS => [
-            self::MAP_NAME => "Cascading Style Sheet",
+            self::MAP_NAME => "CSS",
             self::MAP_EXT => [FileExtension::CSS],
             self::MAP_MIME => [MimeType::CSS],
         ],
@@ -91,7 +90,7 @@ final class MimeMap
         MimeType::GZIP => [
             self::MAP_NAME => "GZIP",
             self::MAP_EXT => [FileExtension::GZIP],
-            self::MAP_MIME => [MimeType::TAR],
+            self::MAP_MIME => [MimeType::GZIP],
         ],
         MimeType::HEIC => [
             self::MAP_NAME => "HEIC",
@@ -106,7 +105,7 @@ final class MimeMap
         MimeType::ICO => [
             self::MAP_NAME => "Icon",
             self::MAP_EXT => [FileExtension::ICO, FileExtension::CUR],
-            self::MAP_MIME => [MimeType::ICO, MimeType::ICO_OSX, MimeType::WIN_BITMAP],
+            self::MAP_MIME => [MimeType::ICO, "image/x-icon"],
         ],
         MimeType::JPEG => [
             self::MAP_NAME => "JPEG",
@@ -169,7 +168,7 @@ final class MimeMap
             self::MAP_MIME => [MimeType::PPM],
         ],
         MimeType::PSD => [
-            self::MAP_NAME => "PSD",
+            self::MAP_NAME => "Photoshop Document",
             self::MAP_EXT => [FileExtension::PSD],
             self::MAP_MIME => [MimeType::PSD],
         ],
@@ -204,7 +203,7 @@ final class MimeMap
             self::MAP_MIME => [MimeType::TAR],
         ],
         MimeType::TGA => [
-            self::MAP_NAME => "TGA",
+            self::MAP_NAME => "Targa",
             self::MAP_EXT => [FileExtension::TGA],
             self::MAP_MIME => [MimeType::TGA, 'image/x-targa'],
         ],

@@ -6,63 +6,63 @@ namespace Shimmie2;
 
 final class MimeType
 {
-    // Couldn't find a mimetype for ani, so made one up based on it being a riff container
-    public const ANI = 'application/riff+ani';
-    public const ASF = 'video/x-ms-asf';
-    public const AVI = 'video/x-msvideo';
-    public const AVIF = 'image/avif';
-    // Went with mime types from http://fileformats.archiveteam.org/wiki/Comic_Book_Archive
-    public const COMIC_ZIP = 'application/vnd.comicbook+zip';
-    public const COMIC_RAR = 'application/vnd.comicbook-rar';
-    public const BMP = 'image/bmp';
-    public const BZIP = 'application/x-bzip';
-    public const BZIP2 = 'application/x-bzip2';
-    public const CSS = 'text/css';
-    public const CSV = 'text/csv';
-    public const FLAC = 'audio/flac';
-    public const FLASH = 'application/x-shockwave-flash';
-    public const FLASH_VIDEO = 'video/x-flv';
-    public const GIF = 'image/gif';
-    public const GZIP = 'application/x-gzip';
-    public const HEIC = 'text/heic';
-    public const HTML = 'text/html';
-    public const ICO = 'image/x-icon';
-    public const ICO_OSX = 'image/vnd.microsoft.icon';
-    public const JPEG = 'image/jpeg';
-    public const JS = 'text/javascript';
     public const JSON = 'application/json';
-    public const MKV = 'video/x-matroska';
-    public const MP3 = 'audio/mpeg';
-    public const MP4_AUDIO = 'audio/mp4';
-    public const MP4_VIDEO = 'video/mp4';
-    public const MPEG = 'video/mpeg';
     public const OCTET_STREAM = 'application/octet-stream';
     public const OGG = 'application/ogg';
-    public const OGG_VIDEO = 'video/ogg';
-    public const OGG_AUDIO = 'audio/ogg';
     public const PDF = 'application/pdf';
-    public const PHP = 'text/x-php';
-    public const PNG = 'image/png';
-    public const PPM = 'image/x-portable-pixmap';
-    public const PSD = 'image/vnd.adobe.photoshop';
-    public const QUICKTIME = 'video/quicktime';
+    public const ANI = 'application/x-navi-animation';
     public const RSS = 'application/rss+xml';
-    public const SVG = 'image/svg+xml';
+    public const COMIC_RAR = 'application/vnd.comicbook-rar';
+    public const COMIC_ZIP = 'application/vnd.comicbook+zip';
+    public const BZIP = 'application/x-bzip';
+    public const BZIP2 = 'application/x-bzip2';
+    public const GZIP = 'application/gzip';
+    public const XML_APPLICATION = 'application/xml';
+    public const FLASH = 'application/x-shockwave-flash';
+    public const XSL = 'application/xsl+xml';
     public const TAR = 'application/x-tar';
-    public const TGA = 'image/x-tga';
-    public const TEXT = 'text/plain';
-    public const TIFF = 'image/tiff';
+    public const ZIP = 'application/zip';
+
+    public const FLAC = 'audio/flac';
+    public const MP4_AUDIO = 'audio/mp4';
+    public const MP3 = 'audio/mpeg';
+    public const OGG_AUDIO = 'audio/ogg';
+    public const WMA = 'audio/x-ms-wma';
     public const WAV = 'audio/x-wav';
-    public const WEBM = 'video/webm';
+
+    public const AVIF = 'image/avif';
+    public const BMP = 'image/bmp';
+    public const GIF = 'image/gif';
+    public const JPEG = 'image/jpeg';
+    public const PNG = 'image/png';
+    public const SVG = 'image/svg+xml';
+    public const TIFF = 'image/tiff';
+    public const PSD = 'image/vnd.adobe.photoshop';
+    public const ICO = 'image/vnd.microsoft.icon';
     public const WEBP = 'image/webp';
     public const WEBP_LOSSLESS = self::WEBP."; lossless=true";
-    public const WIN_BITMAP = 'image/x-win-bitmap';
-    public const WMA = 'audio/x-ms-wma';
-    public const WMV = 'video/x-ms-wmv';
+    public const PPM = 'image/x-portable-pixmap';
+    public const TGA = 'image/x-tga';
+
+    public const CSS = 'text/css';
+    public const CSV = 'text/csv';
+    public const HEIC = 'text/heic';
+    public const HTML = 'text/html';
+    public const JS = 'text/javascript';
+    public const TEXT = 'text/plain';
     public const XML = 'text/xml';
-    public const XML_APPLICATION = 'application/xml';
-    public const XSL = 'application/xsl+xml';
-    public const ZIP = 'application/zip';
+    public const PHP = 'text/x-php';
+
+    public const MP4_VIDEO = 'video/mp4';
+    public const MPEG = 'video/mpeg';
+    public const OGG_VIDEO = 'video/ogg';
+    public const QUICKTIME = 'video/quicktime';
+    public const WEBM = 'video/webm';
+    public const FLASH_VIDEO = 'video/x-flv';
+    public const MKV = 'video/x-matroska';
+    public const ASF = 'video/x-ms-asf';
+    public const AVI = 'video/x-msvideo';
+    public const WMV = 'video/x-ms-wmv';
 
     public string $base;
     /** @var array<string,string> */
