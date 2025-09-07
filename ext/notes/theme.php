@@ -17,7 +17,7 @@ class NotesTheme extends Themelet
 {
     public function note_button(int $image_id): HTMLElement
     {
-        return FORM(INPUT(["type" => "button", "value" => "Add Note", "onclick" => "addNewNote()"]));
+        return FORM(INPUT(["type" => "button", "value" => "Add Note", "onclick" => "Notes.addNewNote()"]));
     }
     public function request_button(int $image_id): HTMLElement
     {
@@ -44,15 +44,14 @@ class NotesTheme extends Themelet
         );
     }
 
-    // check action POST on form
     /**
      * @param Note[] $recovered_notes
      */
     public function display_note_system(int $image_id, array $recovered_notes, bool $adminOptions, bool $editOptions): void
     {
-        $to_json = [];
+        $notes = [];
         foreach ($recovered_notes as $note) {
-            $to_json[] = [
+            $notes[] = [
                 'image_id' => $image_id,
                 'x1'      => $note["x1"],
                 'y1'      => $note["y1"],
@@ -65,10 +64,10 @@ class NotesTheme extends Themelet
         Ctx::$page->add_html_header(SCRIPT(
             ["type" => "text/javascript"],
             \MicroHTML\rawHTML("
-            window.notes = ".\Safe\json_encode($to_json).";
+            window.notes = ".\Safe\json_encode($notes).";
             window.notes_image_id = $image_id;
-            window.notes_admin = ".($adminOptions ? "true" : "false").";
-            window.notes_edit = ".($editOptions ? "true" : "false").";
+            window.notes_admin = ".\Safe\json_encode($adminOptions).";
+            window.notes_edit = ".\Safe\json_encode($editOptions).";
             ")
         ));
     }

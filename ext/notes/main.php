@@ -101,7 +101,6 @@ final class Notes extends Extension
             $event->add_nav_link(make_link('note/requests'), "Requests");
             $event->add_nav_link(make_link('note/list'), "List");
             $event->add_nav_link(make_link('note/updated'), "Updates");
-            $event->add_nav_link(make_link('ext_doc/notes'), "Help");
         }
     }
 
