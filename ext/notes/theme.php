@@ -32,7 +32,7 @@ class NotesTheme extends Themelet
         return SHM_SIMPLE_FORM(
             make_link("note/nuke_notes"),
             INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
-            INPUT(["type" => "submit", "value" => "Nuke Notes", "onclick" => "return confirm_action('Are you sure?')"]),
+            INPUT(["type" => "submit", "value" => "Nuke Notes", "onclick" => "return confirm('Are you sure?')"]),
         );
     }
     public function nuke_requests_button(int $image_id): HTMLElement
@@ -40,7 +40,7 @@ class NotesTheme extends Themelet
         return SHM_SIMPLE_FORM(
             make_link("note/nuke_requests"),
             INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),
-            INPUT(["type" => "submit", "value" => "Nuke Requests", "onclick" => "return confirm_action('Are you sure?')"]),
+            INPUT(["type" => "submit", "value" => "Nuke Requests", "onclick" => "return confirm('Are you sure?')"]),
         );
     }
 
