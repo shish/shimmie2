@@ -166,8 +166,8 @@ Notes.renderEditor = function (noteDiv, note) {
         Notes.dragStart = null;
         note.x1 = Math.round(noteDiv.offsetLeft / scale);
         note.y1 = Math.round(noteDiv.offsetTop / scale);
-        note.width = Math.round(noteDiv.clientWidth / scale);
-        note.height = Math.round(noteDiv.clientHeight / scale);
+        note.width = Math.round(noteDiv.offsetWidth / scale);
+        note.height = Math.round(noteDiv.offsetHeight / scale);
         Notes.renderNotes();
     }
     noteDiv.addEventListener("mouseup", _commit);
