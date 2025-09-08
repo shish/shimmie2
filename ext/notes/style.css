@@ -16,6 +16,11 @@
 	z-index: 1;
 	pointer-events: auto;
 }
+/* note mouse events should be relative to the top-level note,
+ * not relative to any inner elements */
+.notes-container .note DIV {
+    pointer-events: none;
+}
 .notes-container .note.editing {
 	opacity: 1;
 	z-index: 2;
