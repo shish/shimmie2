@@ -1,35 +1,56 @@
-let notesContainer = null;
-let noteImage = document.getElementById("main_image");
-let noteBeingEdited = null;
-let dragStart = null;
+/**
+ * @type {
+ *     notesContainer: HTMLElement,
+ *     noteImage: HTMLElement,
+ *     noteBeingEdited: null | number,
+ *     dragStart: null | {
+ *         x: number,
+ *         y: number,
+ *         mode: string,
+ *     },
+ * } Notes
+ */
+let Notes = {
+    notesContainer: null,
+    noteImage: null,
+    noteBeingEdited: null,
+    dragStart: null,
+};
 
 document.addEventListener("DOMContentLoaded", () => {
-    if (window.notes) {
-        if (noteImage.complete) {
-            renderNotes();
+    Notes.noteImage = document.getElementById("main_image");
+    if (window.notes && Notes.noteImage) {
+        if (Notes.noteImage.complete) {
+            Notes.renderNotes();
         } else {
-            noteImage.addEventListener("load", renderNotes);
+            Notes.noteImage.addEventListener("load", Notes.renderNotes);
         }
 
-        let resizeObserver = new ResizeObserver(renderNotes);
-        resizeObserver.observe(noteImage);
+        let resizeObserver = new ResizeObserver(Notes.renderNotes);
+        resizeObserver.observe(Notes.noteImage);
 
-        noteImage.parentNode.addEventListener("scroll", renderNotes);
+        Notes.noteImage.parentNode.addEventListener(
+            "scroll",
+            Notes.renderNotes,
+        );
     }
 });
 
-function renderNotes() {
+Notes.renderNotes = function () {
+    let notesContainer = Notes.notesContainer;
+
     // reset the DOM to empty
     if (notesContainer) {
         notesContainer.remove();
     }
 
     // check the image we're adding notes on top of
-    let br = noteImage.getBoundingClientRect();
-    let scale = br.width / noteImage.dataset.width;
+    let br = Notes.noteImage.getBoundingClientRect();
+    let scale = br.width / Notes.noteImage.dataset.width;
 
     // render a container full of notes
-    notesContainer = document.createElement("div");
+    Notes.notesContainer = document.createElement("div");
+    notesContainer = Notes.notesContainer;
     notesContainer.className = "notes-container";
     notesContainer.style.top = br.top + "px";
     notesContainer.style.left = br.left + "px";
@@ -49,22 +70,22 @@ function renderNotes() {
         // only add listener if user has edit permissions
         if (window.notes_edit) {
             noteDiv.addEventListener("click", (e) => {
-                noteBeingEdited = note.note_id;
-                renderNotes();
+                Notes.noteBeingEdited = note.note_id;
+                Notes.renderNotes();
             });
         }
         noteDiv.appendChild(text);
         notesContainer.appendChild(noteDiv);
 
         // if the current note is being edited, render the editor
-        if (note.note_id == noteBeingEdited) {
-            let editor = renderEditor(noteDiv, note);
+        if (note.note_id == Notes.noteBeingEdited) {
+            let editor = Notes.renderEditor(noteDiv, note);
             notesContainer.appendChild(editor);
         }
     });
 
-    noteImage.parentNode.appendChild(notesContainer);
-}
+    Notes.noteImage.parentNode.appendChild(notesContainer);
+};
 
 /**
  *
@@ -72,10 +93,10 @@ function renderNotes() {
  * @param {*} note
  * @returns
  */
-function renderEditor(noteDiv, note) {
+Notes.renderEditor = function (noteDiv, note) {
     // check the image we're adding notes on top of
-    let br = noteImage.getBoundingClientRect();
-    let scale = br.width / noteImage.dataset.width;
+    let br = Notes.noteImage.getBoundingClientRect();
+    let scale = br.width / Notes.noteImage.dataset.width;
 
     // set the note itself into drag & resize mode
     // NOTE: to avoid re-rendering the whole DOM every time the mouse
@@ -83,10 +104,10 @@ function renderEditor(noteDiv, note) {
     // the mouse is released, we update the note object and re-render
     noteDiv.classList.add("editing");
     noteDiv.addEventListener("mousedown", (e) => {
-        dragStart = {
+        Notes.dragStart = {
             x: e.pageX,
             y: e.pageY,
-            mode: getArea(
+            mode: Notes.getArea(
                 e.offsetX,
                 e.offsetY,
                 noteDiv.clientWidth,
@@ -94,9 +115,10 @@ function renderEditor(noteDiv, note) {
             ),
         };
         noteDiv.classList.add("dragging");
-        notesContainer.classList.add("dragging");
+        Notes.notesContainer.classList.add("dragging");
     });
     noteDiv.addEventListener("mousemove", (e) => {
+        let dragStart = Notes.dragStart;
         if (dragStart) {
             if (dragStart.mode == "c") {
                 noteDiv.style.left =
@@ -125,7 +147,7 @@ function renderEditor(noteDiv, note) {
                     note.width * scale + (e.pageX - dragStart.x) + "px";
             }
         } else {
-            let area = getArea(
+            let area = Notes.getArea(
                 e.offsetX,
                 e.offsetY,
                 noteDiv.clientWidth,
@@ -140,13 +162,13 @@ function renderEditor(noteDiv, note) {
     });
     function _commit() {
         noteDiv.classList.remove("dragging");
-        notesContainer.classList.remove("dragging");
-        dragStart = null;
+        Notes.notesContainer.classList.remove("dragging");
+        Notes.dragStart = null;
         note.x1 = Math.round(noteDiv.offsetLeft / scale);
         note.y1 = Math.round(noteDiv.offsetTop / scale);
-        note.width = Math.round(noteDiv.clientWidth / scale);
-        note.height = Math.round(noteDiv.clientHeight / scale);
-        renderNotes();
+        note.width = Math.round(noteDiv.offsetWidth / scale);
+        note.height = Math.round(noteDiv.offsetHeight / scale);
+        Notes.renderNotes();
     }
     noteDiv.addEventListener("mouseup", _commit);
     noteDiv.addEventListener("mouseleave", _commit);
@@ -184,7 +206,7 @@ function renderEditor(noteDiv, note) {
                 })
                 .then((data) => {
                     note.note_id = data.note_id;
-                    renderNotes();
+                    Notes.renderNotes();
                 })
                 .catch((error) => {
                     alert(error);
@@ -206,20 +228,20 @@ function renderEditor(noteDiv, note) {
                     alert(error);
                 });
         }
-        noteBeingEdited = null;
-        renderNotes();
+        Notes.noteBeingEdited = null;
+        Notes.renderNotes();
     });
     editor.appendChild(save);
 
     let cancel = document.createElement("button");
     cancel.innerText = "Cancel";
     cancel.addEventListener("click", () => {
-        noteBeingEdited = null;
+        Notes.noteBeingEdited = null;
         if (note.note_id == null) {
             // delete the un-saved note
             window.notes = window.notes.filter((n) => n.note_id != null);
         }
-        renderNotes();
+        Notes.renderNotes();
     });
     editor.appendChild(cancel);
 
@@ -243,60 +265,49 @@ function renderEditor(noteDiv, note) {
                 .catch((error) => {
                     alert(error);
                 });
-            noteBeingEdited = null;
+            Notes.noteBeingEdited = null;
             window.notes = window.notes.filter(
                 (n) => n.note_id != note.note_id,
             );
-            renderNotes();
+            Notes.renderNotes();
         });
         editor.appendChild(deleteNote);
     }
 
     return editor;
-}
+};
 
-function addNewNote() {
+Notes.addNewNote = function () {
     if (window.notes.filter((note) => note.note_id == null).length > 0) {
         alert("Please save all notes before adding a new one.");
         return;
     }
     window.notes.push({
-        x1: noteImage.dataset.width * 0.1,
-        y1: noteImage.dataset.height * 0.1,
-        width: noteImage.dataset.width * 0.2,
-        height: noteImage.dataset.height * 0.1,
+        x1: Notes.noteImage.dataset.width * 0.1,
+        y1: Notes.noteImage.dataset.height * 0.1,
+        width: Notes.noteImage.dataset.width * 0.2,
+        height: Notes.noteImage.dataset.height * 0.1,
         note: "new note",
         note_id: null,
         image_id: window.notes_image_id,
     });
-    noteBeingEdited = null;
-    renderNotes();
-}
+    Notes.noteBeingEdited = null;
+    Notes.renderNotes();
+};
 
-function getArea(x, y, width, height) {
-    let border = 10;
-
-    if (y < border) {
-        if (x < border) {
-            return "nw";
-        } else if (x > width - border) {
-            return "ne";
-        } else {
-            return "n";
-        }
-    } else if (y > height - border) {
-        if (x < border) {
-            return "sw";
-        } else if (x > width - border) {
-            return "se";
-        } else {
-            return "s";
-        }
-    } else if (x < border) {
-        return "w";
-    } else if (x > width - border) {
-        return "e";
-    } else {
-        return "c";
-    }
-}
+/**
+ *
+ * @param {number} x
+ * @param {number} y
+ * @param {number} width
+ * @param {number} height
+ */
+Notes.getArea = function (x, y, width, height, border = 16) {
+    let area = "";
+    if (y < border) area += "n";
+    if (y > height - border) area += "s";
+    if (x < border) area += "w";
+    if (x > width - border) area += "e";
+    if (area === "") area = "c";
+    return area;
+};
