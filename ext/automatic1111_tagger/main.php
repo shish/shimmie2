@@ -8,21 +8,26 @@ class Automatic1111Tagger extends Extension
 {
     public const KEY = "automatic1111_tagger";
 
-    public function onImageBlockBuilding(ImageBlockBuildingEvent $event)
+    public function onImageBlockBuilding(ImageBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(Automatic1111TaggerPermission::INTERROGATE_IMAGE)) {
-            $this->theme->display_interrogate_button($event->image->id);
+            if (property_exists($event, 'image') && isset($event->image->id)) {
+                if (method_exists($this->theme, 'display_interrogate_button')) {
+                    $this->theme->display_interrogate_button($event->image->id);
+                }
+            }
         }
     }
 
-    public function onPageRequest(PageRequestEvent $event)
+    public function onPageRequest(PageRequestEvent $event): void
     {
-
         // Add button to post view
         if ($event->page_matches("post/view/*")) {
-            $post_id = (int)$event->get_arg(2);
+            $post_id = (int)$event->get_arg('id');
             if (Ctx::$user->can(Automatic1111TaggerPermission::INTERROGATE_IMAGE)) {
-                $this->theme->display_interrogate_button($post_id);
+                if (method_exists($this->theme, 'display_interrogate_button')) {
+                    $this->theme->display_interrogate_button($post_id);
+                }
             }
         }
 
@@ -36,7 +41,13 @@ class Automatic1111Tagger extends Extension
                 return;
             }
             $image_path = $image_obj->get_image_filename()->str();
-            $image_data = base64_encode(file_get_contents($image_path));
+            $image_contents = file_get_contents($image_path);
+            if ($image_contents === false) {
+                Ctx::$page->flash("Failed to read image file.");
+                Ctx::$page->set_redirect(make_link("post/list"));
+                return;
+            }
+            $image_data = base64_encode($image_contents);
             $payload = [
                 "image" => $image_data,
                 "model" => Ctx::$config->get(Automatic1111TaggerConfig::MODEL),
@@ -70,28 +81,31 @@ class Automatic1111Tagger extends Extension
                     }
                 }
                 // Get all tags for the image, including artist and meta tags
+                $current_tags = [];
                 if (method_exists($image_obj, 'get_tag_array')) {
                     $current_tags = $image_obj->get_tag_array();
                 } else {
-                    $current_tags = [];
-                    $rows = Ctx::$database->get_col("SELECT t.tag FROM image_tags it JOIN tags t ON it.tag_id = t.id WHERE it.image_id = ?", [$image_obj->id]);
+                    $rows = Ctx::$database->get_col(
+                        "SELECT t.tag FROM image_tags it JOIN tags t ON it.tag_id = t.id WHERE it.image_id = :image_id",
+                        ['image_id' => $image_obj->id]
+                    );
                     foreach ($rows as $t) {
                         $current_tags[] = $t;
                     }
                 }
                 $all_tags = $current_tags;
                 foreach ($tags as $tag) {
-                    if (!in_array(strtolower($tag), array_map('strtolower', $current_tags))) {
+                    if (!in_array(strtolower($tag), array_map('strtolower', $current_tags), true)) {
                         $all_tags[] = $tag;
                     }
                 }
-                if ($rating_tag && !in_array(strtolower($rating_tag), array_map('strtolower', $all_tags))) {
+                if ($rating_tag && !in_array(strtolower($rating_tag), array_map('strtolower', $all_tags), true)) {
                     $all_tags[] = $rating_tag;
                 }
-                $all_tags = array_filter(array_unique($all_tags), fn($t) => $t !== '');
+                $all_tags = array_filter(array_unique($all_tags), fn ($t) => $t !== '');
                 // Remove 'tagme' if new tags are added
                 if (count($all_tags) > count($current_tags)) {
-                    $all_tags = array_filter($all_tags, fn($t) => strtolower($t) !== 'tagme');
+                    $all_tags = array_filter($all_tags, fn ($t) => strtolower($t) !== 'tagme');
                     send_event(new TagSetEvent($image_obj, $all_tags));
                     if (Ctx::$config->get(Automatic1111TaggerConfig::RESOLVE_ALIASES)) {
                         // Alias resolution: fetch aliases and apply them
@@ -108,7 +122,7 @@ class Automatic1111Tagger extends Extension
                             }
                         }
                         unset($tag);
-                        $resolved_tags = array_filter(array_unique($resolved_tags), fn($t) => $t !== '');
+                        $resolved_tags = array_filter(array_unique($resolved_tags), fn ($t) => $t !== '');
                         send_event(new TagSetEvent($image_obj, $resolved_tags));
                     }
                     Ctx::$page->flash("Tags added");
@@ -130,7 +144,13 @@ class Automatic1111Tagger extends Extension
                 return;
             }
             $image_path = $image_obj->get_image_filename()->str();
-            $image_data = base64_encode(file_get_contents($image_path));
+            $image_contents = file_get_contents($image_path);
+            if ($image_contents === false) {
+                Ctx::$page->flash("Failed to read image file.");
+                Ctx::$page->set_redirect(make_link("post/list"));
+                return;
+            }
+            $image_data = base64_encode($image_contents);
             $payload = [
                 "image" => $image_data,
                 "model" => Ctx::$config->get(Automatic1111TaggerConfig::MODEL),
@@ -159,20 +179,23 @@ class Automatic1111Tagger extends Extension
             }
             if ($rating_tag) {
                 // Get all tags for the image
+                $current_tags = [];
                 if (method_exists($image_obj, 'get_tag_array')) {
                     $current_tags = $image_obj->get_tag_array();
                 } else {
-                    $current_tags = [];
-                    $rows = Ctx::$database->get_col("SELECT t.tag FROM image_tags it JOIN tags t ON it.tag_id = t.id WHERE it.image_id = ?", [$image_obj->id]);
+                    $rows = Ctx::$database->get_col(
+                        "SELECT t.tag FROM image_tags it JOIN tags t ON it.tag_id = t.id WHERE it.image_id = :image_id",
+                        ['image_id' => $image_obj->id]
+                    );
                     foreach ($rows as $t) {
                         $current_tags[] = $t;
                     }
                 }
                 // Add rating tag if not present
-                if (!in_array(strtolower($rating_tag), array_map('strtolower', $current_tags))) {
+                if (!in_array(strtolower($rating_tag), array_map('strtolower', $current_tags), true)) {
                     $all_tags = $current_tags;
                     $all_tags[] = $rating_tag;
-                    $all_tags = array_filter(array_unique($all_tags), fn($t) => $t !== '');
+                    $all_tags = array_filter(array_unique($all_tags), fn ($t) => $t !== '');
                     send_event(new TagSetEvent($image_obj, $all_tags));
                     Ctx::$page->flash("Tags added");
                 } else {
@@ -185,7 +208,7 @@ class Automatic1111Tagger extends Extension
         }
     }
 
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(Automatic1111TaggerPermission::INTERROGATE_IMAGE)) {
             $event->add_button("Interrogate", "automatic1111_tagger/interrogate/{$event->image->id}");
@@ -195,15 +218,20 @@ class Automatic1111Tagger extends Extension
         }
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     * @return array<string, mixed>
+     */
     private function send_api_request(string $url, array $payload): array
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        $json_payload = json_encode($payload);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_payload !== false ? $json_payload : '{}');
         $response = curl_exec($ch);
         curl_close($ch);
-        return json_decode($response, true) ?? [];
+        return is_string($response) ? (json_decode($response, true) ?? []) : [];
     }
 }
