@@ -16,7 +16,4 @@ class Automatic1111TaggerConfig extends ConfigGroup
 
     #[ConfigMeta("Threshold", ConfigType::STRING, default: "0.35")]
     public const THRESHOLD = 'automatic1111_tagger_threshold';
-
-    #[ConfigMeta("Resolve aliases after tagging", ConfigType::BOOL, default: false)]
-    public const RESOLVE_ALIASES = 'automatic1111_tagger_resolve_aliases';
 }
