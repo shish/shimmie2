@@ -30,7 +30,7 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress
       - name: Format
-        run: composer format && git diff --exit-code
+        run: composer format-ci
 
   static:
     name: Static Analysis
