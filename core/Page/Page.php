@@ -99,6 +99,10 @@ class Page
             header("HTTP/1.1 {$this->code} Shimmie");
             header("Content-type: " . $this->mime);
             header("X-Powered-By: Shimmie-" . SysConfig::getVersion());
+            $dbtime = round(Ctx::$database->dbtime * 1000, 2);
+            $totaltime = round((ftime() - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000, 2);
+            $apptime = round($totaltime - $dbtime, 2);
+            header("Server-Timing: db;dur={$dbtime}, app;dur={$apptime}, total;dur={$totaltime}");
 
             foreach ($this->http_headers as $head) {
                 header($head);
