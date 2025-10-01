@@ -133,6 +133,8 @@ jobs:
         run: php -v && composer -V
       - name: Validate composer.json and composer.lock
         run: composer validate
+      - name: Install System dependencies
+        run: apt -y update && apt -y install imagemagick
       - name: Install PHP dependencies
         run: composer install --no-progress
       - name: Run test suite
