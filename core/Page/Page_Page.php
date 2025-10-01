@@ -94,10 +94,12 @@ trait Page_Page
 
     protected function display_page(): void
     {
-        $this->send_headers();
         usort($this->blocks, Block::cmp(...));
         $this->add_auto_html_headers();
-        $this->render();
+        $str = (string)$this->render();
+
+        $this->send_headers();
+        print $str;
     }
 
     /**
@@ -279,13 +281,12 @@ trait Page_Page
     /**
      * turns the Page into HTML
      */
-    public function render(): void
+    public function render(): HTMLElement
     {
-        $struct = $this->html_html(
+        return $this->html_html(
             $this->head_html(),
             $this->body_html()
         );
-        print (string)$struct;
     }
 
     public function html_html(HTMLElement $head, HTMLElement $body): HTMLElement
