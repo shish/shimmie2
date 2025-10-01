@@ -21,5 +21,6 @@ return $_phpcs_config
   ])
   ->setFinder($_phpcs_finder)
   ->setCacheFile("data/cache/php-cs-fixer.cache")
-  //->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+  ->setUnsupportedPhpVersionAllowed(true)
+  ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
 ;

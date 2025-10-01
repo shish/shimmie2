@@ -111,7 +111,8 @@
             "@analyse"
         ],
         "xstan": "rm -rf /tmp/phpstan/ && XDEBUG_MODE=debug phpstan --xdebug analyse --memory-limit 1G --error-format=raw | sed 's/:/ /g; s/ /:/'",
-        "format": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
+        "format": "php-cs-fixer fix",
+        "format-ci": "php-cs-fixer check --format=@auto",
         "analyse-ci": "phpstan analyse --memory-limit 1G --error-format=github",
         "analyse": "phpstan analyse --memory-limit 1G --error-format=raw | sed -E 's/:([0-9]+):/:\\1 /'",
         "test-cover": "XDEBUG_MODE=coverage phpunit --coverage-html=./data/coverage",
