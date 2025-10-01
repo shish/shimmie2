@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Shimmie2;
+namespace
+Shimmie2;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Make sure that shimmie is correctly installed                             *
