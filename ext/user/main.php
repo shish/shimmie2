@@ -12,6 +12,7 @@ use MicroCRUD\{ActionColumn, DateColumn, EnumColumn, IntegerColumn, Table, TextC
 use function MicroHTML\{A, P, emptyHTML};
 
 use MicroHTML\HTMLElement;
+use Symfony\Component\Console\Input\InputOption;
 
 final class UserNameColumn extends TextColumn
 {
@@ -127,6 +128,27 @@ final class UserPage extends Extension
     public function onUserLogin(UserLoginEvent $event): void
     {
         Ctx::setUser($event->user);
+    }
+
+    public function onCliGen(CliGenEvent $event): void
+    {
+        $definition = $event->app->getDefinition();
+        $definition->addOption(new InputOption(
+            '--user',
+            '-u',
+            InputOption::VALUE_REQUIRED,
+            'Log in as the given user'
+        ));
+    }
+
+    public function onCliRun(CliRunEvent $event): void
+    {
+        if ($event->input->hasParameterOption(['--user', '-u'])) {
+            $name = $event->input->getParameterOption(['--user', '-u']);
+            send_event(new UserLoginEvent(User::by_name($name)));
+        } else {
+            send_event(new UserLoginEvent(User::get_anonymous()));
+        }
     }
 
     public function onInitExt(InitExtEvent $event): void

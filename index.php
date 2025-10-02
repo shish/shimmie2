@@ -59,6 +59,7 @@ Ctx::$tracer->end();
 
 function main(): int
 {
+    $iee = null;
     // nested try-catch blocks so that we can try to handle user-errors
     // in a pretty and theme-customisable way, but if that breaks, the
     // breakage will be handled by the server-error handler
@@ -77,11 +78,9 @@ function main(): int
             if (!Ctx::$config->get(SetupConfig::NO_AUTO_DB_UPGRADE)) {
                 send_event(new DatabaseUpgradeEvent());
             }
-            send_event(new InitExtEvent());
+            $iee = send_event(new InitExtEvent());
 
             // start the page generation waterfall
-            Ctx::setUser(_get_user());
-            send_event(new UserLoginEvent(Ctx::$user));
             if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
                 ob_end_flush();
                 ob_implicit_flush(true);
@@ -91,6 +90,7 @@ function main(): int
                     throw new \Exception("CLI command failed");
                 }
             } else {
+                send_event(new UserLoginEvent(_get_user()));
                 send_event(new PageRequestEvent(
                     $_SERVER['REQUEST_METHOD'],
                     _get_query(),
@@ -122,29 +122,7 @@ function main(): int
         $exit_code = 1;
     } finally {
         Ctx::$tracer->end();
-        $traceFile = SysConfig::getTraceFile();
-        if (
-            // If tracing is enabled
-            $traceFile !== null
-            // And we either asked for it, are running CLI, or took a long time
-            && (
-                @$_GET["trace"] === "on"
-                || PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg'
-                || (ftime() - $_SERVER["REQUEST_TIME_FLOAT"]) > SysConfig::getTraceThreshold()
-            )
-            // Ignore upload because that always takes forever and isn't worth tracing
-            && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
-            // Sanity check to avoid crashing if misconfigured
-            && (
-                is_writable($traceFile)
-                || (
-                    !file_exists($traceFile)
-                    && is_writable(dirname($traceFile))
-                )
-            )
-        ) {
-            Ctx::$tracer->flush($traceFile);
-        }
+        $iee?->run_shutdown_handlers();
     }
     return $exit_code;
 }
