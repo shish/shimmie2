@@ -260,11 +260,6 @@ function _set_up_shimmie_environment(): void
     }
 
     error_reporting(E_ALL);
-
-    // The trace system has a certain amount of memory consumption every time it is used,
-    // so to prevent running out of memory during complex operations code that uses it should
-    // check if tracer output is enabled before making use of it.
-    Ctx::$tracer_enabled = !is_null(SysConfig::getTraceFile());
 }
 
 /**

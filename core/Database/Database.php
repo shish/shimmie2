@@ -143,9 +143,7 @@ class Database
         // trim whitespace
         $query = \Safe\preg_replace('/[\n\t ]+/m', ' ', $query);
         $query = trim($query);
-        if (Ctx::$tracer_enabled) {
-            Ctx::$tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query" => $query, "args" => $args, "method" => $method]);
-        }
+        Ctx::$tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query" => $query, "args" => $args, "method" => $method]);
         $this->queries[] = $query;
         $this->query_count++;
         $this->dbtime += $dur;
