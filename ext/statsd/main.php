@@ -8,69 +8,69 @@ final class StatsDInterface extends Extension
 {
     public const KEY = "statsd";
     /** @var array<string, string> */
-    public static array $stats = [];
+    private array $stats = [];
+    private string $type = "other";
+
+    public function onInitExt(InitExtEvent $event): void
+    {
+        $this->stats = [];
+
+        $event->add_shutdown_handler(function () {
+            $this->_stats("overall");
+            $this->_stats($this->type);
+            $host = Ctx::$config->get(StatsDInterfaceConfig::HOST);
+            $this->send($host, $this->stats);
+        });
+    }
 
     private function _stats(string $type): void
     {
-        global $database;
-        $time = ftime() - $_SERVER["REQUEST_TIME_FLOAT"];
-        StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
-        StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
-        StatsDInterface::$stats["shimmie.$type.time-db"] = "{$database->dbtime}|ms";
-        StatsDInterface::$stats["shimmie.$type.memory"] = memory_get_peak_usage(true)."|c";
-        StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
-        StatsDInterface::$stats["shimmie.$type.queries"] = $database->query_count."|c";
-        StatsDInterface::$stats["shimmie.$type.events"] = Ctx::$event_bus->event_count."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-hits"] = Ctx::$cache->get("__etc_cache_hits", -1)."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-misses"] = Ctx::$cache->get("__etc_cache_misses", -1)."|c";
+        $this->stats["shimmie.$type.hits"] = "1|c";
+        $this->stats["shimmie.$type.time"] = (ftime() - $_SERVER["REQUEST_TIME_FLOAT"])."|ms";
+        $this->stats["shimmie.$type.time-db"] = Ctx::$database->dbtime."|ms";
+        $this->stats["shimmie.$type.memory"] = memory_get_peak_usage(true)."|c";
+        $this->stats["shimmie.$type.files"] = count(get_included_files())."|c";
+        $this->stats["shimmie.$type.queries"] = Ctx::$database->query_count."|c";
+        $this->stats["shimmie.$type.events"] = Ctx::$event_bus->event_count."|c";
+        $this->stats["shimmie.$type.cache-hits"] = Ctx::$cache->get("__etc_cache_hits", -1)."|c";
+        $this->stats["shimmie.$type.cache-misses"] = Ctx::$cache->get("__etc_cache_misses", -1)."|c";
     }
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $this->_stats("overall");
-
         if ($event->page_starts_with("post/view")) {  # 40%
-            $this->_stats("post-view");
+            $this->type = "post-view";
         } elseif ($event->page_starts_with("post/list")) {  # 30%
-            $this->_stats("post-list");
+            $this->type = "post-list";
         } elseif ($event->page_starts_with("user")) {
-            $this->_stats("user");
+            $this->type = "user";
         } elseif ($event->page_starts_with("upload")) {
-            $this->_stats("upload");
+            $this->type = "upload";
         } elseif ($event->page_starts_with("rss")) {
-            $this->_stats("rss");
+            $this->type = "rss";
         } elseif ($event->page_starts_with("api")) {
-            $this->_stats("api");
-        } else {
-            $this->_stats("other");
+            $this->type = "api";
         }
-
-        $host = Ctx::$config->get(StatsDInterfaceConfig::HOST);
-        if (!is_null($host)) {
-            $this->send($host, StatsDInterface::$stats, 1.0);
-        }
-
-        StatsDInterface::$stats = [];
     }
 
     public function onUserCreation(UserCreationEvent $event): void
     {
-        StatsDInterface::$stats["shimmie_events.user_creations"] = "1|c";
+        $this->stats["shimmie_events.user_creations"] = "1|c";
     }
 
     public function onDataUpload(DataUploadEvent $event): void
     {
-        StatsDInterface::$stats["shimmie_events.uploads"] = "1|c";
+        $this->stats["shimmie_events.uploads"] = "1|c";
     }
 
     public function onCommentPosting(CommentPostingEvent $event): void
     {
-        StatsDInterface::$stats["shimmie_events.comments"] = "1|c";
+        $this->stats["shimmie_events.comments"] = "1|c";
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
-        StatsDInterface::$stats["shimmie_events.info-sets"] = "1|c";
+        $this->stats["shimmie_events.info-sets"] = "1|c";
     }
 
     public function get_priority(): int
@@ -81,40 +81,22 @@ final class StatsDInterface extends Extension
     /**
      * @param array<string, string> $data
      */
-    private function send(string $host, array $data, float $sampleRate = 1): void
+    private function send(string $host, array $data): void
     {
-        // sampling
-        $sampledData = [];
-
-        if ($sampleRate < 1) {
-            foreach ($data as $stat => $value) {
-                if ((mt_rand() / mt_getrandmax()) <= $sampleRate) {
-                    $sampledData[$stat] = "$value|@$sampleRate";
-                }
-            }
-        } else {
-            $sampledData = $data;
-        }
-
-        if (count($sampledData) === 0) {
+        if (count($data) === 0) {
             return;
         }
 
-        // Wrap this in a try/catch - failures in any of this should be silently ignored
-        try {
-            $parts = explode(":", $host);
-            $host = $parts[0];
-            $port = (int)$parts[1];
-            $fp = @fsockopen("udp://$host", $port);
-            if (!$fp) {
-                return;
-            }
-            foreach ($sampledData as $stat => $value) {
-                fwrite($fp, "$stat:$value");
-            }
-            fclose($fp);
-        } catch (\Exception $e) {
-            // ignore any failures.
+        $parts = explode(":", $host);
+        $host = $parts[0];
+        $port = (int)$parts[1];
+        $fp = @fsockopen("udp://$host", $port);
+        if (!$fp) {
+            return;
         }
+        foreach ($data as $stat => $value) {
+            fwrite($fp, "$stat:$value");
+        }
+        fclose($fp);
     }
 }
