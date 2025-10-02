@@ -6,9 +6,9 @@ namespace Shimmie2;
 
 final class StatsDInterfaceInfo extends ExtensionInfo
 {
-    public const KEY = "statsd";
+    public const KEY = "metrics_statsd";
 
-    public string $name = "StatsD Interface";
+    public string $name = "Metrics (StatsD)";
     public array $authors = self::SHISH_AUTHOR;
     public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
     public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
