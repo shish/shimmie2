@@ -128,7 +128,7 @@ final class LogOTLP extends Extension
                 ],
                 [
                     "key" => "remoteAddr",
-                    "value" => ["stringValue" => Network::get_real_ip()],
+                    "value" => ["stringValue" => (string)Network::get_real_ip()],
                 ],
             ],
         ];
