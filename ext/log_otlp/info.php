@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Shimmie2;
+
+final class LogOTLPInfo extends ExtensionInfo
+{
+    public const KEY = "log_otlp";
+
+    public string $name = "Logging (OTLP)";
+    public array $authors = self::SHISH_AUTHOR;
+    public string $description = "Send log events to a network port";
+    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
+    public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
+}
