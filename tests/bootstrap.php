@@ -22,8 +22,6 @@ define("VERSION", 'unit-tests');
 define("TIMEZONE", 'UTC');
 define("SECRET", "asdfghjkl");
 
-CliApp::$logLevel = LogLevel::CRITICAL->value;
-
 $_SERVER['SCRIPT_FILENAME'] = '/var/www/html/test/index.php';
 $_SERVER['DOCUMENT_ROOT'] = '/var/www/html';
 $_SERVER['QUERY_STRING'] = '/';
@@ -34,7 +32,6 @@ if (file_exists("data/test-trace.json")) {
 
 sanitize_php();
 _set_up_shimmie_environment();
-Ctx::$tracer_enabled = true;
 Ctx::setTracer(new \EventTracer());
 Ctx::$tracer->begin("bootstrap");
 _load_ext_files();

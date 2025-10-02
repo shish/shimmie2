@@ -144,34 +144,24 @@ final class EventBus
             return $event;
         }
 
-        // send_event() is performance sensitive, and with the number
-        // of times tracer gets called the time starts to add up
-        if (Ctx::$tracer_enabled) {
-            Ctx::$tracer->begin($event_name);
-        }
+        Ctx::$tracer->begin($event_name);
         $method_name = "on".str_replace("Event", "", $event_name);
         foreach ($this->event_listeners[$event_name] as $listener) {
             if ($this->deadline && ftime() > $this->deadline) {
                 throw new TimeoutException("Timeout while sending $event_name");
             }
-            if (Ctx::$tracer_enabled) {
-                // @phpstan-ignore-next-line
-                Ctx::$tracer->begin($this->namespaced_class_name(get_class($listener)));
-            }
+            // @phpstan-ignore-next-line
+            Ctx::$tracer->begin($this->namespaced_class_name(get_class($listener)));
             if (method_exists($listener, $method_name)) {
                 $listener->$method_name($event);
             }
-            if (Ctx::$tracer_enabled) {
-                Ctx::$tracer->end();
-            }
+            Ctx::$tracer->end();
             if ($event->stop_processing === true) {
                 break;
             }
         }
         $this->event_count++;
-        if (Ctx::$tracer_enabled) {
-            Ctx::$tracer->end();
-        }
+        Ctx::$tracer->end();
 
         return $event;
     }

@@ -85,34 +85,6 @@ final class SysConfig
     }
 
     /**
-     * If set, this should be a path to a file where execution traces
-     * will be logged. This is mainly useful for debugging performance
-     * problems. The file should be writable by the webserver user and
-     * have the `.json` extension.
-     *
-     * Generated files can be loaded into https://ui.perfetto.dev/ for
-     * interactive viewing.
-     */
-    public static function getTraceFile(): ?string
-    {
-        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
-            return CliApp::$traceFile;
-        } else {
-            return defined("TRACE_FILE") ? constant("TRACE_FILE") : null;
-        }
-    }
-
-    /**
-     * If tracing is enabled, this is the minimum time in seconds
-     * that a request must take before the trace is actually saved.
-     * This avoids filling up your disk with traces of every request.
-     */
-    public static function getTraceThreshold(): float
-    {
-        return defined("TRACE_THRESHOLD") ? constant("TRACE_THRESHOLD") : 1.0;
-    }
-
-    /**
      * If shimmie is running behind a reverse proxy (eg nginx),
      * and the proxy passes the original client IP in a header
      * (eg `X-Forwarded-For`), set this to the IP addresses of
