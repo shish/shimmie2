@@ -7,7 +7,7 @@ namespace Shimmie2;
 final class TraceChromeConfig extends ConfigGroup
 {
     public const KEY = "trace_chrome";
-    public ?string $title = "Chrome EventTrace Logger";
+    public ?string $title = "Tracing (Chrome)";
 
     #[ConfigMeta("Trace File", ConfigType::STRING, default: null)]
     public const TRACE_FILE = 'trace_chrome_file';
