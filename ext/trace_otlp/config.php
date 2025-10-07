@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 final class TraceOTLPConfig extends ConfigGroup
 {
-    public const KEY = "trace_chrome";
+    public const KEY = "trace_otlp";
     public ?string $title = "Tracing (OTLP)";
 
     #[ConfigMeta("Trace Threshold (ms)", ConfigType::INT, default: 1000)]
