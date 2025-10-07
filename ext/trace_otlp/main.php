@@ -6,16 +6,16 @@ namespace Shimmie2;
 
 use Symfony\Component\Console\Input\InputOption;
 
-final class TraceChrome extends Extension
+final class TraceOTLP extends Extension
 {
-    public const KEY = "trace_chrome";
+    public const KEY = "trace_otlp";
     private static ?string $traceFile = null;
     private static int $traceThreshold = 0;
 
     public function onInitExt(InitExtEvent $event): void
     {
-        self::$traceFile = Ctx::$config->get(TraceChromeConfig::TRACE_FILE);
-        self::$traceThreshold = Ctx::$config->get(TraceChromeConfig::TRACE_THRESHOLD);
+        self::$traceFile = Ctx::$config->get(OTLPCommonConfig::HOST);
+        self::$traceThreshold = Ctx::$config->get(TraceOTLPConfig::TRACE_THRESHOLD);
         if (@$_GET["trace"] === "on") {
             self::$traceThreshold = 0;
         }
@@ -29,7 +29,7 @@ final class TraceChrome extends Extension
                 // Ignore upload because that always takes forever and isn't worth tracing
                 && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
             ) {
-                Ctx::$tracer->flush(self::$traceFile);
+                Ctx::$tracer->flushTraces(self::$traceFile);
             }
         });
     }
@@ -47,7 +47,12 @@ final class TraceChrome extends Extension
 
     public function onCliRun(CliRunEvent $event): void
     {
-        self::$traceFile = $event->input->getParameterOption(['--trace', '-t'], null);
-        self::$traceThreshold = 0; // Always trace if --trace is passed
+        self::$traceFile = $event->input->getParameterOption(
+            ['--trace', '-t'],
+            Ctx::$config->get(OTLPCommonConfig::HOST)
+        );
+        if (self::$traceFile !== null) {
+            self::$traceThreshold = 0; // Always trace if --trace is passed
+        }
     }
 }
