@@ -18,7 +18,7 @@ final class Installer
         }
 
         // Pull in necessary files
-        Ctx::setTracer(new \EventTracer());
+        Ctx::setTracer(new \MicroOTLP\Client());
 
         $dsn = self::get_dsn();
         if ($dsn) {
