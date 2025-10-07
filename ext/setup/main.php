@@ -139,7 +139,7 @@ final class Setup extends Extension
             ->setDescription('Show defaults')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 foreach (ConfigGroup::get_all_metas() as $key => $meta) {
-                    $output->writeln("$key: " . var_export($meta->default, true));
+                    $output->writeln("$key: " . \Safe\json_encode($meta->default, JSON_UNESCAPED_SLASHES));
                 }
                 return Command::SUCCESS;
             });
@@ -147,7 +147,7 @@ final class Setup extends Extension
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription('Get a config value')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                $output->writeln(\Safe\json_encode(Ctx::$config->get($input->getArgument('key'))));
+                $output->writeln(\Safe\json_encode(Ctx::$config->get($input->getArgument('key')), JSON_UNESCAPED_SLASHES));
                 return Command::SUCCESS;
             });
         $event->app->register('config:set')
