@@ -48,9 +48,8 @@ Ctx::setEventBus(new EventBus());
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 Ctx::setUser(User::get_anonymous());
-$userPage = new UserPage();
-$userPage->onUserCreation(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
-$userPage->onUserCreation(new UserCreationEvent("test", "test", "test", "test@test.com", false));
+send_event(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
+send_event(new UserCreationEvent("test", "test", "test", "test@test.com", false));
 // in mysql, CREATE TABLE commits transactions, so after the database
 // upgrade we may or may not be inside a transaction depending on if
 // any tables were created.
