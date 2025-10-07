@@ -6,13 +6,13 @@ namespace Shimmie2;
 
 use PHPUnit\Framework\TestCase;
 
-final class EventTracingCacheTest extends TestCase
+final class TracingCacheTest extends TestCase
 {
     public function testBits(): void
     {
-        $t = new \EventTracer();
+        $t = new \MicroOTLP\Client();
         $b = new \Sabre\Cache\Memory();
-        $c = new EventTracingCache($b, $t);
+        $c = new TracingCache($b, $t);
 
         $c->set('key', 'value');
         self::assertEquals('value', $c->get('key'));
@@ -23,9 +23,9 @@ final class EventTracingCacheTest extends TestCase
 
     public function testMultipleBits(): void
     {
-        $t = new \EventTracer();
+        $t = new \MicroOTLP\Client();
         $b = new \Sabre\Cache\Memory();
-        $c = new EventTracingCache($b, $t);
+        $c = new TracingCache($b, $t);
 
         $c->setMultiple(['key1' => 'value1', 'key2' => 'value2']);
         foreach ($c->getMultiple(['key1', 'key2']) as $key => $value) {

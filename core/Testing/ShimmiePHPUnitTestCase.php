@@ -15,7 +15,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        Ctx::$tracer->begin(get_called_class());
+        Ctx::$tracer->startSpan(get_called_class());
         Ctx::$database->begin_transaction();
         parent::setUpBeforeClass();
     }
@@ -25,8 +25,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
      */
     public function setUp(): void
     {
-        Ctx::$tracer->begin($this->name());
-        Ctx::$tracer->begin("setUp");
+        Ctx::$tracer->startSpan($this->name());
+        Ctx::$tracer->startSpan("setUp");
 
         // Start a savepoint so we can roll back to it in tearDown
         Ctx::$database->execute("SAVEPOINT test_start");
@@ -51,8 +51,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         Ctx::setCache(load_cache(null));
         Ctx::setConfig(new DatabaseConfig(Ctx::$database));
 
-        Ctx::$tracer->end();  # setUp
-        Ctx::$tracer->begin("test");
+        Ctx::$tracer->endSpan();  # setUp
+        Ctx::$tracer->startSpan("test");
     }
 
     public function tearDown(): void
@@ -64,16 +64,16 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         }
 
         Ctx::$database->execute("ROLLBACK TO test_start");
-        Ctx::$tracer->end();  # test
-        Ctx::$tracer->end();  # $this->getName()
+        Ctx::$tracer->endSpan();  # test
+        Ctx::$tracer->endSpan();  # $this->getName()
     }
 
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
         Ctx::$database->rollback();
-        Ctx::$tracer->end();  # get_called_class()
-        Ctx::$tracer->clear();
+        Ctx::$tracer->endSpan();  # get_called_class()
+        Ctx::$tracer->endAllSpans();
         Ctx::$tracer->flush("data/test-trace.json");
     }
 

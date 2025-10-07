@@ -120,7 +120,7 @@ class Page
      */
     public function display(): void
     {
-        Ctx::$tracer->begin("Display ({$this->mode->name})");
+        Ctx::$tracer->startSpan("Display ({$this->mode->name})");
         match($this->mode) {
             PageMode::MANUAL => null,
             PageMode::PAGE => $this->display_page(),
@@ -129,6 +129,6 @@ class Page
             PageMode::FILE => $this->display_file(),
             PageMode::REDIRECT => $this->display_redirect(),
         };
-        Ctx::$tracer->end();
+        Ctx::$tracer->endSpan();
     }
 }

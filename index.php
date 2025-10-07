@@ -35,9 +35,18 @@ if (!file_exists("data/config/shimmie.conf.php")) {
 @include_once "data/config/extensions.conf.php";
 
 _set_up_shimmie_environment();
-Ctx::setTracer(new \EventTracer());
+Ctx::setTracer(new \MicroOTLP\Client(
+    resourceAttributes: [
+        'service.name' => 'shimmie2',
+        'service.instance.id' => gethostname() ?: 'unknown',
+    ],
+    scopeAttributes: [
+        'name' => 'shimmie2',
+        'version' => SysConfig::getVersion(),
+    ],
+));
 // Override TS to show that bootstrapping started in the past
-Ctx::$tracer->begin("Bootstrap", raw: ["ts" => $_SERVER["REQUEST_TIME_FLOAT"] * 1e6]);
+Ctx::$tracer->startSpan("Bootstrap", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9));
 _load_ext_files();
 // Depends on core files
 $cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
@@ -51,7 +60,7 @@ _load_theme_files();
 $page = Ctx::setPage(Themelet::get_theme_class(Page::class) ?? new Page());
 // $event_bus depends on ext/*/main.php being loaded
 Ctx::setEventBus(new EventBus());
-Ctx::$tracer->end();
+Ctx::$tracer->endSpan();
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Send events, display output                                               *
@@ -66,7 +75,7 @@ function main(): int
     try {
         try {
             // Ctx::$tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
-            Ctx::$tracer->begin(
+            Ctx::$tracer->startSpan(
                 $_SERVER["REQUEST_URI"] ?? "No Request",
                 [
                     "user" => $_COOKIE["shm_user"] ?? "No User",
@@ -121,7 +130,7 @@ function main(): int
         _fatal_error($e);
         $exit_code = 1;
     } finally {
-        Ctx::$tracer->end();
+        Ctx::$tracer->endSpan();
         $iee?->run_shutdown_handlers();
     }
     return $exit_code;

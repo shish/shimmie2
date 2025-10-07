@@ -464,9 +464,9 @@ function cache_get_or_set(string $key, callable $callback, ?int $ttl = null): mi
 {
     $value = Ctx::$cache->get($key);
     if ($value === null) {
-        Ctx::$tracer->begin("Cache Populate", ["key" => $key]);
+        Ctx::$tracer->startSpan("Cache Populate", ["key" => $key]);
         $value = $callback();
-        Ctx::$tracer->end();
+        Ctx::$tracer->endSpan();
         Ctx::$cache->set($key, $value, $ttl);
     }
     return $value;
@@ -502,7 +502,7 @@ function load_cache(?string $dsn): CacheInterface
     if (is_null($c)) {
         $c = new \Sabre\Cache\Memory();
     }
-    return new EventTracingCache($c, Ctx::$tracer);
+    return new TracingCache($c, Ctx::$tracer);
 }
 
 /**
