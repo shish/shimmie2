@@ -10,6 +10,7 @@ final class TraceOTLPInfo extends ExtensionInfo
 
     public string $name = "Tracing (OTLP)";
     public array $authors = self::SHISH_AUTHOR;
-    public string $description = "Log slow request traces to an OTLP collector";
+    public string $description = "Sends slow page traces to an OTLP server";
     public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
+    public array $dependencies = [OTLPCommonInfo::KEY];
 }

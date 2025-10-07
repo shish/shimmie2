@@ -10,7 +10,7 @@ final class MetricsOTLPInfo extends ExtensionInfo
 
     public string $name = "Metrics (OTLP)";
     public array $authors = self::SHISH_AUTHOR;
-    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
+    public string $description = "Sends stats to an OTLP server";
     public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
-    public string $description = "Sends Shimmie stats to an OTLP server";
+    public array $dependencies = [OTLPCommonInfo::KEY];
 }
