@@ -10,7 +10,7 @@ final class LogOTLPInfo extends ExtensionInfo
 
     public string $name = "Logging (OTLP)";
     public array $authors = self::SHISH_AUTHOR;
-    public string $description = "Send log events to a network port";
-    public ExtensionVisibility $visibility = ExtensionVisibility::ADMIN;
+    public string $description = "Sends logs to an OTLP server";
     public ExtensionCategory $category = ExtensionCategory::OBSERVABILITY;
+    public array $dependencies = [OTLPCommon::class];
 }
