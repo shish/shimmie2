@@ -13,6 +13,7 @@ final class Ctx
     public static Database $database;
     public static EventBus $event_bus;
     public static Page $page;
+    public static \MicroOTLP\SpanBuilder $root_span;
     public static \MicroOTLP\Client $tracer;
     public static User $user;
 
@@ -58,6 +59,12 @@ final class Ctx
         $page = $_page;
         self::$page = $_page;
         return $_page;
+    }
+
+    public static function setRootSpan(\MicroOTLP\SpanBuilder $span): \MicroOTLP\SpanBuilder
+    {
+        self::$root_span = $span;
+        return $span;
     }
 
     public static function setTracer(\MicroOTLP\Client $tracer): \MicroOTLP\Client

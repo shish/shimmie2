@@ -46,6 +46,7 @@ Ctx::setTracer(new \MicroOTLP\Client(
     ],
 ));
 // Override TS to show that bootstrapping started in the past
+Ctx::setRootSpan(Ctx::$tracer->startSpan("Root", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9)));
 $sBoot = Ctx::$tracer->startSpan("Bootstrap", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9));
 _load_ext_files();
 // Depends on core files
@@ -70,11 +71,12 @@ function main(): int
 {
     // Ctx::$tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
     $sMain = Ctx::$tracer->startSpan(
-        $_SERVER["REQUEST_URI"] ?? "No Request",
+        "Main",
         [
-            "user" => $_COOKIE["shm_user"] ?? "No User",
-            "ip" => Network::get_real_ip(),
-            "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
+            "enduser.id" => $_COOKIE["shm_user"] ?? "No User",
+            "net.peer.ip" => Network::get_real_ip(),
+            "http.uri" => $_SERVER["REQUEST_URI"] ?? "No URI",
+            "http.user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
         ]
     );
 
@@ -117,6 +119,7 @@ function main(): int
             if (function_exists("fastcgi_finish_request")) {
                 fastcgi_finish_request();
             }
+            $sMain->end(success: true, attributes: ["http.status_code" => Ctx::$page->code]);
             $exit_code = 0;
         } catch (UserError $e) {
             if (Ctx::$database->is_transaction_open()) {
@@ -124,13 +127,17 @@ function main(): int
             }
             Ctx::$page->set_error($e);
             Ctx::$page->display();
+            // "User Error" is considered success from a system perspective
+            $sMain->end(success: true, message: (string)$e, attributes: ["http.status_code" => Ctx::$page->code]);
             $exit_code = 2;
         }
     } catch (\Throwable $e) {
         _fatal_error($e);
+        $code = is_a($e, SCoreException::class) ? $e->http_code : 500;
+        $sMain->end(success: false, message: (string)$e, attributes: ["http.status_code" => $code]);
         $exit_code = 1;
     } finally {
-        $sMain->end();
+        Ctx::$root_span->end();
         $iee?->run_shutdown_handlers();
     }
     return $exit_code;

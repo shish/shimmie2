@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fa7f01e10be9b5cc68d6bea47f1a74fc",
+    "content-hash": "73b98ef8dbd57d319d087ad7b069cc23",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -766,16 +766,16 @@
         },
         {
             "name": "shish/microotlp",
-            "version": "v0.0.10",
+            "version": "v0.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microotlp.git",
-                "reference": "aad28ef255eef7cb9b6b986c28012f7117401544"
+                "reference": "92eae6a3ca4c8a8eb9a45577c9a27153b1bc6e41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microotlp/zipball/aad28ef255eef7cb9b6b986c28012f7117401544",
-                "reference": "aad28ef255eef7cb9b6b986c28012f7117401544",
+                "url": "https://api.github.com/repos/shish/microotlp/zipball/92eae6a3ca4c8a8eb9a45577c9a27153b1bc6e41",
+                "reference": "92eae6a3ca4c8a8eb9a45577c9a27153b1bc6e41",
                 "shasum": ""
             },
             "require": {
@@ -813,9 +813,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microotlp/issues",
-                "source": "https://github.com/shish/microotlp/tree/v0.0.10"
+                "source": "https://github.com/shish/microotlp/tree/v0.0.11"
             },
-            "time": "2025-10-08T13:11:10+00:00"
+            "time": "2025-10-08T15:09:24+00:00"
         },
         {
             "name": "symfony/console",

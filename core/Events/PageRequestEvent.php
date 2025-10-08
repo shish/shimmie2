@@ -100,6 +100,8 @@ final class PageRequestEvent extends Event
             }
         }
 
+        Ctx::$root_span->setName("{$this->method} $name");
+
         // if we matched the method and the path, but the page requires
         // authentication and the user is not authenticated, then complain
         if ($authed && !defined("UNITTEST")) {
