@@ -30,6 +30,7 @@ final class TraceOTLP extends Extension
                 // Ignore upload because that always takes forever and isn't worth tracing
                 && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
             ) {
+                Ctx::$tracer->endAllSpans();
                 Ctx::$tracer->flushTraces(self::$traceFile);
             }
         });
