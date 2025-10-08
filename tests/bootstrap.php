@@ -33,6 +33,7 @@ if (file_exists("data/test-trace.json")) {
 sanitize_php();
 _set_up_shimmie_environment();
 Ctx::setTracer(new \MicroOTLP\Client());
+Ctx::setRootSpan(Ctx::$tracer->startSpan("Root"));
 $sBoot = Ctx::$tracer->startSpan("Test Bootstrap");
 _load_ext_files();
 Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
@@ -57,3 +58,4 @@ if (Ctx::$database->is_transaction_open()) {
     Ctx::$database->commit();
 }
 $sBoot->end();
+Ctx::$root_span->end();
