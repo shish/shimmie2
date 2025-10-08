@@ -9,13 +9,16 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected const ANON_NAME = "anonymous";
     protected const ADMIN_NAME = "demo";
     protected const USER_NAME = "test";
+    private static \MicroOTLP\SpanBuilder $classSpan;
+    private static \MicroOTLP\SpanBuilder $testSpan;
+    private static \MicroOTLP\SpanBuilder $innerSpan;
 
     /**
      * Start a DB transaction for each test class
      */
     public static function setUpBeforeClass(): void
     {
-        Ctx::$tracer->startSpan(get_called_class());
+        self::$classSpan = Ctx::$tracer->startSpan(get_called_class());
         Ctx::$database->begin_transaction();
         parent::setUpBeforeClass();
     }
@@ -25,8 +28,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
      */
     public function setUp(): void
     {
-        Ctx::$tracer->startSpan($this->name());
-        Ctx::$tracer->startSpan("setUp");
+        self::$testSpan = Ctx::$tracer->startSpan($this->name());
+        $sSetUp = Ctx::$tracer->startSpan("setUp");
 
         // Start a savepoint so we can roll back to it in tearDown
         Ctx::$database->execute("SAVEPOINT test_start");
@@ -51,8 +54,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         Ctx::setCache(load_cache(null));
         Ctx::setConfig(new DatabaseConfig(Ctx::$database));
 
-        Ctx::$tracer->endSpan();  # setUp
-        Ctx::$tracer->startSpan("test");
+        $sSetUp->end();
+        self::$innerSpan = Ctx::$tracer->startSpan("test");
     }
 
     public function tearDown(): void
@@ -64,15 +67,15 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         }
 
         Ctx::$database->execute("ROLLBACK TO test_start");
-        Ctx::$tracer->endSpan();  # test
-        Ctx::$tracer->endSpan();  # $this->getName()
+        self::$innerSpan->end();
+        self::$testSpan->end();
     }
 
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
         Ctx::$database->rollback();
-        Ctx::$tracer->endSpan();  # get_called_class()
+        self::$classSpan->end();
         Ctx::$tracer->endAllSpans();
         Ctx::$tracer->flush("data/test-trace.json");
     }

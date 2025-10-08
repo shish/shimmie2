@@ -464,9 +464,9 @@ function cache_get_or_set(string $key, callable $callback, ?int $ttl = null): mi
 {
     $value = Ctx::$cache->get($key);
     if ($value === null) {
-        Ctx::$tracer->startSpan("Cache Populate", ["key" => $key]);
+        $span = Ctx::$tracer->startSpan("Cache Populate", ["key" => $key]);
         $value = $callback();
-        Ctx::$tracer->endSpan();
+        $span->end();
         Ctx::$cache->set($key, $value, $ttl);
     }
     return $value;
