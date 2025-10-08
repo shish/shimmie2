@@ -25,7 +25,7 @@ final class EventBus
 
     public function __construct()
     {
-        Ctx::$tracer->startSpan("Load Event Listeners");
+        $span = Ctx::$tracer->startSpan("Load Event Listeners");
 
         $ver = \Safe\preg_replace("/[^a-zA-Z0-9\.]/", "_", SysConfig::getVersion());
         $key = md5(Extension::get_enabled_extensions_as_string());
@@ -47,7 +47,7 @@ final class EventBus
             $this->set_timeout((int)ini_get('max_execution_time') - 3);
         }
 
-        Ctx::$tracer->endSpan();
+        $span->end();
     }
 
     /**
@@ -144,24 +144,24 @@ final class EventBus
             return $event;
         }
 
-        Ctx::$tracer->startSpan($event_name);
+        $sEvent = Ctx::$tracer->startSpan($event_name);
         $method_name = "on".str_replace("Event", "", $event_name);
         foreach ($this->event_listeners[$event_name] as $listener) {
             if ($this->deadline && ftime() > $this->deadline) {
                 throw new TimeoutException("Timeout while sending $event_name");
             }
             // @phpstan-ignore-next-line
-            Ctx::$tracer->startSpan($this->namespaced_class_name(get_class($listener)));
+            $sListener = Ctx::$tracer->startSpan($this->namespaced_class_name(get_class($listener)));
             if (method_exists($listener, $method_name)) {
                 $listener->$method_name($event);
             }
-            Ctx::$tracer->endSpan();
+            $sListener->end();
             if ($event->stop_processing === true) {
                 break;
             }
         }
         $this->event_count++;
-        Ctx::$tracer->endSpan();
+        $sEvent->end();
 
         return $event;
     }
