@@ -77,9 +77,9 @@ final class GraphQL extends Extension
 
     public static function get_schema(): Schema
     {
-        Ctx::$tracer->startSpan("Create Schema");
+        $sSchema = Ctx::$tracer->startSpan("Create Schema");
         $schema = new \GQLA\Schema();
-        Ctx::$tracer->endSpan();
+        $sSchema->end();
         return $schema;
     }
 

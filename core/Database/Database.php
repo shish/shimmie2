@@ -100,17 +100,17 @@ class Database
      */
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
     {
+        $span = Ctx::$tracer->startSpan("Savepoint $name");
         try {
-            Ctx::$tracer->startSpan("Savepoint $name");
             // doing string interpolation because bound parameters don't work here
             $this->execute("SAVEPOINT $name");  // @phpstan-ignore-line
             $ret = $callback();
             $this->execute("RELEASE SAVEPOINT $name");  // @phpstan-ignore-line
-            Ctx::$tracer->endSpan();
+            $span->end(success: true);
             return $ret;
         } catch (\Exception $e) {
             $this->execute("ROLLBACK TO SAVEPOINT $name");  // @phpstan-ignore-line
-            Ctx::$tracer->endSpan();
+            $span->end(success: false, message: (string) $e);
             throw $e;
         }
     }

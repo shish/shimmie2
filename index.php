@@ -46,7 +46,7 @@ Ctx::setTracer(new \MicroOTLP\Client(
     ],
 ));
 // Override TS to show that bootstrapping started in the past
-Ctx::$tracer->startSpan("Bootstrap", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9));
+$sBoot = Ctx::$tracer->startSpan("Bootstrap", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9));
 _load_ext_files();
 // Depends on core files
 $cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
@@ -60,7 +60,7 @@ _load_theme_files();
 $page = Ctx::setPage(Themelet::get_theme_class(Page::class) ?? new Page());
 // $event_bus depends on ext/*/main.php being loaded
 Ctx::setEventBus(new EventBus());
-Ctx::$tracer->endSpan();
+$sBoot->end();
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Send events, display output                                               *
@@ -68,22 +68,22 @@ Ctx::$tracer->endSpan();
 
 function main(): int
 {
+    // Ctx::$tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
+    $sMain = Ctx::$tracer->startSpan(
+        $_SERVER["REQUEST_URI"] ?? "No Request",
+        [
+            "user" => $_COOKIE["shm_user"] ?? "No User",
+            "ip" => Network::get_real_ip(),
+            "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
+        ]
+    );
+
     $iee = null;
     // nested try-catch blocks so that we can try to handle user-errors
     // in a pretty and theme-customisable way, but if that breaks, the
     // breakage will be handled by the server-error handler
     try {
         try {
-            // Ctx::$tracer->mark($_SERVER["REQUEST_URI"] ?? "No Request");
-            Ctx::$tracer->startSpan(
-                $_SERVER["REQUEST_URI"] ?? "No Request",
-                [
-                    "user" => $_COOKIE["shm_user"] ?? "No User",
-                    "ip" => Network::get_real_ip(),
-                    "user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
-                ]
-            );
-
             if (!Ctx::$config->get(SetupConfig::NO_AUTO_DB_UPGRADE)) {
                 send_event(new DatabaseUpgradeEvent());
             }
@@ -130,7 +130,7 @@ function main(): int
         _fatal_error($e);
         $exit_code = 1;
     } finally {
-        Ctx::$tracer->endSpan();
+        $sMain->end();
         $iee?->run_shutdown_handlers();
     }
     return $exit_code;
