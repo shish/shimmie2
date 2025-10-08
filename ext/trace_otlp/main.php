@@ -21,11 +21,12 @@ final class TraceOTLP extends Extension
         }
 
         $event->add_shutdown_handler(function () {
+            $dur = (ftime() - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000;
             if (
                 // If tracing is enabled
                 self::$traceFile !== null
                 // And we took a long time
-                && (ftime() - $_SERVER["REQUEST_TIME_FLOAT"] > self::$traceThreshold)
+                && ($dur > self::$traceThreshold)
                 // Ignore upload because that always takes forever and isn't worth tracing
                 && ($_SERVER["REQUEST_URI"] ?? "") !== "/upload"
             ) {
