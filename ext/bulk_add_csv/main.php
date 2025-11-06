@@ -35,7 +35,7 @@ final class BulkAddCSV extends Extension
                     return Command::FAILURE;
                 }
 
-                $this->add_csv($input->getArgument('path-to-csv'));
+                $this->add_csv(new Path($input->getArgument('path-to-csv')));
                 return Command::SUCCESS;
             });
     }
