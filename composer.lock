@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73b98ef8dbd57d319d087ad7b069cc23",
+    "content-hash": "361e1c9cc304d36fec94854eed08465a",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -504,16 +504,16 @@
         },
         {
             "name": "shish/ffsphp",
-            "version": "v1.3.4",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/ffsphp.git",
-                "reference": "9f66d9c167772e3a2e6ee17789650b076aba8e5c"
+                "reference": "b8088d971a1e8a81f2eb2e16c79c0b92370e30b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/ffsphp/zipball/9f66d9c167772e3a2e6ee17789650b076aba8e5c",
-                "reference": "9f66d9c167772e3a2e6ee17789650b076aba8e5c",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/b8088d971a1e8a81f2eb2e16c79c0b92370e30b9",
+                "reference": "b8088d971a1e8a81f2eb2e16c79c0b92370e30b9",
                 "shasum": ""
             },
             "require": {
@@ -521,9 +521,9 @@
                 "php": "^8.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.64",
-                "phpstan/phpstan": "^2.0",
-                "phpunit/phpunit": "^11.0"
+                "friendsofphp/php-cs-fixer": "^3.89",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^11.5"
             },
             "type": "library",
             "autoload": {
@@ -547,9 +547,9 @@
             "homepage": "https://github.com/shish/ffsphp",
             "support": {
                 "issues": "https://github.com/shish/ffsphp/issues",
-                "source": "https://github.com/shish/ffsphp/tree/v1.3.4"
+                "source": "https://github.com/shish/ffsphp/tree/v1.4.0"
             },
-            "time": "2025-07-12T11:40:18+00:00"
+            "time": "2025-11-12T20:56:24+00:00"
         },
         {
             "name": "shish/gqla",
