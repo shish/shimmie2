@@ -133,6 +133,7 @@ jobs:
         run: php -v && composer -V
       - name: Validate composer.json and composer.lock
         run: composer validate
+      - uses: mfinelli/setup-imagemagick@v7
       - name: Install PHP dependencies
         run: composer install --no-progress
       - name: Run test suite
