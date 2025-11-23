@@ -11,7 +11,11 @@
          beStrictAboutOutputDuringTests="true"
          failOnRisky="true"
          failOnWarning="true">
-  <coverage/>
+  <coverage>
+    <report>
+        <html outputDirectory="data/coverage" lowUpperBound="50" highLowerBound="90"/>
+    </report>
+  </coverage>
   <testsuites>
     <testsuite name="core">
       <directory suffix="Test.php">core/</directory>
