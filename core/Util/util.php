@@ -379,7 +379,7 @@ function make_form(Url $target, bool $multipart = false, string $form_id = "", s
 const BYTE_DENOMINATIONS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 function human_filesize(int $bytes, int $decimals = 2): string
 {
-    $factor = floor((strlen(strval($bytes)) - 1) / 3);
+    $factor = (int)floor((strlen(strval($bytes)) - 1) / 3);
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @BYTE_DENOMINATIONS[$factor];
 }
 
