@@ -116,46 +116,49 @@ function renderCompletions(element) {
 
     // add children for top completions, with the selected one highlighted
     let word = getCurrentWord(element);
-    Object.keys(completions)
+    let filtered = Object.keys(completions)
         .filter((key) => {
             let k = key.toLowerCase();
             let [ops, term] = splitOperands(word);
             let w = term.toLowerCase();
             return k.startsWith(w) || k.split(":").some((k) => k.startsWith(w));
         })
-        .slice(0, 100)
-        .forEach((key, i) => {
-            let li = document.createElement("li");
-            li.innerText = completions[key].newtag
-                ? `${key} → ${completions[key].newtag} (${completions[key].count})`
-                : `${key} (${completions[key].count})`;
-            if (i === selected_completion) {
-                li.className = "selected";
+        .slice(0, 100);
+
+    element.completions = Object.fromEntries(Object.entries(element.completions).filter(([key]) => filtered.includes(key)));
+
+    filtered.forEach((key, i) => {
+        let li = document.createElement("li");
+        li.innerText = completions[key].newtag
+            ? `${key} → ${completions[key].newtag} (${completions[key].count})`
+            : `${key} (${completions[key].count})`;
+        if (i === selected_completion) {
+            li.className = "selected";
+        }
+        // on hover, select the completion
+        // (use mousemove rather than mouseover, because
+        // if the mouse is stationary, then we want the
+        // keyboard to be able to override it)
+        li.addEventListener("mousemove", () => {
+            // avoid re-rendering if the completion is already selected
+            if (element.selected_completion !== i) {
+                highlightCompletion(element, i);
             }
-            // on hover, select the completion
-            // (use mousemove rather than mouseover, because
-            // if the mouse is stationary, then we want the
-            // keyboard to be able to override it)
-            li.addEventListener("mousemove", () => {
-                // avoid re-rendering if the completion is already selected
-                if (element.selected_completion !== i) {
-                    highlightCompletion(element, i);
-                }
-            });
-            // on click, set the completion
-            // (mousedown is used instead of click because click is
-            // fired after blur, which causes the completion block to
-            // be removed before the click event is handled)
-            li.addEventListener("mousedown", (event) => {
-                setCompletion(element, key);
-                event.preventDefault();
-            });
-            li.addEventListener("touchstart", (event) => {
-                setCompletion(element, key);
-                event.preventDefault();
-            });
-            completions_el.appendChild(li);
         });
+        // on click, set the completion
+        // (mousedown is used instead of click because click is
+        // fired after blur, which causes the completion block to
+        // be removed before the click event is handled)
+        li.addEventListener("mousedown", (event) => {
+            setCompletion(element, key);
+            event.preventDefault();
+        });
+        li.addEventListener("touchstart", (event) => {
+            setCompletion(element, key);
+            event.preventDefault();
+        });
+        completions_el.appendChild(li);
+    });
 
     // insert the completion block after the element
     if (element.parentNode) {
