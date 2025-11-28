@@ -26,7 +26,7 @@ final class LogConsole extends Extension
             Log::debug("log_console", "Hello debug!");
             Log::info("log_console", "Hello info!");
             Log::warning("log_console", "Hello warning!");
-            $page->set_data(MimeType::TEXT, "You should see something in the log\n");
+            Ctx::$page->set_data(MimeType::TEXT, "You should see something in the log\n");
         }
         */
     }
@@ -79,7 +79,7 @@ final class LogConsole extends Extension
             $str = "$str\n";
         }
 
-        $fp = @fopen("php://stdout", "w");
+        $fp = @fopen(Ctx::$config->get(LogConsoleConfig::DEVICE), "w");
         if ($fp) {
             fwrite($fp, $str);
             fclose($fp);
