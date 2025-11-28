@@ -16,4 +16,19 @@ final class LogConsoleConfig extends ConfigGroup
 
     #[ConfigMeta("Log level", ConfigType::INT, default: LogLevel::INFO->value, options: "Shimmie2\LogLevel::names_to_levels")]
     public const LEVEL = "log_console_level";
+
+    #[ConfigMeta(
+        "Console Device",
+        ConfigType::STRING,
+        default: "/dev/tty",
+        options: [
+            "/dev/console" => "/dev/console",
+            "/dev/tty" => "/dev/tty",
+            "/dev/stdout" => "/dev/stdout",
+            "/dev/stderr" => "/dev/stderr",
+            "php://stdout" => "php://stdout",
+            "php://stderr" => "php://stderr",
+        ],
+    )]
+    public const DEVICE = "log_console_device";
 }
