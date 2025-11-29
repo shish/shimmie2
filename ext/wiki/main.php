@@ -153,6 +153,12 @@ final class Wiki extends Extension
                 } else {
                     throw new PermissionDenied("You are not allowed to edit this page");
                 }
+            } elseif ($action === "diff") {
+                $r1 = int_escape($event->GET->req('r1'));
+                $r2 = int_escape($event->GET->req('r2'));
+                $page1 = self::get_page($title, $r1);
+                $page2 = self::get_page($title, $r2);
+                $this->theme->display_page_diff($title, $page1, $page2);
             }
         }
         if ($event->page_matches("wiki/{title}/{action}", method: "POST")) {
