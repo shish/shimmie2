@@ -13,3 +13,6 @@
 	font-size: 1.5em;
 	background-color: #8881;;
 }
+.diff-html TD {
+    text-align: left;
+}
