@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, BR, DIV, HR, INPUT, P, TABLE, TD, TEXTAREA, TR, emptyHTML};
+use Jfcherng\Diff\{DiffHelper};
+
+use function MicroHTML\{A, BR, DIV, HR, INPUT, P, STYLE, TABLE, TD, TEXTAREA, TR, emptyHTML, rawHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -71,13 +73,23 @@ class WikiTheme extends Themelet
      */
     public function display_page_history(string $title, array $history): void
     {
-        $html = TABLE(["class" => "zebra"]);
+        $table = TABLE(["class" => "zebra"]);
         foreach ($history as $row) {
-            $html->appendChild(TR(
+            $table->appendChild(TR(
+                TD(INPUT(["type" => "radio", "name" => "r1", "value" => $row['revision']])),
+                TD(INPUT(["type" => "radio", "name" => "r2", "value" => $row['revision']])),
                 TD(A(["href" => make_link("wiki/$title", ["revision" => $row['revision']])], $row['revision'])),
                 TD($row['date'])
             ));
         }
+        $html = SHM_FORM(
+            method: "GET",
+            action: make_link("wiki/$title/diff"),
+            children: [
+                $table,
+                SHM_SUBMIT("Compare Revisions", ["class" => "setupsubmit"]),
+            ],
+        );
         Ctx::$page->set_title($title);
         $this->display_navigation();
         Ctx::$page->add_block(new Block($title, $html));
@@ -88,6 +100,15 @@ class WikiTheme extends Themelet
         Ctx::$page->set_title($wiki_page->title);
         $this->display_navigation();
         Ctx::$page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
+    }
+
+    public function display_page_diff(string $title, WikiPage $page1, WikiPage $page2): void
+    {
+        Ctx::$page->set_title("Diff for $title");
+        $this->display_navigation();
+        $diff_html = DiffHelper::calculate($page1->body, $page2->body, "SideBySide");
+        Ctx::$page->add_html_header(STYLE(DiffHelper::getStyleSheet()));
+        Ctx::$page->add_block(new Block("Diff for $title", rawHTML($diff_html)));
     }
 
     protected function create_edit_html(WikiPage $page): HTMLElement
@@ -107,7 +128,7 @@ class WikiTheme extends Themelet
             TEXTAREA(["name" => "body", "style" => "width: 100%", "rows" => 20], $page->body),
             $lock,
             BR(),
-            SHM_SUBMIT("Save")
+            SHM_SUBMIT("Save", ["class" => "setupsubmit"])
         );
     }
 

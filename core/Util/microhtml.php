@@ -40,6 +40,7 @@ function SHM_IP(string $ip, string $ban_reason): ?HTMLElement
 
 
 /**
+ * @param "GET"|"POST" $method
  * @param array<string|HTMLElement|null> $children
  */
 function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string $onsubmit = "", string $name = "", string $method = "POST", array $children = []): HTMLElement
@@ -65,7 +66,7 @@ function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string 
     return FORM(
         $attrs,
         $method === "GET" ? INPUT(["type" => "hidden", "name" => "q", "value" => $action->getPath()]) : null,
-        INPUT(["type" => "hidden", "name" => "auth_token", "value" => Ctx::$user->get_auth_token()]),
+        $method !== "GET" ? INPUT(["type" => "hidden", "name" => "auth_token", "value" => Ctx::$user->get_auth_token()]) : null,
         ...$children,
     );
 }
