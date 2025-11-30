@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{BR, DIV, SPAN, emptyHTML};
-
-use MicroHTML\HTMLElement;
-
+/** @extends Extension<TagEditCloudTheme> */
 final class TagEditCloud extends Extension
 {
     public const KEY = "tag_editcloud";
@@ -15,31 +12,27 @@ final class TagEditCloud extends Extension
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         if ($this->can_tag($event->image)) {
-            $html = $this->build_tag_map($event->image);
-            if (!is_null($html)) {
-                $event->add_part($html, 40);
+            $data = $this->get_cloud_data($event->image);
+            if (!is_null($data)) {
+                $event->add_part($this->theme->build_tag_map(
+                    $data,
+                    $event->image->get_tag_array()
+                ), 40);
             }
         }
     }
 
-    private function build_tag_map(Image $image): ?HTMLElement
+    /**
+     * @return array<array{tag: string, scaled: float, count: int}>|null
+     */
+    private function get_cloud_data(Image $image): array|null
     {
         global $database;
 
         $sort_method = Ctx::$config->get(TagEditCloudConfig::SORT);
         $tags_min = Ctx::$config->get(TagEditCloudConfig::MIN_USAGE);
-        $used_first = Ctx::$config->get(TagEditCloudConfig::USED_FIRST);
         $max_count = Ctx::$config->get(TagEditCloudConfig::MAX_COUNT);
-        $def_count = Ctx::$config->get(TagEditCloudConfig::DEF_COUNT);
         $ignore_tags = Tag::explode(Ctx::$config->get(TagEditCloudConfig::IGNORE_TAGS));
-
-        $cat_color = [];
-        if (TagCategoriesInfo::is_enabled()) {
-            $categories = $database->get_all("SELECT category, color FROM image_tag_categories");
-            foreach ($categories as $row) {
-                $cat_color[$row['category']] = $row['color'];
-            }
-        }
 
         switch ($sort_method) {
             case 'r':
@@ -99,104 +92,7 @@ final class TagEditCloud extends Extension
                 );
                 break;
         }
-
-        $cloud = emptyHTML();
-        $precloud = emptyHTML();
-        $postcloud = emptyHTML();
-
-        $counter = 1;
-        $last_cat = null;
-        $last_used_cat = null;
-        foreach ($tag_data as $row) {
-            $full_tag = $row['tag'];
-
-            $current_cat = "";
-            if (TagCategoriesInfo::is_enabled()) {
-                $tc = explode(':', $row['tag']);
-                if (isset($tc[1]) && isset($cat_color[$tc[0]])) {
-                    $current_cat = $tc[0];
-                    $h_tag = $tc[1];
-                    $color = '; color:'.$cat_color[$tc[0]];
-                } else {
-                    $h_tag = $row['tag'];
-                    $color = '';
-                }
-            } else {
-                $h_tag = $row['tag'];
-                $color = '';
-            }
-
-            $size = sprintf("%.2f", max($row['scaled'], 0.5));
-            $js = 'tageditcloud_toggle_tag(this,'.\Safe\json_encode($full_tag).')';
-
-            if (in_array($row['tag'], $image->get_tag_array())) {
-                $entry = SPAN([
-                    'onclick' => $js,
-                    'class' => 'tag-selected',
-                    'style' => "font-size: {$size}em$color",
-                    'title' => $row['count'],
-                ], $h_tag);
-                if ($used_first) {
-                    if ($last_used_cat !== $current_cat && $last_used_cat !== null) {
-                        //$precloud .= "</span><span class='tag-category'>\n";
-                    }
-                    $last_used_cat = $current_cat;
-                    $precloud->appendChild($entry);
-                    continue;
-                }
-            } else {
-                $entry = SPAN([
-                    'onclick' => $js,
-                    'style' => "font-size: {$size}em$color",
-                    'title' => $row['count'],
-                ], $h_tag);
-            }
-
-            if ($counter++ <= $def_count) {
-                if ($last_cat !== $current_cat && $last_cat !== null) {
-                    //$cloud .= "</span><span class='tag-category'>\n";
-                } //TODO: Maybe add a title for the category after the span opens?
-                $cloud->appendChild($entry);
-            } else {
-                if ($last_cat !== $current_cat && $counter !== $def_count + 2) {
-                    //$postcloud .= "</span><span class='tag-category'>\n";
-                }
-                $postcloud->appendChild($entry);
-            }
-
-            $last_cat = $current_cat;
-        }
-
-        if (strlen((string)$postcloud) > 0) {
-            $postcloud = DIV(
-                ["id" => "tagcloud_extra", "style" => "display: none;"],
-                SPAN(["class" => "tag-category"], $postcloud)
-            );
-        }
-
-        $html = emptyHTML();
-        if (strlen((string)$precloud) > 0) {
-            $html->appendChild(DIV(
-                ["id" => "tagcloud_set"],
-                SPAN(["class" => "tag-category"], $precloud)
-            ));
-        }
-        $html->appendChild(DIV(
-            ["id" => "tagcloud_unset"],
-            SPAN(["class" => "tag-category"], $cloud),
-            $postcloud
-        ));
-        if ($sort_method !== 'a' && $counter > $def_count) {
-            $rem = $counter - $def_count;
-            $html->appendChild(emptyHTML(
-                BR(),
-                "[",
-                SPAN(["onclick" => "tageditcloud_toggle_extra(this);", "style" => "color: #0000EF; font-weight:bold;"], "show {$rem} more tags"),
-                "]"
-            ));
-        }
-
-        return DIV(["id" => "tageditcloud", "class" => "tageditcloud"], $html);
+        return $tag_data;
     }
 
     private function can_tag(Image $image): bool
