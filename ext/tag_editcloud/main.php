@@ -105,16 +105,12 @@ final class TagEditCloud extends Extension
         $postcloud = emptyHTML();
 
         $counter = 1;
-        $last_cat = null;
-        $last_used_cat = null;
         foreach ($tag_data as $row) {
             $full_tag = $row['tag'];
 
-            $current_cat = "";
             if (TagCategoriesInfo::is_enabled()) {
                 $tc = explode(':', $row['tag']);
                 if (isset($tc[1]) && isset($cat_color[$tc[0]])) {
-                    $current_cat = $tc[0];
                     $h_tag = $tc[1];
                     $color = '; color:'.$cat_color[$tc[0]];
                 } else {
@@ -137,10 +133,6 @@ final class TagEditCloud extends Extension
                     'title' => $row['count'],
                 ], $h_tag);
                 if ($used_first) {
-                    if ($last_used_cat !== $current_cat && $last_used_cat !== null) {
-                        //$precloud .= "</span><span class='tag-category'>\n";
-                    }
-                    $last_used_cat = $current_cat;
                     $precloud->appendChild($entry);
                     continue;
                 }
@@ -153,18 +145,10 @@ final class TagEditCloud extends Extension
             }
 
             if ($counter++ <= $def_count) {
-                if ($last_cat !== $current_cat && $last_cat !== null) {
-                    //$cloud .= "</span><span class='tag-category'>\n";
-                } //TODO: Maybe add a title for the category after the span opens?
                 $cloud->appendChild($entry);
             } else {
-                if ($last_cat !== $current_cat && $counter !== $def_count + 2) {
-                    //$postcloud .= "</span><span class='tag-category'>\n";
-                }
                 $postcloud->appendChild($entry);
             }
-
-            $last_cat = $current_cat;
         }
 
         if (strlen((string)$postcloud) > 0) {
