@@ -8,6 +8,8 @@ about: Create a report to help us improve
 (You can get all these stats from `http://<your site>/system_info`)
 
  - Shimmie version:
+ - Install method: [Docker, Git, Zip, ...]
+ - Server OS: [Windows 11, Debian, Arch, MacOS, ...]
  - Database: [mysql, postgres, ...]
  - Web server: [apache, nginx, ...]
 
