@@ -43,10 +43,9 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
+                new ImgCondition(new Querylet("trash != TRUE")),
+                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                    "private_owner_id" => 1])),
                 new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
             ],
             "images.id DESC"
@@ -60,10 +59,9 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
+                new ImgCondition(new Querylet("trash != TRUE")),
+                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                    "private_owner_id" => 1])),
                 new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
                 new ImgCondition(new Querylet("images.hash = :hash", ["hash" => "1234567890"])),
             ],
@@ -78,10 +76,9 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
+                new ImgCondition(new Querylet("trash != TRUE")),
+                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                    "private_owner_id" => 1])),
                 new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
                 new ImgCondition(new Querylet("width / :width1 = height / :height1", ['width1' => 42,
                 'height1' => 12345])),
@@ -97,10 +94,9 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != :true", ["true" => true])),
-                new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
-                    "private_owner_id" => 1,
-                    "true" => true])),
+                new ImgCondition(new Querylet("trash != TRUE")),
+                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                    "private_owner_id" => 1])),
                 new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
             ],
             "images.numeric_score DESC"
