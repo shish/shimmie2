@@ -54,7 +54,7 @@ final class NotATag extends Extension
 
     public function onTagSet(TagSetEvent $event): void
     {
-        if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
+        if (Ctx::$user->can(NotATagPermission::IGNORE_INVALID_TAGS)) {
             $event->new_tags = $this->strip($event->new_tags);
         } else {
             $this->scan($event->new_tags);
@@ -114,7 +114,7 @@ final class NotATag extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
-            if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
+            if (Ctx::$user->can(NotATagPermission::MANAGE_UNTAG_LIST)) {
                 $event->add_nav_link(make_link('untag/list'), "UnTags");
             }
         }
@@ -122,7 +122,7 @@ final class NotATag extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
+        if (Ctx::$user->can(NotATagPermission::MANAGE_UNTAG_LIST)) {
             $event->add_link("UnTags", make_link("untag/list"));
         }
     }
@@ -132,14 +132,14 @@ final class NotATag extends Extension
         $page = Ctx::$page;
         $database = Ctx::$database;
 
-        if ($event->page_matches("untag/add", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
+        if ($event->page_matches("untag/add", method: "POST", permission: NotATagPermission::MANAGE_UNTAG_LIST)) {
             $database->execute(
                 "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
                 ["tag" => $event->POST->req('c_tag'), "redirect" => $event->POST->req('c_redirect')]
             );
             $page->set_redirect(Url::referer_or());
         }
-        if ($event->page_matches("untag/remove", method: "POST", permission: ImageHashBanPermission::BAN_IMAGE)) {
+        if ($event->page_matches("untag/remove", method: "POST", permission: NotATagPermission::MANAGE_UNTAG_LIST)) {
             $database->execute(
                 "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",
                 ["tag" => $event->POST->req('d_tag')]
