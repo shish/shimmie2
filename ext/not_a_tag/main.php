@@ -91,14 +91,21 @@ final class NotATag extends Extension
         $untags = Ctx::$database->get_col("SELECT LOWER(tag) FROM untags");
 
         $ok_tags = [];
+        $stripped_tags = [];
         foreach ($tags as $tag) {
             if (!in_array(strtolower($tag), $untags)) {
                 $ok_tags[] = $tag;
+            } else {
+                $stripped_tags[] = $tag;
             }
         }
 
         if (count($ok_tags) === 0) {
             $ok_tags = ["tagme"];
+        }
+
+        if (count($stripped_tags) > 0) {
+            Ctx::$page->flash("Invalid tags stripped: " . implode(", ", $stripped_tags));
         }
 
         return $ok_tags;
