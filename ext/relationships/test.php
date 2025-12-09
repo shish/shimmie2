@@ -106,8 +106,7 @@ final class RelationshipsTest extends ShimmiePHPUnitTestCase
 
         global $database;
         $database->execute(
-            "UPDATE images SET parent_id=NULL, has_children=:false",
-            ["false" => false]
+            "UPDATE images SET parent_id=NULL, has_children=FALSE"
         );
         // FIXME: send_event(new ImageRelationshipSetEvent($image_2->id, null));
 

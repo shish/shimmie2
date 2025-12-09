@@ -202,13 +202,13 @@ final class Upgrade extends Extension
                 // them into one big transaction would not be a good idea.
                 $database->commit();
             }
-            $database->execute("UPDATE images SET lossless = :t, video = :t WHERE ext IN ('swf')", ["t" => true]);
-            $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :t WHERE ext IN ('mp3')", ["t" => true, "f" => false]);
-            $database->execute("UPDATE images SET lossless = :f, video = :f, audio = :f WHERE ext IN ('jpg','jpeg')", ["f" => false]);
-            $database->execute("UPDATE images SET lossless = :t, video = :f, audio = :f WHERE ext IN ('ico','ani','cur','png','svg')", ["t" => true, "f" => false]);
-            $database->execute("UPDATE images SET lossless = :t, audio = :f WHERE ext IN ('gif')", ["t" => true, "f" => false]);
-            $database->execute("UPDATE images SET audio = :f WHERE ext IN ('webp')", ["f" => false]);
-            $database->execute("UPDATE images SET lossless = :f, video = :t WHERE ext IN ('flv','mp4','m4v','ogv','webm')", ["t" => true, "f" => false]);
+            $database->execute("UPDATE images SET lossless = TRUE, video = TRUE WHERE ext IN ('swf')");
+            $database->execute("UPDATE images SET lossless = FALSE, video = FALSE, audio = TRUE WHERE ext IN ('mp3')");
+            $database->execute("UPDATE images SET lossless = FALSE, video = FALSE, audio = FALSE WHERE ext IN ('jpg','jpeg')");
+            $database->execute("UPDATE images SET lossless = TRUE, video = FALSE, audio = FALSE WHERE ext IN ('ico','ani','cur','png','svg')");
+            $database->execute("UPDATE images SET lossless = TRUE, audio = FALSE WHERE ext IN ('gif')");
+            $database->execute("UPDATE images SET audio = FALSE WHERE ext IN ('webp')");
+            $database->execute("UPDATE images SET lossless = FALSE, video = TRUE WHERE ext IN ('flv','mp4','m4v','ogv','webm')");
             $this->set_version(21);
             $database->begin_transaction();
         }

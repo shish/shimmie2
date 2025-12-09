@@ -147,7 +147,7 @@ final class Media extends Extension
             if ($field === "unknown") {
                 $event->add_querylet(new Querylet("video IS NULL OR audio IS NULL OR image IS NULL"));
             } else {
-                $event->add_querylet(new Querylet("$field = :true", ["true" => true]));
+                $event->add_querylet(new Querylet("$field = TRUE"));
             }
         } elseif ($matches = $event->matches("/^ratio(:|<=|<|=|>|>=)(\d+):(\d+)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";
@@ -544,8 +544,8 @@ final class Media extends Extension
         }
 
         if ($this->get_version() < 5) {
-            $database->execute("UPDATE images SET image = :f WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')", ["f" => false]);
-            $database->execute("UPDATE images SET image = :t WHERE ext IN ('jpg','jpeg','ico','cur','png')", ["t" => true]);
+            $database->execute("UPDATE images SET image = FALSE WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')");
+            $database->execute("UPDATE images SET image = TRUE WHERE ext IN ('jpg','jpeg','ico','cur','png')");
             $this->set_version(5);
         }
     }

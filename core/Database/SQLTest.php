@@ -167,4 +167,15 @@ final class SQLTest extends ShimmiePHPUnitTestCase
             "SCORE_ILIKE is consistently case-insensitive for utf-8"
         );
     }
+
+    public function test_booleans(): void
+    {
+        self::assertTrue(bool_escape(Ctx::$database->get_one("SELECT :true", ["true" => true])), "True parameter");
+        self::assertFalse(bool_escape(Ctx::$database->get_one("SELECT :false", ["false" => false])), "False parameter");
+        self::assertTrue(bool_escape(Ctx::$database->get_one("SELECT TRUE")), "TRUE literal");
+        self::assertFalse(bool_escape(Ctx::$database->get_one("SELECT FALSE")), "FALSE literal");
+
+        self::assertTrue(bool_escape(Ctx::$database->get_one("SELECT TRUE = :true", ["true" => true])), "TRUE comparison");
+        self::assertTrue(bool_escape(Ctx::$database->get_one("SELECT FALSE = :false", ["false" => false])), "FALSE comparison");
+    }
 }
