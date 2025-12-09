@@ -729,8 +729,7 @@ final class Pools extends Extension
             $query .= "AND i.rating IN (" . Ratings::privs_to_sql(Ratings::get_user_class_privs(Ctx::$user)) . ")";
         }
         if (TrashInfo::is_enabled()) {
-            $query .= " AND trash != :true";
-            $params["true"] = true;
+            $query .= " AND trash != TRUE";
         }
 
         $result = Ctx::$database->get_all(

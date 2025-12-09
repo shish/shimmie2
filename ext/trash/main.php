@@ -82,12 +82,12 @@ final class Trash extends Extension
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term) && $this->no_trash_query($event->context)) {
-            $event->add_querylet(new Querylet("trash != :true", ["true" => true]));
+            $event->add_querylet(new Querylet("trash != TRUE"));
         }
 
         if ($event->matches(self::SEARCH_REGEXP)) {
             if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
-                $event->add_querylet(new Querylet("trash = :true", ["true" => true]));
+                $event->add_querylet(new Querylet("trash = TRUE"));
             }
         }
     }
