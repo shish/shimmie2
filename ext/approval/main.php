@@ -97,7 +97,7 @@ final class Approval extends Extension
     public const SEARCH_REGEXP = "/^approved[=:](yes|no)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if (is_null($event->term) && $this->no_approval_query($event->context) && !defined("UNITTEST")) {
+        if (is_null($event->term) && $this->no_approval_query($event->context)) {
             $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
         }
 

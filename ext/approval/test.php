@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 final class ApprovalTest extends ShimmiePHPUnitTestCase
 {
+    // Everything is auto-approved in unit-test mode,
     public function testNoApprovalNeeded(): void
     {
         self::log_in_as_user();
@@ -13,14 +14,13 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
         self::assert_search_results(["some_tag"], [$image_id]);
     }
 
-    /*
-    // Approvals are always automatic in unit-test mode,
-    // so we can't test this
+    // Test "not approved yet" case by posting and then immediately disapproving
     public function testApprovalNeeded(): void
     {
         // use can post but not see what they posted
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "some_tag");
+        Approval::disapprove_image($image_id);
         self::assert_search_results(["some_tag"], []);
 
         // admin can approve
@@ -33,5 +33,4 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         self::assert_search_results(["some_tag"], [$image_id]);
     }
-    */
 }
