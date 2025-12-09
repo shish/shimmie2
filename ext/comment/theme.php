@@ -108,12 +108,26 @@ class CommentListTheme extends Themelet
     /**
      * Show comments for an image.
      *
+     * @param Image $image
      * @param Comment[] $comments
+     * @param bool $postbox
+     * @param bool $comments_locked
      */
-    public function display_image_comments(Image $image, array $comments, bool $postbox): void
+    public function display_image_comments(Image $image, array $comments, bool $postbox, bool $comments_locked): void
     {
         $this->show_anon_id = true;
         $html = emptyHTML();
+
+        // Show lock status notice
+        if ($comments_locked) {
+            $html->appendChild(
+                DIV(
+                    ["class" => "comment_lock_status"],
+                    P(["class" => "comment_locked_notice"], "🔒 Comments are locked on this post")
+                )
+            );
+        }
+
         foreach ($comments as $comment) {
             $html->appendChild($this->comment_to_html($comment));
         }
@@ -258,7 +272,18 @@ class CommentListTheme extends Themelet
             SHM_COMMAND_EXAMPLE("comments>0", "Returns posts with 1 or more comments"),
             P("Can use <, <=, >, >=, or =."),
             SHM_COMMAND_EXAMPLE("commented_by=username", "Returns posts that have been commented on by \"username\"."),
+            SHM_COMMAND_EXAMPLE("comments_locked=yes", "Returns posts with locked comments"),
+            SHM_COMMAND_EXAMPLE("comments_locked=no", "Returns posts with unlocked comments"),
             //SHM_COMMAND_EXAMPLE("commented_by_userno=123", "Returns posts that have been commented on by user 123."),
+        );
+    }
+
+    public function get_comments_lock_editor_html(bool $comments_locked): HTMLElement
+    {
+        return SHM_POST_INFO(
+            "Comments Locked",
+            $comments_locked ? "Yes" : "No",
+            Ctx::$user->can(CommentPermission::EDIT_COMMENT_LOCK) ? INPUT(["type" => "checkbox", "name" => "comments_locked", "checked" => $comments_locked]) : null
         );
     }
 }
