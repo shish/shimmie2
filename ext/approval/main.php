@@ -81,7 +81,7 @@ final class Approval extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
-            if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
+            if (!Ctx::$user->is_anonymous()) {
                 $event->add_nav_link(search_link(['approved=no']), "Pending Approval", order: 60);
             }
         }
@@ -89,7 +89,7 @@ final class Approval extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
+        if (!Ctx::$user->is_anonymous()) {
             $event->add_link("Pending Approval", search_link(["approved=no"]), 60);
         }
     }
@@ -97,13 +97,26 @@ final class Approval extends Extension
     public const SEARCH_REGEXP = "/^approved[=:](yes|no)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        if (is_null($event->term) && $this->no_approval_query($event->context) && !defined("UNITTEST")) {
+        if (is_null($event->term) && $this->no_approval_query($event->context)) {
             $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
         }
 
         if ($matches = $event->matches(self::SEARCH_REGEXP)) {
-            if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE) && strtolower($matches[1]) === "no") {
-                $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
+            if (strtolower($matches[1]) === "no") {
+                // Admins can see all unapproved posts
+                if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
+                    $event->add_querylet(new Querylet("approved != :true", ["true" => true]));
+                }
+                // Regular users can see their own unapproved posts
+                elseif (!Ctx::$user->is_anonymous()) {
+                    $event->add_querylet(new Querylet(
+                        "approved != :true AND owner_id = :approval_owner_id",
+                        ["true" => true, "approval_owner_id" => Ctx::$user->id]
+                    ));
+                } else {
+                    // Anonymous users can't see unapproved posts
+                    $event->add_querylet(new Querylet("1=0"));
+                }
             } else {
                 $event->add_querylet(new Querylet("approved = :true", ["true" => true]));
             }
@@ -113,7 +126,7 @@ final class Approval extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
-            if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
+            if (!Ctx::$user->is_anonymous()) {
                 $event->add_section("Approval", $this->theme->get_help_html());
             }
         }

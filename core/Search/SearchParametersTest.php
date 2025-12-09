@@ -44,6 +44,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             ],
             [
                 new ImgCondition(new Querylet("trash != :true", ["true" => true])),
+                new ImgCondition(new Querylet("approved = :true", ["true" => true])),
                 new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1,
                     "true" => true])),
@@ -61,6 +62,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             ],
             [
                 new ImgCondition(new Querylet("trash != :true", ["true" => true])),
+                new ImgCondition(new Querylet("approved = :true", ["true" => true])),
                 new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1,
                     "true" => true])),
@@ -79,6 +81,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             ],
             [
                 new ImgCondition(new Querylet("trash != :true", ["true" => true])),
+                new ImgCondition(new Querylet("approved = :true", ["true" => true])),
                 new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1,
                     "true" => true])),
@@ -98,6 +101,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             ],
             [
                 new ImgCondition(new Querylet("trash != :true", ["true" => true])),
+                new ImgCondition(new Querylet("approved = :true", ["true" => true])),
                 new ImgCondition(new Querylet("private != :true OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1,
                     "true" => true])),
