@@ -13,11 +13,25 @@ class ApprovalTheme extends Themelet
 {
     public function get_help_html(): HTMLElement
     {
-        return emptyHTML(
+        $help_text = emptyHTML(
             P("Search for posts that are approved/not approved."),
             SHM_COMMAND_EXAMPLE("approved=yes", "Returns posts that have been approved."),
-            SHM_COMMAND_EXAMPLE("approved=no", "Returns posts that have not been approved.")
         );
+
+        if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
+            $help_text = emptyHTML(
+                $help_text,
+                SHM_COMMAND_EXAMPLE("approved=no", "Returns posts that have not been approved.")
+            );
+        } else {
+            $help_text = emptyHTML(
+                $help_text,
+                SHM_COMMAND_EXAMPLE("approved=no", "Returns your own posts that have not been approved."),
+                SHM_COMMAND_EXAMPLE("approved=no user=username", "Returns your own unapproved posts (only works with your own username).")
+            );
+        }
+
+        return $help_text;
     }
 
     public function display_admin_form(): void
