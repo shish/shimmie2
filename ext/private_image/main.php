@@ -73,13 +73,13 @@ final class PrivateImage extends Extension
             if ($show_private) {
                 $event->add_querylet(
                     new Querylet(
-                        "private != :true OR owner_id = :private_owner_id",
-                        ["private_owner_id" => Ctx::$user->id, "true" => true]
+                        "private != TRUE OR owner_id = :private_owner_id",
+                        ["private_owner_id" => Ctx::$user->id]
                     )
                 );
             } else {
                 $event->add_querylet(
-                    new Querylet("private != :true", ["true" => true])
+                    new Querylet("private != TRUE")
                 );
             }
         }
@@ -89,12 +89,10 @@ final class PrivateImage extends Extension
             $query = "";
             switch (strtolower($matches[1])) {
                 case "no":
-                    $query .= "private != :true";
-                    $params["true"] = true;
+                    $query .= "private != TRUE";
                     break;
                 case "yes":
-                    $query .= "private = :true";
-                    $params["true"] = true;
+                    $query .= "private = TRUE";
 
                     // Admins can view others private images, but they have to specify the user
                     if (!Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES) ||
@@ -104,8 +102,7 @@ final class PrivateImage extends Extension
                     }
                     break;
                 case "any":
-                    $query .= "private != :true OR owner_id = :private_owner_id";
-                    $params["true"] = true;
+                    $query .= "private != TRUE OR owner_id = :private_owner_id";
                     $params["private_owner_id"] = Ctx::$user->id;
                     break;
             }
@@ -138,8 +135,8 @@ final class PrivateImage extends Extension
         global $database;
 
         $database->execute(
-            "UPDATE images SET private = :true WHERE id = :id AND private = :false",
-            ["id" => $image_id, "true" => true, "false" => false]
+            "UPDATE images SET private = TRUE WHERE id = :id AND private = FALSE",
+            ["id" => $image_id]
         );
     }
 
@@ -148,8 +145,8 @@ final class PrivateImage extends Extension
         global $database;
 
         $database->execute(
-            "UPDATE images SET private = :false WHERE id = :id AND private = :true",
-            ["id" => $image_id, "true" => true, "false" => false]
+            "UPDATE images SET private = FALSE WHERE id = :id AND private = TRUE",
+            ["id" => $image_id]
         );
     }
 
