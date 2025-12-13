@@ -398,111 +398,104 @@ final class Media extends Extension
             throw new MediaException("Could not create output image with dimensions $new_width x $new_height ");
         }
 
-        try {
-            // Handle transparent images
-            switch ($info[2]) {
-                case IMAGETYPE_GIF:
-                    $transparency = imagecolortransparent($image);
-                    $pallet_size = imagecolorstotal($image);
+        // Handle transparent images
+        switch ($info[2]) {
+            case IMAGETYPE_GIF:
+                $transparency = imagecolortransparent($image);
+                $pallet_size = imagecolorstotal($image);
 
-                    // If we have a specific transparent color
-                    if ($transparency >= 0 && $transparency < $pallet_size) {
-                        // Get the original image's transparent color's RGB values
-                        $transparent_color = imagecolorsforindex($image, $transparency);
+                // If we have a specific transparent color
+                if ($transparency >= 0 && $transparency < $pallet_size) {
+                    // Get the original image's transparent color's RGB values
+                    $transparent_color = imagecolorsforindex($image, $transparency);
 
-                        // Allocate the same color in the new image resource
-                        $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
-                        if ($transparency === false) {
-                            throw new MediaException("Unable to allocate transparent color");
-                        }
-
-                        // Completely fill the background of the new image with allocated color.
-                        if (imagefill($image_resized, 0, 0, $transparency) === false) {
-                            throw new MediaException("Unable to fill new image with transparent color");
-                        }
-
-                        // Set the background color for new image to transparent
-                        imagecolortransparent($image_resized, $transparency);
-                    }
-                    break;
-                case IMAGETYPE_PNG:
-                case IMAGETYPE_WEBP:
-                    //
-                    // More info here:  https://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
-                    //
-                    if (imagealphablending($image_resized, false) === false) {
-                        throw new MediaException("Unable to disable image alpha blending");
-                    }
-                    if (imagesavealpha($image_resized, true) === false) {
-                        throw new MediaException("Unable to enable image save alpha");
-                    }
-                    $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
-                    if ($transparent_color === false) {
+                    // Allocate the same color in the new image resource
+                    $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
+                    if ($transparency === false) {
                         throw new MediaException("Unable to allocate transparent color");
                     }
-                    if (imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color) === false) {
+
+                    // Completely fill the background of the new image with allocated color.
+                    if (imagefill($image_resized, 0, 0, $transparency) === false) {
                         throw new MediaException("Unable to fill new image with transparent color");
                     }
-                    break;
-            }
 
-            // Actually resize the image.
-            if (imagecopyresampled(
-                $image_resized,
-                $image,
-                0,
-                0,
-                0,
-                0,
-                $new_width,
-                $new_height,
-                $width,
-                $height
-            ) === false) {
-                throw new MediaException("Unable to copy resized image data to new image");
-            }
+                    // Set the background color for new image to transparent
+                    imagecolortransparent($image_resized, $transparency);
+                }
+                break;
+            case IMAGETYPE_PNG:
+            case IMAGETYPE_WEBP:
+                //
+                // More info here:  https://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
+                //
+                if (imagealphablending($image_resized, false) === false) {
+                    throw new MediaException("Unable to disable image alpha blending");
+                }
+                if (imagesavealpha($image_resized, true) === false) {
+                    throw new MediaException("Unable to enable image save alpha");
+                }
+                $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
+                if ($transparent_color === false) {
+                    throw new MediaException("Unable to allocate transparent color");
+                }
+                if (imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color) === false) {
+                    throw new MediaException("Unable to fill new image with transparent color");
+                }
+                break;
+        }
 
-            switch ($output_mime->base) {
-                case MimeType::BMP:
-                case MimeType::JPEG:
-                    // In case of alpha channels
-                    $width = imagesx($image_resized);
-                    $height = imagesy($image_resized);
-                    $new_image = imagecreatetruecolor($width, $height);
-                    if ($new_image === false) {
-                        throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
-                    }
+        // Actually resize the image.
+        if (imagecopyresampled(
+            $image_resized,
+            $image,
+            0,
+            0,
+            0,
+            0,
+            $new_width,
+            $new_height,
+            $width,
+            $height
+        ) === false) {
+            throw new MediaException("Unable to copy resized image data to new image");
+        }
 
-                    $background_color = Media::hex_color_allocate($new_image, $alpha_color);
-                    if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
-                        throw new ImageTranscodeException("Could not fill background color");
-                    }
-                    if (imagecopy($new_image, $image_resized, 0, 0, 0, 0, $width, $height) === false) {
-                        throw new ImageTranscodeException("Could not copy source image to new image");
-                    }
+        switch ($output_mime->base) {
+            case MimeType::BMP:
+            case MimeType::JPEG:
+                // In case of alpha channels
+                $width = imagesx($image_resized);
+                $height = imagesy($image_resized);
+                $new_image = imagecreatetruecolor($width, $height);
+                if ($new_image === false) {
+                    throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
+                }
 
-                    imagedestroy($image_resized);
-                    $image_resized = $new_image;
-                    break;
-            }
+                $background_color = Media::hex_color_allocate($new_image, $alpha_color);
+                if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
+                    throw new ImageTranscodeException("Could not fill background color");
+                }
+                if (imagecopy($new_image, $image_resized, 0, 0, 0, 0, $width, $height) === false) {
+                    throw new ImageTranscodeException("Could not copy source image to new image");
+                }
 
-            $result = match ($output_mime->base) {
-                MimeType::BMP => imagebmp($image_resized, $output_filename->str(), true),
-                MimeType::WEBP => imagewebp($image_resized, $output_filename->str(), $output_quality),
-                MimeType::JPEG => imagejpeg($image_resized, $output_filename->str(), $output_quality),
-                MimeType::PNG => imagepng($image_resized, $output_filename->str(), 9),
-                MimeType::GIF => imagegif($image_resized, $output_filename->str()),
-                default => throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime"),
-            };
-            if ($result === false) {
-                throw new MediaException("Failed to save the new image, function returned false when saving type: $output_mime");
-            }
-        } finally {
-            @imagedestroy($image);
-            @imagedestroy($image_resized);
+                $image_resized = $new_image;
+                break;
+        }
+
+        $result = match ($output_mime->base) {
+            MimeType::BMP => imagebmp($image_resized, $output_filename->str(), true),
+            MimeType::WEBP => imagewebp($image_resized, $output_filename->str(), $output_quality),
+            MimeType::JPEG => imagejpeg($image_resized, $output_filename->str(), $output_quality),
+            MimeType::PNG => imagepng($image_resized, $output_filename->str(), 9),
+            MimeType::GIF => imagegif($image_resized, $output_filename->str()),
+            default => throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime"),
+        };
+        if ($result === false) {
+            throw new MediaException("Failed to save the new image, function returned false when saving type: $output_mime");
         }
     }
-
 
     public static function supports_alpha(MimeType $mime): bool
     {

@@ -102,7 +102,6 @@ final class SearchTest extends ShimmiePHPUnitTestCase
 
         $class = new \ReflectionClass(Search::class);
         $build_search_querylet = $class->getMethod("build_search_querylet");
-        $build_search_querylet->setAccessible(true); // Use this if you are running PHP older than 8.1.0
 
         $obj = new Search();
         $params = new SearchParameters($tcs, $ics, $order);

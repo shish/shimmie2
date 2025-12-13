@@ -24,7 +24,6 @@ final class ExtraImageFileHandlerTest extends ShimmiePHPUnitTestCase
         $img = \Safe\imagecreatefromstring(\Safe\file_get_contents("tests/pbx_screenshot.jpg"));
         self::assertNotFalse($img);
         \Safe\imagebmp($img, $tmp->str().".bmp");
-        imagedestroy($img);
 
         // check that it can be uploaded
         self::log_in_as_user();
