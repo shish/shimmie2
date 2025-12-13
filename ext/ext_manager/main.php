@@ -43,6 +43,34 @@ final class ExtManager extends Extension
             $info = ExtensionInfo::get_all()[$ext];
             $this->theme->display_doc($info);
         }
+
+        // For https://github.com/shish/shimmie2/issues/2010
+        // Using the "internal" namespace as this is a prototype of a blind
+        // attempt to support clients which I'm not aware of, and may need
+        // to be changed without notice
+        if ($event->page_matches("api/internal/extensions")) {
+            $can_manage = Ctx::$user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST);
+            $enabled = Extension::get_enabled_extensions();
+            $all_infos = ExtensionInfo::get_all();
+
+            $result = [];
+            foreach ($all_infos as $key => $info) {
+                // Skip based on visibility
+                if ($info->visibility === ExtensionVisibility::HIDDEN) {
+                    continue;
+                }
+                if ($info->visibility === ExtensionVisibility::ADMIN && !$can_manage) {
+                    continue;
+                }
+
+                // Only include if enabled
+                if (in_array($key, $enabled)) {
+                    $result[] = $key;
+                }
+            }
+
+            Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode($result));
+        }
     }
 
     public function onCliGen(CliGenEvent $event): void
