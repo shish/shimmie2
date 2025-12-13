@@ -48,7 +48,10 @@ final class UserClass
 
     public function get_parent(): ?UserClass
     {
-        return static::$known_classes[$this->parent_name] ?? null;
+        if ($this->parent_name !== null && array_key_exists($this->parent_name, static::$known_classes)) {
+            return static::$known_classes[$this->parent_name];
+        }
+        return null;
     }
 
     // #[Field(type: "[Permission!]!")]
