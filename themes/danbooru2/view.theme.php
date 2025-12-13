@@ -12,8 +12,9 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
 {
     /**
      * @param HTMLElement[] $editor_parts
+     * @param HTMLElement[] $sidebar_parts
      */
-    public function display_page(Image $image, array $editor_parts): void
+    public function display_page(Image $image, array $editor_parts, array $sidebar_parts): void
     {
         Ctx::$page->set_heading($image->get_tag_list());
         Ctx::$page->add_block(new Block("Search", $this->build_navigation($image), "left", 0));
