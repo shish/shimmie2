@@ -10,8 +10,9 @@ class LiteViewPostTheme extends ViewPostTheme
 {
     /**
      * @param HTMLElement[] $editor_parts
+     * @param HTMLElement[] $sidebar_parts
      */
-    public function display_page(Image $image, array $editor_parts): void
+    public function display_page(Image $image, array $editor_parts, array $sidebar_parts): void
     {
         Ctx::$page->set_title("Post {$image->id}: ".$image->get_tag_list());
         Ctx::$page->set_heading($image->get_tag_list());

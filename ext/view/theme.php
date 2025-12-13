@@ -31,14 +31,15 @@ class ViewPostTheme extends Themelet
      * Build a page showing $image and some info about it
      *
      * @param HTMLElement[] $editor_parts
+     * @param HTMLElement[] $sidebar_parts
      */
-    public function display_page(Image $image, array $editor_parts): void
+    public function display_page(Image $image, array $editor_parts, array $sidebar_parts): void
     {
         $page = Ctx::$page;
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());
         $page->set_heading($image->get_tag_list());
         $page->add_block(new Block("Post {$image->id}", $this->build_navigation($image), "left", 0, "Navigationleft"));
-        $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 20, "ImageInfo"));
+        $page->add_block(new Block(null, $this->build_info($image, $editor_parts, $sidebar_parts), "main", 20, "ImageInfo"));
         //$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 
         if (!$this->is_ordered_search()) {
@@ -125,8 +126,9 @@ class ViewPostTheme extends Themelet
 
     /**
      * @param HTMLElement[] $editor_parts
+     * @param HTMLElement[] $sidebar_parts
      */
-    protected function build_info(Image $image, array $editor_parts): HTMLElement
+    protected function build_info(Image $image, array $editor_parts, array $sidebar_parts = []): HTMLElement
     {
         if (count($editor_parts) === 0) {
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
@@ -143,15 +145,13 @@ class ViewPostTheme extends Themelet
             ));
         }
 
-        // SHM_POST_INFO returns a TR, let's sneakily append
-        // a TD with the avatar in it
-        /** @var BuildAvatarEvent $bae */
-        $bae = send_event(new BuildAvatarEvent($image->get_owner()));
-        if ($bae->html) {
+        // Add sidebar parts (like avatars) to the first row
+        if (count($sidebar_parts) > 0) {
+            $sidebar_content = DIV(["class" => "image-info-sidebar"], ...$sidebar_parts);
             array_values($editor_parts)[0]->appendChild(
                 TD(
-                    ["class" => "image-info-avatar-box", "width" => Ctx::$config->get(SetupConfig::AVATAR_SIZE) . "px", "rowspan" => count($editor_parts) - 2],
-                    $bae->html
+                    ["class" => "image-info-sidebar-box", "rowspan" => count($editor_parts) - 2],
+                    $sidebar_content
                 )
             );
         }
