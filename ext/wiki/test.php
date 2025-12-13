@@ -12,6 +12,21 @@ final class WikiTest extends ShimmiePHPUnitTestCase
         self::assertEquals(PageMode::REDIRECT, $page->mode);
     }
 
+    public function testList(): void
+    {
+        $wikipage = Wiki::get_page("page1");
+        $wikipage->body = "Page 1";
+        send_event(new WikiUpdateEvent(Ctx::$user, $wikipage));
+
+        $wikipage = Wiki::get_page("page2");
+        $wikipage->body = "Page 2";
+        send_event(new WikiUpdateEvent(Ctx::$user, $wikipage));
+
+        self::get_page("wiki/wiki:list");
+        self::assert_text("page1");
+        self::assert_text("page2");
+    }
+
     // By default users are read-only
     public function testAccessUser(): void
     {
@@ -94,6 +109,10 @@ final class WikiTest extends ShimmiePHPUnitTestCase
         self::get_page("wiki/test/history");
         self::assert_title("test");
         self::assert_text("2");
+
+        self::get_page("wiki/test/diff", ["r1" => "1", "r2" => "2"]);
+        self::assert_text("Mooooo <del>1</del>");
+        self::assert_text("Mooooo <ins>2</ins>");
 
         send_event(new WikiDeleteRevisionEvent("test", 2));
         self::get_page("wiki/test");
