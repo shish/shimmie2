@@ -210,39 +210,31 @@ final class TranscodeImage extends Extension
         $tmp_name = shm_tempnam("transcode");
 
         $image = \Safe\imagecreatefromstring($source_name->get_contents());
-        try {
-            $result = false;
-            switch ($target_mime->base) {
-                case MimeType::WEBP:
-                    $result = imagewebp($image, $tmp_name->str(), $q);
-                    break;
-                case MimeType::PNG:
-                    $result = imagepng($image, $tmp_name->str(), 9);
-                    break;
-                case MimeType::JPEG:
-                    // In case of alpha channels
-                    $width = imagesx($image);
-                    $height = imagesy($image);
-                    $new_image = imagecreatetruecolor($width, $height);
-                    if ($new_image === false) {
-                        throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
-                    }
-                    try {
-                        $background_color = Media::hex_color_allocate($new_image, Ctx::$config->get(TranscodeImageConfig::ALPHA_COLOR));
-                        if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
-                            throw new ImageTranscodeException("Could not fill background color");
-                        }
-                        if (imagecopy($new_image, $image, 0, 0, 0, 0, $width, $height) === false) {
-                            throw new ImageTranscodeException("Could not copy source image to new image");
-                        }
-                        $result = imagejpeg($new_image, $tmp_name->str(), $q);
-                    } finally {
-                        imagedestroy($new_image);
-                    }
-                    break;
-            }
-        } finally {
-            imagedestroy($image);
+        $result = false;
+        switch ($target_mime->base) {
+            case MimeType::WEBP:
+                $result = imagewebp($image, $tmp_name->str(), $q);
+                break;
+            case MimeType::PNG:
+                $result = imagepng($image, $tmp_name->str(), 9);
+                break;
+            case MimeType::JPEG:
+                // In case of alpha channels
+                $width = imagesx($image);
+                $height = imagesy($image);
+                $new_image = imagecreatetruecolor($width, $height);
+                if ($new_image === false) {
+                    throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
+                }
+                $background_color = Media::hex_color_allocate($new_image, Ctx::$config->get(TranscodeImageConfig::ALPHA_COLOR));
+                if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
+                    throw new ImageTranscodeException("Could not fill background color");
+                }
+                if (imagecopy($new_image, $image, 0, 0, 0, 0, $width, $height) === false) {
+                    throw new ImageTranscodeException("Could not copy source image to new image");
+                }
+                $result = imagejpeg($new_image, $tmp_name->str(), $q);
+                break;
         }
         if ($result === false) {
             throw new ImageTranscodeException("Error while transcoding ".$source_name->str()." to ".$target_mime);
