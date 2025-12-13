@@ -38,5 +38,12 @@ final class PostOwner extends Extension
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_owner_editor_html($event->image), 39);
+
+        // Add avatar to sidebar
+        /** @var BuildAvatarEvent $bae */
+        $bae = send_event(new BuildAvatarEvent($event->image->get_owner()));
+        if ($bae->html) {
+            $event->add_sidebar_part($bae->html, 10);
+        }
     }
 }
