@@ -19,11 +19,11 @@ if (!file_exists("vendor/")) {
 require_once "vendor/autoload.php";
 
 sanitize_php();
-version_check("8.2");
+version_check("8.4");
 
 if (!file_exists("data/config/shimmie.conf.php")) {
     Installer::install();
-    exit;
+    exit(0);
 }
 
 
