@@ -55,7 +55,7 @@ jobs:
     name: Upgrade from 2.9 ${{ matrix.database }}
     strategy:
       matrix:
-        php: ["8.3"]
+        php: ["8.4"]
         database: ["pgsql", "mysql", "sqlite"]
     runs-on: ubuntu-24.04
     steps:
@@ -98,7 +98,7 @@ jobs:
       - name: Check new version works
         run: |
           php index.php page:get / > new.out
-          grep -q 'Welcome to Shimmie 2.10' new.out || cat new.out
+          grep -q 'Welcome to Shimmie 2.12' new.out || cat new.out
           rm -f new.out
 
   test:
@@ -106,7 +106,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["8.2", "8.3", "8.4"]
+        php: ["8.4"]
         database: ["pgsql", "mysql", "sqlite"]
     runs-on: ubuntu-24.04
     steps:
