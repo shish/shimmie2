@@ -169,7 +169,6 @@ final class MimeType
 
         $finfo = \Safe\finfo_open(FILEINFO_MIME_TYPE);
         $type = finfo_file($finfo, $file->str());
-        finfo_close($finfo);
 
         if ($type !== false && !empty($type)) {
             $output = $type;
