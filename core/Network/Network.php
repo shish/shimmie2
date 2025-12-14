@@ -138,11 +138,7 @@ final class Network
             fclose($fp_in);
             fclose($fp_out);
 
-            // $http_response_header is deprecated in 8.5
-            // http_get_last_response_headers() only exists starting in 8.4
-            // @phpstan-ignore-next-line
-            $header_data = PHP_VERSION_ID >= 80400 ? http_get_last_response_headers() : $http_response_header;
-            $headers = Network::http_parse_headers(implode("\n", $header_data));
+            $headers = Network::http_parse_headers(implode("\n", http_get_last_response_headers() ?? []));
         } else {
             throw new FetchException("No transload engine configured");
         }
