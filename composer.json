@@ -51,7 +51,7 @@
         "sabre/cache": "^2.0.1",
         "naroga/redis-cache": "^1.2",
         "symfony/console": "^7.2",
-        "symfony/yaml": "^7.2",
+        "symfony/yaml": "^8.0",
         "jfcherng/php-diff": "^6.16"
     },
     "require-dev": {
