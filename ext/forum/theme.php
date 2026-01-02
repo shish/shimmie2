@@ -8,18 +8,12 @@ use function MicroHTML\{A, BR, DIV, INPUT, LABEL, SMALL, SUP, TABLE, TBODY, TD, 
 
 use MicroHTML\HTMLElement;
 
-/**
- * @phpstan-type Thread array{id:int,title:string,sticky:bool,user_name:string,uptodate:string,response_count:int}
- * @phpstan-type Post array{id:int,user_name:string,user_class:string,date:string,message:string}
- */
 class ForumTheme extends Themelet
 {
-    /**
-     * @param Thread[] $threads
-     */
+    /** @param ForumThread[] $threads */
     public function display_thread_list(array $threads, bool $showAdminOptions, int $pageNumber, int $totalPages): void
     {
-        if (count($threads) === 0) {
+        if (empty($threads)) {
             $html = emptyHTML("There are no threads to show.");
         } else {
             $html = $this->make_thread_list($threads, $showAdminOptions);
@@ -74,13 +68,13 @@ class ForumTheme extends Themelet
         Ctx::$page->add_block(new Block($blockTitle, $html, "main", 120));
     }
 
-    public function display_new_post_composer(int $threadID): void
+    public function display_new_post_composer(int $thread_id): void
     {
         $max_characters = Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST);
 
         $html = SHM_SIMPLE_FORM(
             make_link("forum/answer"),
-            INPUT(["type" => "hidden", "name" => "threadID", "value" => $threadID]),
+            INPUT(["type" => "hidden", "name" => "thread_id", "value" => $thread_id]),
             TABLE(
                 ["class" => "form"],
                 TR(
@@ -104,10 +98,8 @@ class ForumTheme extends Themelet
     }
 
 
-    /**
-     * @param array<Post> $posts
-     */
-    public function display_thread(array $posts, bool $showAdminOptions, string $threadTitle, int $threadID, int $pageNumber, int $totalPages): void
+    /** @param ForumPost[] $posts */
+    public function display_thread(ForumThread $thread, array $posts, bool $showAdminOptions, int $thread_id, int $pageNumber, int $totalPages): void
     {
         $posts_per_page = Ctx::$config->get(ForumConfig::POSTS_PER_PAGE);
 
@@ -116,7 +108,7 @@ class ForumTheme extends Themelet
         $tbody = TBODY();
         foreach ($posts as $post) {
             /** @var BuildAvatarEvent $avatar_e */
-            $avatar_e = send_event(new BuildAvatarEvent(User::by_name($post["user_name"])));
+            $avatar_e = send_event(new BuildAvatarEvent(User::by_name($post->owner->name)));
             $avatar = $avatar_e->html;
 
             $current_post++;
@@ -133,7 +125,7 @@ class ForumTheme extends Themelet
                                 ["class" => "deleteLink"],
                                 $showAdminOptions
                                     ? SHM_SIMPLE_FORM(
-                                        make_link("forum/delete/$threadID/" . $post['id']),
+                                        make_link("forum/delete/$thread_id/$post->id"),
                                         SHM_SUBMIT("Delete"),
                                     )
                                     : null
@@ -144,19 +136,19 @@ class ForumTheme extends Themelet
                         ["class" => "posBody"],
                         TD(
                             ["class" => "forumUser"],
-                            A(["href" => make_link("user/".$post["user_name"])], $post["user_name"]),
+                            A(["href" => make_link("user/{$post->owner->name}")], $post->owner->name),
                             BR(),
-                            SUP(["class" => "user_rank"], $post["user_class"]),
+                            SUP(["class" => "user_rank"], $post->owner->class->name),
                             BR(),
                             $avatar,
                             BR()
                         ),
                         TD(
                             ["class" => "forumMessage"],
-                            DIV(["class" => "postDate"], SMALL(SHM_DATE($post['date']))),
-                            DIV(["class" => "postNumber"], " #".$post_number),
+                            DIV(["class" => "postDate"], SMALL(SHM_DATE($post->date))),
+                            DIV(["class" => "postNumber"], " #$post_number"),
                             BR(),
-                            DIV(["class" => "postMessage"], format_text($post["message"]))
+                            DIV(["class" => "postMessage"], format_text($post->message))
                         )
                     ),
                     TR(
@@ -187,23 +179,21 @@ class ForumTheme extends Themelet
             )
         );
 
-        $this->display_paginator("forum/view/".$threadID, null, $pageNumber, $totalPages);
-        Ctx::$page->set_title($threadTitle);
-        Ctx::$page->add_block(new Block($threadTitle, $html, "main", 20));
+        $this->display_paginator("forum/view/$thread_id", null, $pageNumber, $totalPages);
+        Ctx::$page->set_title($thread->title);
+        Ctx::$page->add_block(new Block($thread->title, $html, "main", 20));
     }
 
-    public function add_actions_block(int $threadID): void
+    public function add_actions_block(int $thread_id): void
     {
         $html = SHM_SIMPLE_FORM(
-            make_link("forum/nuke/".$threadID),
+            make_link("forum/nuke/$thread_id"),
             SHM_SUBMIT("Delete Thread"),
         );
         Ctx::$page->add_block(new Block("Admin Actions", $html, "left"));
     }
 
-    /**
-     * @param Thread[] $threads
-     */
+    /** @param ForumThread[] $threads */
     private function make_thread_list(array $threads, bool $showAdminOptions): HTMLElement
     {
         $tbody = TBODY();
@@ -223,23 +213,23 @@ class ForumTheme extends Themelet
 
         foreach ($threads as $thread) {
             $titleSubString = Ctx::$config->get(ForumConfig::TITLE_SUBSTRING);
-            $title = truncate($thread["title"], $titleSubString);
+            $title = truncate($thread->title, $titleSubString);
 
             $tbody->appendChild(
                 TR(
                     TD(
                         ["class" => "left"],
-                        $thread["sticky"] ? "Sticky: " : "",
-                        A(["href" => make_link("forum/view/".$thread["id"])], $title)
+                        $thread->sticky ? "Sticky: " : "",
+                        A(["href" => make_link("forum/view/$thread->id")], $title)
                     ),
                     TD(
-                        A(["href" => make_link("user/".$thread["user_name"])], $thread["user_name"])
+                        A(["href" => make_link("user/{$thread->owner->name}")], $thread->owner->name)
                     ),
-                    TD(SHM_DATE($thread["uptodate"])),
-                    TD($thread["response_count"]),
+                    TD(SHM_DATE($thread->update_date)),
+                    TD($thread->response_count),
                     $showAdminOptions ? TD(
                         SHM_SIMPLE_FORM(
-                            make_link("forum/nuke/".$thread["id"]),
+                            make_link("forum/nuke/$thread->id"),
                             SHM_SUBMIT("Delete"),
                         )
                     ) : null

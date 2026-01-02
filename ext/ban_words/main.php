@@ -15,6 +15,20 @@ final class BanWords extends Extension
         }
     }
 
+    public function onForumThreadPosting(ForumThreadPostingEvent $event): void
+    {
+        if (!Ctx::$user->can(ForumPermission::BYPASS_FORUM_CHECKS)) {
+            $this->test_text($event->title, new ForumPostingException("Title contains banned terms"));
+        }
+    }
+
+    public function onForumPostPosting(ForumPostPostingEvent $event): void
+    {
+        if (!Ctx::$user->can(ForumPermission::BYPASS_FORUM_CHECKS)) {
+            $this->test_text($event->message, new ForumPostingException("Message contains banned terms"));
+        }
+    }
+
     public function onSourceSet(SourceSetEvent $event): void
     {
         $this->test_text($event->source, new UserError("Source contains banned terms"));

@@ -19,7 +19,7 @@ final class ForumTest extends ShimmiePHPUnitTestCase
         $thread_id = Ctx::$database->get_one("SELECT id FROM forum_threads ORDER BY id DESC LIMIT 1");
 
         // create response
-        self::post_page("forum/answer", ["threadID" => "$thread_id", "message" => "My new response"]);
+        self::post_page("forum/answer", ["thread_id" => "$thread_id", "message" => "My new response"]);
         self::get_page("forum/view/$thread_id");
         $post_id = Ctx::$database->get_one("SELECT id FROM forum_posts ORDER BY id DESC LIMIT 1");
 
