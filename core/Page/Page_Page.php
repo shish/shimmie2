@@ -397,7 +397,7 @@ trait Page_Page
             A(["href" => "https://www.shishnet.org/"], "Shish"),
             " & ",
             A(["href" => "https://github.com/shish/shimmie2/graphs/contributors"], "The Team"),
-            " 2007-2025, based on the Danbooru concept.",
+            " 2007-2026, based on the Danbooru concept.",
             $contact_link ? emptyHTML(BR(), A(["href" => $contact_link], "Contact")) : ""
         ]);
     }
