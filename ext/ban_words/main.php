@@ -8,7 +8,7 @@ final class BanWords extends Extension
 {
     public const KEY = "ban_words";
 
-    public function onCheckContent(CheckContentEvent $event): void
+    public function onCheckStringContent(CheckContentEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
             return;
