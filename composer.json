@@ -37,7 +37,7 @@
         "google/recaptcha": "^1.1",
         "shish/eventtracer-php": "^2.2",
         "shish/ffsphp": "^1.4",
-        "shish/microbundler": "^1.0",
+        "shish/microbundler": "^1.0.2",
         "shish/microcrud": "^2.4",
         "shish/microhtml": "^2.5.0",
         "shish/microotlp": "^0.0.11",
@@ -55,7 +55,7 @@
         "jfcherng/php-diff": "^6.16"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.5",
+        "phpunit/phpunit": "^12.5",
         "friendsofphp/php-cs-fixer": "^3.89",
         "phpstan/phpstan": "^2.1",
         "thecodingmachine/phpstan-safe-rule": "^1.4",
