@@ -8,54 +8,24 @@ final class BanWords extends Extension
 {
     public const KEY = "ban_words";
 
-    public function onCommentPosting(CommentPostingEvent $event): void
+    public function onCheckContent(CheckContentEvent $event): void
     {
-        if (!Ctx::$user->can(CommentPermission::BYPASS_COMMENT_CHECKS)) {
-            $this->test_text($event->comment, new CommentPostingException("Comment contains banned terms"));
+        if (Ctx::$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
+            return;
         }
-    }
 
-    public function onForumThreadPosting(ForumThreadPostingEvent $event): void
-    {
-        if (!Ctx::$user->can(ForumPermission::BYPASS_FORUM_CHECKS)) {
-            $this->test_text($event->title, new ForumPostingException("Title contains banned terms"));
-        }
-    }
-
-    public function onForumPostPosting(ForumPostPostingEvent $event): void
-    {
-        if (!Ctx::$user->can(ForumPermission::BYPASS_FORUM_CHECKS)) {
-            $this->test_text($event->message, new ForumPostingException("Message contains banned terms"));
-        }
-    }
-
-    public function onSourceSet(SourceSetEvent $event): void
-    {
-        $this->test_text($event->source, new UserError("Source contains banned terms"));
-    }
-
-    public function onTagSet(TagSetEvent $event): void
-    {
-        $this->test_text(Tag::implode($event->new_tags), new UserError("Tags contain banned terms"));
-    }
-
-    /**
-     * Throws if the comment contains banned words.
-     */
-    private function test_text(string $comment, SCoreException $ex): void
-    {
-        $comment = mb_strtolower($comment);
+        $comment = mb_strtolower($event->content);
 
         foreach (self::get_words() as $word) {
             if ($word[0] === '/') {
                 // lines that start with slash are regex
                 if (\Safe\preg_match($word, $comment)) {
-                    throw $ex;
+                    throw new ContentException("{$event->context} contains banned terms");
                 }
             } else {
                 // other words are literal
                 if (str_contains($comment, $word)) {
-                    throw $ex;
+                    throw new ContentException("{$event->context} contains banned terms");
                 }
             }
         }

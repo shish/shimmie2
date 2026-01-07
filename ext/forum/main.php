@@ -239,12 +239,15 @@ final class Forum extends Extension
             $title = $event->POST->req('title');
             $sticky = $event->POST->offsetExists('sticky');
             $message = $event->POST->req('message');
+            send_event(new CheckContentEvent($title));
             $ftpe = send_event(new ForumThreadPostingEvent(Ctx::$user, $title, $sticky));
+            send_event(new CheckContentEvent($message));
             send_event(new ForumPostPostingEvent(Ctx::$user, $ftpe->id, $message));
             $page->set_redirect(make_link("forum/view/$ftpe->id/1"));
         } elseif ($event->page_matches("forum/answer", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
             $thread_id = int_escape($event->POST->req('thread_id'));
             $message = $event->POST->req('message');
+            send_event(new CheckContentEvent($message));
             send_event(new ForumPostPostingEvent(Ctx::$user, $thread_id, $message));
             $total_pages = $this->get_total_pages_for_thread($thread_id);
             $page->set_redirect(make_link("forum/view/$thread_id/$total_pages"));
@@ -283,9 +286,6 @@ final class Forum extends Extension
 
     private function forum_checks(User $user, string $content, ?int $thread_id = null): void
     {
-        if ($user->can(ForumPermission::BYPASS_FORUM_CHECKS)) {
-            return;
-        }
         // basic sanity checks
         if (!$user->can(ForumPermission::FORUM_CREATE)) {
             throw new ForumPostingException("You do not have permission to create forum threads or posts");
@@ -301,8 +301,6 @@ final class Forum extends Extension
             throw new ForumPostingException("$kind needs text...");
         } elseif (strlen($content) > (is_null($thread_id) ? Ctx::$config->get(ForumConfig::TITLE_SUBSTRING) : Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST))) {
             throw new ForumPostingException("$kind too long~");
-        } elseif (strlen($content) / strlen(\Safe\gzcompress($content)) > 10) {
-            throw new ForumPostingException("$kind too repetitive~");
         }
     }
 
