@@ -8,7 +8,7 @@ final class BanWords extends Extension
 {
     public const KEY = "ban_words";
 
-    public function onCheckContent(CheckContentEvent $event): void
+    public function onCheckStringContent(CheckContentEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
             return;
@@ -20,12 +20,12 @@ final class BanWords extends Extension
             if ($word[0] === '/') {
                 // lines that start with slash are regex
                 if (\Safe\preg_match($word, $comment)) {
-                    throw new ContentException("{$event->context} contains banned terms");
+                    throw new ContentException("{$event->type->value} contains banned terms");
                 }
             } else {
                 // other words are literal
                 if (str_contains($comment, $word)) {
-                    throw new ContentException("{$event->context} contains banned terms");
+                    throw new ContentException("{$event->type->value} contains banned terms");
                 }
             }
         }

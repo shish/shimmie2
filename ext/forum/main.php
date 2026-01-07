@@ -239,15 +239,15 @@ final class Forum extends Extension
             $title = $event->POST->req('title');
             $sticky = $event->POST->offsetExists('sticky');
             $message = $event->POST->req('message');
-            send_event(new CheckContentEvent($title));
+            send_event(new CheckStringContentEvent($title));
             $ftpe = send_event(new ForumThreadPostingEvent(Ctx::$user, $title, $sticky));
-            send_event(new CheckContentEvent($message));
+            send_event(new CheckStringContentEvent($message));
             send_event(new ForumPostPostingEvent(Ctx::$user, $ftpe->id, $message));
             $page->set_redirect(make_link("forum/view/$ftpe->id/1"));
         } elseif ($event->page_matches("forum/answer", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
             $thread_id = int_escape($event->POST->req('thread_id'));
             $message = $event->POST->req('message');
-            send_event(new CheckContentEvent($message));
+            send_event(new CheckStringContentEvent($message));
             send_event(new ForumPostPostingEvent(Ctx::$user, $thread_id, $message));
             $total_pages = $this->get_total_pages_for_thread($thread_id);
             $page->set_redirect(make_link("forum/view/$thread_id/$total_pages"));

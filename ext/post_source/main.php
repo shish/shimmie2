@@ -36,7 +36,7 @@ final class PostSource extends Extension
         }
         if (Ctx::$user->can(PostSourcePermission::EDIT_IMAGE_SOURCE) && !is_null($source)) {
             if ($event->params['tags'] ? !\Safe\preg_match('/source[=:]/', $event->params->req("tags")) : true) {
-                send_event(new CheckContentEvent($source, context: "source"));
+                send_event(new CheckStringContentEvent($source, type: StringType::URL));
                 send_event(new SourceSetEvent($event->image, $source));
             }
         }
@@ -80,7 +80,7 @@ final class PostSource extends Extension
     {
         if ($matches = $event->matches("/^source[=:](.*)$/i")) {
             $source = ($matches[1] !== "none" ? $matches[1] : "");
-            send_event(new CheckContentEvent($source, context: "source tag"));
+            send_event(new CheckStringContentEvent($source, type: StringType::URL));
             send_event(new SourceSetEvent(Image::by_id_ex($event->image_id), $source));
         }
     }

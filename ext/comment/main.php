@@ -126,7 +126,7 @@ final class Comment
     #[Mutation(name: "create_comment")]
     public static function create_comment(int $post_id, string $comment): bool
     {
-        send_event(new CheckContentEvent($comment));
+        send_event(new CheckStringContentEvent($comment));
         send_event(new CommentPostingEvent($post_id, Ctx::$user, $comment));
         return true;
     }
@@ -218,7 +218,7 @@ final class CommentList extends Extension
         $page = Ctx::$page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $i_iid = int_escape($event->POST->req('image_id'));
-            send_event(new CheckContentEvent($event->POST->req('comment')));
+            send_event(new CheckStringContentEvent($event->POST->req('comment')));
             send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->POST->req('comment')));
             $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
         }
