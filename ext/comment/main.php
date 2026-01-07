@@ -126,6 +126,7 @@ final class Comment
     #[Mutation(name: "create_comment")]
     public static function create_comment(int $post_id, string $comment): bool
     {
+        send_event(new CheckContentEvent($comment));
         send_event(new CommentPostingEvent($post_id, Ctx::$user, $comment));
         return true;
     }
@@ -217,6 +218,7 @@ final class CommentList extends Extension
         $page = Ctx::$page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $i_iid = int_escape($event->POST->req('image_id'));
+            send_event(new CheckContentEvent($event->POST->req('comment')));
             send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->POST->req('comment')));
             $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
         }
@@ -569,10 +571,8 @@ final class CommentList extends Extension
 
     private function add_comment_wrapper(int $image_id, User $user, string $comment): void
     {
-        if (!$user->can(CommentPermission::BYPASS_COMMENT_CHECKS)) {
-            // will raise an exception if anything is wrong
-            $this->comment_checks($image_id, $user, $comment);
-        }
+        // will raise an exception if anything is wrong
+        $this->comment_checks($image_id, $user, $comment);
 
         // all checks passed
         Ctx::$database->execute(
@@ -619,9 +619,9 @@ final class CommentList extends Extension
         }
 
         // database-querying checks
-        elseif ($this->is_comment_limit_hit()) {
+        elseif (!$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS) && $this->is_comment_limit_hit()) {
             throw new CommentPostingException("You've posted several comments recently; wait a minute and try again...");
-        } elseif ($this->is_dupe($image_id, $comment)) {
+        } elseif (!$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS) && $this->is_dupe($image_id, $comment)) {
             throw new CommentPostingException("Someone already made that comment on that image -- try and be more original?");
         }
 
