@@ -8,7 +8,7 @@ final class CheckContentEvent extends Event
 {
     public function __construct(
         public string $content,
-        public string $context = "content"
+        public StringType $type = StringType::TEXT
     ) {
         parent::__construct();
     }

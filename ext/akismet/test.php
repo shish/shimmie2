@@ -11,6 +11,6 @@ final class AkismetTest extends ShimmiePHPUnitTestCase
         // When Akismet is not configured, it should not block anything
         Ctx::$config->set("akismet_api_key", "");
         $e = send_event(new CheckContentEvent("This is a test comment"));
-        self::assertEquals("content", $e->context);
+        self::assertEquals("text", $e->type->value);
     }
 }

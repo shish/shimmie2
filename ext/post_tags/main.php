@@ -157,7 +157,7 @@ final class PostTags extends Extension
             $my_tags = $event->params["tags{$event->slot}"] ?? "";
             $tags = Tag::explode("$common_tags $my_tags");
             try {
-                send_event(new CheckContentEvent(Tag::implode($tags), context: "tag"));
+                send_event(new CheckContentEvent(Tag::implode($tags), type: StringType::TAG));
                 send_event(new TagSetEvent($event->image, $tags));
             } catch (TagSetException $e) {
                 if ($e->redirect) {

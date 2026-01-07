@@ -20,7 +20,7 @@ final class Akismet extends Extension
         }
 
         // Akismet is designed for blocks of text, not tags or source URLs
-        if ($event->context === "tag" || $event->context === "source") {
+        if ($event->type !== StringType::TEXT) {
             return;
         }
 
@@ -40,7 +40,7 @@ final class Akismet extends Extension
         }
 
         if ($akismet->isSpam()) {
-            throw new ContentException("Akismet thinks that your {$event->context} is spam. Try rewriting the {$event->context}, or logging in.");
+            throw new ContentException("Akismet thinks that your {$event->type->value} is spam. Try rewriting the {$event->type->value}, or logging in.");
         }
     }
 
