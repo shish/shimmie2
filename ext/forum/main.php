@@ -6,19 +6,135 @@ namespace Shimmie2;
 
 use function MicroHTML\emptyHTML;
 
+/** @phpstan-type Thread array{id:int,user_id:int,title:string,date:string,uptodate:string,response_count:int,sticky:bool|int} */
+final class ForumThread
+{
+    public User $owner;
+    public function __construct(
+        public int $id,
+        public int $owner_id,
+        public string $title,
+        public string $date,
+        public string $update_date,
+        public int $response_count,
+        public bool $sticky,
+    ) {
+        $this->owner = User::by_id_dangerously_cached($owner_id);
+    }
+
+    /** @param Thread $row */
+    public static function from_row(array $row): ForumThread
+    {
+        return new ForumThread(
+            $row['id'],
+            $row['user_id'],
+            $row['title'],
+            $row['date'],
+            $row['uptodate'],
+            $row['response_count'],
+            (bool)$row['sticky']
+        );
+    }
+
+    public static function by_id(int $id): ForumThread
+    {
+        /** @var ?Thread */
+        $row = Ctx::$database->get_row(
+            'SELECT * FROM forum_threads
+            WHERE id = :id;',
+            ['id' => $id]
+        );
+
+        if (is_null($row)) {
+            throw new ObjectNotFound("Forum thread with id $id not found.");
+        }
+        return self::from_row($row);
+    }
+
+    /** @return ForumThread[] */
+    public static function get_all_threads(int $page_n = 0, int $threads_per_page = 15): array
+    {
+        /** @var Thread[] */
+        $threads = Ctx::$database->get_all(
+            'SELECT * FROM forum_threads
+            ORDER BY sticky ASC, uptodate DESC
+            LIMIT :limit OFFSET :offset',
+            ['limit' => $threads_per_page, 'offset' => $page_n * $threads_per_page]
+        );
+        $out = [];
+        foreach ($threads as $t) {
+            $out[] = self::from_row($t);
+        }
+        return $out;
+    }
+
+    public static function get_thread_count(): int
+    {
+        return cache_get_or_set(
+            'forum-thread-count',
+            fn () => Ctx::$database->get_one('SELECT COUNT(1) FROM forum_threads'),
+            600
+        );
+    }
+
+    public static function get_response_count(int $thread_id): int
+    {
+        return Ctx::$database->get_one('SELECT response_count FROM forum_threads WHERE id = :id', ['id' => $thread_id]);
+    }
+}
+
+/** @phpstan-type Post array{id:int,thread_id:int,user_id:int,date:string,message:string} */
+final class ForumPost
+{
+    public User $owner;
+    public function __construct(
+        public int $id,
+        public int $thread_id,
+        public int $owner_id,
+        public string $date,
+        public string $message,
+    ) {
+        $this->owner = User::by_id_dangerously_cached($owner_id);
+    }
+
+    /** @param Post $row */
+    public static function from_row(array $row): ForumPost
+    {
+        return new ForumPost(
+            $row['id'],
+            $row['thread_id'],
+            $row['user_id'],
+            $row['date'],
+            $row['message']
+        );
+    }
+
+    /** @return ForumPost[] */
+    public static function get_all_posts(int $thread_id, int $page_n = 0, int $posts_per_page = 15): array
+    {
+        /** @var Post[] */
+        $posts = Ctx::$database->get_all(
+            'SELECT * FROM forum_posts
+            WHERE thread_id = :thread_id
+            ORDER BY date ASC
+            LIMIT :limit OFFSET :offset',
+            ['thread_id' => $thread_id, 'limit' => $posts_per_page, 'offset' => $page_n * $posts_per_page]
+        );
+        $out = [];
+        foreach ($posts as $p) {
+            $out[] = self::from_row($p);
+        }
+        return $out;
+    }
+}
+
 /*
 Todo:
 *Quote buttons on posts
-*Move delete and quote buttons away from each other
-*Bring us on par with comment extension(post linking, image linking, thumb links, URL autolink)
-*Smiley filter, word filter, etc should work with our extension
-
+*Ability to edit threads/posts?
 */
-/**
- * @phpstan-type Thread array{id:int,title:string,sticky:bool,user_name:string,uptodate:string,response_count:int}
- * @phpstan-type Post array{id:int,user_name:string,user_class:string,date:string,message:string}
- * @extends Extension<ForumTheme>
- */
+
+/** @extends Extension<ForumTheme> */
 final class Forum extends Extension
 {
     public const KEY = "forum";
@@ -26,52 +142,56 @@ final class Forum extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        if ($this->get_version() < 4) {
+            if ($this->get_version() < 1) {
+                // shortcut to latest
+                Ctx::$database->create_table("forum_threads", "
+                        id SCORE_AIPK,
+                        user_id INTEGER NOT NULL,
+                        title VARCHAR(255) NOT NULL,
+                        date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        uptodate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        response_count INTEGER NOT NULL DEFAULT 0,
+                        sticky BOOLEAN NOT NULL DEFAULT FALSE,
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
+                        ");
+                Ctx::$database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", []);
 
-        // shortcut to latest
+                Ctx::$database->create_table("forum_posts", "
+                        id SCORE_AIPK,
+                        thread_id INTEGER NOT NULL,
+                        user_id INTEGER NOT NULL,
+                        date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        message TEXT,
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+                        FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
+                        ");
+                Ctx::$database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", []);
 
-        if ($this->get_version() < 1) {
-            $database->create_table("forum_threads", "
-					id SCORE_AIPK,
-					sticky BOOLEAN NOT NULL DEFAULT FALSE,
-					title VARCHAR(255) NOT NULL,
-					user_id INTEGER NOT NULL,
-					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-					uptodate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
-					");
-            $database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", []);
+                $this->set_version(4);
+            }
+            if ($this->get_version() < 2) {
+                Ctx::$database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
+                Ctx::$database->execute("ALTER TABLE forum_posts ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
+                $this->set_version(2);
+            }
+            if ($this->get_version() < 3) {
+                Ctx::$database->standardise_boolean("forum_threads", "sticky");
+                $this->set_version(3);
+            }
 
-            $database->create_table("forum_posts", "
-					id SCORE_AIPK,
-					thread_id INTEGER NOT NULL,
-					user_id INTEGER NOT NULL,
-					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-					message TEXT,
-					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-					FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
-					");
-            $database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", []);
-
-            $this->set_version(3);
-        }
-        if ($this->get_version() < 2) {
-            $database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
-            $database->execute("ALTER TABLE forum_posts ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
-            $this->set_version(2);
-        }
-        if ($this->get_version() < 3) {
-            $database->standardise_boolean("forum_threads", "sticky");
-            $this->set_version(3);
+            if ($this->get_version() < 4) {
+                Ctx::$database->execute("ALTER TABLE forum_threads ADD response_count INTEGER NOT NULL DEFAULT 0");
+                Ctx::$database->execute("UPDATE forum_threads ft SET response_count = (SELECT COUNT(1) FROM forum_posts fp WHERE fp.thread_id = ft.id)");
+                $this->set_version(4);
+            }
         }
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        global $database;
-
-        $threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
-        $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
+        $threads_count = Ctx::$database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
+        $posts_count = Ctx::$database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
 
         $days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
 
@@ -97,210 +217,162 @@ final class Forum extends Extension
         $user = Ctx::$user;
         $page = Ctx::$page;
         if ($event->page_matches("forum/index", method: "GET", paged: true)) {
-            $pageNumber = $event->get_iarg('page_num', 1) - 1;
-            $this->show_last_threads($pageNumber, $user->can(ForumPermission::FORUM_ADMIN));
+            $page_number = $event->get_iarg('page_num', 1) - 1;
+            $this->show_last_threads($page_number, $user->can(ForumPermission::FORUM_ADMIN));
             if ($user->can(ForumPermission::FORUM_CREATE)) {
                 $this->theme->display_new_thread_composer();
             }
-        }
-        if ($event->page_matches("forum/view/{threadID}", method: "GET", paged: true)) {
-            $threadID = $event->get_iarg('threadID');
-            $pageNumber = $event->get_iarg('page_num', 1) - 1;
+        } elseif ($event->page_matches("forum/view/{thread_id}", method: "GET", paged: true)) {
+            $thread_id = $event->get_iarg('thread_id');
+            $page_number = $event->get_iarg('page_num', 1) - 1;
 
-            $this->show_posts($threadID, $pageNumber, $user->can(ForumPermission::FORUM_ADMIN));
+            $this->show_posts($thread_id, $page_number, $user->can(ForumPermission::FORUM_ADMIN));
             if ($user->can(ForumPermission::FORUM_ADMIN)) {
-                $this->theme->add_actions_block($threadID);
+                $this->theme->add_actions_block($thread_id);
             }
             if ($user->can(ForumPermission::FORUM_CREATE)) {
-                $this->theme->display_new_post_composer($threadID);
+                $this->theme->display_new_post_composer($thread_id);
             }
-        }
-        if ($event->page_matches("forum/new", method: "GET", permission: ForumPermission::FORUM_CREATE)) {
+        } elseif ($event->page_matches("forum/new", method: "GET", permission: ForumPermission::FORUM_CREATE)) {
             $this->theme->display_new_thread_composer();
-        }
-        if ($event->page_matches("forum/create", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
-            $errors = $this->sanity_check_new_thread($event->POST);
-            if (count($errors) > 0) {
-                throw new InvalidInput(implode("<br>", $errors));
-            }
-            $newThreadID = $this->save_new_thread($user);
-            $this->save_new_post($newThreadID, $user);
-            $redirectTo = "forum/view/" . $newThreadID . "/1";
-            $page->set_redirect(make_link($redirectTo));
-        }
-        if ($event->page_matches("forum/delete/{threadID}/{postID}", method: "POST", permission: ForumPermission::FORUM_ADMIN)) {
-            $threadID = $event->get_iarg('threadID');
-            $postID = $event->get_iarg('postID');
-            $this->delete_post($postID);
-            $page->set_redirect(make_link("forum/view/" . $threadID));
-        }
-        if ($event->page_matches("forum/nuke/{threadID}", method: "POST", permission: ForumPermission::FORUM_ADMIN)) {
-            $threadID = $event->get_iarg('threadID');
-            $this->delete_thread($threadID);
+        } elseif ($event->page_matches("forum/create", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
+            $title = $event->POST->req('title');
+            $sticky = $event->POST->offsetExists('sticky');
+            $message = $event->POST->req('message');
+            send_event(new CheckContentEvent($title));
+            $ftpe = send_event(new ForumThreadPostingEvent(Ctx::$user, $title, $sticky));
+            send_event(new CheckContentEvent($message));
+            send_event(new ForumPostPostingEvent(Ctx::$user, $ftpe->id, $message));
+            $page->set_redirect(make_link("forum/view/$ftpe->id/1"));
+        } elseif ($event->page_matches("forum/answer", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
+            $thread_id = int_escape($event->POST->req('thread_id'));
+            $message = $event->POST->req('message');
+            send_event(new CheckContentEvent($message));
+            send_event(new ForumPostPostingEvent(Ctx::$user, $thread_id, $message));
+            $total_pages = $this->get_total_pages_for_thread($thread_id);
+            $page->set_redirect(make_link("forum/view/$thread_id/$total_pages"));
+        } elseif ($event->page_matches("forum/delete/{thread_id}/{post_id}", method: "POST", permission: ForumPermission::FORUM_ADMIN)) {
+            $thread_id = $event->get_iarg('thread_id');
+            $post_id = $event->get_iarg('post_id');
+            send_event(new ForumPostDeletionEvent($thread_id, $post_id));
+            $page->set_redirect(make_link("forum/view/$thread_id"));
+        } elseif ($event->page_matches("forum/nuke/{thread_id}", method: "POST", permission: ForumPermission::FORUM_ADMIN)) {
+            $thread_id = $event->get_iarg('thread_id');
+            send_event(new ForumThreadDeletionEvent($thread_id));
             $page->set_redirect(make_link("forum/index"));
         }
-        if ($event->page_matches("forum/answer", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
-            $threadID = int_escape($event->POST->req("threadID"));
-            $errors = $this->sanity_check_new_post($event->POST);
-            if (count($errors) > 0) {
-                throw new InvalidInput(implode("<br>", $errors));
-            }
-            $total_pages = $this->get_total_pages_for_thread($threadID);
-            $this->save_new_post($threadID, $user);
-            $page->set_redirect(make_link("forum/view/" . $threadID . "/" . $total_pages));
+    }
+
+    public function onForumThreadPosting(ForumThreadPostingEvent $event): void
+    {
+        $this->forum_checks($event->user, $event->title);
+        $event->id = $this->save_new_thread($event->user, $event->title, $event->sticky);
+    }
+    public function onForumPostPosting(ForumPostPostingEvent $event): void
+    {
+        $this->forum_checks($event->user, $event->message, $event->thread_id);
+        $this->save_new_post($event->user, $event->thread_id, $event->message);
+    }
+
+    public function onForumThreadDeletion(ForumThreadDeletionEvent $event): void
+    {
+        $this->delete_thread($event->thread_id);
+    }
+
+    public function onForumPostDeletion(ForumPostDeletionEvent $event): void
+    {
+        $this->delete_post($event->thread_id, $event->post_id);
+    }
+
+    private function forum_checks(User $user, string $content, ?int $thread_id = null): void
+    {
+        // basic sanity checks
+        if (!$user->can(ForumPermission::FORUM_CREATE)) {
+            throw new ForumPostingException("You do not have permission to create forum threads or posts");
+        }
+
+        $kind = "Title";
+        if (!is_null($thread_id)) {
+            ForumThread::by_id($thread_id); // will raise an exception if it does not exist
+            $kind = "Message";  // thread_id is null on creating a new thread, hence the check is for a title, not message
+        }
+
+        if (trim($content) === "") {
+            throw new ForumPostingException("$kind needs text...");
+        } elseif (strlen($content) > (is_null($thread_id) ? Ctx::$config->get(ForumConfig::TITLE_SUBSTRING) : Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST))) {
+            throw new ForumPostingException("$kind too long~");
         }
     }
 
-    private function get_total_pages_for_thread(int $threadID): int
+    private function get_total_pages_for_thread(int $thread_id): int
     {
-        $count = Ctx::$database->get_one("
-            SELECT COUNT(1) AS count
-            FROM forum_posts
-            WHERE thread_id = :thread_id
-        ", ['thread_id' => $threadID]);
-
-        return (int) ceil($count / Ctx::$config->get(ForumConfig::POSTS_PER_PAGE));
+        return (int) ceil(ForumThread::get_response_count($thread_id) / Ctx::$config->get(ForumConfig::POSTS_PER_PAGE));
     }
 
-    /**
-     * @return string[]
-     */
-    private function sanity_check_new_thread(QueryArray $data): array
+    private function show_last_threads(int $page_number, bool $showAdminOptions = false): void
     {
-        $errors = [];
-        if (empty($data["title"])) {
-            $errors[] = "You cannot have an empty title.";
-        } elseif (strlen($data["title"]) > 255) {
-            $errors[] = "Your title is too long.";
-        }
+        $threads_per_page = Ctx::$config->get(ForumConfig::THREADS_PER_PAGE);
 
-        if (empty($data["message"])) {
-            $errors[] = "You cannot have an empty message.";
-        }
-
-        return $errors;
+        $threads = ForumThread::get_all_threads($page_number, $threads_per_page);
+        $totalPages = (int)ceil(ForumThread::get_thread_count() / $threads_per_page);
+        $this->theme->display_thread_list($threads, $showAdminOptions, $page_number + 1, $totalPages);
     }
 
-    /**
-     * @return string[]
-     */
-    private function sanity_check_new_post(QueryArray $data): array
+    private function show_posts(int $thread_id, int $page_number, bool $showAdminOptions = false): void
     {
-        $errors = [];
-        if (empty($data["threadID"]) || !is_numeric($data["threadID"])) {
-            $errors[] = "No thread ID supplied.";
-        }
-        if (empty($data["message"])) {
-            $errors[] = "You cannot have an empty message.";
-        }
+        $posts_per_page = Ctx::$config->get(ForumConfig::POSTS_PER_PAGE);
+        $thread = ForumThread::by_id($thread_id);
+        $posts = ForumPost::get_all_posts($thread_id, $page_number, $posts_per_page);
+        $totalPages = (int)ceil($thread->response_count / $posts_per_page);
 
-        return $errors;
+        $this->theme->display_thread($thread, $posts, $showAdminOptions, $thread_id, $page_number + 1, $totalPages);
     }
 
-    private function get_thread_title(int $threadID): string
+    private function save_new_thread(User $user, string $title, bool $sticky): int
     {
-        return Ctx::$database->get_one("SELECT t.title FROM forum_threads AS t WHERE t.id = :id ", ['id' => $threadID]);
-    }
-
-    private function show_last_threads(int $pageNumber, bool $showAdminOptions = false): void
-    {
-        $database = Ctx::$database;
-        $threadsPerPage = Ctx::$config->get(ForumConfig::THREADS_PER_PAGE);
-        $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
-
-        /** @var Thread[] $threads */
-        $threads = $database->get_all(
-            "SELECT f.id, f.sticky, f.title, f.date, f.uptodate, u.name AS user_name, u.email AS user_email, u.class AS user_class, sum(1) - 1 AS response_count " .
-            "FROM forum_threads AS f " .
-            "INNER JOIN users AS u " .
-            "ON f.user_id = u.id " .
-            "INNER JOIN forum_posts AS p " .
-            "ON p.thread_id = f.id " .
-            "GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.class " .
-            "ORDER BY f.sticky ASC, f.uptodate DESC LIMIT :limit OFFSET :offset",
-            ["limit" => $threadsPerPage, "offset" => $pageNumber * $threadsPerPage]
-        );
-
-        $this->theme->display_thread_list($threads, $showAdminOptions, $pageNumber + 1, $totalPages);
-    }
-
-    private function show_posts(int $threadID, int $pageNumber, bool $showAdminOptions = false): void
-    {
-        global $database;
-
-        $result = Ctx::$database->get_one("SELECT COUNT(*) FROM forum_threads WHERE id=:id", ['id' => $threadID]);
-        if ($result !== 1) {
-            throw new ObjectNotFound("Thread not found");
-        }
-
-        $postsPerPage = Ctx::$config->get(ForumConfig::POSTS_PER_PAGE);
-        $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id' => $threadID]) / $postsPerPage);
-        $threadTitle = $this->get_thread_title($threadID);
-
-        $posts = $database->get_all(
-            "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class " .
-            "FROM forum_posts AS p " .
-            "INNER JOIN users AS u " .
-            "ON p.user_id = u.id " .
-            "WHERE thread_id = :thread_id " .
-            "ORDER BY p.date ASC " .
-            "LIMIT :limit OFFSET :offset",
-            ["thread_id" => $threadID, "offset" => $pageNumber * $postsPerPage, "limit" => $postsPerPage]
-        );
-        $this->theme->display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber + 1, $totalPages);
-    }
-
-    private function save_new_thread(User $user): int
-    {
-        $title = $_POST["title"];
-        $sticky = !empty($_POST["sticky"]);
-
-        global $database;
-        $database->execute(
-            "
-				INSERT INTO forum_threads
-				(title, sticky, user_id, date, uptodate)
-				VALUES
-				(:title, :sticky, :user_id, now(), now())",
+        $title = substr($title, 0, Ctx::$config->get(ForumConfig::TITLE_SUBSTRING));
+        Ctx::$database->execute(
+            "INSERT INTO forum_threads
+			(title, sticky, user_id, date, uptodate)
+			VALUES
+			(:title, :sticky, :user_id, now(), now())",
             ['title' => $title, 'sticky' => $sticky, 'user_id' => $user->id]
         );
 
-        $threadID = $database->get_last_insert_id("forum_threads_id_seq");
+        $thread_id = Ctx::$database->get_last_insert_id('forum_threads_id_seq');
 
-        Log::info("forum", "Thread {$threadID} created by {$user->name}");
-
-        return $threadID;
+        Log::info('forum', "Thread $thread_id created by $user->name");
+        Ctx::$cache->delete('forum-thread-count');
+        return $thread_id;
     }
 
-    private function save_new_post(int $threadID, User $user): void
+    private function save_new_post(User $user, int $thread_id, string $message): void
     {
-        $userID = $user->id;
-        $message = $_POST["message"];
+        $message = substr($message, 0, Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST));
 
-        $max_characters = Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST);
-        $message = substr($message, 0, $max_characters);
+        Ctx::$database->execute(
+            'INSERT INTO forum_posts (thread_id, user_id, date, message)
+			VALUES (:thread_id, :user_id, now(), :message)',
+            ['thread_id' => $thread_id, 'user_id' => $user->id, 'message' => $message]
+        );
 
-        global $database;
-        $database->execute("
-			INSERT INTO forum_posts (thread_id, user_id, date, message)
-			VALUES (:thread_id, :user_id, now(), :message)
-		", ['thread_id' => $threadID, 'user_id' => $userID, 'message' => $message]);
+        $post_id = Ctx::$database->get_last_insert_id('forum_posts_id_seq');
 
-        $postID = $database->get_last_insert_id("forum_posts_id_seq");
+        Log::info('forum', "Post $post_id created by $user->name");
 
-        Log::info("forum", "Post {$postID} created by {$user->name}");
-
-        $database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=:id", ['id' => $threadID]);
+        Ctx::$database->execute('UPDATE forum_threads SET uptodate = now(), response_count = response_count + 1 WHERE id = :id', ['id' => $thread_id]);
     }
 
-    private function delete_thread(int $threadID): void
+    private function delete_thread(int $thread_id): void
     {
-        Ctx::$database->execute("DELETE FROM forum_threads WHERE id = :id", ['id' => $threadID]);
-        Ctx::$database->execute("DELETE FROM forum_posts WHERE thread_id = :thread_id", ['thread_id' => $threadID]);
+        Ctx::$database->execute('DELETE FROM forum_threads WHERE id = :id', ['id' => $thread_id]);
+        Ctx::$database->execute('DELETE FROM forum_posts WHERE thread_id = :thread_id', ['thread_id' => $thread_id]);
+        Ctx::$cache->delete('forum-thread-count');
     }
 
-    private function delete_post(int $postID): void
+    private function delete_post(int $thread_id, int $post_id): void
     {
-        Ctx::$database->execute("DELETE FROM forum_posts WHERE id = :id", ['id' => $postID]);
+        Ctx::$database->execute('DELETE FROM forum_posts WHERE id = :id', ['id' => $post_id]);
+        Ctx::$database->execute('UPDATE forum_threads SET response_count = response_count - 1 WHERE id = :id', ['id' => $thread_id]);
     }
 }
