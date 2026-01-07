@@ -4,14 +4,14 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0f65223e0005d0bed27ecc3a7f344d53",
+    "content-hash": "9044dd2954d6b8927b77ec84f3918b2e",
     "packages": [
         {
             "name": "bower-asset/jquery",
             "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jquery/jquery-dist.git",
+                "url": "git@github.com:jquery/jquery-dist.git",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
@@ -842,26 +842,26 @@
         },
         {
             "name": "shish/microbundler",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microbundler.git",
-                "reference": "5f48327e92d3601f2c86caef2856b9671a63b6b0"
+                "reference": "85a0305f32b5f468b784808c3349312ad4bea569"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microbundler/zipball/5f48327e92d3601f2c86caef2856b9671a63b6b0",
-                "reference": "5f48327e92d3601f2c86caef2856b9671a63b6b0",
+                "url": "https://api.github.com/repos/shish/microbundler/zipball/85a0305f32b5f468b784808c3349312ad4bea569",
+                "reference": "85a0305f32b5f468b784808c3349312ad4bea569",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1",
+                "php": "^8.2",
                 "shish/ffsphp": "^1.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "3.41.1",
-                "phpstan/phpstan": "1.10.50",
-                "phpunit/phpunit": "10.5.3"
+                "friendsofphp/php-cs-fixer": "^3.89",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^11.5"
             },
             "type": "library",
             "autoload": {
@@ -890,9 +890,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microbundler/issues",
-                "source": "https://github.com/shish/microbundler/tree/v1.0.1"
+                "source": "https://github.com/shish/microbundler/tree/v1.0.2"
             },
-            "time": "2024-01-01T19:58:28+00:00"
+            "time": "2026-01-07T12:30:21+00:00"
         },
         {
             "name": "shish/microcrud",
@@ -1939,16 +1939,16 @@
         },
         {
             "name": "webonyx/graphql-php",
-            "version": "v15.27.2",
+            "version": "v15.29.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webonyx/graphql-php.git",
-                "reference": "7fc996bb201ce3bf1d803b8e0336e8f2beb029e9"
+                "reference": "7ae6371184a1909822916ff101eab7e6e070c656"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/7fc996bb201ce3bf1d803b8e0336e8f2beb029e9",
-                "reference": "7fc996bb201ce3bf1d803b8e0336e8f2beb029e9",
+                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/7ae6371184a1909822916ff101eab7e6e070c656",
+                "reference": "7ae6371184a1909822916ff101eab7e6e070c656",
                 "shasum": ""
             },
             "require": {
@@ -1961,13 +1961,13 @@
                 "amphp/http-server": "^2.1",
                 "dms/phpunit-arraysubset-asserts": "dev-master",
                 "ergebnis/composer-normalize": "^2.28",
-                "friendsofphp/php-cs-fixer": "3.91.3",
+                "friendsofphp/php-cs-fixer": "3.92.4",
                 "mll-lab/php-cs-fixer-config": "5.11.0",
                 "nyholm/psr7": "^1.5",
                 "phpbench/phpbench": "^1.2",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan": "2.1.33",
-                "phpstan/phpstan-phpunit": "2.0.10",
+                "phpstan/phpstan-phpunit": "2.0.11",
                 "phpstan/phpstan-strict-rules": "2.0.7",
                 "phpunit/phpunit": "^9.5 || ^10.5.21 || ^11",
                 "psr/http-message": "^1 || ^2",
@@ -1977,7 +1977,7 @@
                 "symfony/polyfill-php81": "^1.23",
                 "symfony/var-exporter": "^5 || ^6 || ^7 || ^8",
                 "thecodingmachine/safe": "^1.3 || ^2 || ^3",
-                "ticketswap/phpstan-error-formatter": "1.2.3"
+                "ticketswap/phpstan-error-formatter": "1.2.4"
             },
             "suggest": {
                 "amphp/http-server": "To leverage async resolving with webserver on AMPHP platform",
@@ -2002,7 +2002,7 @@
             ],
             "support": {
                 "issues": "https://github.com/webonyx/graphql-php/issues",
-                "source": "https://github.com/webonyx/graphql-php/tree/v15.27.2"
+                "source": "https://github.com/webonyx/graphql-php/tree/v15.29.4"
             },
             "funding": [
                 {
@@ -2010,7 +2010,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2025-12-09T07:30:56+00:00"
+            "time": "2026-01-05T16:06:25+00:00"
         }
     ],
     "packages-dev": [
@@ -2410,16 +2410,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.92.3",
+            "version": "v3.92.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "2ba8f5a60f6f42fb65758cfb3768434fa2d1c7e8"
+                "reference": "9e7488b19403423e02e8403cc1eb596baf4673b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/2ba8f5a60f6f42fb65758cfb3768434fa2d1c7e8",
-                "reference": "2ba8f5a60f6f42fb65758cfb3768434fa2d1c7e8",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/9e7488b19403423e02e8403cc1eb596baf4673b0",
+                "reference": "9e7488b19403423e02e8403cc1eb596baf4673b0",
                 "shasum": ""
             },
             "require": {
@@ -2451,17 +2451,17 @@
             },
             "require-dev": {
                 "facile-it/paraunit": "^1.3.1 || ^2.7",
-                "infection/infection": "^0.31.0",
-                "justinrainbow/json-schema": "^6.5",
-                "keradus/cli-executor": "^2.2",
+                "infection/infection": "^0.31",
+                "justinrainbow/json-schema": "^6.6",
+                "keradus/cli-executor": "^2.3",
                 "mikey179/vfsstream": "^1.6.12",
                 "php-coveralls/php-coveralls": "^2.9",
                 "php-cs-fixer/phpunit-constraint-isidenticalstring": "^1.6",
                 "php-cs-fixer/phpunit-constraint-xmlmatchesxsd": "^1.6",
-                "phpunit/phpunit": "^9.6.25 || ^10.5.53 || ^11.5.34",
+                "phpunit/phpunit": "^9.6.31 || ^10.5.60 || ^11.5.46",
                 "symfony/polyfill-php85": "^1.33",
-                "symfony/var-dumper": "^5.4.48 || ^6.4.24 || ^7.3.2 || ^8.0",
-                "symfony/yaml": "^5.4.45 || ^6.4.24 || ^7.3.2 || ^8.0"
+                "symfony/var-dumper": "^5.4.48 || ^6.4.26 || ^7.4.0 || ^8.0",
+                "symfony/yaml": "^5.4.45 || ^6.4.30 || ^7.4.1 || ^8.0"
             },
             "suggest": {
                 "ext-dom": "For handling output formats in XML",
@@ -2502,7 +2502,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.92.3"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.92.4"
             },
             "funding": [
                 {
@@ -2510,7 +2510,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-18T10:45:02+00:00"
+            "time": "2026-01-04T00:38:52+00:00"
         },
         {
             "name": "myclabs/deep-copy",
