@@ -20,9 +20,6 @@ final class CommentConfig extends ConfigGroup
     #[ConfigMeta("Comments per post on comments/list", ConfigType::INT, default: 10)]
     public const LIST_COUNT = "comment_list_count";
 
-    #[ConfigMeta("Akismet API key", ConfigType::STRING)]
-    public const WORDPRESS_KEY = "comment_wordpress_key";
-
     #[ConfigMeta("Show repeat anons publicly", ConfigType::BOOL, default: false)]
     public const SHOW_REPEAT_ANONS = "comment_samefags_public";
 
