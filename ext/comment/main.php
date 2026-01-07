@@ -533,32 +533,7 @@ final class CommentList extends Extension
         return in_array($hash, $valid_hashes);
     }
 
-    private function is_spam_akismet(string $text): bool
-    {
-        $key = Ctx::$config->get(CommentConfig::WORDPRESS_KEY);
-        if (!is_null($key) && strlen($key) > 0) {
-            $comment = [
-                'author'       => Ctx::$user->name,
-                'email'        => Ctx::$user->email,
-                'website'      => '',
-                'body'         => $text,
-                'permalink'    => '',
-                'referrer'     => $_SERVER['HTTP_REFERER'] ?? 'none',
-                'user_agent'   => $_SERVER['HTTP_USER_AGENT'] ?? 'none',
-            ];
 
-            // @phpstan-ignore-next-line
-            $akismet = new \Akismet($_SERVER['SERVER_NAME'], $key, $comment);
-
-            if ($akismet->errorsExist()) {
-                return false;
-            } else {
-                return $akismet->isSpam();
-            }
-        }
-
-        return false;
-    }
 
     private function is_dupe(int $image_id, string $comment): bool
     {
@@ -628,8 +603,6 @@ final class CommentList extends Extension
         // rate-limited external service checks last
         elseif (!Captcha::check(CommentPermission::SKIP_CAPTCHA)) {
             throw new CommentPostingException("Error in captcha");
-        } elseif (Ctx::$user->is_anonymous() && $this->is_spam_akismet($comment)) {
-            throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
         }
     }
 }
