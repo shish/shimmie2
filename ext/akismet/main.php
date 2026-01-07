@@ -8,7 +8,7 @@ final class Akismet extends Extension
 {
     public const KEY = "akismet";
 
-    public function onCheckContent(CheckContentEvent $event): void
+    public function onCheckStringContent(CheckStringContentEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
             return;
