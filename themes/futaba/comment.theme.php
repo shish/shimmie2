@@ -104,7 +104,7 @@ class FutabaCommentListTheme extends CommentListTheme
             $h_del = " - [<a onclick='$h_delete_script' href='$h_delete_link'>Delete</a>]";
         }
         if ($this->post_page) {
-            $h_reply = "[<a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>]";
+            $h_reply = "[<a href='javascript: ShmComment.replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>]";
         } else {
             $h_reply = "[<a href='".make_link("post/view/$i_image_id")."'>Reply</a>]";
         }

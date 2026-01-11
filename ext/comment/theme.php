@@ -225,7 +225,7 @@ class CommentListTheme extends Themelet
                         SHM_DATE($comment->posted),
                         $comment->edited ? " (edited)" : null,
                         " - ",
-                        A(["href" => "javascript:replyTo({$comment->image_id}, {$comment->id}, '{$comment->owner->name}')"], "Reply"),
+                        A(["href" => "javascript:ShmComment.replyTo({$comment->image_id}, {$comment->id}, '{$comment->owner->name}')"], "Reply"),
                     ),
                     emptyHTML(
                         Ctx::$user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->owner_ip, "Comment posted {$comment->posted}")) : null,
@@ -253,7 +253,7 @@ class CommentListTheme extends Themelet
 
     protected function edit_button(int $comment_id, int $image_id, string $text): HTMLElement
     {
-        return A(["class" => "comment_edit", "data-comment_id" => $comment_id, "data-post_id" => $image_id, "data-content" => $text, "onclick" => "Comment.edit(this);"], " Edit");
+        return A(["class" => "comment_edit", "data-comment_id" => $comment_id, "data-post_id" => $image_id, "data-content" => $text, "onclick" => "ShmComment.edit(this);"], " Edit");
     }
 
     protected function build_postbox(int $image_id): HTMLElement

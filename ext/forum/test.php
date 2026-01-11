@@ -27,6 +27,10 @@ final class ForumTest extends ShimmiePHPUnitTestCase
         self::get_page("forum/index");
         self::assert_text("My new thread");
 
+        self::post_page("forum/edit", ["post_id" => "$post_id", "thread_id" => "$thread_id", "message" => "My edited response ASDFASDF"]);
+        self::get_page("forum/view/$thread_id");
+        self::assert_text("ASDFASDF");
+
         // delete response
         self::post_page("forum/delete/$thread_id/$post_id");
 
