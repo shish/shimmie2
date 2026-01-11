@@ -11,6 +11,9 @@ final class CommentPermission extends PermissionGroup
     #[PermissionMeta("Create")]
     public const CREATE_COMMENT = "create_comment";
 
+    #[PermissionMeta("Edit")]
+    public const EDIT_COMMENT = "edit_comment";
+
     #[PermissionMeta("Delete")]
     public const DELETE_COMMENT = "delete_comment";
 

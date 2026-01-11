@@ -1,26 +1,19 @@
-class ShmComment{}
+class Forum{}
 
-ShmComment.replyTo = function(imageId, commentId, userId) {
-    var box = document.getElementById("comment_on_" + imageId);
-    box.focus();
-    box.value += `[url=site://post/view/${imageId}#c${commentId}]@${userId}[/url]: `;
-    shm_blink(document.getElementById("c" + commentId));
-}
-
-ShmComment.edit = function(element) {
-    const comment_id = element.dataset.comment_id;
+Forum.edit = function(element) {
     const post_id = element.dataset.post_id;
+    const thread_id = element.dataset.thread_id;
     const content = element.dataset.content;
-    const exists = document.getElementById(`editing_${comment_id}`)
+    const exists = document.getElementById(`editing_${post_id}`)
     if (exists){
         exists.remove();
         return;
     }
-    const parent = document.getElementById(`c${comment_id}`);
-	const postBox = document.getElementById(`comment_add_${post_id}`);
+    const parent = document.getElementById(`${post_id}`);
+	const postBox = document.getElementById('post_composer');
     if (!postBox || !parent) return;
     const editBox = postBox.cloneNode(true);
-    editBox.id = `editing_${comment_id}`;
+    editBox.id = `editing_${post_id}`;
     const form = editBox.querySelector("form");
     if (form) {
         const textarea = form.querySelector("textarea");
@@ -32,11 +25,19 @@ ShmComment.edit = function(element) {
         if (submit){
             submit.value = "Edit Comment";
         }
-        form.action = form.action.replace(/add$/, "edit")
+        const small = form.querySelector("small");
+        const table = form.querySelector("table");
+        if (textarea && submit && small && table) {
+            form.appendChild(textarea);
+            form.appendChild(small);
+            form.appendChild(submit);
+            table.remove();
+        }
+        form.action = form.action.replace(/answer$/, "edit")
         const input = document.createElement("input");
         input.type = "hidden";
-        input.name = "comment_id";
-        input.value = comment_id;
+        input.name = "post_id";
+        input.value = post_id;
         form.appendChild(input);
         parent.appendChild(editBox);
     }
