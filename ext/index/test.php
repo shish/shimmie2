@@ -35,10 +35,9 @@ final class IndexTest extends ShimmiePHPUnitTestCase
             self::get_page('post/view/99999');
         });
 
-        # No results: 404
-        self::assertException(PostNotFound::class, function () {
-            self::get_page('post/list/maumaumau/1');
-        });
+        # No results
+        self::get_page('post/list/maumaumau/1');
+        self::assert_text("No posts were found to match the search criteria");
 
         # One result: 302
         self::get_page("post/list/pbx/1");
