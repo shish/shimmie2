@@ -10,11 +10,10 @@ ARG PHP_VERSION=8.4
 # Install base packages
 # Things which all stages (build, test, run) need
 FROM debian:trixie AS base
-COPY --from=mwader/static-ffmpeg:7.1 /ffmpeg /ffprobe /usr/local/bin/
+COPY --from=docker.io/mwader/static-ffmpeg:7.1 /ffmpeg /ffprobe /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y curl && \
-    apt update && apt install -y --no-install-recommends \
+    apt install -y --no-install-recommends \
     supervisor \
     nginx \
     php${PHP_VERSION}-cli php${PHP_VERSION}-fpm \
@@ -47,6 +46,8 @@ COPY . /app/
 # that's mounted from the host
 FROM dev-tools AS devcontainer
 EXPOSE 8000
+ENTRYPOINT ["/app/.docker/entrypoint.sh"]
+CMD ["php", "/app/.docker/run.php"]
 
 # Actually run shimmie
 FROM base AS run
