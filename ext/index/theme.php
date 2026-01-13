@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, H2, SUP};
-use function MicroHTML\{BR, DIV, H3, HR, INPUT, META, P, emptyHTML};
+use function MicroHTML\{A, BR, DIV, H2, H3, HR, INPUT, META, P, SPAN, SUP, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -80,7 +79,7 @@ class IndexTheme extends Themelet
         if (count($images) > 0) {
             $this->display_page_images($images);
         } else {
-            throw new PostNotFound("No posts were found to match the search criteria");
+            $this->display_none_found();
         }
     }
 
@@ -152,6 +151,19 @@ class IndexTheme extends Themelet
             Ctx::$page->add_block(new Block(null, $this->build_table($images, null), "main", 10, "image-list"));
             $this->display_paginator("post/list", null, $this->page_number, $this->total_pages, true);
         }
+    }
+
+    protected function display_none_found(): void
+    {
+        Ctx::$page->add_block(new Block(null, emptyHTML(
+            SPAN(
+                "No posts were found to match the search criteria, ",
+                A(
+                    ["href" => Url::referer_or(make_link("post/list"))],
+                    "go back"
+                )
+            )
+        )));
     }
 
     public function get_help_html(): HTMLElement
