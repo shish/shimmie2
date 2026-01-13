@@ -44,9 +44,8 @@ final class NumericScoreTest extends ShimmiePHPUnitTestCase
         self::assertEquals(PageMode::REDIRECT, $page->mode);
 
         # and downvote
-        self::assertException(PostNotFound::class, function () {
-            self::get_page("post/list/downvoted_by=test/1");
-        });
+        self::get_page("post/list/downvoted_by=test/1");
+        self::assert_text("No posts were found to match the search criteria");
 
         # test errors
         self::assertException(UserNotFound::class, function () {
@@ -55,11 +54,11 @@ final class NumericScoreTest extends ShimmiePHPUnitTestCase
         self::assertException(UserNotFound::class, function () {
             self::get_page("post/list/downvoted_by=asdfasdf/1");
         });
-        self::assertException(PostNotFound::class, function () {
-            self::get_page("post/list/upvoted_by_id=0/1");
-        });
-        self::assertException(PostNotFound::class, function () {
-            self::get_page("post/list/downvoted_by_id=0/1");
-        });
+
+        self::get_page("post/list/upvoted_by_id=0/1");
+        self::assert_text("No posts were found to match the search criteria");
+
+        self::get_page("post/list/downvoted_by_id=0/1");
+        self::assert_text("No posts were found to match the search criteria");
     }
 }

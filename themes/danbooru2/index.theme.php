@@ -27,7 +27,7 @@ class Danbooru2IndexTheme extends IndexTheme
         if (count($images) > 0) {
             $this->display_page_images($images);
         } else {
-            throw new PostNotFound("No posts were found to match the search criteria");
+            $this->display_none_found();
         }
     }
 
