@@ -1,0 +1,13 @@
+.glightbox-container {
+	.gprev, .gnext {
+		display: none;
+	}
+
+	.gslide-description {
+		display: none;
+	}
+}
+
+img.shm-main-image {
+	cursor: pointer;
+}
