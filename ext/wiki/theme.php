@@ -207,17 +207,24 @@ class WikiTheme extends Themelet
             )));
         }
 
+        $p = [];
+
+        if (Ctx::$config->get(WikiConfig::ENABLE_REVISIONS)) {
+            $p[] = A(["href" => make_link("wiki/$u_title/history")], "Revision {$page->revision}");
+            $p[] = " by ";
+        }
+
+        $p[] = A(["href" => make_link("user/{$owner->name}")], $owner->name);
+        $p[] = " at {$page->date}";
+        $p[] = TABLE($edit);
+
         return DIV(
             ["class" => "wiki-page"],
             $formatted_body,
             HR(),
             P(
                 ["class" => "wiki-footer"],
-                A(["href" => make_link("wiki/$u_title/history")], "Revision {$page->revision}"),
-                " by ",
-                A(["href" => make_link("user/{$owner->name}")], $owner->name),
-                " at {$page->date}",
-                TABLE($edit),
+                ... $p
             )
         );
     }
