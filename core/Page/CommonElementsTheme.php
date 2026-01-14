@@ -109,6 +109,9 @@ class CommonElementsTheme extends Themelet
             "data-mime" => $image->get_mime(),
             "data-post-id" => $id,
         ];
+        if ($image->video) {
+            $attrs["data-video"] = "1";
+        }
         if (RatingsInfo::is_enabled()) {
             $attrs["data-rating"] = $image['rating'];
         }
