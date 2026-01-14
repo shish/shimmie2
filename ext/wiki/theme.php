@@ -194,13 +194,15 @@ class WikiTheme extends Themelet
             )));
         }
         if (Ctx::$user->can(WikiPermission::ADMIN)) {
-            $edit->appendChild(
-                TD(SHM_SIMPLE_FORM(
-                    make_link("wiki/$u_title/delete_revision"),
-                    INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
-                    SHM_SUBMIT("Delete")
-                ))
-            );
+            if (Ctx::$config->get(WikiConfig::ENABLE_REVISIONS)) {
+                $edit->appendChild(
+                    TD(SHM_SIMPLE_FORM(
+                        make_link("wiki/$u_title/delete_revision"),
+                        INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
+                        SHM_SUBMIT("Delete")
+                    ))
+                );
+            }
             $edit->appendChild(TD(SHM_SIMPLE_FORM(
                 make_link("wiki/$u_title/delete_all"),
                 SHM_SUBMIT("Delete All")
