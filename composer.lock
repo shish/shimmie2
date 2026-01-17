@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4a6d84a691370d925851df1f5d5a91f",
+    "content-hash": "919d6e651af9ccec053c2ccb4ef2cbc2",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -951,16 +951,16 @@
         },
         {
             "name": "shish/microhtml",
-            "version": "v2.6.0",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "6b762dd07a3c84efdafdd5b86e2582d3270b5f94"
+                "reference": "f33a68252790aebfea1f530c2b8872618793a187"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/6b762dd07a3c84efdafdd5b86e2582d3270b5f94",
-                "reference": "6b762dd07a3c84efdafdd5b86e2582d3270b5f94",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/f33a68252790aebfea1f530c2b8872618793a187",
+                "reference": "f33a68252790aebfea1f530c2b8872618793a187",
                 "shasum": ""
             },
             "require": {
@@ -997,9 +997,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microhtml/issues",
-                "source": "https://github.com/shish/microhtml/tree/v2.6.0"
+                "source": "https://github.com/shish/microhtml/tree/v2.7.0"
             },
-            "time": "2026-01-17T17:35:57+00:00"
+            "time": "2026-01-17T23:19:10+00:00"
         },
         {
             "name": "shish/microotlp",
