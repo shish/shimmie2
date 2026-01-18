@@ -13,4 +13,6 @@ final class ForumPermission extends PermissionGroup
 
     #[PermissionMeta("Create")]
     public const FORUM_CREATE = "forum_create";
+    #[PermissionMeta("Edit")]
+    public const FORUM_EDIT = "forum_edit";
 }

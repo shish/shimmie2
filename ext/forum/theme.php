@@ -72,23 +72,26 @@ class ForumTheme extends Themelet
     {
         $max_characters = Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST);
 
-        $html = SHM_SIMPLE_FORM(
-            make_link("forum/answer"),
-            INPUT(["type" => "hidden", "name" => "thread_id", "value" => $thread_id]),
-            TABLE(
-                ["class" => "form"],
-                TR(
-                    TH("Message"),
-                    TD(TEXTAREA(["id" => "message", "name" => "message"]))
-                ),
-                TR(
-                    TD(),
-                    TD(SMALL("Max characters allowed: $max_characters."))
-                ),
-                TR(
-                    TD(
-                        ["colspan" => 2],
-                        SHM_SUBMIT("Reply"),
+        $html = DIV(
+            ["id" => "post_composer"],
+            SHM_SIMPLE_FORM(
+                make_link("forum/answer"),
+                INPUT(["type" => "hidden", "name" => "thread_id", "value" => $thread_id]),
+                TABLE(
+                    ["class" => "form"],
+                    TR(
+                        TH("Message"),
+                        TD(TEXTAREA(["id" => "message", "name" => "message"]))
+                    ),
+                    TR(
+                        TD(),
+                        TD(SMALL("Max characters allowed: $max_characters."))
+                    ),
+                    TR(
+                        TD(
+                            ["colspan" => 2],
+                            SHM_SUBMIT("Reply"),
+                        )
                     )
                 )
             )
@@ -144,11 +147,20 @@ class ForumTheme extends Themelet
                             BR()
                         ),
                         TD(
-                            ["class" => "forumMessage"],
-                            DIV(["class" => "postDate"], SMALL(SHM_DATE($post->date))),
+                            ["class" => "forumMessage", "id" => $post->id],
+                            DIV(
+                                ["class" => "postDate"],
+                                SMALL(
+                                    SHM_DATE($post->date),
+                                    $post->edited ? " (edited)" : null,
+                                ),
+                            ),
                             DIV(["class" => "postNumber"], " #$post_number"),
                             BR(),
-                            DIV(["class" => "postMessage"], format_text($post->message))
+                            DIV(["class" => "postMessage"], format_text($post->message)),
+                            emptyHTML(
+                                Ctx::$user->can(ForumPermission::FORUM_EDIT) && Ctx::$user->id === $post->owner_id ? $this->edit_button($post->id, $thread_id, $post->message) : null
+                            )
                         )
                     ),
                     TR(
@@ -182,6 +194,11 @@ class ForumTheme extends Themelet
         $this->display_paginator("forum/view/$thread_id", null, $pageNumber, $totalPages);
         Ctx::$page->set_title($thread->title);
         Ctx::$page->add_block(new Block($thread->title, $html, "main", 20));
+    }
+
+    protected function edit_button(int $post_id, int $thread_id, string $text): HTMLElement
+    {
+        return A(["class" => "forum_edit", "data-post_id" => $post_id, "data-thread_id" => $thread_id, "data-content" => $text, "onclick" => "Forum.edit(this);"], " Edit");
     }
 
     public function add_actions_block(int $thread_id): void

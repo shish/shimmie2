@@ -96,16 +96,17 @@ class Danbooru2CommentListTheme extends CommentListTheme
         }
         $h_posted = SHM_DATE($comment->posted);
 
-        $h_userlink = A(["class" => "username", "href" => make_link("user/{$comment->owner_name}")], $comment->owner_name);
-        $h_del = null;
-        if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
-            $h_del = emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped));
-        }
+        $h_userlink = A(["class" => "username", "href" => make_link("user/{$comment->owner->name}")], $comment->owner->name);
+        $actions = emptyHTML(
+            Ctx::$user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->owner_ip, "Comment posted {$comment->posted}")) : null,
+            Ctx::$user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->id, $comment->image_id, $comment->owner->name, $tfe->stripped)) : null,
+            Ctx::$user->can(CommentPermission::EDIT_COMMENT) && Ctx::$user->id === $comment->owner_id ? emptyHTML(" - ", $this->edit_button($comment->id, $comment->image_id, $comment->comment)) : null,
+        );
         if ($trim) {
             return P(
                 ["class" => "comment"],
                 $h_userlink,
-                $h_del,
+                $actions,
                 BR(),
                 $h_posted,
                 BR(),
@@ -115,8 +116,8 @@ class Danbooru2CommentListTheme extends CommentListTheme
             return TABLE(
                 ["class" => "comment"],
                 TR(
-                    TD(["class" => "meta"], $h_userlink, BR(), $h_posted, $h_del),
-                    TD($h_comment)
+                    TD(["class" => "meta"], $h_userlink, BR(), $h_posted, $actions),
+                    TD(["id" => "c$comment->id"], $h_comment)
                 )
             );
         }

@@ -80,6 +80,23 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
         self::assert_no_text('ASDFASDF');
     }
 
+    public function testEdit(): void
+    {
+        self::log_in_as_admin();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+
+        # make a comment
+        $cpe = send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
+        $comment_id = $cpe->id;
+        self::get_page("post/view/$image_id");
+        self::assert_text("ASDFASDF");
+
+        # edit said comment
+        send_event(new CommentEditingEvent($image_id, $comment_id, Ctx::$user, "Edited comment QWERQWER"));
+        self::get_page("post/view/$image_id");
+        self::assert_text("QWERQWER");
+    }
+
     public function testSingleDel(): void
     {
         self::log_in_as_admin();
