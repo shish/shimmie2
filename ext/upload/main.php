@@ -142,7 +142,7 @@ final class Upload extends Extension
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
-            $event->add_nav_link(make_link('upload'), "Upload", category: "upload");
+            $event->add_nav_link(make_link('upload'), "Upload", "upload");
         }
     }
 
@@ -150,7 +150,7 @@ final class Upload extends Extension
     {
         if ($event->parent === "upload") {
             if (WikiInfo::is_enabled()) {
-                $event->add_nav_link(make_link('wiki/upload_guidelines'), "Guidelines");
+                $event->add_nav_link(make_link('wiki/upload_guidelines'), "Guidelines", "guidelines");
             }
         }
     }

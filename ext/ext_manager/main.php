@@ -87,7 +87,7 @@ final class ExtManager extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
-                $event->add_nav_link(make_link('ext_manager'), "Extension Manager");
+                $event->add_nav_link(make_link('ext_manager'), "Extension Manager", "ext_manager");
             }
         }
     }

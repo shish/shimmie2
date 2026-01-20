@@ -80,7 +80,7 @@ EOD;
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "comment") {
-            $event->add_nav_link(make_link('rss/comments'), "Feed");
+            $event->add_nav_link(make_link('rss/comments'), "Feed", "rss_feed");
         }
     }
 }

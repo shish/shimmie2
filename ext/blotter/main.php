@@ -45,7 +45,7 @@ final class Blotter extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(BlotterPermission::ADMIN)) {
-                $event->add_nav_link(make_link('blotter/editor'), "Blotter Editor");
+                $event->add_nav_link(make_link('blotter/editor'), "Blotter Editor", "blotter_editor");
             }
         }
     }

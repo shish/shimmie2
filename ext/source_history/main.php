@@ -56,7 +56,7 @@ final class SourceHistory extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-                $event->add_nav_link(make_link('source_history/all/1'), "Source Changes", ["source_history"]);
+                $event->add_nav_link(make_link('source_history/all/1'), "Source Changes", "source_history", ["source_history"]);
             }
         }
     }

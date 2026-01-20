@@ -139,7 +139,7 @@ final class AdminPage extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(AdminPermission::MANAGE_ADMINTOOLS)) {
-                $event->add_nav_link(make_link('admin'), "Board Admin");
+                $event->add_nav_link(make_link('admin'), "Board Admin", "board_admin");
             }
         }
     }

@@ -13,9 +13,9 @@ final class PageNavBuildingEvent extends Event
     /**
      * @param string[] $matches
      */
-    public function add_nav_link(Url $link, string $desc, array $matches = [], ?string $category = null, int $order = 50): void
+    public function add_nav_link(Url $link, string $desc, string $key, array $matches = [], int $order = 50): void
     {
-        $navlink = new NavLink($link, $desc, $matches, $category, $order);
+        $navlink = new NavLink($link, $desc, $key, $matches, $order);
 
         if ($this->active_link === null && $navlink->active) {
             $this->active_link = $navlink;

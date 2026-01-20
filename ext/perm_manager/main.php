@@ -180,7 +180,7 @@ final class PermManager extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
-                $event->add_nav_link(make_link('perm_manager'), "Permission Manager");
+                $event->add_nav_link(make_link('perm_manager'), "Permission Manager", "perm_manager");
             }
         }
     }

@@ -66,7 +66,7 @@ final class Trash extends Extension
     {
         if ($event->parent === "posts") {
             if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
-                $event->add_nav_link(search_link(['in=trash']), "Trash", order: 60);
+                $event->add_nav_link(search_link(['in=trash']), "Trash", "trash", order: 60);
             }
         }
     }

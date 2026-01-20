@@ -234,7 +234,7 @@ final class LogDatabase extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
-                $event->add_nav_link(make_link('log/view'), "Event Log");
+                $event->add_nav_link(make_link('log/view'), "Event Log", "event_log");
             }
         }
     }

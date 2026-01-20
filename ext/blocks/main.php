@@ -38,7 +38,7 @@ final class Blocks extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(BlocksPermission::MANAGE_BLOCKS)) {
-                $event->add_nav_link(make_link('blocks/list'), "Blocks Editor");
+                $event->add_nav_link(make_link('blocks/list'), "Blocks Editor", "blocks_editor");
             }
         }
     }

@@ -143,7 +143,7 @@ final class Favorites extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
-            $event->add_nav_link(search_link(["favorited_by=" . Ctx::$user->name]), "My Favorites");
+            $event->add_nav_link(search_link(["favorited_by=" . Ctx::$user->name]), "My Favorites", "my_favorites");
         }
     }
 

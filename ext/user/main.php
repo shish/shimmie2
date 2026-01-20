@@ -402,10 +402,14 @@ final class UserPage extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        if (Ctx::$user->is_anonymous()) {
-            $event->add_nav_link(make_link('user_admin/login'), "Account", category: "user", order: 10);
-        } else {
-            $event->add_nav_link(make_link('user'), "Account", ["user"], "user", 10);
+        $is_anonymous = Ctx::$user->is_anonymous();
+
+        if ($is_anonymous) {
+            $event->add_nav_link(make_link('user_admin/login'), "Account", "user", order: 10);
+        }
+
+        if (!$is_anonymous) {
+            $event->add_nav_link(make_link('user'), "Account", "user", ["user"], order: 10);
         }
     }
 
@@ -464,12 +468,14 @@ final class UserPage extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
-                $event->add_nav_link(make_link('user_admin/list'), "User List", ["user_admin"]);
+                $event->add_nav_link(make_link('user_admin/list'), "User List", "user_list", ["user_admin"]);
             }
         }
 
-        if ($event->parent === "user" && !Ctx::$user->is_anonymous()) {
-            $event->add_nav_link(make_link('user_admin/logout'), "Log Out", order: 90);
+        if ($event->parent === "user") {
+            if (!Ctx::$user->is_anonymous()) {
+                $event->add_nav_link(make_link('user_admin/logout'), "Log Out", "log_out", order: 90);
+            }
         }
     }
 

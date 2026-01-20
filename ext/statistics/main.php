@@ -72,13 +72,13 @@ final class Statistics extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link(make_link('stats'), "Stats", category: "stats");
+        $event->add_nav_link(make_link('stats'), "Stats", "stats");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "stats") {
-            $event->add_nav_link(make_link('stats/100'), "Top 100");
+            $event->add_nav_link(make_link('stats/100'), "Top 100", "top_100");
         }
     }
 

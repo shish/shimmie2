@@ -115,7 +115,7 @@ final class NotATag extends Extension
     {
         if ($event->parent === "tags") {
             if (Ctx::$user->can(NotATagPermission::MANAGE_UNTAG_LIST)) {
-                $event->add_nav_link(make_link('untag/list'), "UnTags");
+                $event->add_nav_link(make_link('untag/list'), "UnTags", "untags");
             }
         }
     }

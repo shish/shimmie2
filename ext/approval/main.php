@@ -81,7 +81,7 @@ final class Approval extends Extension
     {
         if ($event->parent === "posts") {
             if (!Ctx::$user->is_anonymous()) {
-                $event->add_nav_link(search_link(['approved=no']), "Pending Approval", order: 60);
+                $event->add_nav_link(search_link(['approved=no']), "Pending Approval", "pending_approval", order: 60);
             }
         }
     }

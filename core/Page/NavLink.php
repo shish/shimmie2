@@ -16,10 +16,11 @@ final class NavLink
     public function __construct(
         public readonly Url $link,
         public readonly string|HTMLElement $description,
+        public readonly string $key,
         array $matches = [],
-        public readonly ?string $category = null,
         public readonly int $order = 50,
         ?string $_query = null,
+        public readonly ?string $parent = null,
     ) {
         $query = $_query ?: _get_query() ?: Ctx::$config->get(SetupConfig::FRONT_PAGE);
         $active = false;

@@ -135,7 +135,7 @@ final class RSSImages extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
-            $event->add_nav_link(make_link('rss/images'), "Feed");
+            $event->add_nav_link(make_link('rss/images'), "Feed", "rss_feed");
         }
     }
 }

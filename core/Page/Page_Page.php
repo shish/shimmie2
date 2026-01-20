@@ -236,17 +236,13 @@ trait Page_Page
         $sub_links = [];
         // To save on event calls, we check if one of the top-level links has already been marked as active
         // If one is, we just query for sub-menu options under that one tab
-        if ($pnbe->active_link !== null && $pnbe->active_link->category !== null) {
-            $psnbe = send_event(new PageSubNavBuildingEvent($pnbe->active_link->category));
+        if ($pnbe->active_link !== null) {
+            $psnbe = send_event(new PageSubNavBuildingEvent($pnbe->active_link->key));
             $sub_links = $psnbe->links;
         } else {
             // Otherwise we query for the sub-items under each of the tabs
             foreach ($nav_links as $link) {
-                if ($link->category === null) {
-                    continue;
-                }
-
-                $psnbe = send_event(new PageSubNavBuildingEvent($link->category));
+                $psnbe = send_event(new PageSubNavBuildingEvent($link->key));
 
                 // If the active link has been detected, we break out
                 if ($psnbe->active_link !== null) {

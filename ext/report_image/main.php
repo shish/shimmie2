@@ -100,7 +100,7 @@ final class ReportImage extends Extension
                 $count = $this->count_reported_images();
                 $h_count = $count > 0 ? " ($count)" : "";
 
-                $event->add_nav_link(make_link('image_report/list'), "Reported Posts$h_count");
+                $event->add_nav_link(make_link('image_report/list'), "Reported Posts$h_count", "reported_posts");
             }
         }
     }
