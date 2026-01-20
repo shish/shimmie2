@@ -10,6 +10,7 @@ final class PageSubNavBuildingEvent extends Event
 {
     /** @var NavLink[] */
     public array $links = [];
+    public ?NavLink $active_link = null;
 
     public function __construct(
         public string $parent
@@ -22,6 +23,12 @@ final class PageSubNavBuildingEvent extends Event
      */
     public function add_nav_link(Url $link, string|HTMLElement $desc, array $matches = [], int $order = 50): void
     {
-        $this->links[] = new NavLink($link, $desc, $matches, null, $order);
+        $navlink = new NavLink($link, $desc, $matches, null, $order);
+
+        if ($this->active_link === null && $navlink->active) {
+            $this->active_link = $navlink;
+        }
+
+        $this->links[] = $navlink;
     }
 }

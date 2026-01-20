@@ -231,21 +231,13 @@ trait Page_Page
     protected function get_nav_links(): array
     {
         $pnbe = send_event(new PageNavBuildingEvent());
-
         $nav_links = $pnbe->links;
 
-        $active_link = null;
+        $sub_links = [];
         // To save on event calls, we check if one of the top-level links has already been marked as active
-        foreach ($nav_links as $link) {
-            if ($link->active === true) {
-                $active_link = $link;
-                break;
-            }
-        }
-        $sub_links = null;
         // If one is, we just query for sub-menu options under that one tab
-        if ($active_link !== null && $active_link->category !== null) {
-            $psnbe = send_event(new PageSubNavBuildingEvent($active_link->category));
+        if ($pnbe->active_link !== null && $pnbe->active_link->category !== null) {
+            $psnbe = send_event(new PageSubNavBuildingEvent($pnbe->active_link->category));
             $sub_links = $psnbe->links;
         } else {
             // Otherwise we query for the sub-items under each of the tabs
@@ -253,24 +245,17 @@ trait Page_Page
                 if ($link->category === null) {
                     continue;
                 }
+
                 $psnbe = send_event(new PageSubNavBuildingEvent($link->category));
 
-                // Now we check for a current link so we can identify the sub-links to show
-                foreach ($psnbe->links as $sub_link) {
-                    if ($sub_link->active === true) {
-                        $sub_links = $psnbe->links;
-                        break;
-                    }
-                }
                 // If the active link has been detected, we break out
-                if ($sub_links !== null) {
+                if ($psnbe->active_link !== null) {
+                    $sub_links = $psnbe->links;
                     $link->active = true;
                     break;
                 }
             }
         }
-
-        $sub_links = $sub_links ?? [];
 
         usort($nav_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
         usort($sub_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
