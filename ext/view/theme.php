@@ -39,7 +39,7 @@ class ViewPostTheme extends Themelet
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());
         $page->set_heading($image->get_tag_list());
         $page->set_navigation_title("Post {$image->id}");
-        $page->add_to_navigation($this->build_navigation($image), 10);
+        $page->add_to_navigation($this->build_search($image), 10);
 
         if (!$this->is_ordered_search()) {
             $query = $this->get_query();
@@ -109,7 +109,7 @@ class ViewPostTheme extends Themelet
         }
     }
 
-    protected function build_navigation(Image $image): HTMLElement
+    protected function build_search(Image $image): HTMLElement
     {
         $search = SHM_FORM(
             action: search_link(),

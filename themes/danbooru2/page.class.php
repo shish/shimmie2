@@ -22,10 +22,7 @@ class Danbooru2Page extends Page
 {
     protected function body_html(): HTMLElement
     {
-        list($nav_links, $sub_links) = $this->get_nav_links();
-
         $left_block_html = [];
-        $user_block_html = [];
         $main_block_html = [];
         $sub_block_html = [];
 
@@ -33,9 +30,6 @@ class Danbooru2Page extends Page
             switch ($block->section) {
                 case "left":
                     $left_block_html[] = $this->block_html($block, true);
-                    break;
-                case "user":
-                    $user_block_html[] = $block->body;
                     break;
                 case "subheading":
                     $sub_block_html[] = $block->body;

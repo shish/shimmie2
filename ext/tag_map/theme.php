@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, BR, HR, P, SPAN, emptyHTML, joinHTML};
+use function MicroHTML\{A, BR, HR, P, SPAN, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -119,17 +119,10 @@ class TagMapTheme extends Themelet
 
     protected function display_nav(): void
     {
-        Ctx::$page->add_to_navigation(joinHTML(
-            BR(),
-            [
-                " ",
-                A(["href" => make_link("tags/map")], "Map"),
-                A(["href" => make_link("tags/alphabetic")], "Alphabetic"),
-                A(["href" => make_link("tags/popularity")], "Popularity"),
-                " ",
-                A(["href" => Url::current()->withModifiedQuery(["mincount" => "1"])], "Show All"),
-            ]
-        ));
+        Ctx::$page->add_to_navigation(
+            A(["href" => Url::current()->withModifiedQuery(["mincount" => "1"])], "Show All"),
+            21
+        );
     }
 
     protected function build_az(int $tags_min): HTMLElement

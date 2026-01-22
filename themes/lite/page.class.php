@@ -44,7 +44,6 @@ class LitePage extends Page
         $left_block_html = [];
         $main_block_html = [];
         $sub_block_html  = [];
-        $user_block_html = [];
 
         foreach ($this->blocks as $block) {
             switch ($block->section) {
@@ -53,9 +52,6 @@ class LitePage extends Page
                     break;
                 case "main":
                     $main_block_html[] = $this->block_html($block, false);
-                    break;
-                case "user":
-                    $user_block_html[] = $block->body;
                     break;
                 case "subheading":
                     $sub_block_html[] = $this->block_html($block, false);

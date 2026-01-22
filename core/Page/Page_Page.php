@@ -19,7 +19,6 @@ trait Page_Page
     public string $heading = "";
     public string $subheading = "";
     protected string $layout = "grid";
-
     protected Navigation $navigation;
 
     /** @var HTMLElement[] */
@@ -94,74 +93,32 @@ trait Page_Page
         throw new \Exception("Block not found: $text");
     }
 
-    public function set_navigation_title(string $title): void
+    public function get_navigation(): Navigation
     {
         if (!isset($this->navigation)) {
             $this->navigation = new Navigation();
         }
-
-        $this->navigation->title = $title;
+        return $this->navigation;
     }
 
-    public function set_navigation(?Url $prev, ?Url $next, ?Url $index = null): void
+    public function set_navigation_title(string $title): void
     {
-        if (!isset($this->navigation)) {
-            $this->navigation = new Navigation();
-        }
+        $this->get_navigation()->title = $title;
+    }
 
-        $this->navigation->set_prev($prev);
-        $this->navigation->set_index($index);
-        $this->navigation->set_next($next);
+    public function set_navigation(?Url $prev, ?Url $next): void
+    {
+        $this->get_navigation()->set_prev($prev);
+        $this->get_navigation()->set_next($next);
     }
 
     public function add_to_navigation(HTMLElement|string $html, int $position = 50): void
     {
-        if (!isset($this->navigation)) {
-            $this->navigation = new Navigation();
-        }
-
-        $this->navigation->add_extra($html, $position);
-    }
-
-    protected function build_navigation(): void
-    {
-        if (!isset($this->navigation)) {
-            $this->navigation = new Navigation();
-        }
-
-        $user = Ctx::$user;
-        if (!$user->is_anonymous()) {
-            $this->navigation->add_extra(emptyHTML("Logged in as ", $user->name), 20);
-        }
-
-        [$nav_links, $sub_links] = $this->get_nav_links();
-
-        $nav = [];
-        foreach ($sub_links as $sublink) {
-            $nav[] = $sublink->render();
-        }
-
-        if (!empty($nav)) {
-            $this->navigation->add_extra(emptyHTML(joinHTML(BR(), $nav), BR()), 19);
-        }
-
-        $nav = [];
-        foreach ($nav_links as $link) {
-            $nav[] = $link->render();
-        }
-
-        if (!empty($nav)) {
-            $this->navigation->add_extra(joinHTML(BR(), $nav));
-        }
-
-        $html = $this->navigation->render();
-        $this->add_block(new Block($this->navigation->title, $html, "left", 0));
+        $this->get_navigation()->add_part($html, $position);
     }
 
     protected function display_page(): void
     {
-        $this->build_navigation();
-
         usort($this->blocks, Block::cmp(...));
         $this->add_auto_html_headers();
         $str = (string)$this->render();
@@ -291,40 +248,6 @@ trait Page_Page
     protected function get_theme_scripts(): array
     {
         return ["script.js"];
-    }
-
-    /**
-     * @return array{0: NavLink[], 1: NavLink[]}
-     */
-    public function get_nav_links(): array
-    {
-        $pnbe = send_event(new PageNavBuildingEvent());
-        $nav_links = $pnbe->links;
-
-        $sub_links = [];
-        // To save on event calls, we check if one of the top-level links has already been marked as active
-        // If one is, we just query for sub-menu options under that one tab
-        if ($pnbe->active_link !== null) {
-            $psnbe = send_event(new PageSubNavBuildingEvent($pnbe->active_link->key));
-            $sub_links = $psnbe->links;
-        } else {
-            // Otherwise we query for the sub-items under each of the tabs
-            foreach ($nav_links as $link) {
-                $psnbe = send_event(new PageSubNavBuildingEvent($link->key));
-
-                // If the active link has been detected, we break out
-                if ($psnbe->active_link !== null) {
-                    $sub_links = $psnbe->links;
-                    $link->active = true;
-                    break;
-                }
-            }
-        }
-
-        usort($nav_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
-        usort($sub_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
-
-        return [$nav_links, $sub_links];
     }
 
     /**

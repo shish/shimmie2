@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A,SPAN};
-
 use MicroHTML\HTMLElement;
 
 final class NavLink
@@ -37,18 +35,5 @@ final class NavLink
             }
         }
         $this->active = $active;
-    }
-
-    public function render(): HTMLElement
-    {
-        return A(
-            [
-                "href" => $this->link,
-                ... $this->active ? ["class" => "active"] : [],
-            ],
-            SPAN(
-                $this->description
-            )
-        );
     }
 }

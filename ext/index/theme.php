@@ -41,16 +41,9 @@ class IndexTheme extends Themelet
         Ctx::$page->add_block(new Block("Nothing here yet!", $text, "main", 0));
     }
 
-    /**
-     * @param Image[] $images
-     */
-    public function display_page(array $images): void
+    public function build_search(): HTMLElement|string
     {
-        $this->display_shortwiki();
-
-        $this->display_page_header($images);
-
-        $extra = SHM_FORM(
+        return SHM_FORM(
             action: search_link(),
             method: "GET",
             children: [
@@ -69,13 +62,23 @@ class IndexTheme extends Themelet
                 ])
             ],
         );
+    }
+
+    /**
+     * @param Image[] $images
+     */
+    public function display_page(array $images): void
+    {
+        $this->display_shortwiki();
+
+        $this->display_page_header($images);
 
         Ctx::$page->set_navigation(
             ($this->page_number <= 1) ? null : search_link($this->search_terms, $this->page_number - 1),
             ($this->page_number >= $this->total_pages) ? null : search_link($this->search_terms, $this->page_number + 1),
         );
 
-        Ctx::$page->add_to_navigation($extra, 10);
+        Ctx::$page->add_to_navigation($this->build_search(), 10);
 
         if (count($images) > 0) {
             $this->display_page_images($images);

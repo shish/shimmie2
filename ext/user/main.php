@@ -476,6 +476,15 @@ final class UserPage extends Extension
         }
     }
 
+    public function onNavBuilding(NavBuildingEvent $event): void
+    {
+        $user = Ctx::$user;
+
+        if (!$user->is_anonymous()) {
+            $event->add_part(emptyHTML("Logged in as ", $user->name), 49);
+        }
+    }
+
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
