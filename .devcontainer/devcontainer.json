@@ -8,6 +8,8 @@
 		"target": "devcontainer"
 	},
 
+	"overrideCommand": false,
+
 	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
 	"workspaceFolder": "/app",
 
@@ -23,7 +25,6 @@
 	},
 
 	"updateContentCommand": "composer install && cp ./.devcontainer/bash_history /root/.bash_history",
-	"postStartCommand": "./.docker/entrypoint.sh php ./.docker/run.php",
 	"containerEnv": {
 		"UID": "2000",
 		"GID": "2000",
