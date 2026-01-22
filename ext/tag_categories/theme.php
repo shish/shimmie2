@@ -129,7 +129,6 @@ class TagCategoriesTheme extends Themelet
 
         // add html to stuffs
         Ctx::$page->set_title("Tag Categories");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Editing", joinHTML("\n", $html), "main", 10));
     }
 

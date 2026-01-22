@@ -48,7 +48,7 @@ final class TagCategories extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
-            $event->add_nav_link(make_link('tags/categories'), "Tag Categories", ["tag_categories"]);
+            $event->add_nav_link(make_link('tags/categories'), "Tag Categories", "categories", ["tag_categories"]);
         }
     }
 

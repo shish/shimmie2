@@ -15,7 +15,6 @@ class ETTheme extends Themelet
     {
         $page = Ctx::$page;
         $page->set_title("System Info");
-        $this->display_navigation();
         $page->add_block(new Block("Site Information", $this->build_data_form($yaml)));
         $page->add_block(new Block("System Information", TEXTAREA(
             ["name" => 'data', "style" => "width: 100%; height: 20em;"],

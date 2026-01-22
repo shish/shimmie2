@@ -19,6 +19,7 @@ trait Page_Page
     public string $heading = "";
     public string $subheading = "";
     protected string $layout = "grid";
+    protected Navigation $navigation;
 
     /** @var HTMLElement[] */
     public array $html_headers = [];
@@ -90,6 +91,30 @@ trait Page_Page
             }
         }
         throw new \Exception("Block not found: $text");
+    }
+
+    public function get_navigation(): Navigation
+    {
+        if (!isset($this->navigation)) {
+            $this->navigation = new Navigation();
+        }
+        return $this->navigation;
+    }
+
+    public function set_navigation_title(string $title): void
+    {
+        $this->get_navigation()->title = $title;
+    }
+
+    public function set_navigation(?Url $prev, ?Url $next): void
+    {
+        $this->get_navigation()->set_prev($prev);
+        $this->get_navigation()->set_next($next);
+    }
+
+    public function add_to_navigation(HTMLElement|string $html, int $position = 50): void
+    {
+        $this->get_navigation()->add_part($html, $position);
     }
 
     protected function display_page(): void
@@ -223,59 +248,6 @@ trait Page_Page
     protected function get_theme_scripts(): array
     {
         return ["script.js"];
-    }
-
-    /**
-     * @return array{0: NavLink[], 1: NavLink[]}
-     */
-    protected function get_nav_links(): array
-    {
-        $pnbe = send_event(new PageNavBuildingEvent());
-
-        $nav_links = $pnbe->links;
-
-        $active_link = null;
-        // To save on event calls, we check if one of the top-level links has already been marked as active
-        foreach ($nav_links as $link) {
-            if ($link->active === true) {
-                $active_link = $link;
-                break;
-            }
-        }
-        $sub_links = null;
-        // If one is, we just query for sub-menu options under that one tab
-        if ($active_link !== null && $active_link->category !== null) {
-            $psnbe = send_event(new PageSubNavBuildingEvent($active_link->category));
-            $sub_links = $psnbe->links;
-        } else {
-            // Otherwise we query for the sub-items under each of the tabs
-            foreach ($nav_links as $link) {
-                if ($link->category === null) {
-                    continue;
-                }
-                $psnbe = send_event(new PageSubNavBuildingEvent($link->category));
-
-                // Now we check for a current link so we can identify the sub-links to show
-                foreach ($psnbe->links as $sub_link) {
-                    if ($sub_link->active === true) {
-                        $sub_links = $psnbe->links;
-                        break;
-                    }
-                }
-                // If the active link has been detected, we break out
-                if ($sub_links !== null) {
-                    $link->active = true;
-                    break;
-                }
-            }
-        }
-
-        $sub_links = $sub_links ?? [];
-
-        usort($nav_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
-        usort($sub_links, fn (NavLink $a, NavLink $b) => $a->order - $b->order);
-
-        return [$nav_links, $sub_links];
     }
 
     /**

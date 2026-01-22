@@ -13,7 +13,7 @@ class IPBanTheme extends Themelet
     public function display_bans(HTMLElement $table, HTMLElement $paginator): void
     {
         Ctx::$page->set_title("IP Bans");
-        $this->display_navigation(extra: emptyHTML(
+        Ctx::$page->add_to_navigation(emptyHTML(
             BR(),
             A(["href" => make_link("ip_ban/list", ["r__size" => "1000000"])], "Show All Active"),
             BR(),

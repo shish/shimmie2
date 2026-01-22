@@ -17,11 +17,10 @@ class Danbooru2CommentListTheme extends CommentListTheme
     {
         Ctx::$page->set_layout("no-left");
         Ctx::$page->set_title("Comments");
-        $this->display_navigation([
+        Ctx::$page->set_navigation(
             ($page_number <= 1) ? null : make_link('comment/list/'.($page_number - 1)),
-            make_link(),
             ($page_number >= $total_pages) ? null : make_link('comment/list/'.($page_number + 1))
-        ]);
+        );
         $this->display_paginator("comment/list", null, $page_number, $total_pages);
 
         // parts for each image

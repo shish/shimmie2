@@ -26,7 +26,6 @@ class BulkAddTheme extends Themelet
         }
 
         Ctx::$page->set_title("Adding folder");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Results", $html));
     }
 

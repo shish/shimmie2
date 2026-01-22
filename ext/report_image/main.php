@@ -100,17 +100,8 @@ final class ReportImage extends Extension
                 $count = $this->count_reported_images();
                 $h_count = $count > 0 ? " ($count)" : "";
 
-                $event->add_nav_link(make_link('image_report/list'), "Reported Posts$h_count");
+                $event->add_nav_link(make_link('image_report/list'), "Reported Posts$h_count", "reported_posts");
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
-            $count = $this->count_reported_images();
-            $h_count = $count > 0 ? " ($count)" : "";
-            $event->add_link("Reported Posts$h_count", make_link("image_report/list"));
         }
     }
 

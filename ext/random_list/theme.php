@@ -29,7 +29,7 @@ class RandomListTheme extends Themelet
 
         Ctx::$page->add_block(new Block("Random Posts", $html));
         Ctx::$page->set_title("Random Posts");
-        $this->display_navigation(extra: SHM_FORM(
+        Ctx::$page->add_to_navigation(SHM_FORM(
             action: make_link("random"),
             method: "GET",
             children: [
@@ -46,6 +46,6 @@ class RandomListTheme extends Themelet
                     "style" => "display: none;"
                 ])
             ]
-        ));
+        ), 10);
     }
 }

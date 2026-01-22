@@ -40,7 +40,7 @@ class SetupTheme extends Themelet
             A(["href" => make_link("setup", ["advanced" => "on"])], "Advanced");
 
         Ctx::$page->set_title("Shimmie Setup");
-        $this->display_navigation(extra: $nav);
+        Ctx::$page->add_to_navigation($nav);
         Ctx::$page->add_block(new Block(null, $table, id: "Setupmain"));
     }
 

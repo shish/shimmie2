@@ -33,7 +33,6 @@ class BoneQualityTheme extends Themelet
         );
 
         Ctx::$page->set_title("review your fate");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block($heading, $html, "main", 20));
     }
 

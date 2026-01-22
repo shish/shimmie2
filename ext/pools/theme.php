@@ -127,7 +127,6 @@ class PoolsTheme extends Themelet
 
         $page = Ctx::$page;
         $page->set_title($heading);
-        $this->display_navigation();
         $page->add_block(new Block("Pool Navigation", $poolnav, "left", 10));
         $page->add_block(new Block("Search", $search, "left", 10));
 

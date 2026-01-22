@@ -13,32 +13,10 @@ class UserPageTheme extends Themelet
     public function display_login_page(): void
     {
         Ctx::$page->set_title("Login");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block(
             "Login There",
             emptyHTML("There should be a login box to the left")
         ));
-    }
-
-    /**
-     * @param array<int, array{name: string|HTMLElement, link: Url}> $parts
-     */
-    public function display_user_links(User $user, array $parts): void
-    {
-        # $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
-    }
-
-    /**
-     * @param array<array{name: string|HTMLElement, link: Url}> $parts
-     */
-    public function display_user_block(User $user, array $parts): void
-    {
-        $html = emptyHTML('Logged in as ', $user->name);
-        foreach ($parts as $part) {
-            $html->appendChild(BR());
-            $html->appendChild(A(["href" => (string)$part["link"]], $part["name"]));
-        }
-        Ctx::$page->add_block(new Block("User Links", $html, "left", 90, is_content: false));
     }
 
     public function display_signup_page(): void
@@ -92,7 +70,6 @@ class UserPageTheme extends Themelet
         );
 
         Ctx::$page->set_title("Create Account");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Signup", $html));
     }
 
@@ -134,7 +111,6 @@ class UserPageTheme extends Themelet
     public function display_signups_disabled(): void
     {
         Ctx::$page->set_title("Signups Disabled");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block(
             "Signups Disabled",
             format_text(Ctx::$config->get(UserAccountsConfig::SIGNUP_DISABLED_MESSAGE)),
@@ -232,7 +208,6 @@ class UserPageTheme extends Themelet
         $stats[] = emptyHTML('User ID: '.$duser->id);
 
         Ctx::$page->set_title("{$duser->name}'s Page");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Stats", joinHTML(BR(), $stats), "main", 10));
     }
 

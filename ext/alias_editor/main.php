@@ -134,14 +134,7 @@ final class AliasEditor extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
-            $event->add_nav_link(make_link('alias/list'), "Aliases", ["alias"]);
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
-            $event->add_link("Alias Editor", make_link("alias/list"));
+            $event->add_nav_link(make_link('alias/list'), "Aliases", "aliases", ["alias"]);
         }
     }
 

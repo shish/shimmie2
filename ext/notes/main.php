@@ -92,15 +92,15 @@ final class Notes extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link(make_link('note/requests'), "Notes", category: "note");
+        $event->add_nav_link(make_link('note/requests'), "Notes", "note");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "note") {
-            $event->add_nav_link(make_link('note/requests'), "Requests");
-            $event->add_nav_link(make_link('note/list'), "List");
-            $event->add_nav_link(make_link('note/updated'), "Updates");
+            $event->add_nav_link(make_link('note/requests'), "Requests", "requests");
+            $event->add_nav_link(make_link('note/list'), "List", "list");
+            $event->add_nav_link(make_link('note/updated'), "Updates", "updates");
         }
     }
 

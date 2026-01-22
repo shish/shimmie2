@@ -13,30 +13,6 @@ use function MicroHTML\{INPUT, LABEL, OPTION, SELECT, TABLE, TD, TEXTAREA, TH, T
 class CommonElementsTheme extends Themelet
 {
     /**
-     * @param array<Url|null> $links
-     */
-    public function display_navigation(array $links = [], ?HTMLElement $extra = null): void
-    {
-        if (count($links) === 0) {
-            $content = A(["href" => make_link()], "Index");
-        } elseif (count($links) === 1) {
-            $content = A(["href" => $links[0]], "Index");
-        } elseif (count($links) === 3) {
-            $content = joinHTML(" | ", [
-                $links[0] === null ? "Prev" : A(["href" => $links[0], "class" => "prevlink"], "Prev"),
-                $links[1] === null ? "Index" : A(["href" => $links[1]], "Index"),
-                $links[2] === null ? "Next" : A(["href" => $links[2], "class" => "nextlink"], "Next"),
-            ]);
-        } else {
-            throw new \Exception("Invalid navigation array");
-        }
-        if ($extra !== null) {
-            $content = emptyHTML($content, BR(), $extra);
-        }
-        Ctx::$page->add_block(new Block("Navigation", $content, "left", 0));
-    }
-
-    /**
      * @param tag-string $tag
      */
     public function build_tag(

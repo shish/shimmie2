@@ -55,7 +55,6 @@ class ReportImageTheme extends Themelet
         );
 
         Ctx::$page->set_title("Reported Posts");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Reported Posts", $html));
     }
 

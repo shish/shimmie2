@@ -23,7 +23,6 @@ class SourceHistoryTheme extends Themelet
     {
         Ctx::$page->set_title('Post '. $image_id .' Source History');
         Ctx::$page->set_heading('Source History: '.$image_id);
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Source History", $this->history_list($history, true), "main", 10));
     }
 
@@ -33,11 +32,10 @@ class SourceHistoryTheme extends Themelet
     public function display_global_page(array $history, int $page_number): void
     {
         Ctx::$page->set_title("Global Source History");
-        $this->display_navigation([
+        Ctx::$page->set_navigation(
             ($page_number <= 1) ? null : make_link('source_history/all/'.($page_number - 1)),
-            make_link(),
             make_link('source_history/all/'.($page_number + 1))
-        ]);
+        );
         Ctx::$page->add_block(new Block("Source History", $this->history_list($history, false), "main", 10));
     }
 

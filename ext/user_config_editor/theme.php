@@ -37,7 +37,6 @@ class UserConfigEditorTheme extends Themelet
         );
 
         Ctx::$page->set_title("User Options");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block(null, $table, id: "Setupmain"));
     }
 

@@ -59,7 +59,6 @@ class BlotterTheme extends Themelet
         $page = Ctx::$page;
         $page->set_title("Blotter Editor");
         $page->add_block(new Block("Blotter Editor", $html, "main", 10));
-        $this->display_navigation();
     }
 
     /**

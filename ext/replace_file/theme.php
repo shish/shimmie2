@@ -53,7 +53,6 @@ class ReplaceFileTheme extends Themelet
         );
 
         Ctx::$page->set_title("Replace File");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Upload Replacement File", $html, "main", 20));
     }
 

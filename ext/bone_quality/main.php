@@ -42,7 +42,7 @@ final class BoneQuality extends Extension
     {
         if ($event->parent === "stats") {
             $failure_string = Ctx::$config->get(BoneQualityConfig::FAILURE_STRING);
-            $event->add_nav_link(make_link('bone_quality'), "how $failure_string are we?");
+            $event->add_nav_link(make_link('bone_quality'), "how $failure_string are we?", "bone_quality");
         }
     }
 }
