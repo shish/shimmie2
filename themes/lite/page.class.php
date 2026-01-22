@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, ARTICLE, B, BODY, DIV, FOOTER, HEADER, IMG, NAV, SECTION};
+use function MicroHTML\{A, ARTICLE, BODY, DIV, FOOTER, HEADER, NAV, SECTION};
 
 use MicroHTML\HTMLElement;
 
@@ -20,27 +20,7 @@ class LitePage extends Page
 {
     protected function body_html(): HTMLElement
     {
-        list($nav_links, $sub_links) = $this->get_nav_links();
-        $theme_name = Ctx::$config->get(SetupConfig::THEME);
-        $site_name = Ctx::$config->get(SetupConfig::TITLE);
-        $data_href = Url::base();
-
-        $menu = DIV(
-            ["class" => "menu"],
-            A(
-                ["href" => make_link()],
-                IMG(["title" => "Home", "src" => "{$data_href}/favicon.ico", "style" => "position: relative; top: 3px;"])
-            ),
-            B($site_name)
-        );
-
-        // Custom links: These appear on the menu.
-        $custom_links = DIV(["class" => "bar"]);
-        foreach ($nav_links as $nav_link) {
-            $custom_links->appendChild($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active));
-        }
-        $menu->appendChild($custom_links);
-
+        $nav = [];
         $left_block_html = [];
         $main_block_html = [];
         $sub_block_html  = [];
@@ -56,17 +36,12 @@ class LitePage extends Page
                 case "subheading":
                     $sub_block_html[] = $this->block_html($block, false);
                     break;
+                case "nav":
+                    $nav[] = $block->body;
+                    break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
                     break;
-            }
-        }
-
-        $custom_sublinks = null;
-        if (count($sub_links) > 0) {
-            $custom_sublinks = DIV(["class" => "sbar"]);
-            foreach ($sub_links as $nav_link) {
-                $custom_sublinks->appendChild($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active));
             }
         }
 
@@ -76,8 +51,7 @@ class LitePage extends Page
         return BODY(
             $this->body_attrs(),
             HEADER(
-                $menu,
-                $custom_sublinks,
+                ... $nav,
                 ...$sub_block_html
             ),
             NAV(...$left_block_html),
@@ -87,7 +61,7 @@ class LitePage extends Page
             ),
             FOOTER($footer_html)
         );
-    } /* end of function display_page() */
+    }
 
     protected function block_html(Block $block, bool $hidable = false): HTMLElement
     {
@@ -102,13 +76,5 @@ class LitePage extends Page
         }
         $html->appendChild(DIV(["class" => "navside tab".($hidable ? " blockbody" : "")], $block->body));
         return $html;
-    }
-
-    private function navlinks(Url $link, HTMLElement|string $desc, bool $active): HTMLElement
-    {
-        return A([
-            "class" => $active ? "tab-selected" : "tab",
-            "href" => $link,
-        ], $desc);
     }
 }
