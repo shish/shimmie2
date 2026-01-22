@@ -28,15 +28,8 @@ final class ET extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(ETPermission::VIEW_SYSINFO)) {
-                $event->add_nav_link(make_link('system_info'), "System Info", "info", order: 10);
+                $event->add_nav_link(make_link('system_info'), "System Info", "info", order: 99);
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(ETPermission::VIEW_SYSINFO)) {
-            $event->add_link("System Info", make_link("system_info"), 99);
         }
     }
 

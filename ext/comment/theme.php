@@ -24,11 +24,10 @@ class CommentListTheme extends Themelet
     {
         $page = Ctx::$page;
         $page->set_title("Comments");
-        $this->display_navigation([
+        $page->set_navigation(
             make_link('comment/list/'.($page_number - 1)),
-            make_link(),
             make_link('comment/list/'.($page_number + 1))
-        ]);
+        );
         $this->display_paginator("comment/list", null, $page_number, $total_pages);
 
         // parts for each image
@@ -170,11 +169,10 @@ class CommentListTheme extends Themelet
         }
         Ctx::$page->add_block(new Block("Comments", $html, "main", 70, "comment-list-user"));
         Ctx::$page->set_title("{$user->name}'s comments");
-        $this->display_navigation([
+        Ctx::$page->set_navigation(
             ($page_number <= 1) ? null : make_link("comment/beta-search/{$user->name}/" . ($page_number - 1)),
-            make_link(),
             ($page_number >= $total_pages) ? null : make_link("comment/beta-search/{$user->name}/" . ($page_number + 1)),
-        ]);
+        );
         $this->display_paginator("comment/beta-search/{$user->name}", null, $page_number, $total_pages);
     }
 

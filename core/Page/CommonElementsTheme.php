@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, B, BR, IMG, LINK, emptyHTML, joinHTML};
+use function MicroHTML\{A, B, BR, IMG, LINK, SPAN, emptyHTML, joinHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -12,30 +12,6 @@ use function MicroHTML\{INPUT, LABEL, OPTION, SELECT, TABLE, TD, TEXTAREA, TH, T
 
 class CommonElementsTheme extends Themelet
 {
-    /**
-     * @param array<Url|null> $links
-     */
-    public function display_navigation(array $links = [], ?HTMLElement $extra = null): void
-    {
-        if (count($links) === 0) {
-            $content = A(["href" => make_link()], "Index");
-        } elseif (count($links) === 1) {
-            $content = A(["href" => $links[0]], "Index");
-        } elseif (count($links) === 3) {
-            $content = joinHTML(" | ", [
-                $links[0] === null ? "Prev" : A(["href" => $links[0], "class" => "prevlink"], "Prev"),
-                $links[1] === null ? "Index" : A(["href" => $links[1]], "Index"),
-                $links[2] === null ? "Next" : A(["href" => $links[2], "class" => "nextlink"], "Next"),
-            ]);
-        } else {
-            throw new \Exception("Invalid navigation array");
-        }
-        if ($extra !== null) {
-            $content = emptyHTML($content, BR(), $extra);
-        }
-        Ctx::$page->add_block(new Block("Navigation", $content, "left", 0));
-    }
-
     /**
      * @param tag-string $tag
      */
@@ -128,6 +104,38 @@ class CommonElementsTheme extends Themelet
                     "src" => $thumb_link,
                 ]
             )
+        );
+    }
+
+    public function build_navigation(Navigation $nav): HTMLElement
+    {
+        $html = emptyHTML();
+        if ($nav->isPaginated) {
+            $html->appendChild(joinHTML(" | ", [
+                $nav->prev === null ? "Prev" : A(["href" => $nav->prev, "class" => "prevlink"], "Prev"),
+                A(["href" => $nav->index ?? make_link()], "Index"),
+                $nav->next === null ? "Next" : A(["href" => $nav->next, "class" => "nextlink"], "Next"),
+            ]));
+        } else {
+            $html->appendChild(A(["href" => $nav->index ?? make_link()], "Index"));
+        }
+
+        if (\count($nav->extras) > 0) {
+            usort($nav->extras, fn ($a, $b) => $a[1] - $b[1]);
+            $html->appendChild(BR(), joinHTML(BR(), array_column($nav->extras, "0")));
+        }
+
+        return $html;
+    }
+
+    public function build_navlink(NavLink $navlink): HTMLElement
+    {
+        return A(
+            [
+                "href" => $navlink->link,
+                ... $navlink->active ? ["class" => "active"] : [],
+            ],
+            SPAN($navlink->description)
         );
     }
 

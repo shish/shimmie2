@@ -144,13 +144,6 @@ final class AutoTagger extends Extension
         $this->remove_auto_tag($event->tag);
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
-            $event->add_link("Auto-Tag Editor", make_link("auto_tag/list"));
-        }
-    }
-
     private function get_auto_tag_csv(Database $database): string
     {
         $csv = "";

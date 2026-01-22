@@ -77,7 +77,6 @@ class UploadTheme extends Themelet
 
         $page = Ctx::$page;
         $page->set_title("Upload");
-        $this->display_navigation();
         $page->add_block(new Block("Upload", $html, "main", 20));
         if ($tl_enabled) {
             $page->add_block(new Block("Bookmarklets", $this->build_bookmarklets(), "left", 20));
@@ -218,13 +217,11 @@ class UploadTheme extends Themelet
 
         if (count($errors) > 0) {
             $page->set_title("Upload Status");
-            $this->display_navigation();
             foreach ($errors as $error) {
                 $page->add_block(new Block($error->name, format_text($error->error)));
             }
         } elseif (count($successes) === 0) {
             $page->set_title("No images uploaded");
-            $this->display_navigation();
             $page->add_block(new Block("No images uploaded", emptyHTML("Upload attempted, but nothing succeeded and nothing failed?")));
         } elseif (count($successes) === 1) {
             $page->set_redirect(make_link("post/view/{$successes[0]->image_id}"));

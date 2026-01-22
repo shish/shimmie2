@@ -170,13 +170,6 @@ final class Setup extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(SetupPermission::CHANGE_SETTING)) {
-            $event->add_link("Board Config", make_link("setup"));
-        }
-    }
-
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $event->replace('$title', Ctx::$config->get(SetupConfig::TITLE));

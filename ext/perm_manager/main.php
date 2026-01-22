@@ -62,7 +62,6 @@ final class PermManager extends Extension
         // Overview
         if ($event->page_matches("perm_manager", method: "GET")) {
             Ctx::$page->set_title("Permission Manager");
-            $this->theme->display_navigation();
             $this->theme->display_user_classes(
                 UserClass::$known_classes,
                 PermissionGroup::get_all_metas_grouped(),
@@ -121,7 +120,6 @@ final class PermManager extends Extension
             $class_name = $event->get_arg("class");
             $class = UserClass::$known_classes[$class_name];
             Ctx::$page->set_title("Permission Manager");
-            $this->theme->display_navigation();
             $this->theme->display_edit_class($class);
             $this->theme->display_edit_permissions($class, PermissionGroup::get_all_metas_grouped());
         }
@@ -180,15 +178,8 @@ final class PermManager extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
-                $event->add_nav_link(make_link('perm_manager'), "Permission Manager", "perm_manager");
+                $event->add_nav_link(make_link('perm_manager'), "Permission Manager", "perm_manager", order: 88);
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(PermManagerPermission::MANAGE_USER_PERMISSIONS)) {
-            $event->add_link("Permission Manager", make_link("perm_manager"), 88);
         }
     }
 

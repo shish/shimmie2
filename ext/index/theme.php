@@ -70,11 +70,12 @@ class IndexTheme extends Themelet
             ],
         );
 
-        $this->display_navigation([
+        Ctx::$page->set_navigation(
             ($this->page_number <= 1) ? null : search_link($this->search_terms, $this->page_number - 1),
-            make_link(),
             ($this->page_number >= $this->total_pages) ? null : search_link($this->search_terms, $this->page_number + 1),
-        ], $extra);
+        );
+
+        Ctx::$page->add_to_navigation($extra, 10);
 
         if (count($images) > 0) {
             $this->display_page_images($images);

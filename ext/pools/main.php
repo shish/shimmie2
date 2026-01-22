@@ -364,11 +364,6 @@ final class Pools extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        $event->add_link("Pools", make_link("pool/list"));
-    }
-
     /**
      * When displaying an image, optionally list all the pools that the
      * image is currently a member of on a side panel, as well as a link

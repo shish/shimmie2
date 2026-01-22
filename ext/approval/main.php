@@ -86,13 +86,6 @@ final class Approval extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (!Ctx::$user->is_anonymous()) {
-            $event->add_link("Pending Approval", search_link(["approved=no"]), 60);
-        }
-    }
-
     public const SEARCH_REGEXP = "/^approved[=:](yes|no)/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {

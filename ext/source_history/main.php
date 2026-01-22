@@ -61,13 +61,6 @@ final class SourceHistory extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-            $event->add_link("Source Changes", make_link("source_history/all/1"));
-        }
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

@@ -19,7 +19,6 @@ class AutoTaggerTheme extends Themelet
     {
         $page = Ctx::$page;
         $page->set_title("Auto-Tag List");
-        $this->display_navigation();
 
         $page->add_block(new Block("Auto-Tag", emptyHTML(
             $table,

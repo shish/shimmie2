@@ -38,9 +38,18 @@ class ViewPostTheme extends Themelet
         $page = Ctx::$page;
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());
         $page->set_heading($image->get_tag_list());
-        $page->add_block(new Block("Post {$image->id}", $this->build_navigation($image), "left", 0, "Navigationleft"));
+        $page->set_navigation_title("Post {$image->id}");
+        $page->add_to_navigation($this->build_navigation($image), 10);
+
+        if (!$this->is_ordered_search()) {
+            $query = $this->get_query();
+            $page->set_navigation(
+                make_link("post/prev/{$image->id}", $query),
+                make_link("post/next/{$image->id}", $query)
+            );
+        }
+
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts, $sidebar_parts), "main", 20, "ImageInfo"));
-        //$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 
         if (!$this->is_ordered_search()) {
             $query = $this->get_query();
@@ -102,8 +111,6 @@ class ViewPostTheme extends Themelet
 
     protected function build_navigation(Image $image): HTMLElement
     {
-        $pin = $this->build_pin($image);
-
         $search = SHM_FORM(
             action: search_link(),
             method: 'GET',
@@ -121,7 +128,7 @@ class ViewPostTheme extends Themelet
             ]
         );
 
-        return emptyHTML($pin, P(), $search);
+        return emptyHTML(P(), $search);
     }
 
     /**

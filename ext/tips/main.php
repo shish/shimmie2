@@ -91,13 +91,6 @@ final class Tips extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(TipsPermission::ADMIN)) {
-            $event->add_link("Tips Editor", make_link("tips/list"));
-        }
-    }
-
     private function manageTips(): void
     {
         $images = Filesystem::get_dir_contents(new Path("ext/tips/images"));

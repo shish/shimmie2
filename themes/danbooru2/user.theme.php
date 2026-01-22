@@ -37,13 +37,6 @@ class Danbooru2UserPageTheme extends UserPageTheme
         Ctx::$page->add_block(new Block("Login", $html, "main", 90));
     }
 
-    /**
-     * @param array<int, array{name: string|HTMLElement, link: Url}> $parts
-     */
-    public function display_user_links(User $user, array $parts): void
-    {
-        // no block in this theme
-    }
     public function display_login_block(): void
     {
         // no block in this theme

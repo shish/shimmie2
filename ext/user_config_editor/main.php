@@ -18,13 +18,6 @@ final class UserConfigEditor extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
-            $event->add_link("User Options", make_link("user_config"), 40);
-        }
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;

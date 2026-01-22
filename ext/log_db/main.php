@@ -225,7 +225,6 @@ final class LogDatabase extends Extension
             $t = new LogTable($database->raw_db());
             $t->inputs = $event->GET->toArray();
             $page->set_title("Event Log");
-            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }
@@ -236,13 +235,6 @@ final class LogDatabase extends Extension
             if (Ctx::$user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
                 $event->add_nav_link(make_link('log/view'), "Event Log", "event_log");
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
-            $event->add_link("Event Log", make_link("log/view"));
         }
     }
 

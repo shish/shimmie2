@@ -207,11 +207,6 @@ final class Forum extends Extension
         $event->add_nav_link(make_link('forum/index'), "Forum", "forum");
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        $event->add_link("Forum", make_link("forum/index"));
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         $user = Ctx::$user;

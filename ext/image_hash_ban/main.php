@@ -126,7 +126,6 @@ final class ImageBan extends Extension
             $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET->toArray();
             $page->set_title("Post Bans");
-            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }
@@ -137,13 +136,6 @@ final class ImageBan extends Extension
             if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
                 $event->add_nav_link(make_link('image_hash_ban/list'), "Post Bans", "hash_bans", ["image_hash_ban"]);
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
-            $event->add_link("Post Bans", make_link("image_hash_ban/list"));
         }
     }
 

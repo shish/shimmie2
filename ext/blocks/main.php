@@ -43,13 +43,6 @@ final class Blocks extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(BlocksPermission::MANAGE_BLOCKS)) {
-            $event->add_link("Blocks Editor", make_link("blocks/list"));
-        }
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;

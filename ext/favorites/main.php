@@ -109,11 +109,6 @@ final class Favorites extends Extension
         $event->replace('$favorites', (string)$event->image['favorites']);
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        $event->add_link("My Favorites", search_link(["favorited_by=" . Ctx::$user->name]), 20);
-    }
-
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^favorites(:|<=|<|=|>|>=)(\d+)$/i")) {
@@ -143,7 +138,7 @@ final class Favorites extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
-            $event->add_nav_link(search_link(["favorited_by=" . Ctx::$user->name]), "My Favorites", "my_favorites");
+            $event->add_nav_link(search_link(["favorited_by=" . Ctx::$user->name]), "My Favorites", "my_favorites", order: 20);
         }
     }
 

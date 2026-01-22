@@ -55,14 +55,6 @@ class Themelet
     }
 
     /**
-     * @param array<Url|null> $links
-     */
-    public function display_navigation(array $links = [], ?HTMLElement $extra = null): void
-    {
-        self::get_common()->display_navigation($links, $extra);
-    }
-
-    /**
      * @param tag-string $tag
      */
     public function build_tag(

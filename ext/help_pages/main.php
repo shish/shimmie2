@@ -58,7 +58,7 @@ final class HelpPages extends Extension
                 return;
             }
 
-            $this->theme->display_help_page($title, $pages);
+            $this->theme->display_help_page($title);
             $hpbe = send_event(new HelpPageBuildingEvent($name));
             foreach ($hpbe->get_parts() as $block) {
                 $page->add_block($block);
@@ -70,7 +70,7 @@ final class HelpPages extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link(make_link('help'), "Help", "help");
+        $event->add_nav_link(make_link('help'), "Help", "help", order: 90);
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
@@ -81,11 +81,6 @@ final class HelpPages extends Extension
                 $event->add_nav_link(make_link('help/'.$key), $value, $key);
             }
         }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        $event->add_link("Help", make_link("help"), 90);
     }
 
     public function onHelpPageListBuilding(HelpPageListBuildingEvent $event): void

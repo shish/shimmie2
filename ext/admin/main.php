@@ -143,11 +143,4 @@ final class AdminPage extends Extension
             }
         }
     }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(AdminPermission::MANAGE_ADMINTOOLS)) {
-            $event->add_link("Board Admin", make_link("admin"));
-        }
-    }
 }

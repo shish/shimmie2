@@ -67,7 +67,6 @@ class BlocksTheme extends Themelet
 
         $page = Ctx::$page;
         $page->set_title("Blocks");
-        $this->display_navigation();
         $page->add_block(new Block(null, $html));
     }
 }

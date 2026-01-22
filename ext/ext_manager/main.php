@@ -92,13 +92,6 @@ final class ExtManager extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
-            $event->add_link("Extension Manager", make_link("ext_manager"));
-        }
-    }
-
     /**
      * @param string[] $extras
      */

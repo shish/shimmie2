@@ -138,13 +138,6 @@ final class AliasEditor extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
-            $event->add_link("Alias Editor", make_link("alias/list"));
-        }
-    }
-
     private function get_alias_csv(Database $database): string
     {
         $csv = "";

@@ -185,17 +185,8 @@ final class PrivMsg extends Extension
             if (Ctx::$user->can(PrivMsgPermission::READ_PM)) {
                 $count = $this->count_pms(Ctx::$user);
                 $h_count = $count > 0 ? SPAN(["class" => 'unread'], "($count)") : "";
-                $event->add_nav_link(make_link('user', fragment: 'private-messages'), emptyHTML("Private Messages", $h_count), "private_messages");
+                $event->add_nav_link(make_link('user', fragment: 'private-messages'), emptyHTML("Private Messages", $h_count), "private_messages", order: 10);
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(PrivMsgPermission::READ_PM)) {
-            $count = $this->count_pms(Ctx::$user);
-            $h_count = $count > 0 ? SPAN(["class" => 'unread'], "($count)") : "";
-            $event->add_link(emptyHTML("Private Messages", $h_count), make_link("user", fragment: "private-messages"), 10);
         }
     }
 

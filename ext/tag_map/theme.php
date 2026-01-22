@@ -119,7 +119,7 @@ class TagMapTheme extends Themelet
 
     protected function display_nav(): void
     {
-        $this->display_navigation(extra: joinHTML(
+        Ctx::$page->add_to_navigation(joinHTML(
             BR(),
             [
                 " ",

@@ -120,13 +120,6 @@ final class NotATag extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(NotATagPermission::MANAGE_UNTAG_LIST)) {
-            $event->add_link("UnTags", make_link("untag/list"));
-        }
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -152,7 +145,6 @@ final class NotATag extends Extension
             $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET->toArray();
             $page->set_title("UnTags");
-            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
     }

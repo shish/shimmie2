@@ -71,13 +71,6 @@ final class Trash extends Extension
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
-            $event->add_link("Trash", search_link(["in=trash"]), 60);
-        }
-    }
-
     public const SEARCH_REGEXP = "/^in[=:](trash)$/i";
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {

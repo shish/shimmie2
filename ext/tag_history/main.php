@@ -113,14 +113,6 @@ final class TagHistory extends Extension
         }
     }
 
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-            $event->add_link("Tag Changes", make_link("tag_history/all/1"));
-        }
-    }
-
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

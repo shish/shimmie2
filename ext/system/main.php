@@ -18,6 +18,7 @@ final class System extends Extension
             Ctx::$page->set_redirect($link);
         }
     }
+
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('system'), "System", "system");

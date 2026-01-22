@@ -50,14 +50,6 @@ final class Blotter extends Extension
         }
     }
 
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(BlotterPermission::ADMIN)) {
-            $event->add_link("Blotter Editor", make_link("blotter/editor"));
-        }
-    }
-
     public function onPageRequest(PageRequestEvent $event): void
     {
         $database = Ctx::$database;
