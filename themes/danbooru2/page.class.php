@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, ARTICLE, BODY, DIV, FOOTER, H1, HEADER, IMG, LI, NAV, UL, emptyHTML};
+use function MicroHTML\{A, ARTICLE, BODY, DIV, FOOTER, H1, HEADER, IMG, NAV, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -22,6 +22,7 @@ class Danbooru2Page extends Page
 {
     protected function body_html(): HTMLElement
     {
+        $nav = [];
         $left_block_html = [];
         $main_block_html = [];
         $sub_block_html = [];
@@ -40,6 +41,9 @@ class Danbooru2Page extends Page
                     }
                     $main_block_html[] = $this->block_html($block, false);
                     break;
+                case "nav":
+                    $nav[] = $block->body;
+                    break;
                 default:
                     print "<p>error: {$block->header} using an unknown section ({$block->section})";
                     break;
@@ -55,19 +59,6 @@ class Danbooru2Page extends Page
         $site_name = Ctx::$config->get(SetupConfig::TITLE); // bzchan: change from normal default to get title for top of page
         $main_page = Ctx::$config->get(SetupConfig::MAIN_PAGE); // bzchan: change from normal default to get main page for top of page
 
-        $custom_links = emptyHTML();
-        foreach ($nav_links as $nav_link) {
-            $custom_links->appendChild(LI($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active)));
-        }
-
-        $custom_sublinks = "";
-        if (count($sub_links) > 0) {
-            $custom_sublinks = DIV(["class" => "sbar"]);
-            foreach ($sub_links as $nav_link) {
-                $custom_sublinks->appendChild(LI($this->navlinks($nav_link->link, $nav_link->description, $nav_link->active)));
-            }
-        }
-
         $title_link = H1(
             ["id" => "site-title"],
             IMG(["src" => "/favicon.ico", "alt" => "", "class" => "logo"]),
@@ -80,8 +71,7 @@ class Danbooru2Page extends Page
             $this->body_attrs(),
             HEADER(
                 $title_link,
-                UL(["id" => "navbar", "class" => "flat-list"], $custom_links),
-                UL(["id" => "subnavbar", "class" => "flat-list"], $custom_sublinks),
+                ... $nav,
             ),
             $subheading,
             emptyHTML(...$sub_block_html),
@@ -92,13 +82,5 @@ class Danbooru2Page extends Page
             ),
             FOOTER(DIV($footer_html))
         );
-    }
-
-    private function navlinks(Url $link, HTMLElement|string $desc, bool $active): HTMLElement
-    {
-        return A([
-            "class" => $active ? "current-page" : "tab",
-            "href" => $link,
-        ], $desc);
     }
 }
