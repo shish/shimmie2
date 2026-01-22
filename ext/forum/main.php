@@ -57,7 +57,7 @@ final class ForumThread
         /** @var Thread[] */
         $threads = Ctx::$database->get_all(
             'SELECT * FROM forum_threads
-            ORDER BY sticky ASC, uptodate DESC
+            ORDER BY sticky DESC, uptodate DESC
             LIMIT :limit OFFSET :offset',
             ['limit' => $threads_per_page, 'offset' => $page_n * $threads_per_page]
         );

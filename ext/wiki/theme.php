@@ -182,6 +182,7 @@ class WikiTheme extends Themelet
     {
         $u_title = url_escape($page->title);
         $owner = $page->get_owner();
+        $revisions_enabled = Ctx::$config->get(WikiConfig::ENABLE_REVISIONS);
 
         $formatted_body = self::format_wiki_page($page);
 
@@ -194,16 +195,18 @@ class WikiTheme extends Themelet
             )));
         }
         if (Ctx::$user->can(WikiPermission::ADMIN)) {
-            $edit->appendChild(
-                TD(SHM_SIMPLE_FORM(
-                    make_link("wiki/$u_title/delete_revision"),
-                    INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
-                    SHM_SUBMIT("Delete")
-                ))
-            );
+            if ($revisions_enabled) {
+                $edit->appendChild(
+                    TD(SHM_SIMPLE_FORM(
+                        make_link("wiki/$u_title/delete_revision"),
+                        INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision]),
+                        SHM_SUBMIT("Delete")
+                    ))
+                );
+            }
             $edit->appendChild(TD(SHM_SIMPLE_FORM(
                 make_link("wiki/$u_title/delete_all"),
-                SHM_SUBMIT("Delete All")
+                SHM_SUBMIT($revisions_enabled ? "Delete All" : "Delete")
             )));
         }
 
@@ -213,11 +216,15 @@ class WikiTheme extends Themelet
             HR(),
             P(
                 ["class" => "wiki-footer"],
-                A(["href" => make_link("wiki/$u_title/history")], "Revision {$page->revision}"),
-                " by ",
-                A(["href" => make_link("user/{$owner->name}")], $owner->name),
-                " at {$page->date}",
-                TABLE($edit),
+                ... $revisions_enabled ? [
+                    A(["href" => make_link("wiki/$u_title/history")], "Revision {$page->revision}"),
+                    " by ",
+                ] : [],
+                ... [
+                    A(["href" => make_link("user/{$owner->name}")], $owner->name),
+                    " at {$page->date}",
+                    TABLE($edit),
+                ]
             )
         );
     }
