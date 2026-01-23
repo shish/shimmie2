@@ -9,6 +9,7 @@ final class EmoticonList extends Extension
 {
     public const KEY = "emoticons_list";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("emote/list")) {

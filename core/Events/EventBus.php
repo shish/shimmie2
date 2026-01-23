@@ -18,7 +18,7 @@ function send_event(Event $event): Event
 
 final class EventBus
 {
-    /** @var array<string, list<Extension>> $event_listeners */
+    /** @var array<string, list<array{0: Extension, 1: string}>> $event_listeners */
     private readonly array $event_listeners;
     public int $event_count = 0;
     private ?float $deadline = null;
@@ -53,8 +53,8 @@ final class EventBus
     /**
      * Check which extensions are installed, supported, and active;
      * scan them for on<EventName>() functions; return a map of them
-     *
-     * @return array<string, list<Extension>> $event_listeners
+     *`
+     * @return array<string, list<array{0: Extension, 1: string}>> $event_listeners
      */
     private function calc_event_listeners(): array
     {
@@ -68,14 +68,29 @@ final class EventBus
                 continue;
             }
 
-            foreach (get_class_methods($extension) as $method) {
-                if (substr($method, 0, 2) === "on") {
-                    $event = substr($method, 2) . "Event";
-                    $pos = $extension->get_priority() * 100;
+            $reflection = new \ReflectionClass($extension);
+
+            foreach ($reflection->getMethods() as $method) {
+                foreach ($method->getAttributes(EventListener::class) as $attribute) {
+                    $attribute = $attribute->newInstance();
+
+                    if (isset($attribute->event)) {
+                        $event = $attribute->event;
+                    } elseif ($method->getNumberOfParameters() > 0) {
+                        $event = $method->getParameters()[0]->getType()?->__toString();
+                    }
+
+                    if (!isset($event)) {
+                        continue;
+                    }
+
+                    $event = $this->namespaced_class_name($event);
+
+                    $pos = $attribute->priority * 100;
                     while (isset($event_listeners_with_ids[$event][$pos])) {
                         $pos += 1;
                     }
-                    $event_listeners_with_ids[$event][$pos] = $extension;
+                    $event_listeners_with_ids[$event][$pos] = [$extension, $method->name];
                 }
             }
         }
@@ -85,6 +100,7 @@ final class EventBus
             ksort($listeners);
             $event_listeners[$event] = array_values($listeners);
         }
+
         return $event_listeners;
     }
 
@@ -139,22 +155,21 @@ final class EventBus
      */
     public function send_event(Event $event): Event
     {
-        $event_name = $this->namespaced_class_name(get_class($event));
+        $event_name = $this->namespaced_class_name(\get_class($event));
         if (!isset($this->event_listeners[$event_name])) {
             return $event;
         }
 
         $sEvent = Ctx::$tracer->startSpan($event_name);
-        $method_name = "on".str_replace("Event", "", $event_name);
         foreach ($this->event_listeners[$event_name] as $listener) {
+            [$listener, $method] = $listener;
+
             if ($this->deadline && ftime() > $this->deadline) {
                 throw new TimeoutException("Timeout while sending $event_name");
             }
             // @phpstan-ignore-next-line
             $sListener = Ctx::$tracer->startSpan($this->namespaced_class_name(get_class($listener)));
-            if (method_exists($listener, $method_name)) {
-                $listener->$method_name($event);
-            }
+            $listener->$method($event);
             $sListener->end();
             if ($event->stop_processing === true) {
                 break;

@@ -140,6 +140,7 @@ final class Forum extends Extension
     public const KEY = "forum";
     public const VERSION_KEY = "forum_version";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         if ($this->get_version() < 4) {
@@ -188,6 +189,7 @@ final class Forum extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $threads_count = Ctx::$database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=:user_id", ['user_id' => $event->display_user->id]);
@@ -202,16 +204,19 @@ final class Forum extends Extension
         $event->add_part(emptyHTML("Forum posts: $posts_count, $posts_rate per day"));
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('forum/index'), "Forum", category: "forum");
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("Forum", make_link("forum/index"));
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $user = Ctx::$user;
@@ -263,22 +268,27 @@ final class Forum extends Extension
         }
     }
 
+    #[EventListener]
     public function onForumThreadPosting(ForumThreadPostingEvent $event): void
     {
         $this->forum_checks($event->user, $event->title);
         $event->id = $this->save_new_thread($event->user, $event->title, $event->sticky);
     }
+
+    #[EventListener]
     public function onForumPostPosting(ForumPostPostingEvent $event): void
     {
         $this->forum_checks($event->user, $event->message, $event->thread_id);
         $this->save_new_post($event->user, $event->thread_id, $event->message);
     }
 
+    #[EventListener]
     public function onForumThreadDeletion(ForumThreadDeletionEvent $event): void
     {
         $this->delete_thread($event->thread_id);
     }
 
+    #[EventListener]
     public function onForumPostDeletion(ForumPostDeletionEvent $event): void
     {
         $this->delete_post($event->thread_id, $event->post_id);

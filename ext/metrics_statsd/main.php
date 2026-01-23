@@ -11,6 +11,7 @@ final class StatsDInterface extends Extension
     private array $stats = [];
     private string $type = "other";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         $this->stats = [];
@@ -36,6 +37,7 @@ final class StatsDInterface extends Extension
         $this->stats["shimmie.$type.cache-misses"] = Ctx::$cache->get("__etc_cache_misses", -1)."|c";
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_starts_with("post/view")) {  # 40%
@@ -53,29 +55,28 @@ final class StatsDInterface extends Extension
         }
     }
 
+    #[EventListener(priority: 99)]
     public function onUserCreation(UserCreationEvent $event): void
     {
         $this->stats["shimmie_events.user_creations"] = "1|c";
     }
 
+    #[EventListener(priority: 99)]
     public function onDataUpload(DataUploadEvent $event): void
     {
         $this->stats["shimmie_events.uploads"] = "1|c";
     }
 
+    #[EventListener(priority: 99)]
     public function onCommentPosting(CommentPostingEvent $event): void
     {
         $this->stats["shimmie_events.comments"] = "1|c";
     }
 
+    #[EventListener(priority: 99)]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $this->stats["shimmie_events.info-sets"] = "1|c";
-    }
-
-    public function get_priority(): int
-    {
-        return 99;
     }
 
     /**

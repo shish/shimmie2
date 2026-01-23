@@ -17,6 +17,7 @@ final class ImageIO extends Extension
 {
     public const KEY = "image";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         if ($this->get_version() < 1) {
@@ -33,6 +34,7 @@ final class ImageIO extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $thumb_width = Ctx::$config->get(ThumbnailConfig::WIDTH);
@@ -61,6 +63,7 @@ final class ImageIO extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         $image = Image::by_id_ex($event->image->id);
@@ -76,6 +79,7 @@ final class ImageIO extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('post:delete')
@@ -89,17 +93,20 @@ final class ImageIO extends Extension
             });
     }
 
+    #[EventListener]
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         send_event(new ThumbnailGenerationEvent($event->image));
         Log::info("image", "Uploaded >>{$event->image->id} ({$event->image->hash})");
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $event->image->delete();
     }
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $i_image_count = Search::count_images(["user={$event->display_user->name}"]);
@@ -112,6 +119,7 @@ final class ImageIO extends Extension
         ));
     }
 
+    #[EventListener]
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $fname = $event->image->filename;

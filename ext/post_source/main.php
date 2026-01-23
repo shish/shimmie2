@@ -20,6 +20,7 @@ final class PostSource extends Extension
 {
     public const KEY = "post_source";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("tag_edit/mass_source_set", method: "POST", permission: PostTagsPermission::MASS_TAG_EDIT)) {
@@ -28,6 +29,7 @@ final class PostSource extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $source = $event->get_param('source');
@@ -42,6 +44,7 @@ final class PostSource extends Extension
         }
     }
 
+    #[EventListener]
     public function onSourceSet(SourceSetEvent $event): void
     {
         if (Ctx::$user->can(PostSourcePermission::EDIT_IMAGE_SOURCE)) {
@@ -49,11 +52,13 @@ final class PostSource extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_source_editor_html($event->image), 41);
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^(source)[=:](.*)$/i")) {
@@ -69,6 +74,7 @@ final class PostSource extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if ($event->matches("/^source[=:](.*)$/i")) {
@@ -76,6 +82,7 @@ final class PostSource extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermParse(TagTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^source[=:](.*)$/i")) {
@@ -85,16 +92,19 @@ final class PostSource extends Extension
         }
     }
 
+    #[EventListener]
     public function onUploadHeaderBuilding(UploadHeaderBuildingEvent $event): void
     {
         $event->add_part("Source", 11);
     }
 
+    #[EventListener]
     public function onUploadCommonBuilding(UploadCommonBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_upload_common_html(), 11);
     }
 
+    #[EventListener]
     public function onUploadSpecificBuilding(UploadSpecificBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_upload_specific_html($event->suffix), 11);

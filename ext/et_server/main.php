@@ -15,6 +15,7 @@ final class ETServer extends Extension
     public const KEY = "et_server";
     public const VERSION_KEY = "et_server_version";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -187,6 +188,7 @@ final class ETServer extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

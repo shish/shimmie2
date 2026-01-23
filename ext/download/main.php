@@ -10,12 +10,7 @@ final class Download extends Extension
 {
     public const KEY = "download";
 
-    public function get_priority(): int
-    {
-        // Set near the end to give everything else a chance to process
-        return 99;
-    }
-
+    #[EventListener(priority: 99)] // Set near the end to give everything else a chance to process
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         Ctx::$page->set_file($event->mime, $event->path, $event->file_modified);

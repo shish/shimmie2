@@ -85,6 +85,7 @@ final class BulkActions extends Extension
 {
     public const KEY = "bulk_actions";
 
+    #[EventListener]
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         $babbe = new BulkActionBlockBuildingEvent();
@@ -102,6 +103,7 @@ final class BulkActions extends Extension
         $this->theme->display_selector($actions, SearchTerm::implode($event->search_terms));
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         foreach (send_event(new BulkActionBlockBuildingEvent())->actions as $action) {
@@ -119,6 +121,7 @@ final class BulkActions extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10, permission: ImagePermission::DELETE_IMAGE);
@@ -126,6 +129,7 @@ final class BulkActions extends Extension
         $event->add_action("source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10, permission: BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -163,6 +167,7 @@ final class BulkActions extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("bulk_action", method: "POST", permission: BulkActionsPermission::PERFORM_BULK_ACTIONS)) {

@@ -46,6 +46,7 @@ final class HelpPages extends Extension
     public const KEY = "help_pages";
     public const SEARCH = "search";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -68,11 +69,13 @@ final class HelpPages extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('help'), "Help", category: "help");
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "help") {
@@ -83,17 +86,20 @@ final class HelpPages extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("Help", make_link("help"), 90);
     }
 
+    #[EventListener]
     public function onHelpPageListBuilding(HelpPageListBuildingEvent $event): void
     {
         $event->add_page("search", "Searching");
         $event->add_page("licenses", "Licenses");
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === "licenses") {

@@ -9,11 +9,7 @@ final class TaggerXML extends Extension
 {
     public const KEY = "tagger_xml";
 
-    public function get_priority(): int
-    {
-        return 10;
-    }
-
+    #[EventListener(priority: 10)]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("tagger/tags")) {

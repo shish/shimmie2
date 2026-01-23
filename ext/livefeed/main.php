@@ -8,11 +8,13 @@ final class LiveFeed extends Extension
 {
     public const KEY = "livefeed";
 
+    #[EventListener(priority: 99)]
     public function onUserCreation(UserCreationEvent $event): void
     {
         $this->msg("New user created: {$event->username}");
     }
 
+    #[EventListener(priority: 99)]
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         $this->msg(
@@ -21,6 +23,7 @@ final class LiveFeed extends Extension
         );
     }
 
+    #[EventListener(priority: 99)]
     public function onTagSet(TagSetEvent $event): void
     {
         $this->msg(
@@ -29,17 +32,13 @@ final class LiveFeed extends Extension
         );
     }
 
+    #[EventListener(priority: 99)]
     public function onCommentPosting(CommentPostingEvent $event): void
     {
         $this->msg(
             make_link("post/view/".$event->image_id)->asAbsolute(). " - ".
             Ctx::$user->name . ": " . str_replace("\n", " ", $event->comment)
         );
-    }
-
-    public function get_priority(): int
-    {
-        return 99;
     }
 
     private function msg(string $data): void

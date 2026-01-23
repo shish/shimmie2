@@ -9,17 +9,13 @@ final class SourceHistory extends Extension
 {
     public const KEY = "source_history";
 
-    // in before source are actually set, so that "get current source" works
-    public function get_priority(): int
-    {
-        return 40;
-    }
-
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("source_history/revert", method: "POST", permission: PostTagsPermission::EDIT_IMAGE_TAG)) {
@@ -37,21 +33,25 @@ final class SourceHistory extends Extension
         }
     }
 
+    #[EventListener]
     public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         $event->add_disallow("source_history");
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         $event->add_button("View Source History", "source_history/{$event->image->id}", 20);
     }
 
+    #[EventListener(priority: 40)] // in before source are actually set, so that "get current source" works
     public function onSourceSet(SourceSetEvent $event): void
     {
         $this->add_source_history($event->image, $event->source);
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -61,6 +61,7 @@ final class SourceHistory extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
@@ -68,6 +69,7 @@ final class SourceHistory extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

@@ -8,6 +8,7 @@ final class Akismet extends Extension
 {
     public const KEY = "akismet";
 
+    #[EventListener(priority: 31)]
     public function onCheckStringContent(CheckStringContentEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
@@ -42,10 +43,5 @@ final class Akismet extends Extension
         if ($akismet->isSpam()) {
             throw new ContentException("Akismet thinks that your {$event->type->value} is spam. Try rewriting the {$event->type->value}, or logging in.");
         }
-    }
-
-    public function get_priority(): int
-    {
-        return 31;
     }
 }

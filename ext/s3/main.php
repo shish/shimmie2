@@ -17,6 +17,7 @@ final class S3 extends Extension
     public const KEY = "s3";
     public int $synced = 0;
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -31,6 +32,7 @@ final class S3 extends Extension
         }
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $database;
@@ -43,6 +45,7 @@ final class S3 extends Extension
         Ctx::$page->add_block(new Block("Process S3 Queue", $html));
     }
 
+    #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
         global $database;
@@ -64,6 +67,7 @@ final class S3 extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('s3:process')
@@ -113,6 +117,7 @@ final class S3 extends Extension
             });
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("s3/sync/{image_id}", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
@@ -123,6 +128,7 @@ final class S3 extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
@@ -130,22 +136,26 @@ final class S3 extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         // Tags aren't set at this point, let's wait for the TagSetEvent
         // $this->sync_post($event->image);
     }
 
+    #[EventListener]
     public function onTagSet(TagSetEvent $event): void
     {
         $this->sync_post($event->image, $event->new_tags);
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $this->remove_file($event->image->hash);
     }
 
+    #[EventListener]
     public function onImageReplace(ImageReplaceEvent $event): void
     {
         $this->remove_file($event->old_hash);

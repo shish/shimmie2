@@ -18,6 +18,7 @@ use MicroHTML\HTMLElement;
  */
 abstract class CaptchaExtension extends Extension
 {
+    #[EventListener]
     public function onBuildCaptcha(BuildCaptchaEvent $event): void
     {
         $html = $this->captcha_html();
@@ -29,6 +30,7 @@ abstract class CaptchaExtension extends Extension
 
     abstract public function captcha_html(): HTMLElement|null;
 
+    #[EventListener]
     public function onCheckCaptcha(CheckCaptchaEvent $event): void
     {
         $event->passed = $this->check_captcha();
