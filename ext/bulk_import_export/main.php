@@ -11,6 +11,7 @@ final class BulkImportExport extends DataHandlerExtension
 
     public const EXPORT_INFO_FILE_NAME = "export.json";
 
+    #[EventListener]
     public function onDataUpload(DataUploadEvent $event): void
     {
         global $database;
@@ -89,11 +90,13 @@ final class BulkImportExport extends DataHandlerExtension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("export", "Export", permission: BulkImportExportPermission::BULK_EXPORT);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         if (Ctx::$user->can(BulkImportExportPermission::BULK_EXPORT)

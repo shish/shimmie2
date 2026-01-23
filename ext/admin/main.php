@@ -32,6 +32,7 @@ final class AdminPage extends Extension
 {
     public const KEY = "admin";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("admin", method: "GET", permission: AdminPermission::MANAGE_ADMINTOOLS)) {
@@ -52,6 +53,7 @@ final class AdminPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('page:get')
@@ -123,6 +125,7 @@ final class AdminPage extends Extension
             });
     }
 
+    #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
         if ($event->action === "test") {
@@ -130,11 +133,13 @@ final class AdminPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_page();
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -144,6 +149,7 @@ final class AdminPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(AdminPermission::MANAGE_ADMINTOOLS)) {

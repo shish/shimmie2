@@ -9,6 +9,7 @@ final class ReverseSearchLinks extends Extension
 {
     public const KEY = "reverse_search_links";
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         // only support image types

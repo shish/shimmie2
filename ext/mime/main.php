@@ -9,6 +9,7 @@ final class MimeSystem extends Extension
 {
     public const KEY = "mime";
 
+    #[EventListener]
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $event->replace('$ext', $event->image->get_ext());
@@ -16,6 +17,7 @@ final class MimeSystem extends Extension
     }
 
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -54,6 +56,7 @@ final class MimeSystem extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -61,6 +64,7 @@ final class MimeSystem extends Extension
         }
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^ext[=:]([a-zA-Z0-9]+)$/i")) {

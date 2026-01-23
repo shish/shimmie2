@@ -9,6 +9,7 @@ final class LogNet extends Extension
     public const KEY = "log_net";
     private int $count = 0;
 
+    #[EventListener]
     public function onLog(LogEvent $event): void
     {
         if ($event->priority > 10) {

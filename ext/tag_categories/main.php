@@ -9,6 +9,7 @@ final class TagCategories extends Extension
 {
     public const KEY = "tag_categories";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -45,6 +46,7 @@ final class TagCategories extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
@@ -52,6 +54,7 @@ final class TagCategories extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("tags/categories", method: "GET")) {
@@ -65,6 +68,7 @@ final class TagCategories extends Extension
         }
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $database;
@@ -90,6 +94,7 @@ final class TagCategories extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {

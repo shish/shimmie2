@@ -9,6 +9,7 @@ final class RandomList extends Extension
 {
     public const KEY = "random_list";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("random")) {
@@ -42,6 +43,7 @@ final class RandomList extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {

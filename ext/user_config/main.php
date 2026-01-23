@@ -8,6 +8,7 @@ final class UserConfig extends Extension
 {
     public const KEY = "user_config";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

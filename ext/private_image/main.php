@@ -9,11 +9,13 @@ final class PrivateImage extends Extension
 {
     public const KEY = "private_image";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["private"] = ImagePropType::BOOL;
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $user = Ctx::$user;
@@ -53,6 +55,7 @@ final class PrivateImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (
@@ -65,6 +68,8 @@ final class PrivateImage extends Extension
     }
 
     public const SEARCH_REGEXP = "/^private[=:](yes|no|any)/i";
+
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         $show_private = Ctx::$user->get_config()->get(PrivateImageUserConfig::VIEW_DEFAULT);
@@ -110,6 +115,7 @@ final class PrivateImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -150,6 +156,7 @@ final class PrivateImage extends Extension
         );
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if ((Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE) && Ctx::$user->id === $event->image->owner_id) || Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
@@ -161,6 +168,7 @@ final class PrivateImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         if (Ctx::$user->get_config()->get(PrivateImageUserConfig::SET_DEFAULT) && Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
@@ -168,12 +176,14 @@ final class PrivateImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("privatize-post", "Make Private", permission: PrivateImagePermission::SET_PRIVATE_IMAGE);
         $event->add_action("publicize-post", "Make Public", permission: PrivateImagePermission::SET_PRIVATE_IMAGE);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -207,6 +217,7 @@ final class PrivateImage extends Extension
                 break;
         }
     }
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

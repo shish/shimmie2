@@ -8,11 +8,7 @@ final class LinkScan extends Extension
 {
     public const KEY = "link_scan";
 
-    public function get_priority(): int
-    {
-        return 10; // be able to intercept post/list
-    }
-
+    #[EventListener(priority: 10)] // be able to intercept post/list
     public function onPageRequest(PageRequestEvent $event): void
     {
         $search = $event->GET->get('search') ?? $event->POST->get('search');

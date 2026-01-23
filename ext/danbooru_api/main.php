@@ -40,6 +40,7 @@ final class DanbooruApi extends Extension
 {
     public const KEY = "danbooru_api";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;

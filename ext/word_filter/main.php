@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-final class WordFilter extends Extension
+final class WordFilter extends FormatterExtension
 {
     public const KEY = "word_filter";
 
-    // before emoticon filter
-    public function get_priority(): int
-    {
-        return 40;
-    }
-
+    #[EventListener(priority: 40)] // before emoticon filter
     public function onTextFormatting(TextFormattingEvent $event): void
     {
-        $event->formatted = $this->filter($event->formatted);
-        $event->stripped  = $this->filter($event->stripped);
+        parent::onTextFormatting($event);
+    }
+
+    public function format(string $text): string
+    {
+        return $this->filter($text);
+    }
+
+    public function strip(string $text): string
+    {
+        return $this->filter($text);
     }
 
     private function filter(string $text): string

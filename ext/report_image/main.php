@@ -40,6 +40,7 @@ final class ReportImage extends Extension
 {
     public const KEY = "report_image";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("image_report/add")) {
@@ -60,6 +61,7 @@ final class ReportImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onAddReportedImage(AddReportedImageEvent $event): void
     {
         Log::info("report_image", "Adding report of >>{$event->report->image_id} with reason '{$event->report->reason}'");
@@ -71,12 +73,14 @@ final class ReportImage extends Extension
         Ctx::$cache->delete("image-report-count");
     }
 
+    #[EventListener]
     public function onRemoveReportedImage(RemoveReportedImageEvent $event): void
     {
         Ctx::$database->execute("DELETE FROM image_reports WHERE id = :id", ["id" => $event->id]);
         Ctx::$cache->delete("image-report-count");
     }
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         if (Ctx::$user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
@@ -84,6 +88,7 @@ final class ReportImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (Ctx::$user->can(ReportImagePermission::CREATE_IMAGE_REPORT)) {
@@ -93,6 +98,7 @@ final class ReportImage extends Extension
     }
 
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -105,6 +111,7 @@ final class ReportImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ReportImagePermission::VIEW_IMAGE_REPORT)) {
@@ -114,12 +121,14 @@ final class ReportImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         Ctx::$database->execute("DELETE FROM image_reports WHERE image_id = :image_id", ["image_id" => $event->image->id]);
         Ctx::$cache->delete("image-report-count");
     }
 
+    #[EventListener]
     public function onUserDeletion(UserDeletionEvent $event): void
     {
         $this->delete_reports_by($event->id);
@@ -131,6 +140,7 @@ final class ReportImage extends Extension
         Ctx::$cache->delete("image-report-count");
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;

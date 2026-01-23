@@ -57,6 +57,7 @@ final class AliasEditor extends Extension
 {
     public const KEY = "alias_editor";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -97,6 +98,12 @@ final class AliasEditor extends Extension
         }
     }
 
+    /**
+     * Add alias *after* mass tag editing, else the MTE will
+     * search for the images and be redirected to the alias,
+     * missing out the images tagged with the old tag.
+     */
+    #[EventListener(priority: 60)]
     public function onAddAlias(AddAliasEvent $event): void
     {
         global $database;
@@ -124,6 +131,7 @@ final class AliasEditor extends Extension
         Log::info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
     }
 
+    #[EventListener]
     public function onDeleteAlias(DeleteAliasEvent $event): void
     {
         global $database;
@@ -131,6 +139,7 @@ final class AliasEditor extends Extension
         Log::info("alias_editor", "Deleted alias for {$event->oldtag}", "Deleted alias");
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
@@ -138,6 +147,7 @@ final class AliasEditor extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
@@ -170,17 +180,5 @@ final class AliasEditor extends Extension
             }
         }
         return $i;
-    }
-
-    /**
-     * Get the priority for this extension.
-     *
-     * Add alias *after* mass tag editing, else the MTE will
-     * search for the images and be redirected to the alias,
-     * missing out the images tagged with the old tag.
-     */
-    public function get_priority(): int
-    {
-        return 60;
     }
 }

@@ -9,17 +9,13 @@ final class Trash extends Extension
 {
     public const KEY = "trash";
 
-    public function get_priority(): int
-    {
-        // Needs to be early to intercept delete events
-        return 10;
-    }
-
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["trash"] = ImagePropType::BOOL;
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("trash_restore/{image_id}", method: "POST", permission: TrashPermission::VIEW_TRASH)) {
@@ -37,6 +33,7 @@ final class Trash extends Extension
         return true;
     }
 
+    #[EventListener(priority: 10)]
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         /**
@@ -47,6 +44,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener(priority: 10)]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (!$this->check_permissions(($event->image))) {
@@ -54,6 +52,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener(priority: 10)] // Needs to be early to intercept delete events
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         if ($event->force !== true && $event->image['trash'] !== true) {
@@ -62,6 +61,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
@@ -71,6 +71,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
@@ -79,6 +80,8 @@ final class Trash extends Extension
     }
 
     public const SEARCH_REGEXP = "/^in[=:](trash)$/i";
+
+    #[EventListener(priority: 10)]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term) && $this->no_trash_query($event->context)) {
@@ -92,6 +95,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -123,6 +127,8 @@ final class Trash extends Extension
             ["trash" => $trash,"id" => $image_id]
         );
     }
+
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if ($event->image['trash'] === true && Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
@@ -130,6 +136,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         if (in_array("in:trash", $event->search_terms)) {
@@ -137,6 +144,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -153,6 +161,7 @@ final class Trash extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

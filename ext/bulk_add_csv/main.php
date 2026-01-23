@@ -13,6 +13,7 @@ final class BulkAddCSV extends Extension
 {
     public const KEY = "bulk_add_csv";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("bulk_add_csv", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
@@ -23,6 +24,7 @@ final class BulkAddCSV extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('bulk-add-csv')
@@ -40,6 +42,7 @@ final class BulkAddCSV extends Extension
             });
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();

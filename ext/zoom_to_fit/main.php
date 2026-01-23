@@ -10,6 +10,7 @@ final class ZoomToFit extends Extension
 {
     public const KEY = "zoom_to_fit";
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (str_starts_with($event->image->get_mime()->base, "image/")) {

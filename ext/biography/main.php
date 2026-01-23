@@ -9,6 +9,7 @@ final class Biography extends Extension
 {
     public const KEY = "biography";
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $duser = $event->display_user;
@@ -21,6 +22,7 @@ final class Biography extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("user/{name}/biography", method: "POST")) {

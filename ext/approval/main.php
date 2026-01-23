@@ -9,12 +9,14 @@ final class Approval extends Extension
 {
     public const KEY = "approval";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["approved"] = ImagePropType::BOOL;
         Image::$prop_types["approved_by_id"] = ImagePropType::INT;
     }
 
+    #[EventListener]
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         if (defined("UNITTEST") || Ctx::$user->can(ApprovalPermission::BYPASS_IMAGE_APPROVAL)) {
@@ -22,6 +24,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("approve_image/{image_id}", method: "POST", permission: ApprovalPermission::APPROVE_IMAGE)) {
@@ -37,11 +40,13 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_form();
     }
 
+    #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
         global $database;
@@ -70,6 +75,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (!$this->check_permissions($event->image)) {
@@ -77,6 +83,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
@@ -86,6 +93,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (!Ctx::$user->is_anonymous()) {
@@ -94,6 +102,8 @@ final class Approval extends Extension
     }
 
     public const SEARCH_REGEXP = "/^approved[=:](yes|no)/i";
+
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if (is_null($event->term) && $this->no_approval_query($event->context)) {
@@ -122,6 +132,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -173,6 +184,7 @@ final class Approval extends Extension
         );
     }
 
+    #[EventListener]
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         /**
@@ -183,6 +195,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
@@ -195,6 +208,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         if (in_array("approved:no", $event->search_terms)) {
@@ -204,6 +218,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -230,6 +245,7 @@ final class Approval extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

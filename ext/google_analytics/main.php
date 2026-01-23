@@ -10,6 +10,7 @@ final class GoogleAnalytics extends Extension
 {
     public const KEY = "google_analytics";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $google_analytics_id = Ctx::$config->get(GoogleAnalyticsConfig::ANALYTICS_ID);

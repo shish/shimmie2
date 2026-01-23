@@ -9,6 +9,7 @@ final class TagList extends Extension
 {
     public const KEY = "tag_list";
 
+    #[EventListener]
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         if (Ctx::$config->get(TagListConfig::LENGTH) > 0) {
@@ -20,6 +21,7 @@ final class TagList extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (Ctx::$config->get(TagListConfig::LENGTH) > 0) {

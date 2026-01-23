@@ -38,6 +38,7 @@ final class TranscodeImage extends Extension
         "WEBP (lossless)" => MimeType::WEBP_LOSSLESS,
     ];
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::EDIT_FILES) && $event->context !== "report") {
@@ -49,6 +50,7 @@ final class TranscodeImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("transcode/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
@@ -59,6 +61,7 @@ final class TranscodeImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         if (
@@ -97,6 +100,7 @@ final class TranscodeImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $engine = MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE));
@@ -110,6 +114,7 @@ final class TranscodeImage extends Extension
         );
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {

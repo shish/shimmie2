@@ -9,6 +9,7 @@ final class ReplaceFile extends Extension
 {
     public const KEY = "replace_file";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("replace/{image_id}", method: "GET", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
@@ -46,6 +47,7 @@ final class ReplaceFile extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         /* In the future, could perhaps allow users to replace images that they own as well... */
@@ -54,6 +56,7 @@ final class ReplaceFile extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageReplace(ImageReplaceEvent $event): void
     {
         $image = $event->image;

@@ -115,14 +115,7 @@ final class Upload extends Extension
     public const KEY = "upload";
     public bool $is_full;
 
-    /**
-     * Early, so it can stop the DataUploadEvent before any data handlers see it.
-     */
-    public function get_priority(): int
-    {
-        return 40;
-    }
-
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         $this->is_full = false;
@@ -139,6 +132,7 @@ final class Upload extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
@@ -146,6 +140,7 @@ final class Upload extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "upload") {
@@ -155,6 +150,7 @@ final class Upload extends Extension
         }
     }
 
+    #[EventListener(priority: 40)] // Early, so it can stop the DataUploadEvent before any data handlers see it.
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->is_full) {
@@ -167,6 +163,7 @@ final class Upload extends Extension
         }
     }
 
+    #[EventListener]
     public function onDirectoryUpload(DirectoryUploadEvent $event): void
     {
         global $database;
@@ -198,6 +195,7 @@ final class Upload extends Extension
         $event->results = array_merge($event->results, $results);
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('post:upload')
@@ -228,6 +226,7 @@ final class Upload extends Extension
             });
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {

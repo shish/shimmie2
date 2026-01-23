@@ -10,6 +10,7 @@ final class MetricsOTLP extends Extension
 
     private string $type = "other";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         $event->add_shutdown_handler(function () {
@@ -26,6 +27,7 @@ final class MetricsOTLP extends Extension
         });
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_starts_with("post/view")) {  # 40%

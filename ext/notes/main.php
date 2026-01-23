@@ -13,11 +13,13 @@ final class Notes extends Extension
 {
     public const KEY = "notes";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["notes"] = ImagePropType::INT;
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
@@ -90,11 +92,13 @@ final class Notes extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('note/requests'), "Notes", category: "note");
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "note") {
@@ -104,6 +108,7 @@ final class Notes extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -160,11 +165,13 @@ final class Notes extends Extension
         }
     }
 
+    #[EventListener]
     public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         $event->add_disallow("note_history");
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $this->theme->display_note_system(
@@ -175,6 +182,7 @@ final class Notes extends Extension
         );
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(NotesPermission::CREATE)) {
@@ -191,6 +199,7 @@ final class Notes extends Extension
         $event->add_button("View Note History", "note_history/{$event->image->id}", 20);
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^note[=:](.*)$/i")) {
@@ -209,6 +218,7 @@ final class Notes extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {

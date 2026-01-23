@@ -8,11 +8,13 @@ final class BulkDownload extends Extension
 {
     public const KEY = "bulk_download";
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("download", "Download ZIP", permission: BulkDownloadPermission::BULK_DOWNLOAD);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         if (

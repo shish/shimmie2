@@ -13,6 +13,7 @@ final class Upgrade extends Extension
     public const KEY = "upgrade";
     public const VERSION_KEY = "db_version";
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('db-upgrade')
@@ -26,6 +27,7 @@ final class Upgrade extends Extension
             });
     }
 
+    #[EventListener(priority: 5)]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -212,10 +214,5 @@ final class Upgrade extends Extension
             $this->set_version(21);
             $database->begin_transaction();
         }
-    }
-
-    public function get_priority(): int
-    {
-        return 5;
     }
 }

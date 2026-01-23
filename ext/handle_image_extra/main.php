@@ -33,14 +33,6 @@ final class ExtraImageFileHandler extends Extension
         "WEBP (lossless)" => MimeType::WEBP_LOSSLESS,
     ];
 
-    /**
-     * Needs to be after upload, but before the processing extensions
-     */
-    public function get_priority(): int
-    {
-        return 45;
-    }
-
     public static function get_mapping_name(MimeType $mime): string
     {
         $mime = MimeMap::get_canonical($mime);
@@ -55,6 +47,7 @@ final class ExtraImageFileHandler extends Extension
         return ($val === null || $val === "" || $val === "-") ? null : new MimeType($val);
     }
 
+    #[EventListener]
     public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
     {
         $output = [];
@@ -67,6 +60,7 @@ final class ExtraImageFileHandler extends Extension
         $event->add_mimes($output);
     }
 
+    #[EventListener(priority: 45)] // Needs to be after upload, but before the processing extensions
     public function onDataUpload(DataUploadEvent $event): void
     {
         $target_mime = self::get_mapping($event->mime);

@@ -8,11 +8,7 @@ final class AutoComplete extends Extension
 {
     public const KEY = "autocomplete";
 
-    public function get_priority(): int
-    {
-        return 30;
-    } // before Home
-
+    #[EventListener(priority: 30)] // before Home
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("api/internal/autocomplete")) {

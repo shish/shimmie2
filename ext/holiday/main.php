@@ -10,6 +10,7 @@ final class Holiday extends Extension
 {
     public const KEY = "holiday";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (date('m/d') === '04/01' && Ctx::$config->get(HolidayConfig::APRIL_FOOLS)) {

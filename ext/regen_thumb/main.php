@@ -13,6 +13,7 @@ final class RegenThumb extends Extension
 {
     public const KEY = "regen_thumb";
 
+    #[EventListener]
     public function regenerate_thumbnail(Image $image, bool $force = true): bool
     {
         $event = send_event(new ThumbnailGenerationEvent($image, $force));
@@ -20,6 +21,7 @@ final class RegenThumb extends Extension
         return $event->generated;
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("regen_thumb/one/{image_id}", method: "POST", permission: ImagePermission::DELETE_IMAGE)) {
@@ -41,6 +43,7 @@ final class RegenThumb extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
@@ -48,11 +51,13 @@ final class RegenThumb extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("regen-thumb", "Regen Thumbnails", block: $this->theme->bulk_html(), permission: ImagePermission::DELETE_IMAGE);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -76,11 +81,13 @@ final class RegenThumb extends Extension
         }
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
+    #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
         switch ($event->action) {
@@ -122,6 +129,7 @@ final class RegenThumb extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('post:regen-thumb')

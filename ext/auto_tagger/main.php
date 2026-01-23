@@ -62,6 +62,7 @@ final class AutoTagger extends Extension
     public const KEY = "auto_tagger";
     public const VERSION_KEY = "ext_auto_tagger_ver";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -100,6 +101,7 @@ final class AutoTagger extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
@@ -107,6 +109,7 @@ final class AutoTagger extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -125,6 +128,7 @@ final class AutoTagger extends Extension
         }
     }
 
+    #[EventListener(priority: 30)]
     public function onTagSet(TagSetEvent $event): void
     {
         $results = $this->apply_auto_tags($event->new_tags);
@@ -133,17 +137,20 @@ final class AutoTagger extends Extension
         }
     }
 
+    #[EventListener]
     public function onAddAutoTag(AddAutoTagEvent $event): void
     {
         $this->add_auto_tag($event->tag, $event->additional_tags);
         Ctx::$page->flash("Added Auto-Tag");
     }
 
+    #[EventListener]
     public function onDeleteAutoTag(DeleteAutoTagEvent $event): void
     {
         $this->remove_auto_tag($event->tag);
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
@@ -274,10 +281,5 @@ final class AutoTagger extends Extension
             $tags_mixed,
             array_unique(array_map(strtolower(...), $tags_mixed))
         ));
-    }
-
-    public function get_priority(): int
-    {
-        return 30;
     }
 }

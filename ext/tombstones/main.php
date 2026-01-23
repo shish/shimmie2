@@ -33,12 +33,7 @@ class Tombstones extends Extension
 {
     public const KEY = "tombstones";
 
-    public function get_priority(): int
-    {
-        // Before post/view
-        return 20;
-    }
-
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -53,6 +48,7 @@ class Tombstones extends Extension
         }
     }
 
+    #[EventListener(priority: 20)] // Before /post/view
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -86,6 +82,7 @@ class Tombstones extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $database;

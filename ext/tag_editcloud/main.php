@@ -9,6 +9,7 @@ final class TagEditCloud extends Extension
 {
     public const KEY = "tag_editcloud";
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         if ($this->can_tag($event->image)) {

@@ -10,6 +10,7 @@ final class RSSComments extends Extension
 {
     public const KEY = "rss_comments";
 
+    #[EventListener]
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         Ctx::$page->add_html_header(LINK([
@@ -20,6 +21,7 @@ final class RSSComments extends Extension
         ]));
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -77,6 +79,7 @@ EOD;
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "comment") {

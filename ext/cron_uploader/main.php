@@ -19,6 +19,7 @@ final class CronUploader extends Extension
 
     private static bool $IMPORT_RUNNING = false;
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -30,6 +31,7 @@ final class CronUploader extends Extension
      * Checks if the cron upload page has been accessed
      * and initializes the upload.
      */
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("cron_upload/run")) {
@@ -39,6 +41,7 @@ final class CronUploader extends Extension
         }
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $failed_dir = $this->get_failed_dir();
@@ -55,6 +58,7 @@ final class CronUploader extends Extension
         $this->theme->display_form($failed_dirs);
     }
 
+    #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
         $action = $event->action;
@@ -80,6 +84,7 @@ final class CronUploader extends Extension
         }
     }
 
+    #[EventListener]
     public function onLog(LogEvent $event): void
     {
         if (self::$IMPORT_RUNNING) {

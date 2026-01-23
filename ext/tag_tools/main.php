@@ -10,11 +10,13 @@ final class TagTools extends Extension
 {
     public const KEY = "tag_tools";
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_form();
     }
 
+    #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
         global $database;

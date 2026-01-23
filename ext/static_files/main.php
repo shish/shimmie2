@@ -8,6 +8,7 @@ final class StaticFiles extends Extension
 {
     public const KEY = "static_files";
 
+    #[EventListener(priority: 98)] // Before 404
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -43,9 +44,4 @@ final class StaticFiles extends Extension
         }
         return $n;
     }
-
-    public function get_priority(): int
-    {
-        return 98;
-    }  // before 404
 }

@@ -12,6 +12,7 @@ final class TraceOTLP extends Extension
     private static ?string $traceFile = null;
     private static int $traceThreshold = 0;
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         self::$traceFile = Ctx::$config->get(OTLPCommonConfig::HOST);
@@ -36,6 +37,7 @@ final class TraceOTLP extends Extension
         });
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $definition = $event->app->getDefinition();
@@ -47,6 +49,7 @@ final class TraceOTLP extends Extension
         ));
     }
 
+    #[EventListener]
     public function onCliRun(CliRunEvent $event): void
     {
         self::$traceFile = $event->input->getParameterOption(

@@ -9,6 +9,7 @@ final class UserApiKeys extends Extension
 {
     public const KEY = "user_api_keys";
 
+    #[EventListener(priority: 6)] // This needs to happen before any other events, but after db upgrade
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -30,6 +31,7 @@ final class UserApiKeys extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserOperationsBuilding(UserOperationsBuildingEvent $event): void
     {
         $key = $event->user_config->get(UserApiKeysUserConfig::API_KEY);
@@ -38,11 +40,5 @@ final class UserApiKeys extends Extension
             $event->user_config->set(UserApiKeysUserConfig::API_KEY, $key);
         }
         $event->add_part($this->theme->get_user_operations($key));
-    }
-
-    // This needs to happen before any other events, but after db upgrade
-    public function get_priority(): int
-    {
-        return 6;
     }
 }

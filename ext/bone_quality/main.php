@@ -11,6 +11,7 @@ final class BoneQuality extends Extension
 {
     public const KEY = "bone_quality";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("bone_quality")) {
@@ -38,6 +39,7 @@ final class BoneQuality extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "stats") {

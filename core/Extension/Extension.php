@@ -33,15 +33,6 @@ abstract class Extension extends Enablable
         $this->theme = Themelet::get_for_extension_class(get_called_class());
     }
 
-    /**
-     * Override this to change the priority of the extension,
-     * lower numbered ones will receive events first.
-     */
-    public function get_priority(): int
-    {
-        return 50;
-    }
-
     protected function get_version(): int
     {
         $name = static::VERSION_KEY ?? "ext_" . static::KEY . "_version";

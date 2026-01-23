@@ -9,11 +9,13 @@ final class TagHistory extends Extension
 {
     public const KEY = "tag_history";
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("tag_history/revert", method: "POST", permission: PostTagsPermission::EDIT_IMAGE_TAG)) {
@@ -31,16 +33,19 @@ final class TagHistory extends Extension
         }
     }
 
+    #[EventListener]
     public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         $event->add_disallow("tag_history");
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         $event->add_button("View Tag History", "tag_history/{$event->image->id}", 20);
     }
 
+    #[EventListener]
     public function onTagSet(TagSetEvent $event): void
     {
         global $database;
@@ -104,6 +109,7 @@ final class TagHistory extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -113,7 +119,7 @@ final class TagHistory extends Extension
         }
     }
 
-
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
@@ -121,6 +127,7 @@ final class TagHistory extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

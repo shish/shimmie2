@@ -9,6 +9,7 @@ final class LogCli extends Extension
     public const KEY = "log_cli";
     private static int $logLevel = LogLevel::WARNING->value;
 
+    #[EventListener]
     public function onCliRun(CliRunEvent $event): void
     {
         $log_level = LogLevel::WARNING->value;
@@ -39,6 +40,7 @@ final class LogCli extends Extension
         self::$logLevel = $log_level;
     }
 
+    #[EventListener]
     public function onLog(LogEvent $event): void
     {
         if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && !defined("UNITTEST")) {

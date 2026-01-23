@@ -69,6 +69,7 @@ final class Ratings extends Extension
 
     private string $search_regexp;
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         $codes = implode("", array_keys(ImageRating::$known_ratings));
@@ -91,6 +92,7 @@ final class Ratings extends Extension
         return true;
     }
 
+    #[EventListener]
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         /**
@@ -101,6 +103,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         /**
@@ -111,10 +114,13 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkExport(BulkExportEvent $event): void
     {
         $event->fields["rating"] = $event->image['rating'];
     }
+
+    #[EventListener]
     public function onBulkImport(BulkImportEvent $event): void
     {
         if (array_key_exists("rating", $event->fields)
@@ -124,6 +130,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onRatingSet(RatingSetEvent $event): void
     {
         if (empty($event->image['rating'])) {
@@ -134,6 +141,7 @@ final class Ratings extends Extension
         $this->set_rating($event->image->id, $event->rating, $old_rating);
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part(
@@ -146,6 +154,7 @@ final class Ratings extends Extension
         );
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         if (
@@ -172,6 +181,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         if (!is_null($event->image['rating'])) {
@@ -179,6 +189,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -187,6 +198,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         $matches = [];
@@ -213,6 +225,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if ($event->matches($this->search_regexp)) {
@@ -220,6 +233,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermParse(TagTermParseEvent $event): void
     {
         if ($matches = $event->matches($this->search_regexp)) {
@@ -236,6 +250,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         global $database;
@@ -254,6 +269,7 @@ final class Ratings extends Extension
         $this->theme->display_form($original_values);
     }
 
+    #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
         switch ($event->action) {
@@ -273,6 +289,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action(
@@ -285,6 +302,7 @@ final class Ratings extends Extension
         );
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -305,6 +323,7 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("admin/bulk_rate", method: "POST", permission: RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
@@ -327,11 +346,13 @@ final class Ratings extends Extension
         }
     }
 
+    #[EventListener]
     public function onUploadHeaderBuilding(UploadHeaderBuildingEvent $event): void
     {
         $event->add_part("Rating");
     }
 
+    #[EventListener]
     public function onUploadSpecificBuilding(UploadSpecificBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_upload_specific_rater_html($event->suffix));
@@ -435,6 +456,7 @@ final class Ratings extends Extension
         return true;
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

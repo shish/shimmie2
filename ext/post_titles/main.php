@@ -19,16 +19,13 @@ final class PostTitles extends Extension
 {
     public const KEY = "post_titles";
 
-    public function get_priority(): int
-    {
-        return 60;
-    }
-
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["title"] = ImagePropType::STRING;
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -39,6 +36,7 @@ final class PostTitles extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (Ctx::$config->get(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
@@ -46,6 +44,7 @@ final class PostTitles extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part(
@@ -57,6 +56,7 @@ final class PostTitles extends Extension
         );
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $title = $event->get_param('title');
@@ -65,16 +65,19 @@ final class PostTitles extends Extension
         }
     }
 
+    #[EventListener]
     public function onPostTitleSet(PostTitleSetEvent $event): void
     {
         $this->set_title($event->image->id, $event->title);
     }
 
+    #[EventListener]
     public function onBulkExport(BulkExportEvent $event): void
     {
         $event->fields["title"] = $event->image['title'];
     }
 
+    #[EventListener]
     public function onBulkImport(BulkImportEvent $event): void
     {
         if (array_key_exists("title", $event->fields) && $event->fields['title'] !== null) {
@@ -82,6 +85,7 @@ final class PostTitles extends Extension
         }
     }
 
+    #[EventListener(priority: 60)]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^(title)[=:](.*)$/i")) {

@@ -14,6 +14,7 @@ final class ET extends Extension
 {
     public const KEY = "et";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("system_info", permission: ETPermission::VIEW_SYSINFO)) {
@@ -24,6 +25,7 @@ final class ET extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -33,6 +35,7 @@ final class ET extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ETPermission::VIEW_SYSINFO)) {
@@ -40,6 +43,7 @@ final class ET extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('info')

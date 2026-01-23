@@ -19,6 +19,7 @@ final class PostOwner extends Extension
 {
     public const KEY = "post_owner";
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $owner = $event->get_param('owner');
@@ -28,6 +29,7 @@ final class PostOwner extends Extension
         }
     }
 
+    #[EventListener]
     public function onOwnerSet(OwnerSetEvent $event): void
     {
         if (Ctx::$user->can(PostOwnerPermission::EDIT_IMAGE_OWNER)) {
@@ -35,6 +37,7 @@ final class PostOwner extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_owner_editor_html($event->image), 39);

@@ -101,11 +101,13 @@ final class Pools extends Extension
 {
     public const KEY = "pools";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["image_order"] = ImagePropType::INT;
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
@@ -161,11 +163,13 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('pool/list'), "Pools", category: "pool");
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "pool") {
@@ -176,6 +180,7 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -364,6 +369,7 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("Pools", make_link("pool/list"));
@@ -374,6 +380,7 @@ final class Pools extends Extension
      * image is currently a member of on a side panel, as well as a link
      * to the Next image in the pool.
      */
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (Ctx::$config->get(PoolsConfig::INFO_ON_VIEW_IMAGE)) {
@@ -395,6 +402,7 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         global $database;
@@ -417,6 +425,7 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -424,6 +433,7 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^pool[=:]([0-9]+|any|none)$/i")) {
@@ -451,6 +461,7 @@ final class Pools extends Extension
 
     }
 
+    #[EventListener]
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if ($event->matches("/^pool[=:]([^:]*|lastcreated):?([0-9]*)$/i")) {
@@ -458,6 +469,7 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermParse(TagTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^pool[=:]([^:]*|lastcreated):?([0-9]*)$/i")) {
@@ -479,6 +491,7 @@ final class Pools extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         global $database;
@@ -490,6 +503,7 @@ final class Pools extends Extension
         $event->add_action("pool-create", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms), permission: PoolsPermission::UPDATE);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -573,6 +587,7 @@ final class Pools extends Extension
         $this->theme->list_pools($pools, $search, $pageNumber + 1, $totalPages);
     }
 
+    #[EventListener]
     public function onPoolCreation(PoolCreationEvent $event): void
     {
         if (!Ctx::$user->can(PoolsPermission::UPDATE)) {
@@ -642,6 +657,7 @@ final class Pools extends Extension
     /**
      * HERE WE ADD CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
      */
+    #[EventListener]
     public function onPoolAddPosts(PoolAddPostsEvent $event): void
     {
         global $database;
@@ -763,6 +779,7 @@ final class Pools extends Extension
     /**
      * HERE WE NUKE ENTIRE POOL. WE REMOVE POOLS AND POSTS FROM REMOVED POOL AND HISTORIES ENTRIES FROM REMOVED POOL.
      */
+    #[EventListener]
     public function onPoolDeletion(PoolDeletionEvent $event): void
     {
         global $database;

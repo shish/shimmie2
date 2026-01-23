@@ -8,11 +8,7 @@ final class CustomHtmlHeaders extends Extension
 {
     public const KEY = "custom_html_headers";
 
-    public function get_priority(): int
-    {
-        return 96; // after index
-    }
-
+    #[EventListener(priority: 96)] // after index
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;

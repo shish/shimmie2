@@ -32,11 +32,13 @@ final class Artists extends Extension
 {
     public const KEY = "artists";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["author"] = ImagePropType::STRING;
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $author = $event->get_param("author");
@@ -45,6 +47,7 @@ final class Artists extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $artistName = $this->get_artistName_by_imageID($event->image->id);
@@ -53,6 +56,7 @@ final class Artists extends Extension
         }
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^(author|artist)[=:](.*)$/i")) {
@@ -60,6 +64,7 @@ final class Artists extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -67,6 +72,7 @@ final class Artists extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
@@ -118,6 +124,7 @@ final class Artists extends Extension
         }
     }
 
+    #[EventListener]
     public function onAuthorSet(AuthorSetEvent $event): void
     {
         $author = strtolower($event->author);
@@ -154,6 +161,7 @@ final class Artists extends Extension
         );
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;

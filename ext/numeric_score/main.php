@@ -101,11 +101,13 @@ final class NumericScore extends Extension
 {
     public const KEY = "numeric_score";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["numeric_score"] = ImagePropType::INT;
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if (Ctx::$user->can(NumericScorePermission::CREATE_VOTE)) {
@@ -113,6 +115,7 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         if (Ctx::$user->can(NumericScorePermission::EDIT_OTHER_VOTE)) {
@@ -130,6 +133,7 @@ final class NumericScore extends Extension
         ));
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -252,17 +256,20 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onNumericScoreSet(NumericScoreSetEvent $event): void
     {
         Log::debug("numeric_score", "Rated >>{$event->image_id} as {$event->score}", "Rated Post");
         $this->add_vote($event->image_id, Ctx::$user->id, $event->score);
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         Ctx::$database->execute("DELETE FROM numeric_score_votes WHERE image_id=:id", ["id" => $event->image->id]);
     }
 
+    #[EventListener]
     public function onUserDeletion(UserDeletionEvent $event): void
     {
         $this->delete_votes_by($event->id);
@@ -301,11 +308,13 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $event->replace('$score', (string)$event->image['numeric_score']);
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -313,6 +322,7 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^score(:|<=|<|=|>|>=)(-?\d+)$/i")) {
@@ -350,6 +360,7 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if ($event->matches("/^vote[=:](up|down|remove)$/i")) {
@@ -357,6 +368,7 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermParse(TagTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^vote[=:](up|down|remove)$/")) {
@@ -367,6 +379,7 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
@@ -376,6 +389,7 @@ final class NumericScore extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

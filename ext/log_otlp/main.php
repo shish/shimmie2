@@ -8,6 +8,7 @@ final class LogOTLP extends Extension
 {
     public const KEY = "log_otlp";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         $event->add_shutdown_handler(function () {
@@ -15,6 +16,7 @@ final class LogOTLP extends Extension
         });
     }
 
+    #[EventListener]
     public function onLog(LogEvent $event): void
     {
         Ctx::$tracer->logMessage(
