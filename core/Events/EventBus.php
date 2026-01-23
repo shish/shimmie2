@@ -68,9 +68,7 @@ final class EventBus
                 continue;
             }
 
-            $reflection = new \ReflectionClass($extension);
-
-            foreach ($reflection->getMethods() as $method) {
+            foreach ($class->getMethods() as $method) {
                 foreach ($method->getAttributes(EventListener::class) as $attribute) {
                     $attribute = $attribute->newInstance();
 
@@ -118,10 +116,12 @@ final class EventBus
         foreach ($this->event_listeners as $event => $listeners) {
             $t = [];
             foreach ($listeners as $_id => $listener) {
+                [$listener, $method] = $listener;
+
                 // @phpstan-ignore-next-line
                 $class_name = $this->namespaced_class_name(get_class($listener));
                 $classes[] = $class_name;
-                $t[] = "\$".$class_name;
+                $t[] = "[\$$class_name, '$method']";
             }
             $listeners_str .= "\t'$event' => [" . implode(", ", $t) . "],\n";
         }
