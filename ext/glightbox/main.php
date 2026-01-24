@@ -46,11 +46,6 @@ final class GLightboxViewer extends DataHandlerExtension
         ]), 10);
     }
 
-    protected function supported_mime(MimeType $mime): bool
-    {
-        return MimeType::matches_array($mime, $this::SUPPORTED_MIME);
-    }
-
     protected function media_check_properties(Image $image): ?MediaProperties
     {
         return null;

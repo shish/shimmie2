@@ -111,9 +111,11 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        if (!$event->displayed && $this->supported_mime($event->image->get_mime())) {
-            $this->display_media($event->image);
-            $event->displayed = true;
+        if ($this->supported_mime($event->image->get_mime())) {
+            if (!$event->displayed) {
+                $this->display_media($event->image);
+                $event->displayed = true;
+            }
             if (Ctx::$config->get(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
                 $this->theme->display_metadata($event->image);
             }
