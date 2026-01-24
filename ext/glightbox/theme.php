@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use function MicroHTML\{A};
 
-class GLightboxTheme extends Themelet
+class GLightboxViewerTheme extends Themelet
 {
     public function build_media(Image $image): \MicroHTML\HTMLElement
     {

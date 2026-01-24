@@ -2,7 +2,7 @@
 
 namespace Shimmie2;
 
-final class GLightboxInfo extends ExtensionInfo
+final class GLightboxViewerInfo extends ExtensionInfo
 {
     public const string KEY = "glightbox";
 

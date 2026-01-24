@@ -6,7 +6,7 @@ use function MicroHTML\{LINK, SCRIPT};
 
 final class GLightboxConfig extends ConfigGroup
 {
-    public const string KEY = GLightboxInfo::KEY;
+    public const string KEY = GLightboxViewerInfo::KEY;
 
     #[ConfigMeta("Show post title", ConfigType::BOOL, default: true)]
     public const string SHOW_TITLE = "glightbox_show_title";
@@ -15,10 +15,10 @@ final class GLightboxConfig extends ConfigGroup
     public const string SHOW_DESCRIPTION = "glightbox_show_description";
 }
 
-/** @extends DataHandlerExtension<GLightboxTheme> */
-final class GLightbox extends DataHandlerExtension
+/** @extends DataHandlerExtension<GLightboxViewerTheme> */
+final class GLightboxViewer extends DataHandlerExtension
 {
-    public const string KEY = GLightboxInfo::KEY;
+    public const string KEY = GLightboxViewerInfo::KEY;
     public const array SUPPORTED_MIME = ImageFileHandler::SUPPORTED_MIME;
 
     public function get_priority(): int
