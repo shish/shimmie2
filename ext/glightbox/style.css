@@ -4,10 +4,16 @@
 	}
 
 	.gslide-description {
-		display: none;
+		background: var(--page);
 	}
-}
 
-img.shm-main-image {
-	cursor: pointer;
+	.gdesc-inner {
+		padding: 1rem;
+	}
+
+	.gslide-title {
+		color: var(--text);
+		margin-top: 0;
+		margin-bottom: 1rem;
+	}
 }

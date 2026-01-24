@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const lightbox = GLightbox({
-        selector: 'img.shm-main-image',
+        selector: '[data-glightbox]',
         touchNavigation: false,
         // keyboardNavigation: false,
         draggable: false,

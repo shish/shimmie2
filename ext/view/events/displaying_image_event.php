@@ -15,6 +15,8 @@ namespace Shimmie2;
  */
 class DisplayingImageEvent extends Event
 {
+    public bool $displayed = false;
+
     public function __construct(
         public Image $image
     ) {

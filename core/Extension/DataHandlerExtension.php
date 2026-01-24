@@ -111,10 +111,9 @@ abstract class DataHandlerExtension extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
-        if ($this->supported_mime($event->image->get_mime())) {
-            // @phpstan-ignore-next-line
-            $media = $this->theme->build_media($event->image);
-            Ctx::$page->add_block(new Block(null, $media, "main", 10, id: static::KEY . "_media"));
+        if (!$event->displayed && $this->supported_mime($event->image->get_mime())) {
+            $this->display_media($event->image);
+            $event->displayed = true;
             if (Ctx::$config->get(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
                 $this->theme->display_metadata($event->image);
             }
@@ -175,5 +174,12 @@ abstract class DataHandlerExtension extends Extension
         }
         $arr = array_unique($arr);
         return $arr;
+    }
+
+    protected function display_media(Image $image): void
+    {
+        // @phpstan-ignore-next-line
+        $media = $this->theme->build_media($image);
+        Ctx::$page->add_block(new Block(null, $media, "main", 10, id: static::KEY . "_media"));
     }
 }
