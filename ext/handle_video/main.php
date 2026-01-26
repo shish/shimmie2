@@ -15,6 +15,7 @@ final class VideoFileHandler extends DataHandlerExtension
         MimeType::MP4_VIDEO => [
             VideoCodec::H264,
             VideoCodec::H265,
+            VideoCodec::HEVC,
         ],
         MimeType::WEBM => [
             VideoCodec::VP8,
