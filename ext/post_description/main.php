@@ -60,12 +60,15 @@ final class PostDescription extends Extension
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
-        global $database;
-
-        $description = (string) $database->get_one(
-            "SELECT description FROM image_descriptions WHERE image_id = :id",
-            ["id" => $event->image->id]
-        ) ?: "None";
+        $description = self::get_description($event->image);
         $event->add_part($this->theme->get_description_editor_html($description), 35);
+    }
+
+    public static function get_description(Image $image): string
+    {
+        return (string) Ctx::$database->get_one(
+            "SELECT description FROM image_descriptions WHERE image_id = :id",
+            ["id" => $image->id]
+        ) ?: "";
     }
 }
