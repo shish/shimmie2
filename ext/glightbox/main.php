@@ -26,6 +26,22 @@ final class GLightboxViewer extends DataHandlerExtension
         return 49; // Before handle_image
     }
 
+    public function onDataUpload(DataUploadEvent $event): void
+    {
+    }
+
+    public function onThumbnailGeneration(ThumbnailGenerationEvent $event): void
+    {
+    }
+
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event): void
+    {
+    }
+
+    public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
+    {
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
