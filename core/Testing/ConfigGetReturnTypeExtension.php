@@ -72,10 +72,10 @@ class ConfigGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
                         && is_array($this->metas[$key]->options)
                     ) {
                         $configType = new UnionType(
-                            array_map(
+                            array_values(array_map(
                                 fn ($option) => new ConstantStringType($option),
                                 $this->metas[$key]->options
-                            )
+                            ))
                         );
                     }
                     $hasDefault = $this->metas[$key]->default !== null;
