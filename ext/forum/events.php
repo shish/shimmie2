@@ -27,9 +27,22 @@ final class ForumThreadDeletionEvent extends Event
 
 final class ForumPostPostingEvent extends Event
 {
+    public int $id;
     public function __construct(
         public User $user,
         public int $thread_id,
+        public string $message
+    ) {
+        parent::__construct();
+    }
+}
+
+final class ForumPostEditingEvent extends Event
+{
+    public function __construct(
+        public User $user,
+        public int $thread_id,
+        public int $post_id,
         public string $message
     ) {
         parent::__construct();
