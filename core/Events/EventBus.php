@@ -18,7 +18,7 @@ function send_event(Event $event): Event
 
 final class EventBus
 {
-    /** @var array<string, list<array{0: Extension, 1: string}>> $event_listeners */
+    /** @var array<class-string<Event>, list<array{0: Extension, 1: string}>> $event_listeners */
     private readonly array $event_listeners;
     public int $event_count = 0;
     private ?float $deadline = null;
@@ -54,7 +54,7 @@ final class EventBus
      * Check which extensions are installed, supported, and active;
      * scan them for on<EventName>() functions; return a map of them
      *`
-     * @return array<string, list<array{0: Extension, 1: string}>> $event_listeners
+     * @return array<class-string<Event>, list<array{0: Extension, 1: string}>> $event_listeners
      */
     private function calc_event_listeners(): array
     {
@@ -82,7 +82,7 @@ final class EventBus
                         continue;
                     }
 
-                    $event = $this->namespaced_class_name($event);
+                    /** @var class-string<Event> $event */
 
                     $pos = $attribute->priority * 100;
                     while (isset($event_listeners_with_ids[$event][$pos])) {
@@ -155,13 +155,14 @@ final class EventBus
      */
     public function send_event(Event $event): Event
     {
-        $event_name = $this->namespaced_class_name(\get_class($event));
-        if (!isset($this->event_listeners[$event_name])) {
+        $event_class = \get_class($event);
+        if (!isset($this->event_listeners[$event_class])) {
             return $event;
         }
 
+        $event_name = $this->namespaced_class_name($event_class);
         $sEvent = Ctx::$tracer->startSpan($event_name);
-        foreach ($this->event_listeners[$event_name] as $listener) {
+        foreach ($this->event_listeners[$event_class] as $listener) {
             [$listener, $method] = $listener;
 
             if ($this->deadline && ftime() > $this->deadline) {
