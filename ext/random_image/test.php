@@ -30,7 +30,9 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
         # enabled, no image = no text
         Ctx::$config->set(RandomImageConfig::SHOW_RANDOM_BLOCK, true);
         $page = self::get_page("post/list");
-        self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
+        self::assertException(\Exception::class, function () use ($page) {
+            $page->find_block("Random Post");
+        });
 
         # enabled, image = text
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
@@ -40,11 +42,15 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
         # disabled, image = no text
         Ctx::$config->set(RandomImageConfig::SHOW_RANDOM_BLOCK, false);
         $page = self::get_page("post/list");
-        self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
+        self::assertException(\Exception::class, function () use ($page) {
+            $page->find_block("Random Post");
+        });
 
         # disabled, no image = no image
         $this->delete_image($image_id);
         $page = self::get_page("post/list");
-        self::assertException(\Exception::class, function () use ($page) {$page->find_block("Random Post");});
+        self::assertException(\Exception::class, function () use ($page) {
+            $page->find_block("Random Post");
+        });
     }
 }
