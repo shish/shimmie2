@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "events.php";
-
 use GQLA\{Field, Mutation, Type};
 use MicroCRUD\{ActionColumn, DateColumn, EnumColumn, IntegerColumn, Table, TextColumn};
 
