@@ -9,8 +9,6 @@ use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-require_once "events.php";
-
 /** @extends Extension<IndexTheme> */
 final class Index extends Extension
 {
