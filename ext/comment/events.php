@@ -16,6 +16,18 @@ final class CommentPostingEvent extends Event
     }
 }
 
+final class CommentEditingEvent extends Event
+{
+    public function __construct(
+        public int $image_id,
+        public int $comment_id,
+        public User $user,
+        public string $comment
+    ) {
+        parent::__construct();
+    }
+}
+
 /**
  * A comment is being deleted. Maybe used by spam
  * detectors to get a feel for what should be deleted
