@@ -106,6 +106,7 @@ final class GraphQL extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("graphql")) {
@@ -192,6 +193,7 @@ final class GraphQL extends Extension
         return array_map(fn ($im) => $im->id, $event->images);
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('graphql:query')

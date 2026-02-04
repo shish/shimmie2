@@ -12,11 +12,6 @@ final class AvatarGravatar extends AvatarExtension
 {
     public const KEY = "avatar_gravatar";
 
-    public function get_priority(): int
-    {
-        return 50;
-    }
-
     public function avatar_html(User $user): HTMLElement|null
     {
         if (!empty($user->email)) {

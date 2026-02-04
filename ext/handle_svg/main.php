@@ -12,6 +12,7 @@ final class SVGFileHandler extends DataHandlerExtension
     public const KEY = "handle_svg";
     public const SUPPORTED_MIME = [MimeType::SVG];
 
+    #[EventListener]
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {

@@ -9,6 +9,7 @@ final class RandomImage extends Extension
 {
     public const KEY = "random_image";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (
@@ -33,6 +34,7 @@ final class RandomImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         if (Ctx::$config->get(RandomImageConfig::SHOW_RANDOM_BLOCK)) {
@@ -43,6 +45,7 @@ final class RandomImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {

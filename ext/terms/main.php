@@ -9,6 +9,7 @@ final class Terms extends Extension
 {
     public const KEY = "terms";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;

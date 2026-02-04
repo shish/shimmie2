@@ -22,11 +22,13 @@ final class Favorites extends Extension
 {
     public const KEY = "favorites";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["favorites"] = ImagePropType::INT;
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
@@ -46,6 +48,7 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $people = $this->list_persons_who_have_favorited($event->image);
@@ -54,6 +57,7 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("favourite/add/{image_id}", method: "POST", permission: FavouritesPermission::EDIT_FAVOURITES)) {
@@ -68,6 +72,7 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $i_favorites_count = Search::count_images(["favorited_by={$event->display_user->name}"]);
@@ -80,6 +85,7 @@ final class Favorites extends Extension
         ));
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $action = $event->get_param("favorite_action");
@@ -92,6 +98,7 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onFavoriteSet(FavoriteSetEvent $event): void
     {
         $this->add_vote($event->image_id, Ctx::$user->id, $event->do_set);
@@ -99,21 +106,25 @@ final class Favorites extends Extension
 
     // FIXME: this should be handled by the foreign key. Check that it
     // is, and then remove this
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         Ctx::$database->execute("DELETE FROM user_favorites WHERE image_id=:image_id", ["image_id" => $event->image->id]);
     }
 
+    #[EventListener]
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         $event->replace('$favorites', (string)$event->image['favorites']);
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("My Favorites", search_link(["favorited_by=" . Ctx::$user->name]), 20);
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^favorites(:|<=|<|=|>|>=)(\d+)$/i")) {
@@ -133,6 +144,7 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -140,6 +152,7 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
@@ -147,12 +160,14 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("favorite", "Favorite", permission: FavouritesPermission::EDIT_FAVOURITES);
         $event->add_action("unfavorite", "Un-Favorite", permission: FavouritesPermission::EDIT_FAVOURITES);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -179,6 +194,7 @@ final class Favorites extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;

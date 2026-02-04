@@ -19,6 +19,7 @@ use MicroHTML\HTMLElement;
  */
 abstract class AvatarExtension extends Extension
 {
+    #[EventListener]
     public function onBuildAvatar(BuildAvatarEvent $event): void
     {
         $html = $this->avatar_html($event->user);

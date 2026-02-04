@@ -8,6 +8,7 @@ final class LogLogstash extends Extension
 {
     public const KEY = "log_logstash";
 
+    #[EventListener]
     public function onLog(LogEvent $event): void
     {
         $username = isset(Ctx::$user) ? Ctx::$user->name : "Anonymous";

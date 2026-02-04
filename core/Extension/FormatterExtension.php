@@ -17,6 +17,7 @@ namespace Shimmie2;
  */
 abstract class FormatterExtension extends Extension
 {
+    #[EventListener]
     public function onTextFormatting(TextFormattingEvent $event): void
     {
         $event->formatted = $this->format($event->formatted);
