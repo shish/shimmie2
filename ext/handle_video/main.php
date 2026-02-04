@@ -11,17 +11,6 @@ final class VideoFileHandler extends DataHandlerExtension
         MimeType::MP4_VIDEO,
         MimeType::WEBM,
     ];
-    private const VIDEO_CODEC_SUPPORT = [
-        MimeType::MP4_VIDEO => [
-            VideoCodec::H264,
-            VideoCodec::H265,
-        ],
-        MimeType::WEBM => [
-            VideoCodec::VP8,
-            VideoCodec::VP9,
-            VideoCodec::AV1,
-        ],
-    ];
 
     protected function media_check_properties(Image $image): MediaProperties
     {
@@ -60,9 +49,12 @@ final class VideoFileHandler extends DataHandlerExtension
             throw new MediaException("Could not determine video codec");
         }
 
-        $supported_codecs = self::VIDEO_CODEC_SUPPORT[$image->get_mime()->base];
-        if (!in_array($video_codec, $supported_codecs)) {
-            throw new MediaException("Unsupported video codec '{$video_codec->name}' for '{$image->get_mime()->base}' container. Supported codecs are " . implode(", ", array_map(fn ($c) => $c->name, $supported_codecs)) . ".");
+        $container = VideoContainer::fromMimeType($image->get_mime());
+        if (!$container->is_codec_supported($video_codec)) {
+            throw new MediaException(
+                "Unsupported video codec '{$video_codec->name}' for '{$image->get_mime()->base}' container. ".
+                "Supported codecs are " . implode(", ", array_map(fn ($c) => $c->name, VideoContainer::VIDEO_CODEC_SUPPORT[$container->value])) . "."
+            );
         }
 
         return new MediaProperties(
