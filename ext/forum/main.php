@@ -32,7 +32,7 @@ final class ForumThread
             $row['date'],
             $row['uptodate'],
             $row['response_count'],
-            (bool)$row['sticky']
+            (bool)$row['sticky'],
         );
     }
 
@@ -83,7 +83,7 @@ final class ForumThread
     }
 }
 
-/** @phpstan-type Post array{id:int,thread_id:int,user_id:int,date:string,message:string} */
+/** @phpstan-type Post array{id:int,thread_id:int,user_id:int,date:string,message:string,edited:bool|int} */
 final class ForumPost
 {
     public User $owner;
@@ -93,6 +93,7 @@ final class ForumPost
         public int $owner_id,
         public string $date,
         public string $message,
+        public bool $edited
     ) {
         $this->owner = User::by_id_dangerously_cached($owner_id);
     }
@@ -105,8 +106,25 @@ final class ForumPost
             $row['thread_id'],
             $row['user_id'],
             $row['date'],
-            $row['message']
+            $row['message'],
+            (bool)$row['edited']
         );
+    }
+
+    public static function by_id(int $id, int $thread_id): ForumPost
+    {
+        /** @var ?Post */
+        $row = Ctx::$database->get_row(
+            'SELECT * FROM forum_posts
+            WHERE id = :id
+            AND thread_id = :thread_id',
+            ['id' => $id, 'thread_id' => $thread_id]
+        );
+
+        if (is_null($row)) {
+            throw new ObjectNotFound("Forum post with id $id belonging to thread $thread_id not found.");
+        }
+        return self::from_row($row);
     }
 
     /** @return ForumPost[] */
@@ -130,8 +148,8 @@ final class ForumPost
 
 /*
 Todo:
-*Quote buttons on posts
-*Ability to edit threads/posts?
+* Quote buttons on posts
+* Improve the frontend, consistent with comments(?)
 */
 
 /** @extends Extension<ForumTheme> */
@@ -142,12 +160,13 @@ final class Forum extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        if ($this->get_version() < 4) {
+        if ($this->get_version() < 5) {
             if ($this->get_version() < 1) {
                 // shortcut to latest
                 Ctx::$database->create_table("forum_threads", "
                         id SCORE_AIPK,
                         user_id INTEGER NOT NULL,
+                        user_ip SCORE_INET NOT NULL,
                         title VARCHAR(255) NOT NULL,
                         date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         uptodate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -161,14 +180,16 @@ final class Forum extends Extension
                         id SCORE_AIPK,
                         thread_id INTEGER NOT NULL,
                         user_id INTEGER NOT NULL,
+                        user_ip SCORE_INET NOT NULL,
                         date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         message TEXT,
+                        edited BOOLEAN NOT NULL DEFAULT FALSE,
                         FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
                         FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
                         ");
                 Ctx::$database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", []);
 
-                $this->set_version(4);
+                $this->set_version(5);
             }
             if ($this->get_version() < 2) {
                 Ctx::$database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
@@ -185,6 +206,19 @@ final class Forum extends Extension
                 Ctx::$database->execute("UPDATE forum_threads ft SET response_count = (SELECT COUNT(1) FROM forum_posts fp WHERE fp.thread_id = ft.id)");
                 $this->set_version(4);
             }
+
+            if ($this->get_version() < 5) {
+                Ctx::$database->execute("ALTER TABLE forum_posts ADD COLUMN edited BOOLEAN NOT NULL DEFAULT FALSE");
+                Ctx::$database->execute("ALTER TABLE forum_threads ADD COLUMN user_ip SCORE_INET NOT NULL DEFAULT '0.0.0.0'");
+                Ctx::$database->execute("ALTER TABLE forum_posts ADD COLUMN user_ip SCORE_INET NOT NULL DEFAULT '0.0.0.0'");
+                if (Ctx::$database->get_driver_id() !== DatabaseDriverID::SQLITE) {
+                    // TODO drop the default for sqlite
+                    Ctx::$database->execute("ALTER TABLE forum_threads ALTER COLUMN user_ip DROP DEFAULT");
+                    Ctx::$database->execute("ALTER TABLE forum_posts ALTER COLUMN user_ip DROP DEFAULT");
+                }
+                $this->set_version(5);
+            }
+
         }
     }
 
@@ -214,23 +248,21 @@ final class Forum extends Extension
 
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $user = Ctx::$user;
-        $page = Ctx::$page;
         if ($event->page_matches("forum/index", method: "GET", paged: true)) {
             $page_number = $event->get_iarg('page_num', 1) - 1;
-            $this->show_last_threads($page_number, $user->can(ForumPermission::FORUM_ADMIN));
-            if ($user->can(ForumPermission::FORUM_CREATE)) {
+            $this->show_last_threads($page_number, Ctx::$user->can(ForumPermission::FORUM_ADMIN));
+            if (Ctx::$user->can(ForumPermission::FORUM_CREATE)) {
                 $this->theme->display_new_thread_composer();
             }
         } elseif ($event->page_matches("forum/view/{thread_id}", method: "GET", paged: true)) {
             $thread_id = $event->get_iarg('thread_id');
             $page_number = $event->get_iarg('page_num', 1) - 1;
 
-            $this->show_posts($thread_id, $page_number, $user->can(ForumPermission::FORUM_ADMIN));
-            if ($user->can(ForumPermission::FORUM_ADMIN)) {
+            $this->show_posts($thread_id, $page_number, Ctx::$user->can(ForumPermission::FORUM_ADMIN));
+            if (Ctx::$user->can(ForumPermission::FORUM_ADMIN)) {
                 $this->theme->add_actions_block($thread_id);
             }
-            if ($user->can(ForumPermission::FORUM_CREATE)) {
+            if (Ctx::$user->can(ForumPermission::FORUM_CREATE)) {
                 $this->theme->display_new_post_composer($thread_id);
             }
         } elseif ($event->page_matches("forum/new", method: "GET", permission: ForumPermission::FORUM_CREATE)) {
@@ -243,23 +275,31 @@ final class Forum extends Extension
             $ftpe = send_event(new ForumThreadPostingEvent(Ctx::$user, $title, $sticky));
             send_event(new CheckStringContentEvent($message));
             send_event(new ForumPostPostingEvent(Ctx::$user, $ftpe->id, $message));
-            $page->set_redirect(make_link("forum/view/$ftpe->id/1"));
+            Ctx::$page->set_redirect(make_link("forum/view/$ftpe->id/1"));
         } elseif ($event->page_matches("forum/answer", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
             $thread_id = int_escape($event->POST->req('thread_id'));
             $message = $event->POST->req('message');
             send_event(new CheckStringContentEvent($message));
             send_event(new ForumPostPostingEvent(Ctx::$user, $thread_id, $message));
             $total_pages = $this->get_total_pages_for_thread($thread_id);
-            $page->set_redirect(make_link("forum/view/$thread_id/$total_pages"));
+            Ctx::$page->set_redirect(make_link("forum/view/$thread_id/$total_pages"));
+        } elseif ($event->page_matches("forum/edit", method:"POST", permission: ForumPermission::FORUM_EDIT)) {
+            $thread_id = int_escape($event->POST->req("thread_id"));
+            $post_id = int_escape($event->POST->req("post_id"));
+            $message = $event->POST->req('message');
+            send_event(new CheckStringContentEvent($message));
+            send_event(new ForumPostEditingEvent(Ctx::$user, $thread_id, $post_id, $message));
+            $total_pages = $this->get_total_pages_for_thread($thread_id);
+            Ctx::$page->set_redirect(make_link("forum/view/$thread_id/$total_pages", fragment: (string)$post_id));
         } elseif ($event->page_matches("forum/delete/{thread_id}/{post_id}", method: "POST", permission: ForumPermission::FORUM_ADMIN)) {
             $thread_id = $event->get_iarg('thread_id');
             $post_id = $event->get_iarg('post_id');
             send_event(new ForumPostDeletionEvent($thread_id, $post_id));
-            $page->set_redirect(make_link("forum/view/$thread_id"));
+            Ctx::$page->set_redirect(make_link("forum/view/$thread_id"));
         } elseif ($event->page_matches("forum/nuke/{thread_id}", method: "POST", permission: ForumPermission::FORUM_ADMIN)) {
             $thread_id = $event->get_iarg('thread_id');
             send_event(new ForumThreadDeletionEvent($thread_id));
-            $page->set_redirect(make_link("forum/index"));
+            Ctx::$page->set_redirect(make_link("forum/index"));
         }
     }
 
@@ -271,7 +311,13 @@ final class Forum extends Extension
     public function onForumPostPosting(ForumPostPostingEvent $event): void
     {
         $this->forum_checks($event->user, $event->message, $event->thread_id);
-        $this->save_new_post($event->user, $event->thread_id, $event->message);
+        $event->id = $this->save_new_post($event->user, $event->thread_id, $event->message);
+    }
+
+    public function onForumPostEditing(ForumPostEditingEvent $event): void
+    {
+        $this->forum_checks($event->user, $event->message, $event->thread_id, $event->post_id);
+        $this->edit_post($event->user, $event->thread_id, $event->post_id, $event->message);
     }
 
     public function onForumThreadDeletion(ForumThreadDeletionEvent $event): void
@@ -284,7 +330,7 @@ final class Forum extends Extension
         $this->delete_post($event->thread_id, $event->post_id);
     }
 
-    private function forum_checks(User $user, string $content, ?int $thread_id = null): void
+    private function forum_checks(User $user, string $content, ?int $thread_id = null, ?int $post_id = null): void
     {
         // basic sanity checks
         if (!$user->can(ForumPermission::FORUM_CREATE)) {
@@ -295,6 +341,12 @@ final class Forum extends Extension
         if (!is_null($thread_id)) {
             ForumThread::by_id($thread_id); // will raise an exception if it does not exist
             $kind = "Message";  // thread_id is null on creating a new thread, hence the check is for a title, not message
+            if (!is_null($post_id)) {
+                $post = ForumPost::by_id($post_id, $thread_id); // will raise an exception if it does not exist
+                if ($post->owner_id !== $user->id) {
+                    throw new PermissionDenied("You cannot change other users' replies");
+                }
+            }
         }
 
         if (trim($content) === "") {
@@ -333,10 +385,10 @@ final class Forum extends Extension
         $title = substr($title, 0, Ctx::$config->get(ForumConfig::TITLE_SUBSTRING));
         Ctx::$database->execute(
             "INSERT INTO forum_threads
-			(title, sticky, user_id, date, uptodate)
+			(title, sticky, user_id, user_ip, date, uptodate)
 			VALUES
-			(:title, :sticky, :user_id, now(), now())",
-            ['title' => $title, 'sticky' => $sticky, 'user_id' => $user->id]
+			(:title, :sticky, :user_id, :user_ip, now(), now())",
+            ['title' => $title, 'sticky' => $sticky, 'user_id' => $user->id, 'user_ip' => (string)Network::get_real_ip()]
         );
 
         $thread_id = Ctx::$database->get_last_insert_id('forum_threads_id_seq');
@@ -346,14 +398,14 @@ final class Forum extends Extension
         return $thread_id;
     }
 
-    private function save_new_post(User $user, int $thread_id, string $message): void
+    private function save_new_post(User $user, int $thread_id, string $message): int
     {
         $message = substr($message, 0, Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST));
 
         Ctx::$database->execute(
-            'INSERT INTO forum_posts (thread_id, user_id, date, message)
-			VALUES (:thread_id, :user_id, now(), :message)',
-            ['thread_id' => $thread_id, 'user_id' => $user->id, 'message' => $message]
+            'INSERT INTO forum_posts (thread_id, user_id, user_ip, date, message)
+			VALUES (:thread_id, :user_id, :user_ip, now(), :message)',
+            ['thread_id' => $thread_id, 'user_id' => $user->id, 'user_ip' => (string)Network::get_real_ip(), 'message' => $message]
         );
 
         $post_id = Ctx::$database->get_last_insert_id('forum_posts_id_seq');
@@ -361,6 +413,26 @@ final class Forum extends Extension
         Log::info('forum', "Post $post_id created by $user->name");
 
         Ctx::$database->execute('UPDATE forum_threads SET uptodate = now(), response_count = response_count + 1 WHERE id = :id', ['id' => $thread_id]);
+        return $post_id;
+    }
+
+    private function edit_post(User $user, int $thread_id, int $post_id, string $message): void
+    {
+        $message = substr($message, 0, Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST));
+
+        Ctx::$database->execute(
+            'UPDATE forum_posts
+            SET message = :message,
+            user_ip = :user_ip,
+            edited = TRUE
+            WHERE id = :id
+            AND thread_id = :thread_id',
+            ['message' => $message, 'user_ip' => (string)Network::get_real_ip(), 'id' => $post_id, 'thread_id' => $thread_id]
+        );
+
+        Log::info("forum", "Post $post_id edited by $user->name");
+
+        Ctx::$database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=:id", ['id' => $thread_id]);
     }
 
     private function delete_thread(int $thread_id): void
