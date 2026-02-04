@@ -13,7 +13,6 @@ enum VideoCodec: string
     case MPEG4 = "mpeg4";
     case H264 = "h264";
     case AVC = "avc";
-    case H265 = "h265";
     case HEVC = "hevc";
     case FLV1 = "flv1";
     case UNKNOWN = "unknown";

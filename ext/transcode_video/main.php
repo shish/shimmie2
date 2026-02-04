@@ -109,7 +109,7 @@ final class TranscodeVideo extends Extension
                 continue;
             }
             if (!empty($starting_codec) &&
-                !VideoContainer::is_video_codec_supported($container, $starting_codec)) {
+                !$container->is_codec_supported($starting_codec)) {
                 continue;
             }
             // FIXME: VideoContainer happens to be a mime type when in string form,
@@ -148,7 +148,7 @@ final class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
         }
 
-        if (!VideoContainer::is_video_codec_supported(VideoContainer::from($target_mime), $source_video_codec)) {
+        if (!VideoContainer::from($target_mime)->is_codec_supported($source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec {$source_video_codec->value}");
         }
 
