@@ -223,12 +223,14 @@ class CommentListTheme extends Themelet
                     ),
                     emptyHTML(
                         SHM_DATE($comment->posted),
+                        $comment->edited ? " (edited)" : null,
                         " - ",
                         A(["href" => "javascript:ShmComment.replyTo({$comment->image_id}, {$comment->id}, '{$comment->owner->name}')"], "Reply"),
                     ),
                     emptyHTML(
                         Ctx::$user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->owner_ip, "Comment posted {$comment->posted}")) : null,
                         Ctx::$user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->id, $comment->image_id, $comment->owner->name, $tfe->stripped)) : null,
+                        Ctx::$user->can(CommentPermission::EDIT_COMMENT) && Ctx::$user->id === $comment->owner_id ? emptyHTML(" - ", $this->edit_button($comment->id, $comment->image_id, $comment->comment)) : null,
                     ),
                 ),
                 $userlink,
@@ -249,10 +251,15 @@ class CommentListTheme extends Themelet
         ], "Del");
     }
 
+    protected function edit_button(int $comment_id, int $image_id, string $text): HTMLElement
+    {
+        return A(["class" => "comment_edit", "data-comment_id" => $comment_id, "data-post_id" => $image_id, "data-content" => $text, "onclick" => "ShmComment.edit(this);"], " Edit");
+    }
+
     protected function build_postbox(int $image_id): HTMLElement
     {
         return DIV(
-            ["class" => "comment comment_add"],
+            ["class" => "comment comment_add", "id" => "comment_add_$image_id"],
             SHM_SIMPLE_FORM(
                 make_link("comment/add"),
                 INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),

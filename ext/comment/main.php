@@ -8,7 +8,7 @@ use GQLA\{Field, Mutation, Type};
 
 use function MicroHTML\{emptyHTML};
 
-/** @phpstan-type DBComment array{id:int,image_id:int,owner_id:int,owner_ip:string,posted:string,comment:string} */
+/** @phpstan-type DBComment array{id:int,image_id:int,owner_id:int,owner_ip:string,posted:string,comment:string,edited:bool|int} */
 #[Type(name: "Comment")]
 final class Comment
 {
@@ -24,6 +24,7 @@ final class Comment
         public string $posted,
         #[Field]
         public string $comment,
+        public bool $edited,
     ) {
         $this->owner = User::by_id_dangerously_cached($owner_id);
     }
@@ -38,6 +39,7 @@ final class Comment
             $row['owner_ip'],
             $row['posted'],
             $row['comment'],
+            (bool)$row['edited']
         );
     }
 
@@ -158,7 +160,7 @@ final class CommentList extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
-        if ($this->get_version() < 4) {
+        if ($this->get_version() < 5) {
             // shortcut to latest
             if ($this->get_version() < 1) {
                 $database->create_table("comments", "
@@ -168,13 +170,17 @@ final class CommentList extends Extension
 					owner_ip SCORE_INET NOT NULL,
 					posted TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					comment TEXT NOT NULL,
+                    edited BOOLEAN NOT NULL DEFAULT FALSE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 				");
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);
                 $database->execute("CREATE INDEX comments_owner_id_idx ON comments(owner_id)", []);
                 $database->execute("CREATE INDEX comments_posted_idx ON comments(posted)", []);
-                $this->set_version(3);
+
+                $database->execute("ALTER TABLE images ADD COLUMN comments_locked BOOLEAN NOT NULL DEFAULT FALSE");
+                $database->execute("CREATE INDEX images_comments_locked_idx ON images(comments_locked)");
+                $this->set_version(5);
             }
 
             // the whole history
@@ -208,6 +214,11 @@ final class CommentList extends Extension
                 $database->execute("CREATE INDEX images_comments_locked_idx ON images(comments_locked)");
                 $this->set_version(4);
             }
+
+            if ($this->get_version() === 4) {
+                $database->execute("ALTER TABLE comments ADD COLUMN edited BOOLEAN NOT NULL DEFAULT FALSE");
+                $this->set_version(5);
+            }
         }
     }
 
@@ -233,6 +244,13 @@ final class CommentList extends Extension
             send_event(new CheckStringContentEvent($event->POST->req('comment')));
             send_event(new CommentPostingEvent($image_id, Ctx::$user, $event->POST->req('comment')));
             $page->set_redirect(make_link("post/view/$image_id", null, "comment_on_$image_id"));
+        } elseif ($event->page_matches("comment/edit", method: "POST", permission: CommentPermission::EDIT_COMMENT)) {
+            $comment_id = int_escape($event->POST->req('comment_id'));
+            $image_id = int_escape($event->POST->req('image_id'));
+            $new_comment = $event->POST->req('comment');
+            send_event(new CheckStringContentEvent($new_comment));
+            send_event(new CommentEditingEvent($image_id, $comment_id, Ctx::$user, $new_comment));
+            $page->set_redirect(make_link("post/view/$image_id", null, "c$comment_id"));
         } elseif ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: CommentPermission::DELETE_COMMENT)) {
             // FIXME: post, not args
             send_event(new CommentDeletionEvent($event->get_iarg('comment_id')));
@@ -395,6 +413,12 @@ final class CommentList extends Extension
         $event->id = $this->save_new_comment($event->user, $event->image_id, $event->comment);
     }
 
+    public function onCommentEditing(CommentEditingEvent $event): void
+    {
+        $this->comment_checks($event->user, $event->image_id, $event->comment, $event->comment_id);
+        $this->edit_comment($event->user, $event->comment_id, $event->image_id, $event->comment);
+    }
+
     public function onCommentDeletion(CommentDeletionEvent $event): void
     {
         Ctx::$database->execute("
@@ -439,6 +463,24 @@ final class CommentList extends Extension
         $snippet = str_replace("\r", " ", $snippet);
         Log::info("comment", "Comment #$comment_id added to >>$image_id: $snippet");
         return $comment_id;
+    }
+
+    private function edit_comment(User $user, int $comment_id, int $image_id, string $comment): void
+    {
+        Ctx::$database->execute(
+            'UPDATE comments
+            SET comment = :comment,
+            owner_ip = :ip,
+            edited = TRUE
+            WHERE id = :id
+            AND image_id = :image_id',
+            ['comment' => $comment, 'ip' => (string)Network::get_real_ip(), 'id' => $comment_id, 'image_id' => $image_id]
+        );
+
+        $snippet = substr($comment, 0, 100);
+        $snippet = str_replace("\n", " ", $snippet);
+        $snippet = str_replace("\r", " ", $snippet);
+        Log::info("comment", "Comment $comment_id on >>$image_id edited by $user->name to: $snippet");
     }
 
     private function is_comment_limit_hit(): bool
@@ -498,6 +540,14 @@ final class CommentList extends Extension
         $image = Image::by_id($image_id);
         if (is_null($image)) {
             throw new CommentPostingException("The image does not exist");
+        }
+
+        // editing an existing comment
+        if (!is_null($comment_id)) {
+            $comment_obj = Comment::by_id($comment_id); // will raise an exception if it does not exist
+            if ($comment_obj->owner_id !== $user->id) {
+                throw new PermissionDenied("You cannot change other users' comments");
+            }
         }
 
         // Check if comments are locked
