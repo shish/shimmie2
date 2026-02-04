@@ -41,7 +41,6 @@ class WikiTheme extends Themelet
             $page->set_code(404);
         }
         $page->set_title($wiki_page->title);
-        $this->display_navigation();
         $page->add_block(new Block("Wiki Index", $body_html, "left", 20));
         $page->add_block(new Block($wiki_page->title, $this->create_display_html($wiki_page)));
     }
@@ -91,21 +90,18 @@ class WikiTheme extends Themelet
             ],
         );
         Ctx::$page->set_title($title);
-        $this->display_navigation();
         Ctx::$page->add_block(new Block($title, $html));
     }
 
     public function display_page_editor(WikiPage $wiki_page): void
     {
         Ctx::$page->set_title($wiki_page->title);
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
     }
 
     public function display_page_diff(string $title, WikiPage $page1, WikiPage $page2): void
     {
         Ctx::$page->set_title("Diff for $title");
-        $this->display_navigation();
         $diff_html = DiffHelper::calculate($page1->body, $page2->body, "SideBySide");
         Ctx::$page->add_html_header(STYLE(DiffHelper::getStyleSheet()));
         Ctx::$page->add_block(new Block("Diff for $title", rawHTML($diff_html)));

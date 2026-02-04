@@ -42,7 +42,6 @@ class AliasEditorTheme extends Themelet
 
         $page = Ctx::$page;
         $page->set_title("Alias List");
-        $this->display_navigation();
         $page->add_block(new Block("Aliases", $html));
 
         if (Ctx::$user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {

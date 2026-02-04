@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, B, BR, DIV, IMG, INPUT, LABEL, P, TABLE, TBODY, TD, TR, emptyHTML};
+use function MicroHTML\{A, B, BR, DIV, IMG, INPUT, LABEL, P, TABLE, TBODY, TD, TR, emptyHTML, joinHTML};
 
 class ExtManagerTheme extends Themelet
 {
@@ -92,7 +92,7 @@ class ExtManagerTheme extends Themelet
         }
 
         Ctx::$page->set_title("Extensions");
-        $this->display_navigation(extra: \MicroHTML\joinHTML(BR(), $cat_html));
+        Ctx::$page->add_to_navigation(joinHTML(BR(), $cat_html));
     }
 
     public function display_doc(ExtensionInfo $info): void
@@ -122,7 +122,6 @@ class ExtManagerTheme extends Themelet
 
         Ctx::$page->set_title("Documentation for {$info->name}");
         Ctx::$page->set_heading($info->name);
-        $this->display_navigation();
         Ctx::$page->add_block(new Block(null, $html));
     }
 }

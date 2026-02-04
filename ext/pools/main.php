@@ -163,16 +163,16 @@ final class Pools extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        $event->add_nav_link(make_link('pool/list'), "Pools", category: "pool");
+        $event->add_nav_link(make_link('pool/list'), "Pools", "pool");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "pool") {
-            $event->add_nav_link(make_link('pool/list'), "List");
-            $event->add_nav_link(make_link('pool/new'), "Create");
-            $event->add_nav_link(make_link('pool/updated'), "Changes");
-            $event->add_nav_link(make_link('ext_doc/pools'), "Help");
+            $event->add_nav_link(make_link('pool/list'), "List", "list");
+            $event->add_nav_link(make_link('pool/new'), "Create", "new");
+            $event->add_nav_link(make_link('pool/updated'), "Changes", "changes");
+            $event->add_nav_link(make_link('ext_doc/pools'), "Help", "help");
         }
     }
 
@@ -362,11 +362,6 @@ final class Pools extends Extension
                 throw new PermissionDenied("You do not have permission to access this page");
             }
         }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        $event->add_link("Pools", make_link("pool/list"));
     }
 
     /**

@@ -103,7 +103,7 @@ final class AutoTagger extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
-            $event->add_nav_link(make_link('auto_tag/list'), "Auto-Tag", ["auto_tag"]);
+            $event->add_nav_link(make_link('auto_tag/list'), "Auto-Tag", "auto_tags", ["auto_tag"]);
         }
     }
 
@@ -142,13 +142,6 @@ final class AutoTagger extends Extension
     public function onDeleteAutoTag(DeleteAutoTagEvent $event): void
     {
         $this->remove_auto_tag($event->tag);
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(AutoTaggerPermission::MANAGE_AUTO_TAG)) {
-            $event->add_link("Auto-Tag Editor", make_link("auto_tag/list"));
-        }
     }
 
     private function get_auto_tag_csv(Database $database): string

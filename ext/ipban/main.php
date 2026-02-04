@@ -212,15 +212,8 @@ final class IPBan extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(IPBanPermission::BAN_IP)) {
-                $event->add_nav_link(make_link('ip_ban/list'), "IP Bans", ["ip_ban"]);
+                $event->add_nav_link(make_link('ip_ban/list'), "IP Bans", "ip_bans", ["ip_ban"]);
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(IPBanPermission::BAN_IP)) {
-            $event->add_link("IP Bans", make_link("ip_ban/list"));
         }
     }
 

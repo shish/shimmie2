@@ -165,15 +165,8 @@ final class Setup extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(SetupPermission::CHANGE_SETTING)) {
-                $event->add_nav_link(make_link('setup'), "Board Config", order: 0);
+                $event->add_nav_link(make_link('setup'), "Board Config", "board_config", order: 0);
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(SetupPermission::CHANGE_SETTING)) {
-            $event->add_link("Board Config", make_link("setup"));
         }
     }
 

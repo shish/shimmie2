@@ -222,7 +222,9 @@ final class UserPage extends Extension
         $user = Ctx::$user;
         $page = Ctx::$page;
 
-        $this->show_user_info();
+        if (Ctx::$user->is_anonymous()) {
+            $this->theme->display_login_block();
+        }
 
         if ($event->page_matches("user_admin/login", method: "GET")) {
             $this->theme->display_login_page();
@@ -284,7 +286,6 @@ final class UserPage extends Extension
                 array_splice($t->columns, 2, 0, [$col]);
             }
             $page->set_title("Users");
-            $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
         if ($event->page_matches("user_admin/logout", method: "GET")) {
@@ -400,10 +401,14 @@ final class UserPage extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
-        if (Ctx::$user->is_anonymous()) {
-            $event->add_nav_link(make_link('user_admin/login'), "Account", category: "user", order: 10);
-        } else {
-            $event->add_nav_link(make_link('user'), "Account", ["user"], "user", 10);
+        $is_anonymous = Ctx::$user->is_anonymous();
+
+        if ($is_anonymous) {
+            $event->add_nav_link(make_link('user_admin/login'), "Account", "user", order: 10);
+        }
+
+        if (!$is_anonymous) {
+            $event->add_nav_link(make_link('user'), "Account", "user", ["user"], order: 10);
         }
     }
 
@@ -439,10 +444,6 @@ final class UserPage extends Extension
             }
         }
 
-        if ($user->id === $event->display_user->id) {
-            $ubbe = send_event(new UserBlockBuildingEvent());
-            $this->theme->display_user_links($user, $ubbe->get_parts());
-        }
         if (
             (
                 $user->can(IPBanPermission::VIEW_IP) ||  # user can view all IPS
@@ -462,22 +463,24 @@ final class UserPage extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
-                $event->add_nav_link(make_link('user_admin/list'), "User List", ["user_admin"]);
+                $event->add_nav_link(make_link('user_admin/list'), "User List", "user_list", ["user_admin"], order: 87);
             }
         }
 
-        if ($event->parent === "user" && !Ctx::$user->is_anonymous()) {
-            $event->add_nav_link(make_link('user_admin/logout'), "Log Out", order: 90);
+        if ($event->parent === "user") {
+            if (!Ctx::$user->is_anonymous()) {
+                $event->add_nav_link(make_link('user_admin/logout'), "Log Out", "log_out", order: 99);
+            }
         }
     }
 
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
+    public function onNavBuilding(NavBuildingEvent $event): void
     {
-        $event->add_link("My Profile", make_link("user"), 0);
-        if (Ctx::$user->can(UserAccountsPermission::EDIT_USER_PASSWORD)) {
-            $event->add_link("User List", make_link("user_admin/list"), 87);
+        $user = Ctx::$user;
+
+        if (!$user->is_anonymous()) {
+            $event->add_part(emptyHTML("Logged in as ", $user->name), 49);
         }
-        $event->add_link("Log Out", make_link("user_admin/logout"), 99);
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event): void
@@ -577,17 +580,6 @@ final class UserPage extends Extension
     {
         if ($event->key === HelpPages::SEARCH) {
             $event->add_section("Users", $this->theme->get_help_html());
-        }
-    }
-
-    private function show_user_info(): void
-    {
-        // user info is shown on all pages
-        if (Ctx::$user->is_anonymous()) {
-            $this->theme->display_login_block();
-        } else {
-            $ubbe = send_event(new UserBlockBuildingEvent());
-            $this->theme->display_user_block(Ctx::$user, $ubbe->get_parts());
         }
     }
 

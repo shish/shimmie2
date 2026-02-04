@@ -86,15 +86,8 @@ final class Tips extends Extension
     {
         if ($event->parent === "system") {
             if (Ctx::$user->can(TipsPermission::ADMIN)) {
-                $event->add_nav_link(make_link('tips/list'), "Tips Editor");
+                $event->add_nav_link(make_link('tips/list'), "Tips Editor", "tips_editor");
             }
-        }
-    }
-
-    public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
-    {
-        if (Ctx::$user->can(TipsPermission::ADMIN)) {
-            $event->add_link("Tips Editor", make_link("tips/list"));
         }
     }
 

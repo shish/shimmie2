@@ -48,7 +48,6 @@ class TipsTheme extends Themelet
             )
         );
         Ctx::$page->set_title("Tips List");
-        $this->display_navigation();
         Ctx::$page->add_block(new Block("Add Tip", $html, "main", 10));
     }
 
