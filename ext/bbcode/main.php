@@ -12,11 +12,13 @@ final class BBCode extends FormatterExtension
 {
     public const KEY = "bbcode";
 
+    #[EventListener]
     public function onHelpPageListBuilding(HelpPageListBuildingEvent $event): void
     {
         $event->add_page("formatting", "Formatting");
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === "formatting") {

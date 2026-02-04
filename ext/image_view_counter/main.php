@@ -13,6 +13,7 @@ final class ImageViewCounter extends Extension
     private int $view_interval = 3600; # allows views to be added each hour
 
     # Adds view to database if needed
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         global $database;
@@ -53,6 +54,7 @@ final class ImageViewCounter extends Extension
         );
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         global $database;
@@ -67,6 +69,7 @@ final class ImageViewCounter extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -86,6 +89,7 @@ final class ImageViewCounter extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -105,6 +109,7 @@ final class ImageViewCounter extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {

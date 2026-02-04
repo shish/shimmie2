@@ -9,6 +9,8 @@ use function MicroHTML\{LINK};
 final class RSSImages extends Extension
 {
     public const KEY = "rss_images";
+
+    #[EventListener]
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         $title = Ctx::$config->get(SetupConfig::TITLE);
@@ -31,6 +33,7 @@ final class RSSImages extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (
@@ -48,6 +51,7 @@ final class RSSImages extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         Ctx::$cache->delete("rss-item-image:{$event->image->id}");
@@ -132,6 +136,7 @@ final class RSSImages extends Extension
         return $data;
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {

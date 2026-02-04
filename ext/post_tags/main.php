@@ -119,6 +119,7 @@ final class PostTags extends Extension
 {
     public const KEY = "post_tags";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (Ctx::$config->get(PostTagsConfig::FORCE_LOWERCASE)) {
@@ -130,6 +131,7 @@ final class PostTags extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('tag-replace')
@@ -145,6 +147,7 @@ final class PostTags extends Extension
             });
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         if (
@@ -170,6 +173,7 @@ final class PostTags extends Extension
         }
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^tags(:|<=|<|=|>|>=)(\d+)$/i")) {
@@ -188,6 +192,7 @@ final class PostTags extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagSet(TagSetEvent $event): void
     {
         if (Ctx::$user->can(PostTagsPermission::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK))) {
@@ -198,16 +203,19 @@ final class PostTags extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         $event->image->delete_tags_from_image();
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_mass_editor();
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
@@ -218,16 +226,19 @@ final class PostTags extends Extension
     /**
      * When an alias is added, oldtag becomes inaccessible.
      */
+    #[EventListener]
     public function onAddAlias(AddAliasEvent $event): void
     {
         $this->mass_tag_edit($event->oldtag, $event->newtag, false);
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_tag_editor_html($event->image), 40);
     }
 
+    #[EventListener]
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event): void
     {
         // get_tag_list can trigger a database query,
@@ -241,16 +252,19 @@ final class PostTags extends Extension
     }
 
 
+    #[EventListener]
     public function onUploadHeaderBuilding(UploadHeaderBuildingEvent $event): void
     {
         $event->add_part("Tags", 10);
     }
 
+    #[EventListener]
     public function onUploadCommonBuilding(UploadCommonBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_upload_common_html(), 10);
     }
 
+    #[EventListener]
     public function onUploadSpecificBuilding(UploadSpecificBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_upload_specific_html($event->suffix), 10);

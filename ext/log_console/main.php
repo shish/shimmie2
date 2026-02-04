@@ -8,6 +8,7 @@ final class LogConsole extends Extension
 {
     public const KEY = "log_console";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (
@@ -31,6 +32,7 @@ final class LogConsole extends Extension
         */
     }
 
+    #[EventListener]
     public function onLog(LogEvent $event): void
     {
         if ($event->priority >= Ctx::$config->get(LogConsoleConfig::LEVEL)) {

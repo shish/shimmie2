@@ -57,6 +57,7 @@ final class ImageBan extends Extension
     public const KEY = "image_hash_ban";
     public const VERSION_KEY = "ext_imageban_version";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -71,6 +72,7 @@ final class ImageBan extends Extension
         }
     }
 
+    #[EventListener(priority: 30)] // in before resolution limit plugin
     public function onDataUpload(DataUploadEvent $event): void
     {
         global $database;
@@ -81,6 +83,7 @@ final class ImageBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -131,6 +134,7 @@ final class ImageBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -140,6 +144,7 @@ final class ImageBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
@@ -147,6 +152,7 @@ final class ImageBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onAddImageHashBan(AddImageHashBanEvent $event): void
     {
         global $database;
@@ -157,12 +163,14 @@ final class ImageBan extends Extension
         Log::info("image_hash_ban", "Banned hash {$event->hash} because '{$event->reason}'");
     }
 
+    #[EventListener]
     public function onRemoveImageHashBan(RemoveImageHashBanEvent $event): void
     {
         global $database;
         $database->execute("DELETE FROM image_bans WHERE hash = :hash", ["hash" => $event->hash]);
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
@@ -174,11 +182,5 @@ final class ImageBan extends Extension
                 INPUT(["type" => 'submit', "value" => 'Ban Hash and Delete Post']),
             ));
         }
-    }
-
-    // in before resolution limit plugin
-    public function get_priority(): int
-    {
-        return 30;
     }
 }

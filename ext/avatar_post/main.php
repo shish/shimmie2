@@ -13,11 +13,13 @@ final class AvatarPost extends AvatarExtension
 {
     public const KEY = "avatar_post";
 
-    public function get_priority(): int
+    #[EventListener(priority: 49)]
+    public function onBuildAvatar(BuildAvatarEvent $event): void
     {
-        return 49;
+        parent::onBuildAvatar($event);
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("set_avatar/{image_id}", method: "POST", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
@@ -37,6 +39,7 @@ final class AvatarPost extends AvatarExtension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
@@ -44,6 +47,7 @@ final class AvatarPost extends AvatarExtension
         }
     }
 
+    #[EventListener]
     public function onConfigSave(ConfigSaveEvent $event): void
     {
         if (array_key_exists(AvatarPostUserConfig::AVATAR_ID, $event->values)) {

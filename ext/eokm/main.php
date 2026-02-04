@@ -8,11 +8,7 @@ final class Eokm extends Extension
 {
     public const KEY = "eokm";
 
-    public function get_priority(): int
-    {
-        return 40;
-    } // early, to veto ImageUploadEvent
-
+    #[EventListener(priority: 40)] // early, to veto ImageUploadEvent
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         $username = Ctx::$config->get(EokmConfig::USERNAME);
