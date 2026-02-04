@@ -8,8 +8,6 @@ use GQLA\{Field, Mutation, Type};
 
 use function MicroHTML\{emptyHTML};
 
-require_once "vendor/ifixit/php-akismet/akismet.class.php";
-
 final class CommentPostingEvent extends Event
 {
     public function __construct(
