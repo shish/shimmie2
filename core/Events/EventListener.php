@@ -8,7 +8,7 @@ namespace Shimmie2;
 class EventListener
 {
     /**
-     * @param class-string|null $event
+     * @param class-string<Event>|null $event
      */
     public function __construct(
         public readonly ?string $event = null,
