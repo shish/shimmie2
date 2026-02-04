@@ -9,6 +9,7 @@ final class Featured extends Extension
 {
     public const KEY = "featured";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("featured_image/set/{image_id}", method: "POST", permission: FeaturedPermission::EDIT_FEATURE)) {
@@ -37,6 +38,7 @@ final class Featured extends Extension
         }
     }
 
+    #[EventListener]
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         $fid = Ctx::$config->get(FeaturedConfig::ID);
@@ -63,6 +65,7 @@ final class Featured extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         if ($event->image->id === Ctx::$config->get(FeaturedConfig::ID)) {
@@ -70,6 +73,7 @@ final class Featured extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(FeaturedPermission::EDIT_FEATURE) && $event->context === "view") {

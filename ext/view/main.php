@@ -9,6 +9,7 @@ final class ViewPost extends Extension
 {
     public const KEY = "view";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("post/prev/{image_id}") || $event->page_matches("post/next/{image_id}")) {
@@ -66,6 +67,7 @@ final class ViewPost extends Extension
         }
     }
 
+    #[EventListener]
     public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         // next and prev are just CPU-heavier ways of getting
@@ -74,6 +76,7 @@ final class ViewPost extends Extension
         $event->add_disallow("post/prev");
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $this->theme->display_meta_headers($event->image);
@@ -85,6 +88,7 @@ final class ViewPost extends Extension
         $this->theme->display_admin_block($iabbe->get_parts());
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $image_info = Ctx::$config->get(ImageConfig::INFO);

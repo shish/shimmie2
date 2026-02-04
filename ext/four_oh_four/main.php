@@ -12,6 +12,7 @@ final class FourOhFour extends Extension
 {
     public const KEY = "four_oh_four";
 
+    #[EventListener(priority: 99)]
     public function onPageRequest(PageRequestEvent $event): void
     {
         // hax.
@@ -33,10 +34,5 @@ final class FourOhFour extends Extension
             } // more hax.
         }
         return $n;
-    }
-
-    public function get_priority(): int
-    {
-        return 99;
     }
 }

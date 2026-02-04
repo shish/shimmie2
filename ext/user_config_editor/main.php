@@ -9,6 +9,7 @@ final class UserConfigEditor extends Extension
 {
     public const KEY = "user_config_editor";
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "user" && Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
@@ -16,6 +17,7 @@ final class UserConfigEditor extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
@@ -23,6 +25,7 @@ final class UserConfigEditor extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;

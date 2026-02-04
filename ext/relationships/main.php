@@ -22,12 +22,14 @@ final class Relationships extends Extension
 
     public const NAME = "Relationships";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["parent_id"] = ImagePropType::INT;
         Image::$prop_types["has_children"] = ImagePropType::BOOL;
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -49,6 +51,7 @@ final class Relationships extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         if (Ctx::$user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)) {
@@ -62,11 +65,13 @@ final class Relationships extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $this->theme->relationship_info($event->image);
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^parent[=:]([0-9]+|any|none)$/")) {
@@ -84,6 +89,7 @@ final class Relationships extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -91,6 +97,7 @@ final class Relationships extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermCheck(TagTermCheckEvent $event): void
     {
         if ($event->matches("/^(parent|child)[=:](.*)$/i")) {
@@ -98,6 +105,7 @@ final class Relationships extends Extension
         }
     }
 
+    #[EventListener]
     public function onTagTermParse(TagTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^parent[=:]([0-9]+|none)$/")) {
@@ -113,11 +121,13 @@ final class Relationships extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_parent_editor_html($event->image), 45);
     }
 
+    #[EventListener]
     public function onImageDeletion(ImageDeletionEvent $event): void
     {
         global $database;
@@ -131,6 +141,7 @@ final class Relationships extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageRelationshipSet(ImageRelationshipSetEvent $event): void
     {
         global $database;

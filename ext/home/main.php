@@ -11,6 +11,7 @@ final class Home extends Extension
 {
     public const KEY = "home";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("home")) {

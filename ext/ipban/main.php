@@ -73,11 +73,7 @@ final class IPBan extends Extension
 {
     public const KEY = "ipban";
 
-    public function get_priority(): int
-    {
-        return 10;
-    }
-
+    #[EventListener(priority: 10)]
     public function onInitExt(InitExtEvent $event): void
     {
         UserClass::$loading = UserClassSource::DEFAULT;
@@ -90,6 +86,7 @@ final class IPBan extends Extension
         UserClass::$loading = UserClassSource::UNKNOWN;
     }
 
+    #[EventListener(priority: 10)]
     public function onUserLogin(UserLoginEvent $event): void
     {
         global $database;
@@ -162,6 +159,7 @@ final class IPBan extends Extension
         }
     }
 
+    #[EventListener(priority: 10)]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -208,6 +206,7 @@ final class IPBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -217,6 +216,7 @@ final class IPBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(IPBanPermission::BAN_IP)) {
@@ -224,6 +224,7 @@ final class IPBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onAddIPBan(AddIPBanEvent $event): void
     {
         Ctx::$database->execute(
@@ -235,6 +236,7 @@ final class IPBan extends Extension
         Log::info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
+    #[EventListener]
     public function onRemoveIPBan(RemoveIPBanEvent $event): void
     {
         global $database;
@@ -247,6 +249,7 @@ final class IPBan extends Extension
         }
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;

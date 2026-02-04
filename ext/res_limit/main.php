@@ -8,12 +8,7 @@ final class ResolutionLimit extends Extension
 {
     public const KEY = "res_limit";
 
-    public function get_priority(): int
-    {
-        // early, to veto ImageUploadEvent
-        return 40;
-    }
-
+    #[EventListener(priority: 40)] // early, to veto ImageUploadEvent
     public function onImageAddition(ImageAdditionEvent $event): void
     {
         $min_w = Ctx::$config->get(ResolutionLimitConfig::MIN_WIDTH);
