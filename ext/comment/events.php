@@ -6,6 +6,7 @@ namespace Shimmie2;
 
 final class CommentPostingEvent extends Event
 {
+    public int $id;
     public function __construct(
         public int $image_id,
         public User $user,

@@ -8,48 +8,113 @@ use GQLA\{Field, Mutation, Type};
 
 use function MicroHTML\{emptyHTML};
 
+/** @phpstan-type DBComment array{id:int,image_id:int,owner_id:int,owner_ip:string,posted:string,comment:string} */
 #[Type(name: "Comment")]
 final class Comment
 {
-    public ?User $owner;
-    public int $owner_id;
-    public string $owner_name;
-    public ?string $owner_email;
-    public string $owner_class;
     #[Field]
-    public string $comment;
-    #[Field]
-    public int $comment_id;
-    public int $image_id;
-    public string $poster_ip;
-    #[Field]
-    public string $posted;
+    public User $owner;
+    public function __construct(
+        #[Field]
+        public int $id,
+        public int $image_id,
+        public int $owner_id,
+        public string $owner_ip,
+        #[Field]
+        public string $posted,
+        #[Field]
+        public string $comment,
+    ) {
+        $this->owner = User::by_id_dangerously_cached($owner_id);
+    }
 
-    /**
-     * @param array{
-     *     user_id: string|int,
-     *     user_name: string,
-     *     user_email: ?string,
-     *     user_class: string,
-     *     comment: string,
-     *     comment_id: string|int,
-     *     image_id: string|int,
-     *     poster_ip: string,
-     *     posted: string,
-     * } $row
-     */
-    public function __construct(array $row)
+    /** @param DBComment $row */
+    public static function from_row(array $row): Comment
     {
-        $this->owner = null;
-        $this->owner_id = (int)$row['user_id'];
-        $this->owner_name = $row['user_name'];
-        $this->owner_email = $row['user_email']; // deprecated
-        $this->owner_class = $row['user_class'];
-        $this->comment =  $row['comment'];
-        $this->comment_id =  (int)$row['comment_id'];
-        $this->image_id =  (int)$row['image_id'];
-        $this->poster_ip =  $row['poster_ip'];
-        $this->posted =  $row['posted'];
+        return new Comment(
+            $row['id'],
+            $row['image_id'],
+            $row['owner_id'],
+            $row['owner_ip'],
+            $row['posted'],
+            $row['comment'],
+        );
+    }
+
+    /** @param DBComment[] $rows
+     * @return Comment[] */
+    private static function multi_row(array $rows): array
+    {
+        $out = [];
+        foreach ($rows as $r) {
+            $out[] = self::from_row($r);
+        }
+        return $out;
+    }
+
+    public static function by_id(int $id): Comment
+    {
+        /** @var ?DBComment */
+        $row = Ctx::$database->get_row(
+            'SELECT * FROM comments
+            WHERE id = :id;',
+            ['id' => $id]
+        );
+
+        if (is_null($row)) {
+            throw new ObjectNotFound("Comment with id $id not found.");
+        }
+        return self::from_row($row);
+    }
+
+    /** @return Comment[] */
+    public static function get_all(int $limit, int $offset = 0): array
+    {
+        /** @var DBComment[] */
+        $rows = Ctx::$database->get_all(
+            'SELECT * FROM comments
+            ORDER BY id DESC
+            LIMIT :limit OFFSET :offset',
+            ['limit' => $limit, 'offset' => $offset]
+        );
+        return self::multi_row($rows);
+    }
+
+    /** @return Comment[] */
+    public static function get_all_from_image(int $image_id): array
+    {
+        /** @var DBComment[] */
+        $rows = Ctx::$database->get_all(
+            'SELECT * FROM comments
+            WHERE image_id = :image_id
+            ORDER BY id DESC',
+            ['image_id' => $image_id]
+        );
+        return self::multi_row($rows);
+    }
+
+    /** @return Comment[] */
+    public static function get_all_from_user(int $user_id, int $limit, int $offset = 0): array
+    {
+        /** @var DBComment[] */
+        $rows = Ctx::$database->get_all(
+            'SELECT * FROM comments
+            WHERE owner_id = :owner_id
+            ORDER BY id DESC
+            LIMIT :limit OFFSET :offset',
+            ['owner_id' => $user_id, 'limit' => $limit, 'offset' => $offset]
+        );
+        return self::multi_row($rows);
+    }
+
+    public static function is_dupe(int $image_id, string $comment): bool
+    {
+        return !\is_null(Ctx::$database->get_one(
+            "SELECT id
+			FROM comments
+			WHERE image_id=:image_id AND comment=:comment",
+            ["image_id" => $image_id, "comment" => $comment]
+        ));
     }
 
     public static function count_comments_by_user(User $user): int
@@ -61,22 +126,13 @@ final class Comment
 		", ["owner_id" => $user->id]);
     }
 
-    #[Field(name: "owner")]
-    public function get_owner(): User
-    {
-        if (is_null($this->owner)) {
-            $this->owner = User::by_id_dangerously_cached($this->owner_id);
-        }
-        return $this->owner;
-    }
-
     /**
      * @return Comment[]
      */
     #[Field(extends: "Post", name: "comments", type: "[Comment!]!")]
     public static function get_comments(Image $post): array
     {
-        return CommentList::get_comments($post->id);
+        return self::get_all_from_image($post->id);
     }
 
     #[Mutation(name: "create_comment")]
@@ -173,18 +229,16 @@ final class CommentList extends Extension
         global $database;
         $page = Ctx::$page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
-            $i_iid = int_escape($event->POST->req('image_id'));
+            $image_id = int_escape($event->POST->req('image_id'));
             send_event(new CheckStringContentEvent($event->POST->req('comment')));
-            send_event(new CommentPostingEvent($i_iid, Ctx::$user, $event->POST->req('comment')));
-            $page->set_redirect(make_link("post/view/$i_iid", null, "comment_on_$i_iid"));
-        }
-        if ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: CommentPermission::DELETE_COMMENT)) {
+            send_event(new CommentPostingEvent($image_id, Ctx::$user, $event->POST->req('comment')));
+            $page->set_redirect(make_link("post/view/$image_id", null, "comment_on_$image_id"));
+        } elseif ($event->page_matches("comment/delete/{comment_id}/{image_id}", permission: CommentPermission::DELETE_COMMENT)) {
             // FIXME: post, not args
             send_event(new CommentDeletionEvent($event->get_iarg('comment_id')));
             $page->flash("Deleted comment");
             $page->set_redirect(Url::referer_or(make_link("post/view/" . $event->get_iarg('image_id'))));
-        }
-        if ($event->page_matches("comment/bulk_delete", method: "POST", permission: CommentPermission::DELETE_COMMENT)) {
+        } elseif ($event->page_matches("comment/bulk_delete", method: "POST", permission: CommentPermission::DELETE_COMMENT)) {
             $ip = $event->POST->req('ip');
 
             $comment_ids = $database->get_col("
@@ -194,13 +248,12 @@ final class CommentList extends Extension
             ", ["ip" => $ip]);
             $num = count($comment_ids);
             Log::warning("comment", "Deleting $num comments from $ip");
-            foreach ($comment_ids as $cid) {
-                send_event(new CommentDeletionEvent($cid));
+            foreach ($comment_ids as $comment_id) {
+                send_event(new CommentDeletionEvent($comment_id));
             }
             $page->flash("Deleted $num comments");
             $page->set_redirect(make_link("admin"));
-        }
-        if ($event->page_matches("comment/list", paged: true)) {
+        } elseif ($event->page_matches("comment/list", paged: true)) {
             $threads_per_page = 10;
 
             $where = Ctx::$config->get(CommentConfig::RECENT_COMMENTS)
@@ -243,21 +296,20 @@ final class CommentList extends Extension
                     $image = null;
                 }
                 if (!is_null($image)) {
-                    $comments = self::get_comments($image->id);
+                    $comments = Comment::get_all_from_image($image->id);
                     $images[] = [$image, $comments];
                 }
             }
 
             $this->theme->display_comment_list($images, $current_page + 1, $total_pages, Ctx::$user->can(CommentPermission::CREATE_COMMENT));
-        }
-        if ($event->page_matches("comment/beta-search/{search}", paged: true)) {
+        } elseif ($event->page_matches("comment/beta-search/{search}", paged: true)) {
             $search = $event->get_arg('search');
             $page_num = $event->get_iarg('page_num', 1) - 1;
             $duser = User::by_name($search);
             $i_comment_count = Comment::count_comments_by_user($duser);
             $com_per_page = 50;
             $total_pages = (int)ceil($i_comment_count / $com_per_page);
-            $comments = self::get_user_comments($duser->id, $com_per_page, $page_num * $com_per_page);
+            $comments = Comment::get_all_from_user($duser->id, $com_per_page, $page_num * $com_per_page);
             $this->theme->display_all_user_comments($comments, $page_num + 1, $total_pages, $duser);
         }
     }
@@ -276,10 +328,10 @@ final class CommentList extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
-        $cc = Ctx::$config->get(CommentConfig::COUNT);
-        if ($cc > 0) {
-            $recent = cache_get_or_set("recent_comments", fn () => self::get_recent_comments($cc), 60);
-            if (count($recent) > 0) {
+        $count = Ctx::$config->get(CommentConfig::COUNT);
+        if ($count > 0) {
+            $recent = cache_get_or_set("recent_comments", fn () => Comment::get_all($count), 60);
+            if (!empty($recent)) {
                 $this->theme->display_recent_comments($recent);
             }
         }
@@ -292,7 +344,7 @@ final class CommentList extends Extension
         $h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
         $event->add_part(emptyHTML("Comments made: $i_comment_count, $h_comment_rate per day"));
 
-        $recent = self::get_user_comments($event->display_user->id, 10);
+        $recent = Comment::get_all_from_user($event->display_user->id, 10);
         $this->theme->display_recent_user_comments($recent, $event->display_user);
     }
 
@@ -306,7 +358,7 @@ final class CommentList extends Extension
         $can_post = Ctx::$user->can(CommentPermission::CREATE_COMMENT) &&
                     (!$comments_locked || Ctx::$user->can(CommentPermission::BYPASS_COMMENT_LOCK));
 
-        $comments = self::get_comments($event->image->id);
+        $comments = Comment::get_all_from_image($event->image->id);
         $this->theme->display_image_comments($event->image, $comments, $can_post, $comments_locked);
     }
 
@@ -337,10 +389,10 @@ final class CommentList extends Extension
         $event->add_part($this->theme->get_comments_lock_editor_html($comments_locked), 42);
     }
 
-    // TODO: split akismet into a separate class, which can veto the event
     public function onCommentPosting(CommentPostingEvent $event): void
     {
-        $this->add_comment_wrapper($event->image_id, $event->user, $event->comment);
+        $this->comment_checks($event->user, $event->image_id, $event->comment);
+        $event->id = $this->save_new_comment($event->user, $event->image_id, $event->comment);
     }
 
     public function onCommentDeletion(CommentDeletionEvent $event): void
@@ -374,72 +426,19 @@ final class CommentList extends Extension
         }
     }
 
-    /**
-     * @param literal-string $query
-     * @param sql-params-array $args
-     * @return Comment[]
-     */
-    private static function get_generic_comments(string $query, array $args): array
+    private function save_new_comment(User $user, int $image_id, string $comment): int
     {
-        $rows = Ctx::$database->get_all($query, $args);
-        // @phpstan-ignore-next-line
-        return array_map(fn (array $row) => new Comment($row), $rows);
-    }
-
-    /**
-     * @return Comment[]
-     */
-    private static function get_recent_comments(int $count): array
-    {
-        return CommentList::get_generic_comments("
-			SELECT
-				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
-				comments.comment as comment, comments.id as comment_id,
-				comments.image_id as image_id, comments.owner_ip as poster_ip,
-				comments.posted as posted
-			FROM comments
-			LEFT JOIN users ON comments.owner_id=users.id
-			ORDER BY comments.id DESC
-			LIMIT :limit
-		", ["limit" => $count]);
-    }
-
-    /**
-     * @return Comment[]
-     */
-    private static function get_user_comments(int $user_id, int $count, int $offset = 0): array
-    {
-        return CommentList::get_generic_comments("
-			SELECT
-				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
-				comments.comment as comment, comments.id as comment_id,
-				comments.image_id as image_id, comments.owner_ip as poster_ip,
-				comments.posted as posted
-			FROM comments
-			LEFT JOIN users ON comments.owner_id=users.id
-			WHERE users.id = :user_id
-			ORDER BY comments.id DESC
-			LIMIT :limit OFFSET :offset
-		", ["user_id" => $user_id, "offset" => $offset, "limit" => $count]);
-    }
-
-    /**
-     * public just for Image::get_comments()
-     * @return Comment[]
-     */
-    public static function get_comments(int $image_id): array
-    {
-        return CommentList::get_generic_comments("
-			SELECT
-				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
-				comments.comment as comment, comments.id as comment_id,
-				comments.image_id as image_id, comments.owner_ip as poster_ip,
-				comments.posted as posted
-			FROM comments
-			LEFT JOIN users ON comments.owner_id=users.id
-			WHERE comments.image_id=:image_id
-			ORDER BY comments.id ASC
-		", ["image_id" => $image_id]);
+        Ctx::$database->execute(
+            "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment)
+            VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
+            ["image_id" => $image_id, "user_id" => $user->id, "remote_addr" => (string)Network::get_real_ip(), "comment" => $comment]
+        );
+        $comment_id = Ctx::$database->get_last_insert_id('comments_id_seq');
+        $snippet = substr($comment, 0, 100);
+        $snippet = str_replace("\n", " ", $snippet);
+        $snippet = str_replace("\r", " ", $snippet);
+        Log::info("comment", "Comment #$comment_id added to >>$image_id: $snippet");
+        return $comment_id;
     }
 
     private function is_comment_limit_hit(): bool
@@ -489,36 +488,7 @@ final class CommentList extends Extension
         return in_array($hash, $valid_hashes);
     }
 
-
-
-    private function is_dupe(int $image_id, string $comment): bool
-    {
-        return (bool)Ctx::$database->get_row("
-			SELECT *
-			FROM comments
-			WHERE image_id=:image_id AND comment=:comment
-		", ["image_id" => $image_id, "comment" => $comment]);
-    }
-
-    private function add_comment_wrapper(int $image_id, User $user, string $comment): void
-    {
-        // will raise an exception if anything is wrong
-        $this->comment_checks($image_id, $user, $comment);
-
-        // all checks passed
-        Ctx::$database->execute(
-            "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
-                "VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
-            ["image_id" => $image_id, "user_id" => $user->id, "remote_addr" => (string)Network::get_real_ip(), "comment" => $comment]
-        );
-        $cid = Ctx::$database->get_last_insert_id('comments_id_seq');
-        $snippet = substr($comment, 0, 100);
-        $snippet = str_replace("\n", " ", $snippet);
-        $snippet = str_replace("\r", " ", $snippet);
-        Log::info("comment", "Comment #$cid added to >>$image_id: $snippet");
-    }
-
-    private function comment_checks(int $image_id, User $user, string $comment): void
+    private function comment_checks(User $user, int $image_id, string $comment, ?int $comment_id = null): void
     {
         // basic sanity checks
         if (!Ctx::$user->can(CommentPermission::CREATE_COMMENT)) {
@@ -550,10 +520,12 @@ final class CommentList extends Extension
         }
 
         // database-querying checks
-        elseif (!$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS) && $this->is_comment_limit_hit()) {
-            throw new CommentPostingException("You've posted several comments recently; wait a minute and try again...");
-        } elseif (!$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS) && $this->is_dupe($image_id, $comment)) {
-            throw new CommentPostingException("Someone already made that comment on that image -- try and be more original?");
+        if (!$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
+            if ($this->is_comment_limit_hit()) {
+                throw new CommentPostingException("You've posted several comments recently; wait a minute and try again...");
+            } elseif (Comment::is_dupe($image_id, $comment)) {
+                throw new CommentPostingException("Someone already made that comment on that image -- try and be more original?");
+            }
         }
 
         // rate-limited external service checks last
