@@ -198,6 +198,7 @@ final class LogDatabase extends Extension
     public const KEY = "log_db";
     public const VERSION_KEY = "ext_log_database_version";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
@@ -217,6 +218,7 @@ final class LogDatabase extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $database = Ctx::$database;
@@ -230,6 +232,7 @@ final class LogDatabase extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -239,6 +242,7 @@ final class LogDatabase extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(LogDatabasePermission::VIEW_EVENTLOG)) {
@@ -246,6 +250,7 @@ final class LogDatabase extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('log:test')
@@ -260,6 +265,7 @@ final class LogDatabase extends Extension
             });
     }
 
+    #[EventListener]
     public function onLog(LogEvent $event): void
     {
         $username = isset(Ctx::$user) ? Ctx::$user->name : "Anonymous";

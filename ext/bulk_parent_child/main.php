@@ -12,11 +12,13 @@ final class BulkParentChild extends Extension
 {
     public const KEY = "bulk_parent_child";
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("parent-child", "Set Parent Child", permission: BulkParentChildPermission::BULK_PARENT_CHILD);
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         if (

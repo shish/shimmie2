@@ -9,11 +9,7 @@ final class Downtime extends Extension
 {
     public const KEY = "downtime";
 
-    public function get_priority(): int
-    {
-        return 10;
-    }
-
+    #[EventListener(priority: 10)]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (Ctx::$config->get(DowntimeConfig::DOWNTIME)) {

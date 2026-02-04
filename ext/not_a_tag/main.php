@@ -35,11 +35,7 @@ final class NotATag extends Extension
     public const KEY = "not_a_tag";
     public const VERSION_KEY = "ext_notatag_version";
 
-    public function get_priority(): int
-    {
-        return 30;
-    } // before ImageUploadEvent and tag_history
-
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
@@ -52,6 +48,7 @@ final class NotATag extends Extension
         }
     }
 
+    #[EventListener(priority: 30)] // before ImageUploadEvent and tag_history
     public function onTagSet(TagSetEvent $event): void
     {
         if (Ctx::$user->can(NotATagPermission::IGNORE_INVALID_TAGS)) {
@@ -111,6 +108,7 @@ final class NotATag extends Extension
         return $ok_tags;
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
@@ -120,6 +118,7 @@ final class NotATag extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(NotATagPermission::MANAGE_UNTAG_LIST)) {
@@ -127,6 +126,7 @@ final class NotATag extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;

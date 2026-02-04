@@ -16,14 +16,8 @@ final class ImageResizeException extends ServerError
 final class ResizeImage extends Extension
 {
     public const KEY = "resize";
-    /**
-     * Needs to be after the data processing extensions
-     */
-    public function get_priority(): int
-    {
-        return 55;
-    }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (
@@ -55,6 +49,7 @@ final class ResizeImage extends Extension
         }
     }
 
+    #[EventListener(priority: 55)] // Needs to be after the data processing extensions
     public function onDataUpload(DataUploadEvent $event): void
     {
         if (Ctx::$config->get(ResizeConfig::UPLOAD)
@@ -87,6 +82,7 @@ final class ResizeImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("resize/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
@@ -103,6 +99,7 @@ final class ResizeImage extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageDownloading(ImageDownloadingEvent $event): void
     {
         if (Ctx::$config->get(ResizeConfig::GET_ENABLED) &&

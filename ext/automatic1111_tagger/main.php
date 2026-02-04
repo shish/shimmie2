@@ -8,6 +8,7 @@ class Automatic1111Tagger extends Extension
 {
     public const KEY = "automatic1111_tagger";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         // Handle interrogation request
@@ -99,6 +100,7 @@ class Automatic1111Tagger extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(Automatic1111TaggerPermission::INTERROGATE_IMAGE)) {

@@ -9,6 +9,7 @@ final class LinkImage extends Extension
 {
     public const KEY = "link_image";
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $this->theme->links_block($this->data($event->image));

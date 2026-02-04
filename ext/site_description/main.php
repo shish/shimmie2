@@ -10,6 +10,7 @@ final class SiteDescription extends Extension
 {
     public const KEY = "site_description";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $description = Ctx::$config->get(SiteDescriptionConfig::DESCRIPTION);

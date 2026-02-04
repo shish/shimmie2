@@ -19,6 +19,7 @@ final class PostLock extends Extension
 {
     public const KEY = "post_lock";
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         if ($event->image->is_locked() && !Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
@@ -30,6 +31,7 @@ final class PostLock extends Extension
         }
     }
 
+    #[EventListener]
     public function onLockSet(LockSetEvent $event): void
     {
         if (Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
@@ -37,6 +39,7 @@ final class PostLock extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_lock_editor_html($event->image), 42);

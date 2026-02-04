@@ -18,6 +18,8 @@ final class XMLSitemapURL
 final class XMLSitemap extends Extension
 {
     public const KEY = "sitemap";
+
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("sitemap.xml")) {

@@ -16,6 +16,7 @@ final class Blotter extends Extension
     /** @var BlotterTheme */
     protected Themelet $theme;
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
@@ -41,6 +42,7 @@ final class Blotter extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -50,7 +52,7 @@ final class Blotter extends Extension
         }
     }
 
-
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(BlotterPermission::ADMIN)) {
@@ -58,6 +60,7 @@ final class Blotter extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $database = Ctx::$database;

@@ -8,6 +8,7 @@ final class BanWords extends Extension
 {
     public const KEY = "ban_words";
 
+    #[EventListener(priority: 30)]
     public function onCheckStringContent(CheckStringContentEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
@@ -49,10 +50,5 @@ final class BanWords extends Extension
         }
 
         return $words;
-    }
-
-    public function get_priority(): int
-    {
-        return 30;
     }
 }

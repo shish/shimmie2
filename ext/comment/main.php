@@ -152,11 +152,13 @@ final class CommentList extends Extension
     public const KEY = "comment";
     public const VERSION_KEY = "ext_comments_version";
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         Image::$prop_types["comments_locked"] = ImagePropType::BOOL;
     }
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         $database = Ctx::$database;
@@ -222,11 +224,13 @@ final class CommentList extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('comment/list'), "Comments", category: "comment");
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "comment") {
@@ -235,6 +239,7 @@ final class CommentList extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -332,6 +337,7 @@ final class CommentList extends Extension
         }
     }
 
+    #[EventListener]
     public function onRobotsBuilding(RobotsBuildingEvent $event): void
     {
         // comment lists change all the time, crawlers should
@@ -339,11 +345,13 @@ final class CommentList extends Extension
         $event->add_disallow("comment");
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
+    #[EventListener]
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         $count = Ctx::$config->get(CommentConfig::COUNT);
@@ -355,6 +363,7 @@ final class CommentList extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $i_days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
@@ -366,6 +375,7 @@ final class CommentList extends Extension
         $this->theme->display_recent_user_comments($recent, $event->display_user);
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         $comments_locked = (bool)Ctx::$database->get_one(
@@ -380,6 +390,7 @@ final class CommentList extends Extension
         $this->theme->display_image_comments($event->image, $comments, $can_post, $comments_locked);
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         if (Ctx::$user->can(CommentPermission::EDIT_COMMENT_LOCK)) {
@@ -388,6 +399,7 @@ final class CommentList extends Extension
         }
     }
 
+    #[EventListener]
     public function onCommentLockSet(CommentLockSetEvent $event): void
     {
         if (Ctx::$user->can(CommentPermission::EDIT_COMMENT_LOCK)) {
@@ -398,6 +410,7 @@ final class CommentList extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $comments_locked = (bool)Ctx::$database->get_one(
@@ -407,18 +420,21 @@ final class CommentList extends Extension
         $event->add_part($this->theme->get_comments_lock_editor_html($comments_locked), 42);
     }
 
+    #[EventListener]
     public function onCommentPosting(CommentPostingEvent $event): void
     {
         $this->comment_checks($event->user, $event->image_id, $event->comment);
         $event->id = $this->save_new_comment($event->user, $event->image_id, $event->comment);
     }
 
+    #[EventListener]
     public function onCommentEditing(CommentEditingEvent $event): void
     {
         $this->comment_checks($event->user, $event->image_id, $event->comment, $event->comment_id);
         $this->edit_comment($event->user, $event->comment_id, $event->image_id, $event->comment);
     }
 
+    #[EventListener]
     public function onCommentDeletion(CommentDeletionEvent $event): void
     {
         Ctx::$database->execute("
@@ -428,6 +444,7 @@ final class CommentList extends Extension
         Log::info("comment", "Deleting Comment #{$event->comment_id}");
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^comments(:|<=|<|=|>|>=)(\d+)$/i")) {
@@ -443,6 +460,7 @@ final class CommentList extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {

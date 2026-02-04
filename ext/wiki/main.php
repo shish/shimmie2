@@ -104,6 +104,7 @@ final class Wiki extends Extension
 {
     public const KEY = "wiki";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -134,6 +135,7 @@ final class Wiki extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
@@ -216,11 +218,13 @@ final class Wiki extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('wiki'), "Wiki", ["wiki"], "wiki");
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "wiki") {
@@ -230,6 +234,7 @@ final class Wiki extends Extension
         }
     }
 
+    #[EventListener]
     public function onWikiUpdate(WikiUpdateEvent $event): void
     {
         $wpage = $event->wikipage;
@@ -259,6 +264,7 @@ final class Wiki extends Extension
         }
     }
 
+    #[EventListener]
     public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event): void
     {
         Ctx::$database->execute(
@@ -267,6 +273,7 @@ final class Wiki extends Extension
         );
     }
 
+    #[EventListener]
     public function onWikiDeletePage(WikiDeletePageEvent $event): void
     {
         Ctx::$database->execute(

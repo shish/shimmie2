@@ -26,14 +26,7 @@ final class TranscodeVideo extends Extension
         VideoContainer::MP4->value => "mp4",
     ];
 
-    /**
-     * Needs to be after upload, but before the processing extensions
-     */
-    public function get_priority(): int
-    {
-        return 45;
-    }
-
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if ($event->image->video === true && $event->image->video_codec !== null && Ctx::$user->can(ImagePermission::EDIT_FILES)) {
@@ -44,6 +37,7 @@ final class TranscodeVideo extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("transcode_video/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
@@ -54,6 +48,7 @@ final class TranscodeVideo extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action(
@@ -66,6 +61,7 @@ final class TranscodeVideo extends Extension
         );
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
