@@ -45,7 +45,7 @@ Notes.renderNotes = function () {
     }
 
     // check the image we're adding notes on top of
-    let br = Notes.noteImage.getBoundingClientRect();
+    let br = Notes.noteImage;
     let scale = br.width / Notes.noteImage.dataset.width;
 
     // render a container full of notes
@@ -110,8 +110,8 @@ Notes.renderEditor = function (noteDiv, note) {
             mode: Notes.getArea(
                 e.offsetX,
                 e.offsetY,
-                noteDiv.clientWidth,
-                noteDiv.clientHeight,
+                noteDiv.offsetWidth,
+                noteDiv.offsetHeight,
             ),
         };
         noteDiv.classList.add("dragging");
@@ -166,8 +166,8 @@ Notes.renderEditor = function (noteDiv, note) {
         Notes.dragStart = null;
         note.x1 = Math.round(noteDiv.offsetLeft / scale);
         note.y1 = Math.round(noteDiv.offsetTop / scale);
-        note.width = Math.round(noteDiv.offsetWidth / scale);
-        note.height = Math.round(noteDiv.offsetHeight / scale);
+        note.width = Math.round(noteDiv.clientWidth / scale);
+        note.height = Math.round(noteDiv.clientHeight / scale);
         Notes.renderNotes();
     }
     noteDiv.addEventListener("mouseup", _commit);
@@ -283,10 +283,10 @@ Notes.addNewNote = function () {
         return;
     }
     window.notes.push({
-        x1: Notes.noteImage.dataset.width * 0.1,
-        y1: Notes.noteImage.dataset.height * 0.1,
-        width: Notes.noteImage.dataset.width * 0.2,
-        height: Notes.noteImage.dataset.height * 0.1,
+        x1: Notes.noteImage.dataset.width * 0.2,
+        y1: Notes.noteImage.dataset.height * 0.2,
+        width: 100,
+        height: 40,
         note: "new note",
         note_id: null,
         image_id: window.notes_image_id,
