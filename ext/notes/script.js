@@ -283,10 +283,10 @@ Notes.addNewNote = function () {
         return;
     }
     window.notes.push({
-        x1: Notes.noteImage.dataset.width * 0.2,
-        y1: Notes.noteImage.dataset.height * 0.2,
-        width: 100,
-        height: 40,
+        x1: Notes.noteImage.dataset.width * 0.01,
+        y1: Notes.noteImage.dataset.height * 0.01,
+        width: Notes.noteImage.dataset.width * 0.2,
+        height: Notes.noteImage.dataset.height * 0.1,
         note: "new note",
         note_id: null,
         image_id: window.notes_image_id,
