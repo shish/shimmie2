@@ -185,21 +185,21 @@ class CommentListTheme extends Themelet
             $anoncode2 = "";
             if ($this->show_anon_id) {
                 $anoncode = SUP($this->anon_id);
-                if (!array_key_exists($comment->poster_ip, $this->anon_map)) {
-                    $this->anon_map[$comment->poster_ip] = $this->anon_id;
+                if (!array_key_exists($comment->owner_ip, $this->anon_map)) {
+                    $this->anon_map[$comment->owner_ip] = $this->anon_id;
                 }
                 #if(Ctx::$user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
                 if (Ctx::$user->can(IPBanPermission::VIEW_IP) || Ctx::$config->get(CommentConfig::SHOW_REPEAT_ANONS)) {
-                    if ($this->anon_map[$comment->poster_ip] !== $this->anon_id) {
-                        $anoncode2 = SUP("(" . $this->anon_map[$comment->poster_ip] . ")");
+                    if ($this->anon_map[$comment->owner_ip] !== $this->anon_id) {
+                        $anoncode2 = SUP("(" . $this->anon_map[$comment->owner_ip] . ")");
                     }
                 }
             }
-            $userlink = SPAN(["class" => "username"], $comment->owner_name, $anoncode, $anoncode2);
+            $userlink = SPAN(["class" => "username"], $comment->owner->name, $anoncode, $anoncode2);
             $this->anon_id++;
         } else {
-            $userlink = A(["class" => "username", "href" => make_link("user/{$comment->owner_name}")], $comment->owner_name);
+            $userlink = A(["class" => "username", "href" => make_link("user/{$comment->owner->name}")], $comment->owner->name);
         }
 
         $tfe = send_event(new TextFormattingEvent($comment->comment));
@@ -209,13 +209,13 @@ class CommentListTheme extends Themelet
                 $userlink,
                 ": ",
                 truncate($tfe->stripped, 50),
-                A(["href" => make_link("post/view/{$comment->image_id}", null, "c{$comment->comment_id}")], " >>>")
+                A(["href" => make_link("post/view/{$comment->image_id}", null, "c{$comment->id}")], " >>>")
             );
         } else {
             /** @var BuildAvatarEvent $bae */
-            $bae = send_event(new BuildAvatarEvent($comment->get_owner()));
+            $bae = send_event(new BuildAvatarEvent($comment->owner));
             $html = DIV(
-                ["class" => "comment", "id" => "c{$comment->comment_id}"],
+                ["class" => "comment", "id" => "c{$comment->id}"],
                 DIV(
                     ["class" => "info"],
                     emptyHTML(
@@ -223,12 +223,14 @@ class CommentListTheme extends Themelet
                     ),
                     emptyHTML(
                         SHM_DATE($comment->posted),
+                        $comment->edited ? " (edited)" : null,
                         " - ",
-                        A(["href" => "javascript:replyTo({$comment->image_id}, {$comment->comment_id}, '{$comment->owner_name}')"], "Reply"),
+                        A(["href" => "javascript:ShmComment.replyTo({$comment->image_id}, {$comment->id}, '{$comment->owner->name}')"], "Reply"),
                     ),
                     emptyHTML(
-                        Ctx::$user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->poster_ip, "Comment posted {$comment->posted}")) : null,
-                        Ctx::$user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->comment_id, $comment->image_id, $comment->owner_name, $tfe->stripped)) : null,
+                        Ctx::$user->can(IPBanPermission::VIEW_IP) ? emptyHTML(BR(), SHM_IP($comment->owner_ip, "Comment posted {$comment->posted}")) : null,
+                        Ctx::$user->can(CommentPermission::DELETE_COMMENT) ? emptyHTML(" - ", $this->delete_link($comment->id, $comment->image_id, $comment->owner->name, $tfe->stripped)) : null,
+                        Ctx::$user->can(CommentPermission::EDIT_COMMENT) && Ctx::$user->id === $comment->owner_id ? emptyHTML(" - ", $this->edit_button($comment->id, $comment->image_id, $comment->comment)) : null,
                     ),
                 ),
                 $userlink,
@@ -249,10 +251,15 @@ class CommentListTheme extends Themelet
         ], "Del");
     }
 
+    protected function edit_button(int $comment_id, int $image_id, string $text): HTMLElement
+    {
+        return A(["class" => "comment_edit", "data-comment_id" => $comment_id, "data-post_id" => $image_id, "data-content" => $text, "onclick" => "ShmComment.edit(this);"], " Edit");
+    }
+
     protected function build_postbox(int $image_id): HTMLElement
     {
         return DIV(
-            ["class" => "comment comment_add"],
+            ["class" => "comment comment_add", "id" => "comment_add_$image_id"],
             SHM_SIMPLE_FORM(
                 make_link("comment/add"),
                 INPUT(["type" => "hidden", "name" => "image_id", "value" => $image_id]),

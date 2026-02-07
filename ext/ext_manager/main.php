@@ -22,6 +22,7 @@ final class ExtManager extends Extension
 {
     public const KEY = "ext_manager";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("ext_manager/set", method: "POST", permission: ExtManagerPermission::MANAGE_EXTENSION_LIST)) {
@@ -73,6 +74,7 @@ final class ExtManager extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('ext:disable-all')
@@ -83,6 +85,7 @@ final class ExtManager extends Extension
             });
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -92,6 +95,7 @@ final class ExtManager extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ExtManagerPermission::MANAGE_EXTENSION_LIST)) {

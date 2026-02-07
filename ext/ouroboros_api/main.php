@@ -226,6 +226,7 @@ final class OuroborosAPI extends Extension
     public const ERROR_POST_CREATE_DUPE = 'Duplicate';
     public const OK_POST_CREATE_UPDATE = 'Updated';
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (\Safe\preg_match("%(.*)\.(xml|json)$%", implode('/', $event->args), $matches)) {

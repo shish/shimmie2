@@ -19,6 +19,7 @@ final class PostDescription extends Extension
 {
     public const KEY = "post_description";
 
+    #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $database;
@@ -34,6 +35,7 @@ final class PostDescription extends Extension
         }
     }
 
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $description = $event->get_param("description");
@@ -42,6 +44,7 @@ final class PostDescription extends Extension
         }
     }
 
+    #[EventListener]
     public function onPostDescriptionSet(PostDescriptionSetEvent $event): void
     {
         global $database;
@@ -58,6 +61,7 @@ final class PostDescription extends Extension
         ", ["id" => $event->image_id, "description" => $event->description]);
     }
 
+    #[EventListener]
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
     {
         $description = self::get_description($event->image);

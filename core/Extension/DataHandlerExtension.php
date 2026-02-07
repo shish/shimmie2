@@ -29,6 +29,7 @@ abstract class DataHandlerExtension extends Extension
     /** @var string[] */
     protected const SUPPORTED_MIME = [];
 
+    #[EventListener]
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {
@@ -90,6 +91,7 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
+    #[EventListener]
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event): void
     {
         $result = false;
@@ -109,6 +111,7 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
@@ -122,6 +125,7 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
+    #[EventListener]
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
@@ -152,6 +156,7 @@ abstract class DataHandlerExtension extends Extension
         return MimeType::matches_array($mime, $this::SUPPORTED_MIME);
     }
 
+    #[EventListener]
     public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
     {
         $event->add_mimes(array_map(fn ($mime) => new MimeType($mime), $this::SUPPORTED_MIME));

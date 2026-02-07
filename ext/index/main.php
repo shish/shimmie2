@@ -9,13 +9,12 @@ use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-require_once "events.php";
-
 /** @extends Extension<IndexTheme> */
 final class Index extends Extension
 {
     public const KEY = "index";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if (
@@ -92,11 +91,13 @@ final class Index extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(search_link(), "Posts", ["post"], category: "posts", order: 20);
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "posts") {
@@ -104,6 +105,7 @@ final class Index extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {
@@ -111,6 +113,7 @@ final class Index extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('search')
@@ -165,6 +168,7 @@ final class Index extends Extension
             });
     }
 
+    #[EventListener(priority: 95)] // we want to turn a search term into a TagCondition only if nobody did anything else with that term
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         global $database;
@@ -226,11 +230,5 @@ final class Index extends Extension
         if (!is_null($event->term) && $event->order === null && $event->img_conditions === [] && $event->tag_conditions === []) {
             $event->add_tag_condition(new TagCondition($event->term, !$event->negative));
         }
-    }
-
-    public function get_priority(): int
-    {
-        // we want to turn a search term into a TagCondition only if nobody did anything else with that term
-        return 95;
     }
 }

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "events/upload_common_building_event.php";
-require_once "events/upload_specific_building_event.php";
-require_once "events/upload_header_building_event.php";
-
 use function MicroHTML\{A, BR, DIV, INPUT, NOSCRIPT, P, SCRIPT, SMALL, SPAN, emptyHTML};
 
 use MicroHTML\HTMLElement;

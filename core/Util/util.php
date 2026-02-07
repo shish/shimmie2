@@ -232,6 +232,7 @@ function _load_ext_files(): void
     $span = Ctx::$tracer->startSpan("Load Ext Files");
     require_all(array_merge(
         Filesystem::zglob("ext/*/info.php"),
+        Filesystem::zglob("ext/*/events.php"),
         Filesystem::zglob("ext/*/config.php"),
         Filesystem::zglob("ext/*/permissions.php"),
         Filesystem::zglob("ext/*/theme.php"),

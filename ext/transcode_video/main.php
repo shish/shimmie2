@@ -26,14 +26,7 @@ final class TranscodeVideo extends Extension
         VideoContainer::MP4->value => "mp4",
     ];
 
-    /**
-     * Needs to be after upload, but before the processing extensions
-     */
-    public function get_priority(): int
-    {
-        return 45;
-    }
-
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         if ($event->image->video === true && $event->image->video_codec !== null && Ctx::$user->can(ImagePermission::EDIT_FILES)) {
@@ -44,6 +37,7 @@ final class TranscodeVideo extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("transcode_video/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
@@ -54,6 +48,7 @@ final class TranscodeVideo extends Extension
         }
     }
 
+    #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action(
@@ -66,6 +61,7 @@ final class TranscodeVideo extends Extension
         );
     }
 
+    #[EventListener]
     public function onBulkAction(BulkActionEvent $event): void
     {
         switch ($event->action) {
@@ -109,7 +105,7 @@ final class TranscodeVideo extends Extension
                 continue;
             }
             if (!empty($starting_codec) &&
-                !VideoContainer::is_video_codec_supported($container, $starting_codec)) {
+                !$container->is_codec_supported($starting_codec)) {
                 continue;
             }
             // FIXME: VideoContainer happens to be a mime type when in string form,
@@ -148,7 +144,7 @@ final class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
         }
 
-        if (!VideoContainer::is_video_codec_supported(VideoContainer::from($target_mime), $source_video_codec)) {
+        if (!VideoContainer::from($target_mime)->is_codec_supported($source_video_codec)) {
             throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec {$source_video_codec->value}");
         }
 

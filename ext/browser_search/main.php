@@ -10,6 +10,7 @@ final class BrowserSearch extends Extension
 {
     public const KEY = "browser_search";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;

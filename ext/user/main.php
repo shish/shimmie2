@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "events.php";
-
 use GQLA\{Field, Mutation, Type};
 use MicroCRUD\{ActionColumn, DateColumn, EnumColumn, IntegerColumn, Table, TextColumn};
 
@@ -125,11 +123,13 @@ final class UserPage extends Extension
 {
     public const KEY = "user";
 
+    #[EventListener]
     public function onUserLogin(UserLoginEvent $event): void
     {
         Ctx::setUser($event->user);
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $definition = $event->app->getDefinition();
@@ -141,6 +141,7 @@ final class UserPage extends Extension
         ));
     }
 
+    #[EventListener]
     public function onCliRun(CliRunEvent $event): void
     {
         if ($event->input->hasParameterOption(['--user', '-u'])) {
@@ -151,6 +152,7 @@ final class UserPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
         UserClass::$loading = UserClassSource::DEFAULT;
@@ -218,6 +220,7 @@ final class UserPage extends Extension
         UserClass::$loading = UserClassSource::UNKNOWN;
     }
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         global $database;
@@ -362,6 +365,7 @@ final class UserPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
         $duser = $event->display_user;
@@ -400,6 +404,7 @@ final class UserPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         if (Ctx::$user->is_anonymous()) {
@@ -460,6 +465,7 @@ final class UserPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
@@ -473,6 +479,7 @@ final class UserPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
         $event->add_link("My Profile", make_link("user"), 0);
@@ -482,6 +489,7 @@ final class UserPage extends Extension
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
@@ -489,6 +497,7 @@ final class UserPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onUserCreation(UserCreationEvent $event): void
     {
         $name = $event->username;
@@ -561,6 +570,7 @@ final class UserPage extends Extension
         return false;
     }
 
+    #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches(self::USER_SEARCH_REGEX)) {
@@ -575,6 +585,7 @@ final class UserPage extends Extension
         }
     }
 
+    #[EventListener]
     public function onHelpPageBuilding(HelpPageBuildingEvent $event): void
     {
         if ($event->key === HelpPages::SEARCH) {

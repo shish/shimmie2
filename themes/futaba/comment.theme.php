@@ -79,7 +79,7 @@ class FutabaCommentListTheme extends CommentListTheme
         $tfe = send_event(new TextFormattingEvent($comment->comment));
 
         //$i_uid = $comment->owner_id;
-        $h_name = html_escape($comment->owner_name);
+        $h_name = html_escape($comment->owner->name);
         //$h_poster_ip = html_escape($comment->poster_ip);
         if ($trim) {
             $h_comment = truncate($tfe->stripped, 50);
@@ -90,7 +90,7 @@ class FutabaCommentListTheme extends CommentListTheme
         // handles discrepency in comment page and homepage
         $h_comment = str_replace("<br>", "", $h_comment);
         $h_comment = str_replace("\n", "<br>", $h_comment);
-        $i_comment_id = $comment->comment_id;
+        $i_comment_id = $comment->id;
         $i_image_id = $comment->image_id;
 
         $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
@@ -98,13 +98,13 @@ class FutabaCommentListTheme extends CommentListTheme
         $h_del = "";
         if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
             $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
-            $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
+            $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner->name}:\n$comment_preview");
             $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
             $h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
             $h_del = " - [<a onclick='$h_delete_script' href='$h_delete_link'>Delete</a>]";
         }
         if ($this->post_page) {
-            $h_reply = "[<a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>]";
+            $h_reply = "[<a href='javascript: ShmComment.replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>]";
         } else {
             $h_reply = "[<a href='".make_link("post/view/$i_image_id")."'>Reply</a>]";
         }

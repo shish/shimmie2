@@ -59,7 +59,9 @@ final class UserPageTest extends ShimmiePHPUnitTestCase
                 'email' => '',
             ]);
         });
-        self::assertException(UserNotFound::class, function () {User::by_name('testnew');});
+        self::assertException(UserNotFound::class, function () {
+            User::by_name('testnew');
+        });
 
         self::log_in_as_admin();
         $page = self::post_page('user_admin/create_other', [

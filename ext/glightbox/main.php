@@ -21,27 +21,27 @@ final class GLightboxViewer extends DataHandlerExtension
     public const string KEY = GLightboxViewerInfo::KEY;
     public const array SUPPORTED_MIME = ImageFileHandler::SUPPORTED_MIME;
 
-    public function get_priority(): int
-    {
-        return 49; // Before handle_image
-    }
-
+    #[EventListener]
     public function onDataUpload(DataUploadEvent $event): void
     {
     }
 
+    #[EventListener]
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event): void
     {
     }
 
+    #[EventListener]
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event): void
     {
     }
 
+    #[EventListener]
     public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
     {
     }
 
+    #[EventListener]
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {

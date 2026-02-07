@@ -9,6 +9,7 @@ final class ArchiveFileHandler extends DataHandlerExtension
     public const KEY = "handle_archive";
     public const SUPPORTED_MIME = [MimeType::ZIP];
 
+    #[EventListener]
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->supported_mime($event->mime)) {

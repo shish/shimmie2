@@ -25,14 +25,6 @@ final class ExtraVideoFileHandler extends Extension
         "MP4" => MimeType::MP4_VIDEO,
     ];
 
-    /**
-     * Needs to be after upload, but before the processing extensions
-     */
-    public function get_priority(): int
-    {
-        return 45;
-    }
-
     public static function get_mapping_name(MimeType $mime): string
     {
         $mime = MimeMap::get_canonical($mime);
@@ -47,6 +39,7 @@ final class ExtraVideoFileHandler extends Extension
         return ($val === null || $val === "") ? null : new MimeType($val);
     }
 
+    #[EventListener]
     public function onBuildSupportedMimes(BuildSupportedMimesEvent $event): void
     {
         $output = [];
@@ -59,6 +52,7 @@ final class ExtraVideoFileHandler extends Extension
         $event->add_mimes($output);
     }
 
+    #[EventListener(priority: 45)] // Needs to be after upload, but before the processing extensions
     public function onDataUpload(DataUploadEvent $event): void
     {
         $target_mime = self::get_mapping($event->mime);

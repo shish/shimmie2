@@ -16,10 +16,22 @@ final class IndexConfig extends ConfigGroup
     #[ConfigMeta("Post order", ConfigType::STRING, default: "id DESC", advanced: true)]
     public const ORDER = "index_order";
 
-    #[ConfigMeta("Limit search to N results", ConfigType::INT, default: null, advanced: true, help: "Going deeper into search history requires exponential more CPU time")]
+    #[ConfigMeta(
+        "Limit search to N results",
+        ConfigType::INT,
+        default: null,
+        advanced: true,
+        help: "Going deeper into search history requires exponentially more CPU time"
+    )]
     public const SEARCH_RESULTS_LIMIT = "index_search_results_limit";
 
-    #[ConfigMeta("Limits bots to simple searches", ConfigType::BOOL, default: false, advanced: true, help: "Bots can sometimes generate really complicated nonsense queries that use a lot of CPU time")]
+    #[ConfigMeta(
+        "Limits bots to simple searches",
+        ConfigType::BOOL,
+        default: false,
+        advanced: true,
+        help: "Bots can sometimes generate really complicated nonsense queries that use a lot of CPU time"
+    )]
     public const SIMPLE_BOTS_ONLY = "index_simple_bots_only";
 
     #[ConfigMeta(

@@ -30,12 +30,12 @@ enum VideoContainer: string
             VideoCodec::VP9,
             VideoCodec::THEORA,
             VideoCodec::H264,
-            VideoCodec::H265,
+            VideoCodec::HEVC,
             VideoCodec::MPEG4,
         ],
         VideoContainer::MP4->value => [
             VideoCodec::H264,
-            VideoCodec::H265,
+            VideoCodec::HEVC,
             VideoCodec::MPEG4,
         ],
         VideoContainer::OGG->value => [
@@ -43,12 +43,13 @@ enum VideoContainer: string
         ],
         VideoContainer::QUICKTIME->value => [
             VideoCodec::H264,
-            VideoCodec::H265,
+            VideoCodec::HEVC,
             VideoCodec::MPEG4,
         ],
         VideoContainer::WEBM->value => [
             VideoCodec::VP8,
             VideoCodec::VP9,
+            VideoCodec::AV1,
         ],
     ];
 
@@ -58,9 +59,10 @@ enum VideoContainer: string
         // and shouldn't be relied upon
         return VideoContainer::from($mime->base);
     }
-    public static function is_video_codec_supported(VideoContainer $container, VideoCodec $codec): bool
+
+    public function is_codec_supported(VideoCodec $codec): bool
     {
-        return array_key_exists($container->value, self::VIDEO_CODEC_SUPPORT) &&
-                in_array($codec, self::VIDEO_CODEC_SUPPORT[$container->value]);
+        return array_key_exists($this->value, self::VIDEO_CODEC_SUPPORT) &&
+                in_array($codec, self::VIDEO_CODEC_SUPPORT[$this->value]);
     }
 }

@@ -27,6 +27,7 @@ final class BulkAdd extends Extension
 {
     public const KEY = "bulk_add";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("bulk_add", method: "POST", permission: BulkAddPermission::BULK_ADD)) {
@@ -38,6 +39,7 @@ final class BulkAdd extends Extension
         }
     }
 
+    #[EventListener]
     public function onCliGen(CliGenEvent $event): void
     {
         $event->app->register('bulk-add')
@@ -62,11 +64,13 @@ final class BulkAdd extends Extension
             });
     }
 
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_admin_block();
     }
 
+    #[EventListener]
     public function onBulkAdd(BulkAddEvent $event): void
     {
         if ($event->dir->is_dir() && $event->dir->is_readable()) {

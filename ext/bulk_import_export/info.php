@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-include_once "events.php";
-
 final class BulkImportExportInfo extends ExtensionInfo
 {
     public const KEY = "bulk_import_export";

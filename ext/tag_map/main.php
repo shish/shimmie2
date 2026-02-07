@@ -9,6 +9,7 @@ final class TagMap extends Extension
 {
     public const KEY = "tag_map";
 
+    #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("tags/{sub}", method: "GET")) {
@@ -41,11 +42,13 @@ final class TagMap extends Extension
         }
     }
 
+    #[EventListener]
     public function onPageNavBuilding(PageNavBuildingEvent $event): void
     {
         $event->add_nav_link(make_link('tags/map'), "Tags", category: "tags");
     }
 
+    #[EventListener]
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "tags") {
