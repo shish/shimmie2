@@ -33,6 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "scroll",
             Notes.renderNotes,
         );
+
+        // clone notes to make a restore point in case we cancel a note edit
+        window.notes_last_saved = JSON.parse(JSON.stringify(window.notes))
     }
 });
 
@@ -206,6 +209,8 @@ Notes.renderEditor = function (noteDiv, note) {
                 })
                 .then((data) => {
                     note.note_id = data.note_id;
+                    // update restore point
+                    window.notes_last_saved.push(JSON.parse(JSON.stringify(note)));
                     Notes.renderNotes();
                 })
                 .catch((error) => {
@@ -223,6 +228,9 @@ Notes.renderEditor = function (noteDiv, note) {
                     if (!response.ok) {
                         throw new Error("Failed to update note");
                     }
+                    // update restore point
+                    last_saved_note = window.notes_last_saved.filter((n) => n.note_id == note.note_id)[0];
+                    Object.assign(last_saved_note, note);
                 })
                 .catch((error) => {
                     alert(error);
@@ -240,6 +248,10 @@ Notes.renderEditor = function (noteDiv, note) {
         if (note.note_id == null) {
             // delete the un-saved note
             window.notes = window.notes.filter((n) => n.note_id != null);
+        } else {
+            // restore note
+            last_saved_note = window.notes_last_saved.filter((n) => n.note_id == note.note_id)[0];
+            Object.assign(note, last_saved_note);
         }
         Notes.renderNotes();
     });
@@ -267,6 +279,9 @@ Notes.renderEditor = function (noteDiv, note) {
                 });
             Notes.noteBeingEdited = null;
             window.notes = window.notes.filter(
+                (n) => n.note_id != note.note_id,
+            );
+            window.notes_last_saved = window.notes.filter(
                 (n) => n.note_id != note.note_id,
             );
             Notes.renderNotes();
