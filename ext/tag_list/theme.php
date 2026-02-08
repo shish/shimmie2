@@ -70,7 +70,7 @@ class TagListTheme extends Themelet
 
         foreach ($tag_infos as $row) {
             $tag = $row['tag'];
-            $category = TagCategories::get_tag_category($tag);
+            $category = TagCategories::get_tag_category($tag) ?? "";
             if (!isset($tag_categories_html[$category])) {
                 $tag_categories_html[$category] = $this->get_tag_list_preamble();
             }
