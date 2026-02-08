@@ -44,8 +44,14 @@ final class ReportImage extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("image_report/add")) {
+            $reason = $event->POST->req('reason');
+            if (trim($reason) === "") {
+                throw new ReportPostingException("Reports need text...");
+            } elseif (strlen($reason) > 300) {
+                throw new ReportPostingException("Report too long~");
+            }
             $image_id = int_escape($event->POST->req('image_id'));
-            send_event(new AddReportedImageEvent(new ImageReport($image_id, Ctx::$user->id, $event->POST->req('reason'))));
+            send_event(new AddReportedImageEvent(new ImageReport($image_id, Ctx::$user->id, $reason)));
             Ctx::$page->set_redirect(make_link("post/view/$image_id"));
         }
         if ($event->page_matches("image_report/remove", method: "POST", permission: ReportImagePermission::VIEW_IMAGE_REPORT)) {

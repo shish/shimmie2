@@ -84,7 +84,7 @@ class ReportImageTheme extends Themelet
         $html->appendChild(SHM_SIMPLE_FORM(
             make_link("image_report/add"),
             INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $image->id]),
-            INPUT(["type" => 'text', "name" => 'reason', "placeholder" => 'Please enter a reason']),
+            INPUT(["type" => 'text', "name" => 'reason', "placeholder" => 'Please enter a reason', "required" => ""]),
             SHM_SUBMIT('Report')
         ));
         Ctx::$page->add_block(new Block("Report Post", $html, "left"));
