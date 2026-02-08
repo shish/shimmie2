@@ -45,15 +45,15 @@ Notes.renderNotes = function () {
     }
 
     // check the image we're adding notes on top of
-    let br = Notes.noteImage;
+    let br = Notes.noteImage.getBoundingClientRect();
     let scale = br.width / Notes.noteImage.dataset.width;
 
     // render a container full of notes
     Notes.notesContainer = document.createElement("div");
     notesContainer = Notes.notesContainer;
     notesContainer.className = "notes-container";
-    notesContainer.style.top = br.top + "px";
-    notesContainer.style.left = br.left + "px";
+    notesContainer.style.top = (br.top + window.scrollY) + "px";
+    notesContainer.style.left = (br.left + window.scrollX) + "px";
     notesContainer.style.width = br.width + "px";
     notesContainer.style.height = br.height + "px";
 
@@ -110,8 +110,8 @@ Notes.renderEditor = function (noteDiv, note) {
             mode: Notes.getArea(
                 e.offsetX,
                 e.offsetY,
-                noteDiv.offsetWidth,
-                noteDiv.offsetHeight,
+                noteDiv.clientWidth,
+                noteDiv.clientHeight,
             ),
         };
         noteDiv.classList.add("dragging");
@@ -283,10 +283,10 @@ Notes.addNewNote = function () {
         return;
     }
     window.notes.push({
-        x1: Notes.noteImage.dataset.width * 0.01,
-        y1: Notes.noteImage.dataset.height * 0.01,
-        width: Notes.noteImage.dataset.width * 0.2,
-        height: Notes.noteImage.dataset.height * 0.1,
+        x1: Notes.noteImage.dataset.width * 0.2,
+        y1: Notes.noteImage.dataset.height * 0.2,
+        width: 100,
+        height: 40,
         note: "new note",
         note_id: null,
         image_id: window.notes_image_id,
