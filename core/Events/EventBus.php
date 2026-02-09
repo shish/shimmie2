@@ -162,14 +162,13 @@ final class EventBus
 
         $event_name = $this->namespaced_class_name($event_class);
         $sEvent = Ctx::$tracer->startSpan($event_name);
-        foreach ($this->event_listeners[$event_class] as $listener) {
-            [$listener, $method] = $listener;
 
+        foreach ($this->event_listeners[$event_class] as [$listener, $method]) {
             if ($this->deadline && ftime() > $this->deadline) {
                 throw new TimeoutException("Timeout while sending $event_name");
             }
             // @phpstan-ignore-next-line
-            $sListener = Ctx::$tracer->startSpan($this->namespaced_class_name(get_class($listener)));
+            $sListener = Ctx::$tracer->startSpan($this->namespaced_class_name(\get_class($listener)));
             $listener->$method($event);
             $sListener->end();
             if ($event->stop_processing === true) {
