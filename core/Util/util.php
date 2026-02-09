@@ -259,8 +259,6 @@ function _set_up_shimmie_environment(): void
     if (SysConfig::getTimezone()) {
         date_default_timezone_set(SysConfig::getTimezone());
     }
-
-    error_reporting(E_ALL);
 }
 
 /**
