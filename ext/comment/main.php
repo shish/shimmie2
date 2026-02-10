@@ -597,7 +597,7 @@ final class CommentList extends Extension
         }
 
         // rate-limited external service checks last
-        elseif (!Captcha::check(CommentPermission::SKIP_CAPTCHA)) {
+        if (!Captcha::check(CommentPermission::SKIP_CAPTCHA)) {
             throw new CommentPostingException("Error in captcha");
         }
     }
