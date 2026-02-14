@@ -172,11 +172,13 @@ final class S3 extends Extension
             throw new ServerError("S3 credentials not set");
         }
         $endpoint = Ctx::$config->get(S3Config::ENDPOINT);
+        $region = Ctx::$config->get(S3Config::REGION);
 
         return new \S3Client\S3(
             $access_key_id,
             $access_key_secret,
             $endpoint,
+            $region
         );
     }
 

@@ -35,18 +35,25 @@ class S3
     private string $access_key;
     private string $secret_key;
     private string $endpoint;
-    /** @var array<int,mixed> */
-    private array $curl_opts;
+    private string $region;
 
-    public function __construct(string $access_key, string $secret_key, string $endpoint = 's3.amazonaws.com')
-    {
+    public function __construct(
+        string $access_key,
+        string $secret_key,
+        string $endpoint = 's3.amazonaws.com',
+        string $region = 'auto',
+    ) {
+        // if endpoint doesn't start with http:// or https://, prepend https://
+        // this allows users to specify endpoints like "s3.amazonaws.com"
+        // without needing to include the protocol
+        if (!preg_match('/^https?:\/\//', $endpoint)) {
+            $endpoint = 'https://' . $endpoint;
+        }
+
         $this->access_key = $access_key;
         $this->secret_key = $secret_key;
         $this->endpoint = $endpoint;
-
-        if (!preg_match('/^https?:\/\//', $endpoint)) {
-            throw new \InvalidArgumentException('Endpoint must start with http:// or https://');
-        }
+        $this->region = $region;
 
         $this->curl_opts = [
             CURLOPT_CONNECTTIMEOUT => 30,
@@ -55,22 +62,14 @@ class S3
         ];
     }
 
-    /** @param array<int,mixed> $curl_opts */
-    public function useCurlOpts(array $curl_opts): S3
-    {
-        $this->curl_opts = $curl_opts;
-        return $this;
-    }
-
     /** @param array<string,string> $headers */
     public function putObject(string $bucket, string $path, string $file, array $headers = []): S3Response
     {
         $uri = "$bucket/$path";
 
-        $request = (new S3Request('PUT', $this->endpoint, $uri))
+        $request = (new S3Request('PUT', $this->endpoint, $uri, $this->region))
             ->setFileContents($file)
             ->setHeaders($headers)
-            ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
         return $request->getResponse();
@@ -81,9 +80,8 @@ class S3
     {
         $uri = "$bucket/$path";
 
-        $request = (new S3Request('HEAD', $this->endpoint, $uri))
+        $request = (new S3Request('HEAD', $this->endpoint, $uri, $this->region))
             ->setHeaders($headers)
-            ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
         return $request->getResponse();
@@ -99,9 +97,8 @@ class S3
     ): S3Response {
         $uri = "$bucket/$path";
 
-        $request = (new S3Request('GET', $this->endpoint, $uri))
+        $request = (new S3Request('GET', $this->endpoint, $uri, $this->region))
             ->setHeaders($headers)
-            ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
         return $request->getResponse();
@@ -112,9 +109,8 @@ class S3
     {
         $uri = "$bucket/$path";
 
-        $request = (new S3Request('DELETE', $this->endpoint, $uri))
+        $request = (new S3Request('DELETE', $this->endpoint, $uri, $this->region))
             ->setHeaders($headers)
-            ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
         return $request->getResponse();
@@ -123,9 +119,8 @@ class S3
     /** @param array<string,string> $headers */
     public function getBucket(string $bucket, array $headers = []): S3Response
     {
-        $request = (new S3Request('GET', $this->endpoint, $bucket))
+        $request = (new S3Request('GET', $this->endpoint, $bucket, $this->region))
             ->setHeaders($headers)
-            ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
         return $request->getResponse();
@@ -138,17 +133,21 @@ class S3Request
     private array $headers;
     private \CurlHandle $curl;
     private S3Response $response;
+    private string $body_content = '';
 
     public function __construct(
         private string $action,
         private string $endpoint,
-        private string $uri
+        private string $uri,
+        private string $region = 'auto',
     ) {
+        $host = parse_url($this->endpoint, PHP_URL_HOST);
+        if (!is_string($host)) {
+            throw new \InvalidArgumentException("Invalid endpoint URL: $endpoint");
+        }
+
         $this->headers = [
-            'Content-MD5' => '',
-            'Content-Type' => '',
-            'Date' => gmdate('D, d M Y H:i:s T'),
-            'Host' => $this->endpoint
+            'Host' => $host
         ];
 
         $this->curl = curl_init();
@@ -156,29 +155,12 @@ class S3Request
     }
 
     /**
-     * @param resource|string $file The file to send
+     * @param string $file The file to send
      */
-    public function setFileContents($file): S3Request
+    public function setFileContents(string $file): S3Request
     {
-        if (is_resource($file)) {
-            $hash_ctx = hash_init('md5');
-            $length = hash_update_stream($hash_ctx, $file);
-            $md5 = hash_final($hash_ctx, true);
-
-            rewind($file);
-
-            curl_setopt($this->curl, CURLOPT_PUT, true);
-            curl_setopt($this->curl, CURLOPT_INFILE, $file);
-            curl_setopt($this->curl, CURLOPT_INFILESIZE, $length);
-        } elseif (is_string($file)) {
-            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $file);
-            $md5 = md5($file, true);
-        } else {
-            throw new \InvalidArgumentException('Invalid file type');
-        }
-
-        $this->headers['Content-MD5'] = base64_encode($md5);
-
+        $this->body_content = $file;
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $file);
         return $this;
     }
 
@@ -193,35 +175,58 @@ class S3Request
 
     public function sign(string $access_key, string $secret_key): S3Request
     {
-        $canonical_amz_headers = $this->getCanonicalAmzHeaders();
+        // AWS Signature Version 4
+        $timestamp = gmdate('Ymd\THis\Z');
+        $date = gmdate('Ymd');
 
-        $string_to_sign = '';
-        $string_to_sign .= "{$this->action}\n";
-        $string_to_sign .= "{$this->headers['Content-MD5']}\n";
-        $string_to_sign .= "{$this->headers['Content-Type']}\n";
-        $string_to_sign .= "{$this->headers['Date']}\n";
+        $this->headers['x-amz-date'] = $timestamp;
+        $this->headers['x-amz-content-sha256'] = hash('sha256', $this->body_content);
 
-        if (count($canonical_amz_headers) > 0) {
-            $string_to_sign .= implode("\n", $canonical_amz_headers) . "\n";
+        // Step 1: Create canonical request
+        $canonical_uri = '/' . $this->uri;
+        $canonical_querystring = '';
+        $canonical_headers = '';
+        $signed_headers = '';
+
+        // Sort headers and build canonical headers
+        ksort($this->headers);
+        $header_names = [];
+        foreach ($this->headers as $key => $value) {
+            $key_lower = strtolower($key);
+            $header_names[] = $key_lower;
+            $canonical_headers .= $key_lower . ':' . trim($value) . "\n";
         }
+        $signed_headers = implode(';', $header_names);
 
-        $string_to_sign .= "/{$this->uri}";
+        $payload_hash = $this->headers['x-amz-content-sha256'];
 
-        $signature = base64_encode(
-            hash_hmac('sha1', $string_to_sign, $secret_key, true)
-        );
+        $canonical_request = $this->action . "\n" .
+            $canonical_uri . "\n" .
+            $canonical_querystring . "\n" .
+            $canonical_headers . "\n" .
+            $signed_headers . "\n" .
+            $payload_hash;
 
-        $this->headers['Authorization'] = "AWS $access_key:$signature";
+        // Step 2: Create string to sign
+        $algorithm = 'AWS4-HMAC-SHA256';
+        $credential_scope = $date . '/' . $this->region . '/s3/aws4_request';
+        $string_to_sign = $algorithm . "\n" .
+            $timestamp . "\n" .
+            $credential_scope . "\n" .
+            hash('sha256', $canonical_request);
 
-        return $this;
-    }
+        // Step 3: Calculate signature
+        $k_date = hash_hmac('sha256', $date, 'AWS4' . $secret_key, true);
+        $k_region = hash_hmac('sha256', $this->region, $k_date, true);
+        $k_service = hash_hmac('sha256', 's3', $k_region, true);
+        $k_signing = hash_hmac('sha256', 'aws4_request', $k_service, true);
+        $signature = hash_hmac('sha256', $string_to_sign, $k_signing);
 
-    /**
-     * @param array<int,mixed> $curl_opts
-     */
-    public function useCurlOpts(array $curl_opts): S3Request
-    {
-        curl_setopt_array($this->curl, $curl_opts);
+        // Step 4: Add authorization header
+        $this->headers['Authorization'] = $algorithm . ' ' .
+            'Credential=' . $access_key . '/' . $credential_scope . ', ' .
+            'SignedHeaders=' . $signed_headers . ', ' .
+            'Signature=' . $signature;
 
         return $this;
     }
@@ -272,28 +277,6 @@ class S3Request
 
         return $this->response;
     }
-
-    /**
-     * @return array<string,string>
-     */
-    private function getCanonicalAmzHeaders(): array
-    {
-        $canonical_amz_headers = [];
-
-        foreach ($this->headers as $header => $value) {
-            $header = trim(strtolower($header));
-            $value = trim($value);
-
-            if (strpos($header, 'x-amz-') === 0) {
-                $canonical_amz_headers[$header] = "$header:$value";
-            }
-        }
-
-        ksort($canonical_amz_headers);
-
-        return $canonical_amz_headers;
-    }
-
 }
 
 class S3Response
