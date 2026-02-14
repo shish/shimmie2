@@ -172,11 +172,13 @@ final class S3 extends Extension
             throw new ServerError("S3 credentials not set");
         }
         $endpoint = Ctx::$config->get(S3Config::ENDPOINT);
+        $region = Ctx::$config->get(S3Config::REGION);
 
         return new \S3Client\S3(
             $access_key_id,
             $access_key_secret,
             $endpoint,
+            $region
         );
     }
 
@@ -226,9 +228,9 @@ final class S3 extends Extension
                 $this->hash_to_path($image->hash),
                 $image->get_image_filename()->get_contents(),
                 [
-                    'ACL' => 'public-read',
-                    'ContentType' => (string)$image->get_mime(),
-                    'ContentDisposition' => "inline; filename=\"$friendly\"",
+                    'x-amz-acl' => 'public-read',
+                    'Content-Type' => (string)$image->get_mime(),
+                    'Content-Disposition' => "inline; filename=\"$friendly\"",
                 ]
             );
             $this->dequeue($image->hash);
