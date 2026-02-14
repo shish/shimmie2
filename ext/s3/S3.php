@@ -44,6 +44,10 @@ class S3
         $this->secret_key = $secret_key;
         $this->endpoint = $endpoint;
 
+        if (!preg_match('/^https?:\/\//', $endpoint)) {
+            throw new \InvalidArgumentException('Endpoint must start with http:// or https://');
+        }
+
         $this->curl_opts = [
             CURLOPT_CONNECTTIMEOUT => 30,
             CURLOPT_LOW_SPEED_LIMIT => 1,
