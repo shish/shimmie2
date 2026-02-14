@@ -128,17 +128,7 @@ class S3
             ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
-        $response = $request->getResponse();
-        /*
-        if (!isset($response->error)) {
-            $body = simplexml_load_string($response->body);
-
-            if ($body) {
-                $response->body = $body;
-            }
-        }
-        */
-        return $response;
+        return $request->getResponse();
     }
 }
 
@@ -248,7 +238,7 @@ class S3Request
 
         curl_setopt_array($this->curl, [
             CURLOPT_USERAGENT => 'ericnorris/amazon-s3-php',
-            CURLOPT_URL => "https://{$this->endpoint}/{$this->uri}",
+            CURLOPT_URL => "{$this->endpoint}/{$this->uri}",
             CURLOPT_HTTPHEADER => $http_headers,
             CURLOPT_HEADER => false,
             CURLOPT_RETURNTRANSFER => false,
