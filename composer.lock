@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "919d6e651af9ccec053c2ccb4ef2cbc2",
+    "content-hash": "1903d637fe2aa6b0cb6fe7fb97811dcd",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -1003,25 +1003,25 @@
         },
         {
             "name": "shish/microotlp",
-            "version": "v0.0.11",
+            "version": "v0.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microotlp.git",
-                "reference": "92eae6a3ca4c8a8eb9a45577c9a27153b1bc6e41"
+                "reference": "98478e3f290ad84395abb4e10b869065bbc79ddf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microotlp/zipball/92eae6a3ca4c8a8eb9a45577c9a27153b1bc6e41",
-                "reference": "92eae6a3ca4c8a8eb9a45577c9a27153b1bc6e41",
+                "url": "https://api.github.com/repos/shish/microotlp/zipball/98478e3f290ad84395abb4e10b869065bbc79ddf",
+                "reference": "98478e3f290ad84395abb4e10b869065bbc79ddf",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.64",
-                "phpstan/phpstan": "^2.0",
-                "phpunit/phpunit": "^11.0",
+                "friendsofphp/php-cs-fixer": "^3.89",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^11.5",
                 "thecodingmachine/safe": "^3.3"
             },
             "type": "library",
@@ -1050,9 +1050,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shish/microotlp/issues",
-                "source": "https://github.com/shish/microotlp/tree/v0.0.11"
+                "source": "https://github.com/shish/microotlp/tree/v0.0.12"
             },
-            "time": "2025-10-08T15:09:24+00:00"
+            "time": "2025-12-13T20:20:46+00:00"
         },
         {
             "name": "symfony/console",
