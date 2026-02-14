@@ -35,7 +35,6 @@ class S3
     private string $access_key;
     private string $secret_key;
     private string $endpoint;
-    private \CurlMultiHandle $multi_curl;
     /** @var array<int,mixed> */
     private array $curl_opts;
 
@@ -45,18 +44,15 @@ class S3
         $this->secret_key = $secret_key;
         $this->endpoint = $endpoint;
 
-        $this->multi_curl = curl_multi_init();
+        if (!preg_match('/^https?:\/\//', $endpoint)) {
+            throw new \InvalidArgumentException('Endpoint must start with http:// or https://');
+        }
 
         $this->curl_opts = [
             CURLOPT_CONNECTTIMEOUT => 30,
             CURLOPT_LOW_SPEED_LIMIT => 1,
             CURLOPT_LOW_SPEED_TIME => 30
         ];
-    }
-
-    public function __destruct()
-    {
-        curl_multi_close($this->multi_curl);
     }
 
     /** @param array<int,mixed> $curl_opts */
@@ -74,7 +70,6 @@ class S3
         $request = (new S3Request('PUT', $this->endpoint, $uri))
             ->setFileContents($file)
             ->setHeaders($headers)
-            ->useMultiCurl($this->multi_curl)
             ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
@@ -88,7 +83,6 @@ class S3
 
         $request = (new S3Request('HEAD', $this->endpoint, $uri))
             ->setHeaders($headers)
-            ->useMultiCurl($this->multi_curl)
             ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
@@ -107,7 +101,6 @@ class S3
 
         $request = (new S3Request('GET', $this->endpoint, $uri))
             ->setHeaders($headers)
-            ->useMultiCurl($this->multi_curl)
             ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
@@ -121,7 +114,6 @@ class S3
 
         $request = (new S3Request('DELETE', $this->endpoint, $uri))
             ->setHeaders($headers)
-            ->useMultiCurl($this->multi_curl)
             ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
@@ -133,23 +125,11 @@ class S3
     {
         $request = (new S3Request('GET', $this->endpoint, $bucket))
             ->setHeaders($headers)
-            ->useMultiCurl($this->multi_curl)
             ->useCurlOpts($this->curl_opts)
             ->sign($this->access_key, $this->secret_key);
 
-        $response = $request->getResponse();
-        /*
-        if (!isset($response->error)) {
-            $body = simplexml_load_string($response->body);
-
-            if ($body) {
-                $response->body = $body;
-            }
-        }
-        */
-        return $response;
+        return $request->getResponse();
     }
-
 }
 
 class S3Request
@@ -158,7 +138,6 @@ class S3Request
     private array $headers;
     private \CurlHandle $curl;
     private S3Response $response;
-    private ?\CurlMultiHandle $multi_curl;
 
     public function __construct(
         private string $action,
@@ -174,8 +153,6 @@ class S3Request
 
         $this->curl = curl_init();
         $this->response = new S3Response();
-
-        $this->multi_curl = null;
     }
 
     /**
@@ -239,12 +216,6 @@ class S3Request
         return $this;
     }
 
-    public function useMultiCurl(\CurlMultiHandle $mh): S3Request
-    {
-        $this->multi_curl = $mh;
-        return $this;
-    }
-
     /**
      * @param array<int,mixed> $curl_opts
      */
@@ -267,7 +238,7 @@ class S3Request
 
         curl_setopt_array($this->curl, [
             CURLOPT_USERAGENT => 'ericnorris/amazon-s3-php',
-            CURLOPT_URL => "https://{$this->endpoint}/{$this->uri}",
+            CURLOPT_URL => "{$this->endpoint}/{$this->uri}",
             CURLOPT_HTTPHEADER => $http_headers,
             CURLOPT_HEADER => false,
             CURLOPT_RETURNTRANSFER => false,
@@ -295,22 +266,8 @@ class S3Request
                 break;
         }
 
-        if (isset($this->multi_curl)) {
-            curl_multi_add_handle($this->multi_curl, $this->curl);
-
-            $running = null;
-            do {
-                curl_multi_exec($this->multi_curl, $running);
-                curl_multi_select($this->multi_curl);
-            } while ($running > 0);
-
-            curl_multi_remove_handle($this->multi_curl, $this->curl);
-        } else {
-            $success = curl_exec($this->curl);
-        }
-
+        $success = curl_exec($this->curl);
         $this->response->finalize($this->curl);
-
         curl_close($this->curl);
 
         return $this->response;

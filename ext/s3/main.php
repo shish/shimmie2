@@ -102,7 +102,8 @@ final class S3 extends Extension
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $query = SearchTerm::explode($input->getArgument('query'));
                 foreach (Search::find_images_iterable(terms: $query) as $image) {
-                    print("{$image->id}: {$image->hash}\n");
+                    $output->writeln("{$image->id}: {$image->hash}");
+                    $this->sync_post($image);
                 }
                 return Command::SUCCESS;
             });
