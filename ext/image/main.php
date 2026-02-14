@@ -64,6 +64,13 @@ final class ImageIO extends Extension
     }
 
     #[EventListener]
+    public function onRobotsBuilding(RobotsBuildingEvent $event): void
+    {
+        $event->add_disallow("thumb/");
+        $event->add_disallow("_thumbs/");
+    }
+
+    #[EventListener]
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
     {
         $image = Image::by_id_ex($event->image->id);
