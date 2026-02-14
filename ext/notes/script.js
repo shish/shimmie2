@@ -113,8 +113,8 @@ Notes.renderEditor = function (noteDiv, note) {
             mode: Notes.getArea(
                 e.offsetX,
                 e.offsetY,
-                noteDiv.clientWidth,
-                noteDiv.clientHeight,
+                noteDiv.offsetWidth,
+                noteDiv.offsetHeight,
             ),
         };
         noteDiv.classList.add("dragging");
@@ -153,8 +153,8 @@ Notes.renderEditor = function (noteDiv, note) {
             let area = Notes.getArea(
                 e.offsetX,
                 e.offsetY,
-                noteDiv.clientWidth,
-                noteDiv.clientHeight,
+                noteDiv.offsetWidth,
+                noteDiv.offsetHeight,
             );
             if (area == "c") {
                 noteDiv.style.cursor = "move";
