@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         // clone notes to make a restore point in case we cancel a note edit
-        window.notes_last_saved = JSON.parse(JSON.stringify(window.notes))
+        window.notes_last_saved = JSON.parse(JSON.stringify(window.notes));
     }
 });
 
@@ -55,8 +55,8 @@ Notes.renderNotes = function () {
     Notes.notesContainer = document.createElement("div");
     notesContainer = Notes.notesContainer;
     notesContainer.className = "notes-container";
-    notesContainer.style.top = (br.top + window.scrollY) + "px";
-    notesContainer.style.left = (br.left + window.scrollX) + "px";
+    notesContainer.style.top = br.top + window.scrollY + "px";
+    notesContainer.style.left = br.left + window.scrollX + "px";
     notesContainer.style.width = br.width + "px";
     notesContainer.style.height = br.height + "px";
 
@@ -210,7 +210,9 @@ Notes.renderEditor = function (noteDiv, note) {
                 .then((data) => {
                     note.note_id = data.note_id;
                     // update restore point
-                    window.notes_last_saved.push(JSON.parse(JSON.stringify(note)));
+                    window.notes_last_saved.push(
+                        JSON.parse(JSON.stringify(note)),
+                    );
                     Notes.renderNotes();
                 })
                 .catch((error) => {
@@ -229,7 +231,9 @@ Notes.renderEditor = function (noteDiv, note) {
                         throw new Error("Failed to update note");
                     }
                     // update restore point
-                    last_saved_note = window.notes_last_saved.filter((n) => n.note_id == note.note_id)[0];
+                    last_saved_note = window.notes_last_saved.filter(
+                        (n) => n.note_id == note.note_id,
+                    )[0];
                     Object.assign(last_saved_note, note);
                 })
                 .catch((error) => {
@@ -250,7 +254,9 @@ Notes.renderEditor = function (noteDiv, note) {
             window.notes = window.notes.filter((n) => n.note_id != null);
         } else {
             // restore note
-            last_saved_note = window.notes_last_saved.filter((n) => n.note_id == note.note_id)[0];
+            last_saved_note = window.notes_last_saved.filter(
+                (n) => n.note_id == note.note_id,
+            )[0];
             Object.assign(note, last_saved_note);
         }
         Notes.renderNotes();
