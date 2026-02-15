@@ -146,7 +146,7 @@ class PoolsTheme extends Themelet
      */
     public function view_pool(Pool $pool, array $images, int $pageNumber, int $totalPages): void
     {
-        $this->display_top($pool, "Pool: " . html_escape($pool->title));
+        $this->display_top($pool, "Pool: " . $pool->title);
 
         $image_list = DIV(["class" => "shm-image-list"]);
         foreach ($images as $image) {
