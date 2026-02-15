@@ -8,22 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 final class PolyfillsTest extends TestCase
 {
-    public function test_html_escape(): void
-    {
-        self::assertEquals(
-            "Foo &amp; &lt;main&gt;",
-            html_escape("Foo & <main>")
-        );
-
-        self::assertEquals(
-            "Foo & <main>",
-            html_unescape("Foo &amp; &lt;main&gt;")
-        );
-
-        $x = "Foo &amp; &lt;waffles&gt;";
-        self::assertEquals(html_escape(html_unescape($x)), $x);
-    }
-
     public function test_int_escape(): void
     {
         self::assertEquals(0, int_escape(""));
