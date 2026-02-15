@@ -6,6 +6,8 @@ namespace Shimmie2;
 
 use function MicroHTML\{A, INPUT, TABLE, TD, TR, emptyHTML};
 
+use MicroHTML\HTMLElement;
+
 class BulkAddCSVTheme extends Themelet
 {
     /** @var Block[] */
@@ -54,8 +56,8 @@ class BulkAddCSVTheme extends Themelet
         Ctx::$page->add_block(new Block("Bulk Add CSV", $html));
     }
 
-    public function add_status(string $title, string $body): void
+    public function add_status(string $title, HTMLElement $body): void
     {
-        $this->messages[] = new Block($title, emptyHTML($body));
+        $this->messages[] = new Block($title, $body);
     }
 }

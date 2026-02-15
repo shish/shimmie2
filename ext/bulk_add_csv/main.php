@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\{LI,UL,emptyHTML};
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
@@ -76,48 +78,41 @@ final class BulkAddCSV extends Extension
     private function add_csv(Path $csvfile): void
     {
         if (!$csvfile->exists()) {
-            $this->theme->add_status("Error", "{$csvfile->str()} not found");
+            $this->theme->add_status("Error", emptyHTML("{$csvfile->str()} not found"));
             return;
         }
         if (!$csvfile->is_file() || !str_ends_with(strtolower($csvfile->str()), ".csv")) {
-            $this->theme->add_status("Error", "{$csvfile->str()} doesn't appear to be a csv file");
+            $this->theme->add_status("Error", emptyHTML("{$csvfile->str()} doesn't appear to be a csv file"));
             return;
         }
 
         $linenum = 1;
-        $list = "";
+        $results = UL();
         $csvhandle = \Safe\fopen($csvfile->str(), "r");
 
         while (($csvdata = \Safe\fgetcsv($csvhandle, 0, ",")) !== false) {
             if (count($csvdata) !== 5) {
-                if (strlen($list) > 0) {
-                    $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum {$csvfile->str()}</b><br>".$list);
-                } else {
-                    $this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum {$csvfile->str()}</b><br>Check <a href=\"" . make_link("ext_doc/bulk_add_csv") . "\">here</a> for the expected format");
-                }
-                fclose($csvhandle);
-                return;
+                $results->appendChild(LI("Line $linenum: Malformed data"));
+                break;
             }
             [$fullpath, $tags_string, $source, $rating, $thumbfile] = $csvdata;
             $tags = Tag::explode(trim($tags_string));
             $shortpath = pathinfo($fullpath, PATHINFO_BASENAME);
-            $list .= "<br>".html_escape("$shortpath (".implode(", ", $tags).")... ");
+
             if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
                 try {
                     $this->add_image(new Path($fullpath), $shortpath, $tags, $source, $rating, new Path($thumbfile));
-                    $list .= "ok\n";
+                    $results->appendChild(LI("$shortpath - added with tags: " . implode(", ", $tags)));
                 } catch (\Exception $ex) {
-                    $list .= "failed:<br>". $ex->getMessage();
+                    $results->appendChild(LI("$shortpath - failed: " . $ex->getMessage()));
                 }
             } else {
-                $list .= "failed:<br> File doesn't exist ".html_escape($csvdata[0]);
+                $results->appendChild(LI("$shortpath - file doesn't exist"));
             }
             $linenum += 1;
         }
 
-        if (strlen($list) > 0) {
-            $this->theme->add_status("Adding {$csvfile->str()}", $list);
-        }
+        $this->theme->add_status("Adding {$csvfile->str()}", $results);
         fclose($csvhandle);
     }
 }
