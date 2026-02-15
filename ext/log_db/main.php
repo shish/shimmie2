@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use MicroCRUD\{ActionColumn, Column, Table, TextColumn};
 
-use function MicroHTML\{A, BR, INPUT, OPTION, SELECT, SPAN, emptyHTML};
+use function MicroHTML\{A, BR, INPUT, OPTION, SELECT, SPAN, emptyHTML, joinHTML};
 
 use MicroHTML\HTMLElement;
 use Symfony\Component\Console\Command\Command;
@@ -151,24 +151,34 @@ final class MessageColumn extends Column
             LogLevel::CRITICAL->value => "critical",
             default => "",
         };
-        $line = $row[$this->name];
-        $line = html_escape($line);
-        $line = preg_replace_callback(
-            "/(Image #|Post #|&gt;&gt;)(\d+)/s",
-            $this->link_image(...),
-            $line
-        );
-        assert(is_string($line));
-        return SPAN(["class" => "level-$c"], \MicroHTML\rawHTML($line));
-    }
+        $message = $row[$this->name];
 
-    /**
-     * @param array<string> $id
-     */
-    protected function link_image(array $id): string
-    {
-        $iid = int_escape($id[2]);
-        return "<a href='".make_link("post/view/$iid")."'>&gt;&gt;$iid</a>";
+        // Split message into parts, capturing the delimiters
+        $parts = preg_split(
+            "/(Image #|Post #|&gt;&gt;)(\d+)/",
+            $message,
+            -1,
+            PREG_SPLIT_DELIM_CAPTURE
+        );
+        assert(is_array($parts));
+
+        // Process parts into HTMLElements
+        // Pattern with 2 capture groups produces: [text, prefix, number, text, prefix, number, ...]
+        $elements = [];
+        for ($i = 0; $i < count($parts); $i += 3) {
+            // Add regular text part
+            if ($parts[$i] !== '') {
+                $elements[] = $parts[$i];
+            }
+
+            // If we have a match (prefix and number), create a link
+            if (isset($parts[$i + 1]) && isset($parts[$i + 2])) {
+                $iid = int_escape($parts[$i + 2]);
+                $elements[] = A(["href" => make_link("post/view/$iid")], ">>$iid");
+            }
+        }
+
+        return SPAN(["class" => "level-$c"], joinHTML("", $elements));
     }
 }
 
