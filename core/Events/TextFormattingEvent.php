@@ -28,7 +28,7 @@ final class TextFormattingEvent extends Event
         // We need to escape before formatting, instead of at display time,
         // because formatters will add their own HTML tags into the mix and
         // we don't want to escape those.
-        $this->formatted = html_escape(trim($text));
+        $this->formatted = htmlentities(trim($text), ENT_QUOTES, "UTF-8");
         $this->stripped  = $text;
     }
 
