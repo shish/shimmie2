@@ -503,6 +503,9 @@ final class Image implements \ArrayAccess
         if ($this->mime->base === MimeType::WEBP && $this->lossless) {
             return new MimeType(MimeType::WEBP_LOSSLESS);
         }
+        if ($this->mime->base === MimeType::GIF && $this->video) {
+            return new MimeType(MimeType::GIF_ANIMATED);
+        }
         return $this->mime;
     }
 
