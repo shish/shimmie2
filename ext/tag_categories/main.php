@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use MicroHTML\HTMLElement;
+
+use function MicroHTML\SPAN;
+
 /** @extends Extension<TagCategoriesTheme> */
 final class TagCategories extends Extension
 {
@@ -142,7 +146,7 @@ final class TagCategories extends Extension
         return $tag;
     }
 
-    public static function getTagHtml(string $h_tag, string $extra_text = ''): string
+    public static function getTagHtml(string $h_tag, string $extra_text = ''): HTMLElement
     {
         $h_tag_no_underscores = str_replace("_", " ", $h_tag);
 
@@ -153,16 +157,19 @@ final class TagCategories extends Extension
         if ((count($h_tag_split) > 1) and array_key_exists($h_tag_split[0], $tag_category_dict)) {
             $category = $h_tag_split[0];
             $h_tag = $h_tag_split[1];
-            $tag_category_css = ' tag_category_'.$category;
-            $tag_category_style = 'style="color:'.html_escape($tag_category_dict[$category]['color']).';" ';
+            $tag_category_css = 'tag_category_'.$category;
             $h_tag_no_underscores = str_replace("_", " ", $h_tag);
 
-            $h_tag_no_underscores = '<span class="'.$tag_category_css.'" '.$tag_category_style.'>'.$h_tag_no_underscores.$extra_text.'</span>';
+            return SPAN(
+                [
+                    "class" => $tag_category_css,
+                    "style" => "color:".$tag_category_dict[$category]['color'].";"
+                ],
+                $h_tag_no_underscores.$extra_text
+            );
         } else {
-            $h_tag_no_underscores .= $extra_text;
+            return SPAN($h_tag_no_underscores.$extra_text);
         }
-
-        return $h_tag_no_underscores;
     }
 
     public function page_update(): void
