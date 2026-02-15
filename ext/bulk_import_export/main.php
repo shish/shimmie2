@@ -17,77 +17,77 @@ final class BulkImportExport extends DataHandlerExtension
         global $database;
 
         if (
-            $this->supported_mime($event->mime)
-            && Ctx::$user->can(BulkImportExportPermission::BULK_IMPORT)
+            !$this->supported_mime($event->mime)
+            || !Ctx::$user->can(BulkImportExportPermission::BULK_IMPORT)
         ) {
-            $zip = new \ZipArchive();
+            return;
+        }
 
-            if ($zip->open($event->tmpname->str())) {
-                $json_data = $this->get_export_data($zip);
+        $zip = new \ZipArchive();
+        if (!$zip->open($event->tmpname->str())) {
+            throw new UserError("Could not open zip archive");
+        }
 
-                if (empty($json_data)) {
-                    return;
+        $json_data = $this->get_export_data($zip);
+        if (empty($json_data)) {
+            return;
+        }
+
+        $total = 0;
+        $skipped = 0;
+        $failed = 0;
+
+        while (!empty($json_data)) {
+            $item = array_pop($json_data);
+            try {
+                $image = Image::by_hash($item->hash);
+                if ($image !== null) {
+                    $skipped++;
+                    Log::info(BulkImportExportInfo::KEY, "Post $item->hash already present, skipping");
+                    continue;
                 }
 
-                $total = 0;
-                $skipped = 0;
-                $failed = 0;
+                $tmpfile = shm_tempnam("bulk_import");
+                $stream = $zip->getStream($item->hash);
+                if ($stream === false) {
+                    throw new UserError("Could not import " . $item->hash . ": File not in zip");
+                }
 
-                while (!empty($json_data)) {
-                    $item = array_pop($json_data);
-                    try {
-                        $image = Image::by_hash($item->hash);
-                        if ($image !== null) {
-                            $skipped++;
-                            Log::info(BulkImportExportInfo::KEY, "Post $item->hash already present, skipping");
-                            continue;
-                        }
+                $tmpfile->put_contents($stream);
 
-                        $tmpfile = shm_tempnam("bulk_import");
-                        $stream = $zip->getStream($item->hash);
-                        if ($stream === false) {
-                            throw new UserError("Could not import " . $item->hash . ": File not in zip");
-                        }
+                $database->with_savepoint(function () use ($item, $tmpfile, $event) {
+                    $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, new QueryArray([
+                        'tags' => $item->tags,
+                    ])))->images;
 
-                        $tmpfile->put_contents($stream);
-
-                        $database->with_savepoint(function () use ($item, $tmpfile, $event) {
-                            $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, new QueryArray([
-                                'tags' => $item->new_tags,
-                            ])))->images;
-
-                            if (count($images) === 0) {
-                                throw new UserError("Unable to import file $item->hash");
-                            }
-                            foreach ($images as $image) {
-                                $event->images[] = $image;
-                                if ($item->source !== null) {
-                                    $image->set_source($item->source);
-                                }
-                                send_event(new BulkImportEvent($image, $item));
-                            }
-                        });
-
-                        $total++;
-                    } catch (\Exception $ex) {
-                        $failed++;
-                        Log::error(BulkImportExportInfo::KEY, "Could not import " . $item->hash . ": " . $ex->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
-                    } finally {
-                        if (!empty($tmpfile) && $tmpfile->is_file()) {
-                            $tmpfile->unlink();
-                        }
+                    if (count($images) === 0) {
+                        throw new UserError("Unable to import file $item->hash");
                     }
-                }
+                    foreach ($images as $image) {
+                        $event->images[] = $image;
+                        if ($item->source !== null) {
+                            $image->set_source($item->source);
+                        }
+                        send_event(new BulkImportEvent($image, $item));
+                    }
+                });
 
-                Log::info(
-                    BulkImportExportInfo::KEY,
-                    "Imported $total items, skipped $skipped, $failed failed",
-                    "Imported $total items, skipped $skipped, $failed failed"
-                );
-            } else {
-                throw new UserError("Could not open zip archive");
+                $total++;
+            } catch (\Exception $ex) {
+                $failed++;
+                Log::error(BulkImportExportInfo::KEY, "Could not import " . $item->hash . ": " . $ex->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
+            } finally {
+                if (!empty($tmpfile) && $tmpfile->is_file()) {
+                    $tmpfile->unlink();
+                }
             }
         }
+
+        Log::info(
+            BulkImportExportInfo::KEY,
+            "Imported $total items, skipped $skipped, $failed failed",
+            "Imported $total items, skipped $skipped, $failed failed"
+        );
     }
 
     #[EventListener]
@@ -150,7 +150,7 @@ final class BulkImportExport extends DataHandlerExtension
     }
 
     /**
-     * @return array<mixed>
+     * @return null|array<\stdClass>
      */
     private function get_export_data(\ZipArchive $zip): ?array
     {
