@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, DIV, HR, P, TABLE, TD, TR, emptyHTML};
+use function MicroHTML\{A, DIV, HR, P, TABLE, TD, TR, emptyHTML, rawHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -78,9 +78,7 @@ class FutabaCommentListTheme extends CommentListTheme
 
         $tfe = send_event(new TextFormattingEvent($comment->comment));
 
-        //$i_uid = $comment->owner_id;
-        $h_name = html_escape($comment->owner->name);
-        //$h_poster_ip = html_escape($comment->poster_ip);
+        $name = $comment->owner->name;
         if ($trim) {
             $h_comment = truncate($tfe->stripped, 50);
         } else {
@@ -93,36 +91,37 @@ class FutabaCommentListTheme extends CommentListTheme
         $i_comment_id = $comment->id;
         $i_image_id = $comment->image_id;
 
-        $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
+        $userlink = A(["class" => "username", "href" => make_link("user/$name")], $name);
         $h_date = $comment->posted;
-        $h_del = "";
+        $del = null;
         if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
-            $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
+            $comment_preview = substr($tfe->stripped, 0, 50);
             $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner->name}:\n$comment_preview");
-            $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
+            $h_delete_script = "return confirm($j_delete_confirm_message);";
             $h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
-            $h_del = " - [<a onclick='$h_delete_script' href='$h_delete_link'>Delete</a>]";
+            $del = emptyHTML(" - [", A(["onclick" => $h_delete_script, "href" => $h_delete_link], "Delete"), "]");
         }
         if ($this->post_page) {
-            $h_reply = "[<a href='javascript: ShmComment.replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>]";
+            $j_name = json_encode($comment->owner->name);
+            $reply = emptyHTML("[", A(["href" => "javascript: ShmComment.replyTo($i_image_id, $i_comment_id, $j_name)"], "Reply"), "]");
         } else {
-            $h_reply = "[<a href='".make_link("post/view/$i_image_id")."'>Reply</a>]";
+            $reply = emptyHTML("[", A(["href" => make_link("post/view/$i_image_id")], "Reply"), "]");
         }
 
         if ($inner_id === 0) {
             return DIV(
                 ["class" => "comment", "style" => "margin-top: 8px;"],
-                $h_userlink,
-                $h_del,
+                $userlink,
+                $del,
                 $h_date,
                 "No.$i_comment_id",
-                $h_reply,
-                P($h_comment)
+                $reply,
+                P(rawHTML($h_comment))
             );
         } else {
             return TABLE(TR(
                 TD(["nowrap" => true, "class" => "doubledash"], ">>"),
-                TD(DIV(["class" => "reply"], $h_userlink, $h_del, $h_date, "No.$i_comment_id", P($h_comment)))
+                TD(DIV(["class" => "reply"], $userlink, $del, $h_date, "No.$i_comment_id", P(rawHTML($h_comment))))
             ));
         }
     }
