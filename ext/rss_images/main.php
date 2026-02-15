@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{LINK};
+use function MicroHTML\{DIV, LINK, P};
+
+use MicroHTML\HTMLElement;
 
 final class RSSImages extends Extension
 {
@@ -63,9 +65,9 @@ final class RSSImages extends Extension
      */
     private function do_rss(array $images, array $search_terms, int $page_number): void
     {
-        $data = "";
+        $items = [];
         foreach ($images as $image) {
-            $data .= $this->thumb($image);
+            $items[] = $this->thumb($image);
         }
 
         $title = Ctx::$config->get(SetupConfig::TITLE);
@@ -75,65 +77,51 @@ final class RSSImages extends Extension
             $search = url_escape(SearchTerm::implode($search_terms)) . "/";
         }
 
+        $links = [];
         if ($page_number > 1) {
             $prev_url = make_link("rss/images/$search".($page_number - 1));
-            $prev_link = "<atom:link rel=\"previous\" href=\"$prev_url\" />";
-        } else {
-            $prev_link = "";
+            $links[] = ATOM_LINK(["rel" => "previous", "href" => (string)$prev_url]);
         }
         $next_url = make_link("rss/images/$search".($page_number + 1));
-        $next_link = "<atom:link rel=\"next\" href=\"$next_url\" />"; // no end...
+        $links[] = ATOM_LINK(["rel" => "next", "href" => (string)$next_url]); // no end...
 
         $version = SysConfig::getVersion();
-        $xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
-<rss version=\"2.0\" xmlns:media=\"http://search.yahoo.com/mrss\" xmlns:atom=\"http://www.w3.org/2005/Atom\">
-    <channel>
-        <title>$title</title>
-        <description>The latest uploads to the image board</description>
-		<link>$base_href</link>
-		<generator>Shimmie-$version</generator>
-		<copyright>(c) 2007 Shish</copyright>
-		$prev_link
-		$next_link
-		$data
-	</channel>
-</rss>";
+
+        $rss = RSS(
+            ["version" => "2.0", "xmlns:media" => "http://search.yahoo.com/mrss/", "xmlns:atom" => "http://www.w3.org/2005/Atom"],
+            CHANNEL(
+                RSS_TITLE($title),
+                RSS_DESCRIPTION("The latest uploads to the image board"),
+                RSS_LINK($base_href),
+                RSS_GENERATOR("Shimmie-$version"),
+                RSS_COPYRIGHT("(c) 2007 Shish"),
+                ...$links,
+                ...$items
+            )
+        );
+
+        $xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n" . $rss;
         Ctx::$page->set_data(MimeType::RSS, $xml);
     }
 
-    private function thumb(Image $image): string
+    private function thumb(Image $image): HTMLElement
     {
-        $cached = Ctx::$cache->get("rss-item-image:{$image->id}");
-        if (!is_null($cached)) {
-            return $cached;
-        }
-
         $link = make_link("post/view/{$image->id}")->asAbsolute();
-        $tags = html_escape($image->get_tag_list());
-        $thumb_url = $image->get_thumb_link();
-        $image_url = $image->get_image_link();
+        $tags = $image->get_tag_list();
+        $thumb_url = $image->get_thumb_link()->asAbsolute();
+        $image_url = $image->get_image_link()->asAbsolute();
         $posted = date(DATE_RSS, \Safe\strtotime($image->posted));
-        $content = html_escape(
-            "<div>" .
-            "<p>" . $this->theme->build_thumb($image) . "</p>" .
-            "</div>"
+        $content = (string)DIV(P($this->theme->build_thumb($image)));
+
+        return ITEM(
+            RSS_TITLE("{$image->id} - $tags"),
+            RSS_LINK($link),
+            RSS_GUID(["isPermaLink" => "true"], (string)$link),
+            RSS_PUBDATE($posted),
+            RSS_DESCRIPTION($content),
+            MEDIA_THUMBNAIL(["url" => (string)$thumb_url]),
+            MEDIA_CONTENT(["url" => (string)$image_url])
         );
-
-        $data = "
-		<item>
-			<title>{$image->id} - $tags</title>
-			<link>$link</link>
-			<guid isPermaLink=\"true\">$link</guid>
-			<pubDate>$posted</pubDate>
-			<description>$content</description>
-			<media:thumbnail url=\"$thumb_url\"/>
-			<media:content url=\"$image_url\"/>
-		</item>
-		";
-
-        Ctx::$cache->set("rss-item-image:{$image->id}", $data, rand(43200, 86400));
-
-        return $data;
     }
 
     #[EventListener]

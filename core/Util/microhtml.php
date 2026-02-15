@@ -191,3 +191,92 @@ function SHM_POST_INFO(
         TD($show)
     );
 }
+
+/**
+ * RSS/XML Element Helpers
+ * Since MicroHTML only provides HTML elements, we need custom functions for RSS/XML elements
+ */
+
+// RSS Channel elements
+/**
+ * @param array<string, string> $attrs
+ */
+function RSS(array $attrs = [], string|HTMLElement|null ...$children): HTMLElement
+{
+    return new HTMLElement("rss", [$attrs, ...$children]);
+}
+
+function CHANNEL(string|HTMLElement|null ...$children): HTMLElement
+{
+    return new HTMLElement("channel", $children);
+}
+
+function ITEM(string|HTMLElement|null ...$children): HTMLElement
+{
+    return new HTMLElement("item", $children);
+}
+
+// RSS child elements
+function RSS_TITLE(string $text): HTMLElement
+{
+    return new HTMLElement("title", [$text]);
+}
+
+function RSS_DESCRIPTION(string $text): HTMLElement
+{
+    return new HTMLElement("description", [$text]);
+}
+
+function RSS_LINK(Url $url): HTMLElement
+{
+    return new HTMLElement("link", [$url]);
+}
+
+/**
+ * @param array<string, string> $attrs
+ */
+function RSS_GUID(array $attrs, string $guid): HTMLElement
+{
+    return new HTMLElement("guid", [$attrs, $guid]);
+}
+
+function RSS_PUBDATE(string $date): HTMLElement
+{
+    return new HTMLElement("pubDate", [$date]);
+}
+
+function RSS_GENERATOR(string $gen): HTMLElement
+{
+    return new HTMLElement("generator", [$gen]);
+}
+
+function RSS_COPYRIGHT(string $cop): HTMLElement
+{
+    return new HTMLElement("copyright", [$cop]);
+}
+
+// Atom namespace elements
+/**
+ * @param array<string, string> $attrs
+ */
+function ATOM_LINK(array $attrs): HTMLElement
+{
+    return new HTMLElement("atom:link", [$attrs]);
+}
+
+// Media RSS namespace elements
+/**
+ * @param array<string, string> $attrs
+ */
+function MEDIA_THUMBNAIL(array $attrs): HTMLElement
+{
+    return new HTMLElement("media:thumbnail", [$attrs]);
+}
+
+/**
+ * @param array<string, string> $attrs
+ */
+function MEDIA_CONTENT(array $attrs): HTMLElement
+{
+    return new HTMLElement("media:content", [$attrs]);
+}
