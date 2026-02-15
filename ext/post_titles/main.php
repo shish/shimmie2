@@ -77,14 +77,6 @@ final class PostTitles extends Extension
         $event->fields["title"] = $event->image['title'];
     }
 
-    #[EventListener]
-    public function onBulkImport(BulkImportEvent $event): void
-    {
-        if (isset($event->fields["title"])) {
-            $this->set_title($event->image->id, $event->fields["title"]);
-        }
-    }
-
     #[EventListener(priority: 60)]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {

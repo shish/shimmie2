@@ -23,17 +23,3 @@ class BulkExportEvent extends Event
         $this->image = $image;
     }
 }
-
-
-class BulkImportEvent extends Event
-{
-    /**
-     * @param array<string, mixed> $fields
-     */
-    public function __construct(
-        public Image $image,
-        public array $fields
-    ) {
-        parent::__construct();
-    }
-}
