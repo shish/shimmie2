@@ -57,7 +57,7 @@ final class BulkImportExport extends DataHandlerExtension
 
                 $database->with_savepoint(function () use ($item, $tmpfile, $event) {
                     $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, new QueryArray([
-                        'tags' => $item->new_tags,
+                        'tags' => $item->tags,
                     ])))->images;
 
                     if (count($images) === 0) {
