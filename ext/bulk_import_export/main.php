@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+/**
+ * @phpstan-type BulkExportMetaData = array<string, mixed>
+ */
 final class BulkImportExport extends DataHandlerExtension
 {
     public const KEY = "bulk_import_export";
@@ -29,7 +32,7 @@ final class BulkImportExport extends DataHandlerExtension
         }
 
         $json_data = $this->get_export_data($zip);
-        if (empty($json_data)) {
+        if ($json_data === null) {
             return;
         }
 
@@ -37,8 +40,8 @@ final class BulkImportExport extends DataHandlerExtension
         $skipped = 0;
         $failed = 0;
 
-        while (!empty($json_data)) {
-            $item = array_pop($json_data);
+        foreach ($json_data as $metadata) {
+            $item = (object)$metadata;
             try {
                 $image = Image::by_hash($item->hash);
                 if ($image !== null) {
@@ -55,7 +58,7 @@ final class BulkImportExport extends DataHandlerExtension
 
                 $tmpfile->put_contents($stream);
 
-                $database->with_savepoint(function () use ($item, $tmpfile, $event) {
+                $database->with_savepoint(function () use ($item, $metadata, $tmpfile, $event) {
                     $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, new QueryArray([
                         'tags' => $item->tags,
                     ])))->images;
@@ -68,7 +71,7 @@ final class BulkImportExport extends DataHandlerExtension
                         if ($item->source !== null) {
                             $image->set_source($item->source);
                         }
-                        send_event(new BulkImportEvent($image, $item));
+                        send_event(new BulkImportEvent($image, $metadata));
                     }
                 });
 
@@ -150,7 +153,7 @@ final class BulkImportExport extends DataHandlerExtension
     }
 
     /**
-     * @return null|array<\stdClass>
+     * @return null|array<BulkExportMetaData>
      */
     private function get_export_data(\ZipArchive $zip): ?array
     {
@@ -158,7 +161,7 @@ final class BulkImportExport extends DataHandlerExtension
         if ($info !== false) {
             try {
                 $json_string = \Safe\stream_get_contents($info);
-                $json_data = json_decode($json_string);
+                $json_data = \Safe\json_decode($json_string, flags: JSON_OBJECT_AS_ARRAY);
                 return $json_data;
             } finally {
                 fclose($info);
