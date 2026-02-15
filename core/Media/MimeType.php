@@ -33,6 +33,7 @@ final class MimeType
     public const AVIF = 'image/avif';
     public const BMP = 'image/bmp';
     public const GIF = 'image/gif';
+    public const GIF_ANIMATED = self::GIF."; animated=true";
     public const JPEG = 'image/jpeg';
     public const PNG = 'image/png';
     public const SVG = 'image/svg+xml';
