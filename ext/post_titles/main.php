@@ -80,8 +80,8 @@ final class PostTitles extends Extension
     #[EventListener]
     public function onBulkImport(BulkImportEvent $event): void
     {
-        if (array_key_exists("title", $event->fields) && $event->fields['title'] !== null) {
-            $this->set_title($event->image->id, $event->fields['title']);
+        if (property_exists($event->fields, "title") && $event->fields->title !== null) {
+            $this->set_title($event->image->id, $event->fields->title);
         }
     }
 
