@@ -91,6 +91,21 @@ class ImageInfoBoxBuildingEvent extends PartListBuildingEvent
     }
 }
 
+
+/**
+ * Collect post metadata in a format usable by ImageInfoSetEvent
+ */
+class ImageInfoGetEvent extends Event
+{
+    public function __construct(
+        public Image $image,
+        public QueryArray $params = new QueryArray(),
+    ) {
+        parent::__construct();
+    }
+}
+
+
 class ImageInfoSetEvent extends Event
 {
     public function __construct(

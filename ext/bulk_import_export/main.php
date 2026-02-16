@@ -59,19 +59,29 @@ final class BulkImportExport extends DataHandlerExtension
                 $tmpfile->put_contents($stream);
 
                 $database->with_savepoint(function () use ($item, $metadata, $tmpfile, $event) {
-                    $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, new QueryArray([
-                        'tags' => $item->tags,
-                    ])))->images;
+                    // Convert metadata to QueryArray compatible format
+                    /** @var array<string, string|string[]> $query_metadata */
+                    $query_metadata = [];
+                    foreach ($metadata as $key => $value) {
+                        if ($key === 'tags' && is_array($value)) {
+                            $query_metadata[$key] = Tag::implode($value);
+                        } elseif ($value !== null) {
+                            $query_metadata[$key] = $value;
+                        }
+                    }
+
+                    $images = send_event(new DataUploadEvent(
+                        $tmpfile,
+                        basename($item->filename),
+                        0,
+                        new QueryArray($query_metadata)
+                    ))->images;
 
                     if (count($images) === 0) {
                         throw new UserError("Unable to import file $item->hash");
                     }
                     foreach ($images as $image) {
                         $event->images[] = $image;
-                        if ($item->source !== null) {
-                            $image->set_source($item->source);
-                        }
-                        send_event(new BulkImportEvent($image, $metadata));
                     }
                 });
 
@@ -112,15 +122,10 @@ final class BulkImportExport extends DataHandlerExtension
 
             if ($zip->open($zip_filename->str(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
                 foreach ($event->items as $image) {
-                    $export_event = send_event(new BulkExportEvent($image));
-                    $data = $export_event->fields;
-                    $data["hash"] = $image->hash;
-                    $data["tags"] = $image->get_tag_array();
-                    $data["filename"] = $image->filename;
-                    $data["source"] = $image->source;
-
-                    $json_data[] = $data;
-
+                    $image_info = send_event(new ImageInfoGetEvent($image))->params;
+                    $image_info["hash"] = $image->hash;
+                    $image_info["filename"] = $image->filename;
+                    $json_data[] = $image_info;
                     $zip->addFile($image->get_image_filename()->str(), $image->hash);
                 }
 
