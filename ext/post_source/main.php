@@ -30,6 +30,15 @@ final class PostSource extends Extension
     }
 
     #[EventListener]
+    public function onImageInfoGet(ImageInfoGetEvent $event): void
+    {
+        $source = $event->image->get_source();
+        if ($source !== null) {
+            $event->params['source'] = $source;
+        }
+    }
+
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $source = $event->get_param('source');

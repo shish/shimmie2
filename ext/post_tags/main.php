@@ -148,6 +148,12 @@ final class PostTags extends Extension
     }
 
     #[EventListener]
+    public function onImageInfoGet(ImageInfoGetEvent $event): void
+    {
+        $event->params['tags'] = $event->image->get_tag_list();
+    }
+
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         if (
