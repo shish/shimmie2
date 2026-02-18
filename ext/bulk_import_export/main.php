@@ -33,28 +33,29 @@ class BulkImportExport extends DataHandlerExtension
                 while (!empty($json_data)) {
                     $item = array_pop($json_data);
                     try {
+                        $zipname = property_exists($item, "_filename") ? $item->_filename : $item->hash;
                         $image = Image::by_hash($item->hash);
                         if ($image != null) {
                             $skipped++;
-                            log_info(BulkImportExportInfo::KEY, "Post $item->hash already present, skipping");
+                            log_info(BulkImportExportInfo::KEY, "Post $zipname already present, skipping");
                             continue;
                         }
 
                         $tmpfile = shm_tempnam("bulk_import");
-                        $stream = $zip->getStream($item->hash);
+                        $stream = $zip->getStream($zipname);
                         if ($stream === false) {
-                            throw new UserError("Could not import " . $item->hash . ": File not in zip");
+                            throw new UserError("Could not import $zipname: File not in zip");
                         }
 
                         file_put_contents($tmpfile, $stream);
 
-                        $database->with_savepoint(function () use ($item, $tmpfile, $event) {
+                        $database->with_savepoint(function () use ($item, $zipname, $tmpfile, $event) {
                             $images = send_event(new DataUploadEvent($tmpfile, basename($item->filename), 0, [
-                                'tags' => $item->new_tags,
+                                'tags' => $item->tags,
                             ]))->images;
 
                             if (count($images) == 0) {
-                                throw new UserError("Unable to import file $item->hash");
+                                throw new UserError("Unable to import file $zipname");
                             }
                             foreach ($images as $image) {
                                 $event->images[] = $image;
@@ -68,7 +69,7 @@ class BulkImportExport extends DataHandlerExtension
                         $total++;
                     } catch (\Exception $ex) {
                         $failed++;
-                        log_error(BulkImportExportInfo::KEY, "Could not import " . $item->hash . ": " . $ex->getMessage(), "Could not import " . $item->hash . ": " . $ex->getMessage());
+                        log_error(BulkImportExportInfo::KEY, "Could not import $zipname: " . $ex->getMessage(), "Could not import $zipname: " . $ex->getMessage());
                     } finally {
                         if (!empty($tmpfile) && is_file($tmpfile)) {
                             unlink($tmpfile);
