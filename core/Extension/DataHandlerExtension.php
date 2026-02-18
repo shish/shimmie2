@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use function MicroHTML\DIV;
+
 /**
  * A common base class for data handler extensions
  *
@@ -115,8 +117,12 @@ abstract class DataHandlerExtension extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
+            $attrs = ["id" => "shm_post_media"];
+            foreach (send_event(new ImageInfoGetEvent($event->image))->params->toArray() as $key => $value) {
+                $attrs["data-$key"] = $value;
+            }
             // @phpstan-ignore-next-line
-            $media = $this->theme->build_media($event->image);
+            $media = DIV($attrs, $this->theme->build_media($event->image));
             Ctx::$page->add_block(new Block(null, $media, "main", 10, id: static::KEY . "_media"));
             if (Ctx::$config->get(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
                 $this->theme->display_metadata($event->image);
