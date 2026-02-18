@@ -16,8 +16,8 @@ final class ImageDeletionEvent extends Event
      * clean out related rows in their tables.
      */
     public function __construct(
-        public Image $image,
-        public bool $force = false,
+        public readonly Image $image,
+        public readonly bool $force = false,
     ) {
         parent::__construct();
     }

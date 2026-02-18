@@ -74,7 +74,7 @@ final class SetupTest extends ShimmiePHPUnitTestCase
         $page = self::get_page('nicedebug/foo%2Fbar/1');
         self::assertEquals(
             [
-                "args" => ["nicedebug","foo%2Fbar","1"],
+                "args" => ["nicedebug", "foo%2Fbar", "1"],
                 "theme" => "default",
                 "nice_urls" => true,
                 "base" => "/test",

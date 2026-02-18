@@ -13,10 +13,10 @@ trait Page_File
     abstract public function set_mime(MimeType|string $mime): void;
     abstract public function send_headers(): void;
 
-    protected ?Path $file = null;
-    protected bool $file_delete = false;
-    private ?string $file_filename = null;
-    private ?string $file_disposition = null;
+    public private(set) ?Path $file = null;
+    public private(set) bool $file_delete = false;
+    public private(set) ?string $file_filename = null;
+    public private(set) ?string $file_disposition = null;
 
     public function set_file(
         MimeType|string $mime,

@@ -7,7 +7,7 @@ namespace Shimmie2;
 #[\Attribute(\Attribute::TARGET_CLASS_CONSTANT)]
 final readonly class ConfigMeta
 {
-    public ConfigInput $input;
+    public private(set) ConfigInput $input;
 
     /**
      * @param ConfigInput $input Override the default UI renderer
