@@ -13,9 +13,9 @@ trait Page_Data
     abstract public function set_mime(MimeType|string $mime): void;
     abstract public function send_headers(): void;
 
-    public string $data = "";  // public only for unit test
-    private ?string $data_filename = null;
-    private ?string $data_disposition = null;
+    public private(set) string $data = "";
+    public private(set) ?string $data_filename = null;
+    public private(set) ?string $data_disposition = null;
 
     /**
      * Set the raw data to be sent.

@@ -15,16 +15,16 @@ trait Page_Page
 {
     abstract public function set_mode(PageMode $mode): void;
 
-    public string $title = "";
-    public string $heading = "";
-    public string $subheading = "";
-    protected string $layout = "grid";
+    public private(set) string $title = "";
+    public private(set) string $heading = "";
+    public private(set) string $subheading = "";
+    public private(set) string $layout = "grid";
 
     /** @var HTMLElement[] */
-    public array $html_headers = [];
+    public private(set) array $html_headers = [];
 
     /** @var Block[] */
-    public array $blocks = [];
+    public private(set) array $blocks = [];
 
     public function set_title(string $title): void
     {

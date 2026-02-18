@@ -107,7 +107,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         Ctx::setPage(new Page());
         send_event(new PageRequestEvent($method, $page_name, $get_args, $post_args));
         if (Ctx::$page->mode === PageMode::REDIRECT) {
-            Ctx::$page->code = 302;
+            Ctx::$page->set_code(302);
         }
         return Ctx::$page;
     }

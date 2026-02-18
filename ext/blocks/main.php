@@ -61,7 +61,7 @@ final class Blocks extends Extension
 
         $blocks = cache_get_or_set("blocks", fn () => $database->get_all("SELECT * FROM blocks"), 600);
         foreach ($blocks as $block) {
-            $path = implode("/", $event->args);
+            $path = $event->path;
             if (strlen($path) < 4000 && fnmatch($block['pages'], $path)) {
                 # Split by comma, trimming whitespaces, and not allowing empty elements.
                 $userclasses = preg_split('/\s*,+\s*/', strtolower($block['userclass'] ?? ""), 0, PREG_SPLIT_NO_EMPTY);

@@ -21,10 +21,15 @@ final class CustomHtmlHeaders extends Extension
         $site_title = Ctx::$config->get(SetupConfig::TITLE);
         $sitename_in_title = Ctx::$config->get(CustomHtmlHeadersConfig::SITENAME_IN_TITLE);
         if (!str_contains($page->title, $site_title)) {
+            // Make sure header is set to just the page title, because set_title()
+            // will set both title and heading if heading is empty
+            if (empty($page->heading)) {
+                $page->set_heading($site_title);
+            }
             if ($sitename_in_title === "prefix") {
-                $page->title = "$site_title - $page->title";
+                $page->set_title("$site_title - $page->title");
             } elseif ($sitename_in_title === "suffix") {
-                $page->title = "$page->title - $site_title";
+                $page->set_title("$page->title - $site_title");
             }
         }
     }
