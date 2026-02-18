@@ -36,6 +36,19 @@ final class PostDescription extends Extension
     }
 
     #[EventListener]
+    public function onImageInfoGet(ImageInfoGetEvent $event): void
+    {
+        global $database;
+        $description = (string) $database->get_one(
+            "SELECT description FROM image_descriptions WHERE image_id = :id",
+            ["id" => $event->image->id]
+        ) ?: null;
+        if ($description !== null) {
+            $event->params["description"] = $description;
+        }
+    }
+
+    #[EventListener]
     public function onImageInfoSet(ImageInfoSetEvent $event): void
     {
         $description = $event->get_param("description");
