@@ -142,7 +142,18 @@ final class ETServer extends Extension
             }
             $this->add_table("Server Versions", $versions, 50);
 
-
+            $extensions = [];
+            foreach ($reports as $r) {
+                $extra = $r['extensions']['extra'] ?? [];
+                if (is_array($extra)) {
+                    foreach ($extra as $ext) {
+                        if (!empty($ext)) {
+                            $extensions[$ext] = ($extensions[$ext] ?? 0) + 1;
+                        }
+                    }
+                }
+            }
+            $this->add_table("Extra Extensions", $extensions, 60);
         }
 
         if ($event->page_matches("et/registrations", method: "GET", permission: ETServerPermission::VIEW_REGISTRATIONS)) {
