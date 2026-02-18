@@ -13,9 +13,9 @@ namespace Shimmie2;
 abstract class Config
 {
     /** @var array<string, ConfigMeta> */
-    public array $metas = [];
+    protected array $metas = [];
     /** @var array<string, ConfigValue> */
-    public array $values = [];
+    protected array $values = [];
 
     /**
      * @param ConfigValue $value

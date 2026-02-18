@@ -10,9 +10,9 @@ namespace Shimmie2;
 final class LogEvent extends Event
 {
     public function __construct(
-        public string $section,
-        public int $priority,
-        public string $message,
+        public readonly string $section,
+        public readonly int $priority,
+        public readonly string $message,
     ) {
         parent::__construct();
     }

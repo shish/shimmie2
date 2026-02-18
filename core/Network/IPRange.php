@@ -6,8 +6,8 @@ namespace Shimmie2;
 
 abstract class IPRange
 {
-    public IPAddress $ip;
-    public int $mask;
+    public protected(set) IPAddress $ip;
+    public protected(set) int $mask;
 
     public static function parse(string $cidr): IPRange
     {

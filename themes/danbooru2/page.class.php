@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use function MicroHTML\{A, ARTICLE, BODY, DIV, FOOTER, H1, HEADER, IMG, LI, NAV, UL, emptyHTML};
+use function MicroHTML\{H3, SECTION};
 
 use MicroHTML\HTMLElement;
 
@@ -41,9 +42,6 @@ class Danbooru2Page extends Page
                     $sub_block_html[] = $block->body;
                     break;
                 case "main":
-                    if ($block->header === "Posts") {
-                        $block->header = "&nbsp;";
-                    }
                     $main_block_html[] = $this->block_html($block, false);
                     break;
                 default:
@@ -98,6 +96,19 @@ class Danbooru2Page extends Page
             ),
             FOOTER(DIV($footer_html))
         );
+    }
+
+    protected function block_html(Block $block, bool $hidable): HTMLElement
+    {
+        $html = SECTION(['id' => $block->id]);
+        if (!empty($block->header)) {
+            $header = ($block->header === "Posts") ? "&nbsp;" : $block->header;
+            $html->appendChild(H3(["data-toggle-sel" => "#{$block->id}", "class" => $hidable ? "shm-toggler" : ""], $header));
+        }
+        if (!empty($block->body)) {
+            $html->appendChild(DIV(['class' => "blockbody"], $block->body));
+        }
+        return $html;
     }
 
     private function navlinks(Url $link, HTMLElement|string $desc, bool $active): HTMLElement

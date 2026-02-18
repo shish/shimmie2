@@ -13,20 +13,19 @@ namespace Shimmie2;
  */
 final class PageRequestEvent extends Event
 {
-    private string $method;
-    public string $path;
-    public QueryArray $GET;
-    public QueryArray $POST;
+    private readonly string $method;
+    public readonly string $path;
+    public readonly QueryArray $GET;
+    public readonly QueryArray $POST;
 
     /**
      * @var string[]
      */
-    public array $args;
+    private readonly array $args;
     /**
      * @var array<string, string>
      */
     private array $named_args = [];
-    public int $page_num;
 
     public function __construct(
         string $method,

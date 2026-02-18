@@ -12,8 +12,8 @@ class SCoreException extends \RuntimeException
     public int $http_code = 500;
 
     public function __construct(
-        public string $error,
-        public ?\MicroHTML\HTMLElement $html = null,
+        public readonly string $error,
+        public readonly ?\MicroHTML\HTMLElement $html = null,
     ) {
         parent::__construct($error);
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-final class MediaProperties
+final readonly class MediaProperties
 {
     /**
      * @param ?int<0, max> $width Width of the media, or null if unknown

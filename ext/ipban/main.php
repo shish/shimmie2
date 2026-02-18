@@ -197,11 +197,11 @@ final class IPBan extends Extension
             $page->set_redirect(Url::referer_or());
         }
         if ($event->page_matches("ip_ban/list", method: "GET", permission: IPBanPermission::BAN_IP)) {
-            $event->GET['c_banner'] = Ctx::$user->name;
-            $event->GET['c_added'] = date('Y-m-d');
             $t = new IPBanTable(Ctx::$database->raw_db());
             $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET->toArray();
+            $t->inputs['c_banner'] = Ctx::$user->name;
+            $t->inputs['c_added'] = date('Y-m-d');
             $this->theme->display_bans($t->table($t->query()), $t->paginator());
         }
     }

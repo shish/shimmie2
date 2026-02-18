@@ -15,7 +15,7 @@ class Database
      * The PDO database connection object, for anyone who wants direct access.
      */
     private ?PDO $db = null;
-    public float $dbtime = 0.0;
+    public private(set) float $dbtime = 0.0;
 
     /**
      * Meta info about the database engine.
@@ -25,9 +25,7 @@ class Database
     /**
      * How many queries this DB object has run
      */
-    public int $query_count = 0;
-    /** @var string[] */
-    public array $queries = [];
+    public private(set) int $query_count = 0;
 
     public function __construct(
         private string $dsn
@@ -150,7 +148,6 @@ class Database
             "DB Query",
             attributes: ["query" => $query, "args" => $args, "method" => $method]
         );
-        $this->queries[] = $query;
         $this->query_count++;
         $this->dbtime += $dur;
     }
