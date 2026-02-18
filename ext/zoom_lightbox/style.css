@@ -1,0 +1,19 @@
+.glightbox-container {
+	.gprev, .gnext {
+		display: none;
+	}
+
+	.gslide-description {
+		background: var(--page);
+	}
+
+	.gdesc-inner {
+		padding: 1rem;
+	}
+
+	.gslide-title {
+		color: var(--text);
+		margin-top: 0;
+		margin-bottom: 1rem;
+	}
+}
