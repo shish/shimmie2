@@ -117,7 +117,11 @@ abstract class DataHandlerExtension extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
-            $attrs = ["id" => "shm_post_media"];
+            $attrs = [
+                "id" => "shm_post_media",
+                "data-handler" => static::KEY,
+                "data-mime" => $event->image->get_mime(),
+            ];
             foreach (send_event(new ImageInfoGetEvent($event->image))->params->toArray() as $key => $value) {
                 $attrs["data-$key"] = $value;
             }
