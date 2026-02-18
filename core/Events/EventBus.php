@@ -20,7 +20,7 @@ final class EventBus
 {
     /** @var array<class-string<Event>, list<array{0: Extension, 1: string}>> $event_listeners */
     private readonly array $event_listeners;
-    public int $event_count = 0;
+    public private(set) int $event_count = 0;
     private ?float $deadline = null;
 
     public function __construct()

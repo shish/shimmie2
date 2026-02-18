@@ -10,7 +10,7 @@ namespace Shimmie2;
 trait WithFlash
 {
     /** @var string[] */
-    public array $flash = [];
+    public private(set) array $flash = [];
 
     public function flash(string $message): void
     {

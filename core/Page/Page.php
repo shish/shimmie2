@@ -20,9 +20,9 @@ class Page
     use Page_Redirect;
     use Page_Error;
 
-    public int $code = 200;
-    public PageMode $mode = PageMode::PAGE;
-    private MimeType $mime;
+    public private(set) int $code = 200;
+    public private(set) PageMode $mode = PageMode::PAGE;
+    public private(set) MimeType $mime;
 
     /** @var string[] */
     private array $http_headers = [];

@@ -229,7 +229,7 @@ final class OuroborosAPI extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if (\Safe\preg_match("%(.*)\.(xml|json)$%", implode('/', $event->args), $matches)) {
+        if (\Safe\preg_match("%(.*)\.(xml|json)$%", $event->path, $matches)) {
             $event_args = $matches[1];
             $this->type = $matches[2];
 
@@ -279,7 +279,7 @@ final class OuroborosAPI extends Extension
                 $this->tagIndex($limit, $p, $order, $name, $name_pattern);
             }
         } elseif ($event->page_matches('post/show')) {
-            Ctx::$page->set_redirect(make_link(str_replace('post/show', 'post/view', implode('/', $event->args))));
+            Ctx::$page->set_redirect(make_link(str_replace('post/show', 'post/view', $event->path)));
         }
     }
 

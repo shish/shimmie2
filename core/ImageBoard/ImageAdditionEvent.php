@@ -15,7 +15,7 @@ final class ImageAdditionEvent extends Event
      * fails, then the image addition transaction will be rolled back)
      */
     public function __construct(
-        public Image $image,
+        public readonly Image $image,
     ) {
         parent::__construct();
     }

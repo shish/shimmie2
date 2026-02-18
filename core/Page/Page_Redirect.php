@@ -13,7 +13,7 @@ trait Page_Redirect
 
     abstract public function set_mode(PageMode $mode): void;
 
-    public ?Url $redirect = null;
+    public private(set) ?Url $redirect = null;
 
     /**
      * Set the URL to redirect to (remember to use make_link() if linking

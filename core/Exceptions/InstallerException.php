@@ -7,9 +7,9 @@ namespace Shimmie2;
 class InstallerException extends \RuntimeException
 {
     public function __construct(
-        public string $title,
-        public string $body,
-        public int $exit_code
+        public readonly string $title,
+        public readonly string $body,
+        public readonly int $exit_code
     ) {
         parent::__construct($body);
     }

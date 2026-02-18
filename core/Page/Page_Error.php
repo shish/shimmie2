@@ -14,7 +14,7 @@ trait Page_Error
     abstract public function set_mode(PageMode $mode): void;
     abstract public function set_code(int $code): void;
 
-    protected ?UserError $error = null;
+    public private(set) ?UserError $error = null;
 
     public function set_error(UserError $error): void
     {

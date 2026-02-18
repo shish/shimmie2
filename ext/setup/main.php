@@ -89,7 +89,7 @@ final class Setup extends Extension
 
         if ($event->page_starts_with("nicedebug")) {
             $page->set_data(MimeType::JSON, \Safe\json_encode([
-                "args" => $event->args,
+                "args" => explode("/", $event->path),
                 "theme" => get_theme(),
                 "nice_urls" => Url::are_niceurls_enabled(),
                 "base" => (string)Url::base(),
