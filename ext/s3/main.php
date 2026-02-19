@@ -157,7 +157,7 @@ final class S3 extends Extension
     }
 
     #[EventListener]
-    public function onImageReplace(MediaReplaceEvent $event): void
+    public function onMediaReplace(MediaReplaceEvent $event): void
     {
         $this->remove_file($event->old_hash);
         $this->sync_post($event->image);
@@ -226,7 +226,7 @@ final class S3 extends Extension
             $client->putObject(
                 $bucket,
                 $this->hash_to_path($image->hash),
-                $image->get_image_filename()->get_contents(),
+                $image->get_media_filename()->get_contents(),
                 [
                     'x-amz-acl' => 'public-read',
                     'Content-Type' => (string)$image->get_mime(),

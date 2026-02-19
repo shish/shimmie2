@@ -12,8 +12,8 @@ final class BulkDownloadTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
 
         // Upload some test images
-        $image_id_1 = self::post_image("tests/pbx_screenshot.jpg", "export test1");
-        $image_id_2 = self::post_image("tests/favicon.png", "export test2");
+        $image_id_1 = self::create_post("tests/pbx_screenshot.jpg", "export test1");
+        $image_id_2 = self::create_post("tests/favicon.png", "export test2");
 
         $image1 = Post::by_id_ex($image_id_1);
         $image2 = Post::by_id_ex($image_id_2);

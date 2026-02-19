@@ -65,7 +65,7 @@ final class RotateImage extends Extension
         $image_obj = Post::by_id_ex($image_id);
         $hash = $image_obj->hash;
 
-        $image_filename  = Filesystem::warehouse_path(Post::IMAGE_DIR, $hash);
+        $image_filename  = Filesystem::warehouse_path(Post::MEDIA_DIR, $hash);
         if (!$image_filename->exists()) {
             throw new ImageRotateException("{$image_filename->str()} does not exist.");
         }
@@ -122,7 +122,7 @@ final class RotateImage extends Extension
 
         $new_hash = $tmp_filename->md5();
         /* Move the new image into the main storage location */
-        $target = Filesystem::warehouse_path(Post::IMAGE_DIR, $new_hash);
+        $target = Filesystem::warehouse_path(Post::MEDIA_DIR, $new_hash);
         $tmp_filename->copy($target);
         send_event(new MediaReplaceEvent($image_obj, $tmp_filename));
 

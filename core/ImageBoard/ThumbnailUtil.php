@@ -103,7 +103,7 @@ final class ThumbnailUtil
     public static function create_image_thumb(Post $image, ?MediaEngine $engine = null): void
     {
         self::create_scaled_image(
-            $image->get_image_filename(),
+            $image->get_media_filename(),
             $image->get_thumb_filename(),
             self::get_thumbnail_max_size_scaled(),
             $image->get_mime(),

@@ -19,7 +19,7 @@ final class DataUploadEvent extends Event
     public int $size;
 
     /** @var Post[] */
-    public array $images = [];
+    public array $posts = [];
     public bool $handled = false;
     public bool $merged = false;
 
@@ -181,7 +181,7 @@ final class Upload extends Extension
                         'tags' => Tag::implode($tags),
                     ])));
                     $results = [];
-                    foreach ($dae->images as $image) {
+                    foreach ($dae->posts as $image) {
                         $results[] = new UploadSuccess($filename, $image->id);
                     }
                     return $results;
@@ -217,7 +217,7 @@ final class Upload extends Extension
                 /** @var array<string,string> $arr */
                 $metadata = new QueryArray($arr);
                 $event = send_event(new DataUploadEvent($file_path, $file_path->basename()->str(), 0, $metadata));
-                $images = $event->images;
+                $images = $event->posts;
                 if (count($images) === 0) {
                     $output->writeln("<error>No crash, but no posts uploaded</error>");
                     return Command::FAILURE;
@@ -327,10 +327,10 @@ final class Upload extends Extension
 
                 $new_images = $database->with_savepoint(function () use ($tmp_name, $name, $slot, $metadata) {
                     $event = send_event(new DataUploadEvent($tmp_name, basename($name), $slot, $metadata));
-                    if (count($event->images) === 0) {
+                    if (count($event->posts) === 0) {
                         throw new UploadException("MIME type not supported: " . $event->mime);
                     }
-                    return $event->images;
+                    return $event->posts;
                 });
                 foreach ($new_images as $image) {
                     $results[] = new UploadSuccess($name, $image->id);
@@ -368,10 +368,10 @@ final class Upload extends Extension
 
             $new_images = Ctx::$database->with_savepoint(function () use ($tmp_filename, $filename, $slot, $metadata) {
                 $event = send_event(new DataUploadEvent($tmp_filename, $filename, $slot, $metadata));
-                if (count($event->images) === 0) {
+                if (count($event->posts) === 0) {
                     throw new UploadException("File type not supported: " . $event->mime);
                 }
-                return $event->images;
+                return $event->posts;
             });
             foreach ($new_images as $image) {
                 $results[] = new UploadSuccess($url, $image->id);

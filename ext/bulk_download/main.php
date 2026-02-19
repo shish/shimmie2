@@ -44,7 +44,7 @@ final class BulkDownload extends Extension
 
         if ($zip->open($zip_filename->str(), \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
             foreach ($event->items as $image) {
-                $img_loc = $image->get_image_filename();
+                $img_loc = $image->get_media_filename();
 
                 if (!Ctx::$user->can(BulkDownloadPermission::UNLIMITED_SIZE)) {
                     $size_total += $img_loc->filesize();
@@ -57,11 +57,11 @@ final class BulkDownload extends Extension
                     $image_info = send_event(new PostInfoGetEvent($image))->params;
                     $image_info["hash"] = $image->hash;
                     $image_info["filename"] = $image->filename;
-                    $image_info["_filename"] = $image->get_nice_image_name();
+                    $image_info["_filename"] = $image->get_nice_media_name();
                     $json_data[] = $image_info->toArray();
                 }
 
-                $zip->addFile($img_loc->str(), $image->get_nice_image_name());
+                $zip->addFile($img_loc->str(), $image->get_nice_media_name());
             }
 
             if (count($json_data) > 0) {

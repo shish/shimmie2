@@ -10,7 +10,7 @@ final class PostLockTest extends ShimmiePHPUnitTestCase
     {
         // user can post
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
 
         // admin can lock
         self::log_in_as_admin();

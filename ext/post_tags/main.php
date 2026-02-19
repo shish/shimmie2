@@ -212,7 +212,7 @@ final class PostTags extends Extension
     #[EventListener]
     public function onPostDeletion(PostDeletionEvent $event): void
     {
-        $event->image->delete_tags_from_image();
+        $event->image->delete_tags();
     }
 
     #[EventListener]

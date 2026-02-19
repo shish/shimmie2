@@ -13,8 +13,8 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         self::assert_no_text("Prev | Index | Next");
 
         self::log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-        $this->post_image("tests/bedroom_workshop.jpg", "thing computer computing bedroom workshop");
+        $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $this->create_post("tests/bedroom_workshop.jpg", "thing computer computing bedroom workshop");
         self::log_out();
 
         self::get_page('post/list');
@@ -88,8 +88,8 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set(IndexConfig::BIG_SEARCH, 1);
 
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "asdf post1");
-        $image_id_2 = $this->post_image("tests/favicon.png", "asdf post2");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "asdf post1");
+        $image_id_2 = $this->create_post("tests/favicon.png", "asdf post2");
 
         // default user isn't limited
         self::assert_search_results(["asdf"], [$image_id_2, $image_id_1], "User can search for one tag");
@@ -101,8 +101,8 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set(IndexConfig::BIG_SEARCH, 1);
 
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "asdf post1");
-        $image_id_2 = $this->post_image("tests/favicon.png", "asdf post2");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "asdf post1");
+        $image_id_2 = $this->create_post("tests/favicon.png", "asdf post2");
         self::log_out();
 
         // default anon is limited
@@ -117,8 +117,8 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set(IndexConfig::BIG_SEARCH, 1);
 
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "asdf post1");
-        $image_id_2 = $this->post_image("tests/favicon.png", "asdf post2");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "asdf post1");
+        $image_id_2 = $this->create_post("tests/favicon.png", "asdf post2");
         self::log_out();
 
         // post/next and post/prev use additional tags internally,

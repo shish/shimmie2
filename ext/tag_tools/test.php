@@ -11,7 +11,7 @@ final class TagToolsTest extends ShimmiePHPUnitTestCase
         // Create a problem
         $ts = time(); // we need a tag that hasn't been used before
         send_event(new UserLoginEvent(User::by_name(self::ADMIN_NAME)));
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase$ts");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "TeStCase$ts");
 
         // Validate problem
         $page = self::get_page("post/view/$image_id_1");

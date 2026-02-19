@@ -14,7 +14,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
         self::assert_title("Upload");
     }
 
-    // Because $this->post_image() sends the event directly
+    // Because $this->create_post() sends the event directly
     public function testRawUpload(): void
     {
         global $database;
@@ -54,7 +54,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
     public function testUpload(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::assertGreaterThan(0, $image_id);
 
         self::get_page("post/view/$image_id");
@@ -63,10 +63,10 @@ final class UploadTest extends ShimmiePHPUnitTestCase
 
     public function testRejectDupe(): void
     {
-        $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         $e = self::assertException(UploadException::class, function () {
-            $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+            $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         });
         self::assertStringContainsString("already has hash", $e->getMessage());
     }
@@ -74,7 +74,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
     public function testRejectUnknownFiletype(): void
     {
         $this->expectException(\Exception::class);
-        $this->post_image("index.php", "test");
+        $this->create_post("index.php", "test");
     }
 
     public function testRejectHuge(): void
@@ -82,7 +82,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
         // FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
         file_put_contents("data/huge.jpg", \Safe\file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024 * 1024 * 3));
         $e = self::assertException(UploadException::class, function () {
-            $this->post_image("data/huge.jpg", "test");
+            $this->create_post("data/huge.jpg", "test");
         });
         unlink("data/huge.jpg");
         self::assertEquals("File too large (3.0MB > 1.0MB)", $e->getMessage());

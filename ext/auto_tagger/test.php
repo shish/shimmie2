@@ -40,17 +40,17 @@ final class AutoTaggerTest extends ShimmiePHPUnitTestCase
         self::get_page("auto_tag/export/auto_tag.csv");
         self::assert_text('"test1","test2"');
 
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test1");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test1");
         self::get_page("post/view/$image_id"); # check that the tag has been replaced
         self::assert_title("Post $image_id: test1 test2");
-        $this->delete_image($image_id);
+        $this->delete_post($image_id);
 
         send_event(new AddAutoTagEvent("test2", "test3"));
 
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test1");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test1");
         self::get_page("post/view/$image_id"); # check that the tag has been replaced
         self::assert_title("Post $image_id: test1 test2 test3");
-        $this->delete_image($image_id);
+        $this->delete_post($image_id);
 
         send_event(new DeleteAutoTagEvent("test1"));
         send_event(new DeleteAutoTagEvent("test2"));

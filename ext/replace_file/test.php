@@ -9,7 +9,7 @@ final class ReplaceFileTest extends ShimmiePHPUnitTestCase
     public function testReplacePage(): void
     {
         self::log_in_as_admin();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::get_page("replace/$image_id");
         self::assert_title("Replace File");
     }
@@ -19,7 +19,7 @@ final class ReplaceFileTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
 
         // upload an image
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         // check that the image is original
         $image = Post::by_id_ex($image_id);
@@ -60,9 +60,9 @@ final class ReplaceFileTest extends ShimmiePHPUnitTestCase
         self::assertEquals(md5_file("tests/favicon.png"), $image->hash);
 
         // check that new files exist and old files don't
-        self::assertFalse(Filesystem::warehouse_path(Post::IMAGE_DIR, $old_hash)->exists());
+        self::assertFalse(Filesystem::warehouse_path(Post::MEDIA_DIR, $old_hash)->exists());
         self::assertFalse(Filesystem::warehouse_path(Post::THUMBNAIL_DIR, $old_hash)->exists());
-        self::assertTrue(Filesystem::warehouse_path(Post::IMAGE_DIR, $new_hash)->exists());
+        self::assertTrue(Filesystem::warehouse_path(Post::MEDIA_DIR, $new_hash)->exists());
         self::assertTrue(Filesystem::warehouse_path(Post::THUMBNAIL_DIR, $new_hash)->exists());
     }
 }

@@ -30,7 +30,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             ],
             new IsEqual([
                 "tags" => $params->tag_conditions,
-                "imgs" => $params->img_conditions,
+                "imgs" => $params->metadata_conditions,
                 "order" => $params->order,
             ])
         );

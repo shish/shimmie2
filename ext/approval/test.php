@@ -10,7 +10,7 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
     public function testNoApprovalNeeded(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "some_tag");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "some_tag");
         self::assert_search_results(["some_tag"], [$image_id]);
     }
 
@@ -22,7 +22,7 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
 
         // Post an image
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "user_test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "user_test");
 
         // In unit test mode, images are auto-approved, so manually disapprove it
         self::log_in_as_admin();
@@ -41,7 +41,7 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
         // We'll just test that when an admin posts an unapproved image,
         // a regular user can't search for it with approved=no
         self::log_in_as_admin();
-        $admin_image_id = $this->post_image("tests/favicon.png", "admin_test");
+        $admin_image_id = $this->create_post("tests/favicon.png", "admin_test");
         Approval::disapprove_image($admin_image_id);
 
         // User should not find admin's unapproved posts
@@ -55,7 +55,7 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
     public function testAdminCanSeeAllUnapprovedPosts(): void
     {
         self::log_in_as_user();
-        $user_image_id = $this->post_image("tests/pbx_screenshot.jpg", "user_img");
+        $user_image_id = $this->create_post("tests/pbx_screenshot.jpg", "user_img");
 
         self::log_in_as_admin();
         Approval::disapprove_image($user_image_id);
@@ -70,7 +70,7 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
     public function testAnonCannotSeeUnapprovedPosts(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "anon_test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "anon_test");
 
         self::log_in_as_admin();
         Approval::disapprove_image($image_id);
@@ -86,7 +86,7 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
     public function testApprovedYesFilter(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "approved_test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "approved_test");
 
         // In unit test mode, images are auto-approved
         self::assert_search_results(["approved=yes"], [$image_id], "approved=yes finds approved posts");
@@ -98,10 +98,10 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
     public function testDefaultSearchShowsApprovedOnly(): void
     {
         self::log_in_as_user();
-        $approved_image_id = $this->post_image("tests/pbx_screenshot.jpg", "shared_tag");
+        $approved_image_id = $this->create_post("tests/pbx_screenshot.jpg", "shared_tag");
 
         self::log_in_as_admin();
-        $unapproved_image_id = $this->post_image("tests/favicon.png", "shared_tag");
+        $unapproved_image_id = $this->create_post("tests/favicon.png", "shared_tag");
         Approval::disapprove_image($unapproved_image_id);
 
         // Default search should only show approved posts for regular users
@@ -121,7 +121,7 @@ final class ApprovalTest extends ShimmiePHPUnitTestCase
     {
         // use can post but not see what they posted
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "some_tag");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "some_tag");
         Approval::disapprove_image($image_id);
         self::assert_search_results(["some_tag"], []);
 

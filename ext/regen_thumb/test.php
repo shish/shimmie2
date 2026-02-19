@@ -9,7 +9,7 @@ final class RegenThumbTest extends ShimmiePHPUnitTestCase
     public function testRegenThumb(): void
     {
         self::log_in_as_admin();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::get_page("post/view/$image_id");
 
         self::post_page("regen_thumb/one/$image_id");

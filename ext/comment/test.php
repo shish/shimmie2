@@ -16,7 +16,7 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
     public function testCommentsPage(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
 
         # a good comment
         send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
@@ -72,7 +72,7 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
         self::assert_title('Comments');
 
         self::log_in_as_admin();
-        $this->delete_image($image_id);
+        $this->delete_post($image_id);
         self::log_out();
 
         self::get_page('comment/list');
@@ -83,7 +83,7 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
     public function testEdit(): void
     {
         self::log_in_as_admin();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
 
         # make a comment
         $cpe = send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
@@ -100,7 +100,7 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
     public function testSingleDel(): void
     {
         self::log_in_as_admin();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
 
         # make a comment
         send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
@@ -117,7 +117,7 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
     public function testCommentLocking(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
 
         # user can comment on unlocked post
         send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment Before Lock"));

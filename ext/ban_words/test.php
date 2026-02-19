@@ -21,7 +21,7 @@ final class BanWordsTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set("banned_words", "viagra\nporn\n\n/http:.*\.cn\//");
 
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         $this->check_blocked($image_id, "kittens and viagra");
         $this->check_blocked($image_id, "kittens and ViagrA");
@@ -40,7 +40,7 @@ final class BanWordsTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set("banned_words", "СОЮЗ\nсоветских\nСоциалистических\n/Республик/\n");
 
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         // check lowercase ban matches uppercase word
         $this->check_blocked($image_id, "СОВЕТСКИХ");

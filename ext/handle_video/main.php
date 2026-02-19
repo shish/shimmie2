@@ -25,7 +25,7 @@ final class VideoFileHandler extends DataHandlerExtension
         $command->add_args("-v", "quiet");
         $command->add_args("-show_format");
         $command->add_args("-show_streams");
-        $command->add_args($image->get_image_filename()->str());
+        $command->add_args($image->get_media_filename()->str());
         $output = $command->execute();
         $data = json_decode($output, true);
 
@@ -71,7 +71,7 @@ final class VideoFileHandler extends DataHandlerExtension
 
     protected function create_thumb(Post $image): bool
     {
-        $inname = $image->get_image_filename();
+        $inname = $image->get_media_filename();
         $outname = $image->get_thumb_filename();
 
         $ok = false;

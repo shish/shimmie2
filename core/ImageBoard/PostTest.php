@@ -9,14 +9,14 @@ final class PostTest extends ShimmiePHPUnitTestCase
     public function testLoadData(): void
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "AC/DC");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "AC/DC");
         $image = Post::by_id_ex($image_id_1);
         self::assertNull($image->source);
         self::assertEquals("pbx_screenshot.jpg", $image->filename);
 
         self::assertEquals(
             "1 - ACDC.jpg",
-            $image->get_nice_image_name()
+            $image->get_nice_media_name()
         );
 
         Ctx::$config->set(SetupConfig::NICE_URLS, true);

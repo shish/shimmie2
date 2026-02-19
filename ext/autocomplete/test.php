@@ -9,7 +9,7 @@ final class AutoCompleteTest extends ShimmiePHPUnitTestCase
     public function testAuth(): void
     {
         self::log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "link");
+        $this->create_post("tests/pbx_screenshot.jpg", "link");
         send_event(new AddAliasEvent("prince_zelda", "link"));
 
         self::log_out();
@@ -38,7 +38,7 @@ final class AutoCompleteTest extends ShimmiePHPUnitTestCase
     public function testCategories(): void
     {
         self::log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "artist:bob");
+        $this->create_post("tests/pbx_screenshot.jpg", "artist:bob");
 
         $page = self::get_page('api/internal/autocomplete', ["s" => "bob"]);
         self::assertEquals(200, $page->code);
@@ -61,7 +61,7 @@ final class AutoCompleteTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
 
         // insert uppercase, lowercase, mixed case, and unrelated-words into the database
-        $this->post_image("tests/pbx_screenshot.jpg", "СОЮЗ советских Социалистических Республик");
+        $this->create_post("tests/pbx_screenshot.jpg", "СОЮЗ советских Социалистических Республик");
 
         // check that lowercase search returns all three cases of matching words
         $page = self::get_page('api/internal/autocomplete', ["s" => "со"]);

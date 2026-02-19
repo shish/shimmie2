@@ -9,7 +9,7 @@ final class PostOwnerTest extends ShimmiePHPUnitTestCase
     public function testOwnerEdit(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         self::log_in_as_admin();

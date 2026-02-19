@@ -88,7 +88,7 @@ final class TranscodeImage extends Extension
             if ($source_mime !== $target_mime) {
                 $tmp_filename = $this->transcode_image($event->path, $source_mime, $target_mime);
 
-                if ($event->file_modified === true && $event->path !== $event->image->get_image_filename()) {
+                if ($event->file_modified === true && $event->path !== $event->image->get_media_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up
                     $event->path->unlink();
                 }
@@ -182,7 +182,7 @@ final class TranscodeImage extends Extension
 
     private function transcode_and_replace_image(Post $image, MimeType $target_mime): void
     {
-        $original_file = Filesystem::warehouse_path(Post::IMAGE_DIR, $image->hash);
+        $original_file = Filesystem::warehouse_path(Post::MEDIA_DIR, $image->hash);
         $tmp_filename = $this->transcode_image($original_file, $image->get_mime(), $target_mime);
         send_event(new MediaReplaceEvent($image, $tmp_filename));
     }

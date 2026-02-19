@@ -17,7 +17,7 @@ final class XMLSitemapTest extends ShimmiePHPUnitTestCase
         self::assertEquals(200, $page->code);
 
         self::log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         // check DB with one image
         if ($xml->exists()) {

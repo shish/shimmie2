@@ -9,7 +9,7 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
     public function testRatingSafe(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "s"));
 
@@ -29,7 +29,7 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
     {
         Ctx::$config->set("ext_rating_anonymous_privs", ["s", "q"]);
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "e"));
 
@@ -42,10 +42,10 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
     {
         // post a safe image and an explicit image
         self::log_in_as_user();
-        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_e = $this->create_post("tests/bedroom_workshop.jpg", "pbx");
         $image_e = Post::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
-        $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id_s = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image_s = Post::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
 
@@ -80,13 +80,13 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
 
-        $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id_s = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image_s = Post::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
-        $image_id_q = $this->post_image("tests/favicon.png", "favicon");
+        $image_id_q = $this->create_post("tests/favicon.png", "favicon");
         $image_q = Post::by_id_ex($image_id_q);
         send_event(new RatingSetEvent($image_q, "q"));
-        $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
+        $image_id_e = $this->create_post("tests/bedroom_workshop.jpg", "bedroom");
         $image_e = Post::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
