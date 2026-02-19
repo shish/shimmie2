@@ -216,6 +216,6 @@ final class ImageIO extends Extension
             $page->add_http_header('Expires: ' . $expires);
         }
 
-        send_event(new ImageDownloadingEvent($image, $file, $mime, $params));
+        send_event(new MediaDownloadingEvent($image, $file, $mime, $params));
     }
 }

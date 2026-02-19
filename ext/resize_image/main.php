@@ -97,7 +97,7 @@ final class ResizeImage extends Extension
     }
 
     #[EventListener]
-    public function onImageDownloading(ImageDownloadingEvent $event): void
+    public function onMediaDownloading(MediaDownloadingEvent $event): void
     {
         if (Ctx::$config->get(ResizeConfig::GET_ENABLED) &&
             Ctx::$user->can(ImagePermission::EDIT_FILES) &&
