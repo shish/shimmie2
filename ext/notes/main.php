@@ -186,17 +186,17 @@ final class Notes extends Extension
     public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(NotesPermission::CREATE)) {
-            $event->add_part($this->theme->note_button($event->image->id));
-        }
-        if (Ctx::$user->can(NotesPermission::ADMIN)) {
-            $event->add_part($this->theme->nuke_notes_button($event->image->id));
-            $event->add_part($this->theme->nuke_requests_button($event->image->id));
+            $event->add_part($this->theme->note_button($event->image->id), 40);
         }
         if (Ctx::$user->can(NotesPermission::REQUEST)) {
-            $event->add_part($this->theme->request_button($event->image->id));
+            $event->add_part($this->theme->request_button($event->image->id), 41);
+        }
+        if (Ctx::$user->can(NotesPermission::ADMIN)) {
+            $event->add_part($this->theme->nuke_notes_button($event->image->id), 42);
+            $event->add_part($this->theme->nuke_requests_button($event->image->id), 43);
         }
 
-        $event->add_button("View Note History", "note_history/{$event->image->id}", 20);
+        $event->add_button("View Note History", "note_history/{$event->image->id}", 44);
     }
 
     #[EventListener]
