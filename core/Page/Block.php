@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A};
-
 use MicroHTML\HTMLElement;
 
 /**

@@ -9,7 +9,7 @@ final class ReportImageTest extends ShimmiePHPUnitTestCase
     public function testReportImage(): void
     {
         self::log_in_as_admin();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::get_page("post/view/$image_id");
 
         // Add image report

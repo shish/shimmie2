@@ -29,8 +29,8 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
             new QueryArray()
         ));
 
-        // Should have imported 2 images
-        self::assertCount(2, $dae->images);
+        // Should have imported 2 posts
+        self::assertCount(2, $dae->posts);
 
         // Check first image - should have tags from filename
         $image1 = Post::by_hash($test_image_1->md5());
@@ -95,8 +95,8 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
             new QueryArray()
         ));
 
-        // Should have imported 2 images
-        self::assertCount(2, $dae->images);
+        // Should have imported 2 posts
+        self::assertCount(2, $dae->posts);
 
         // Check first image - should have tags and metadata from export.json
         $image1 = Post::by_hash($hash1);
@@ -130,7 +130,7 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
 
         // First, upload an image directly
-        $image_id = self::post_image($test_image, "original");
+        $image_id = self::create_post($test_image, "original");
         $image = Post::by_id_ex($image_id);
         $original_hash = $image->hash;
 
@@ -150,7 +150,7 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         ));
 
         // Should not have imported any new images (duplicate was skipped)
-        self::assertCount(0, $dae->images);
+        self::assertCount(0, $dae->posts);
 
         // Original image should still exist with original tags
         $image_check = Post::by_hash($original_hash);

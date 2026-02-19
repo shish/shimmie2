@@ -13,7 +13,7 @@ final class NotATagTest extends ShimmiePHPUnitTestCase
         $database->execute("INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)", ["tag" => "face", "redirect" => "no-body-parts.html"]);
 
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         // Original

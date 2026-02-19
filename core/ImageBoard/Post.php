@@ -18,7 +18,7 @@ use GQLA\{Field, Query, Type};
 #[Type(name: "Post")]
 final class Post implements \ArrayAccess
 {
-    public const IMAGE_DIR = "images";
+    public const MEDIA_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
     private bool $in_db = false;
@@ -376,7 +376,7 @@ final class Post implements \ArrayAccess
     }
 
     #[Field(name: "image_link")]
-    public function graphql_image_link(): string
+    public function graphql_media_link(): string
     {
         return (string)$this->get_media_link();
     }
@@ -386,7 +386,7 @@ final class Post implements \ArrayAccess
      * in a filesystem-safe manner
      */
     #[Field(name: "nice_name")]
-    public function get_nice_image_name(): string
+    public function get_nice_media_name(): string
     {
         $text = send_event(new ParseLinkTemplateEvent('$id - $tags.$ext', $this))->text;
         $text = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $text);
@@ -450,12 +450,12 @@ final class Post implements \ArrayAccess
     /**
      * Figure out where the full size image is on disk.
      */
-    public function get_image_filename(): Path
+    public function get_media_filename(): Path
     {
         if (!is_null($this->tmp_file)) {
             return $this->tmp_file;
         }
-        return Filesystem::warehouse_path(self::IMAGE_DIR, $this->hash);
+        return Filesystem::warehouse_path(self::MEDIA_DIR, $this->hash);
     }
 
     /**
@@ -572,7 +572,7 @@ final class Post implements \ArrayAccess
      *
      * Normally in preparation to set them to a new set.
      */
-    public function delete_tags_from_image(): void
+    public function delete_tags(): void
     {
         Ctx::$database->execute("
             UPDATE tags
@@ -616,7 +616,7 @@ final class Post implements \ArrayAccess
 
         if (strtolower(Tag::implode($tags)) !== strtolower($this->get_tag_list())) {
             // delete old
-            $this->delete_tags_from_image();
+            $this->delete_tags();
 
             // insert each new tags
             $ids = array_map(fn ($tag) => Tag::get_or_create_id($tag), $tags);
@@ -643,19 +643,19 @@ final class Post implements \ArrayAccess
      */
     public function delete(): void
     {
-        $this->delete_tags_from_image();
+        $this->delete_tags();
         Ctx::$database->execute("DELETE FROM images WHERE id=:id", ["id" => $this->id]);
         Log::info("core_image", 'Deleted Post #'.$this->id.' ('.$this->hash.')');
-        $this->remove_image_only(quiet: true);
+        $this->delete_media(quiet: true);
     }
 
     /**
      * This function removes an image (and thumbnail) from the DISK ONLY.
      * It DOES NOT remove anything from the database.
      */
-    public function remove_image_only(bool $quiet = false): void
+    public function delete_media(bool $quiet = false): void
     {
-        $img = $this->get_image_filename();
+        $img = $this->get_media_filename();
         if ($img->exists()) {
             $img->unlink();
         }

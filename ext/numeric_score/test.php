@@ -9,7 +9,7 @@ final class NumericScoreTest extends ShimmiePHPUnitTestCase
     public function testNumericScore(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         self::get_page("post/view/$image_id");
         self::assert_text("Post Score: 0");
 

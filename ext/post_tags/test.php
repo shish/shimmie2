@@ -9,7 +9,7 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
     public function testValidChange(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         // Original
@@ -25,7 +25,7 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
     public function testInvalidChange(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         $e = self::assertException(TagSetException::class, function () use ($image) {
@@ -43,7 +43,7 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
         self::assertException(TagSetException::class, function () {
-            $this->post_image("tests/pbx_screenshot.jpg", str_repeat("a", 500));
+            $this->create_post("tests/pbx_screenshot.jpg", str_repeat("a", 500));
         });
     }
 }

@@ -190,7 +190,7 @@ final class GraphQL extends Extension
             return send_event(new DataUploadEvent($tmpname, $filename, $n, $post));
         });
 
-        return array_map(fn ($im) => $im->id, $event->images);
+        return array_map(fn ($im) => $im->id, $event->posts);
     }
 
     #[EventListener]

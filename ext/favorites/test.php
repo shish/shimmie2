@@ -9,7 +9,7 @@ final class FavoritesTest extends ShimmiePHPUnitTestCase
     public function testFavorites(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
 
         # No favourites
         self::get_page("post/view/$image_id");

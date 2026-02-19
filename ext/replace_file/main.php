@@ -57,7 +57,7 @@ final class ReplaceFile extends Extension
     }
 
     #[EventListener]
-    public function onImageReplace(MediaReplaceEvent $event): void
+    public function onMediaReplace(MediaReplaceEvent $event): void
     {
         $image = $event->image;
 
@@ -66,9 +66,9 @@ final class ReplaceFile extends Extension
             throw new MediaReplaceException("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
         }
 
-        $image->remove_image_only(); // Actually delete the old image file from disk
+        $image->delete_media(); // Actually delete the old image file from disk
 
-        $target = Filesystem::warehouse_path(Post::IMAGE_DIR, $event->new_hash);
+        $target = Filesystem::warehouse_path(Post::MEDIA_DIR, $event->new_hash);
         try {
             $event->tmp_filename->copy($target);
         } catch (\Exception $e) {

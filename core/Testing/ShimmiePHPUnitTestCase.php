@@ -253,20 +253,20 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     }
 
     // post things
-    protected function post_image(string $filename, string $tags): int
+    protected function create_post(string $filename, string $tags): int
     {
         $file = new Path($filename);
         $dae = send_event(new DataUploadEvent($file, $file->basename()->str(), 0, new QueryArray([
             "filename" => $file->basename()->str(),
             "tags" => $tags,
         ])));
-        if (count($dae->images) === 0) {
+        if (count($dae->posts) === 0) {
             throw new \Exception("No handler found for {$dae->mime}");
         }
-        return $dae->images[0]->id;
+        return $dae->posts[0]->id;
     }
 
-    protected function delete_image(int $image_id): void
+    protected function delete_post(int $image_id): void
     {
         $img = Post::by_id($image_id);
         if ($img) {

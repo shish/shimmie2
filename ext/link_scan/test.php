@@ -8,8 +8,8 @@ final class LinkScanTest extends ShimmiePHPUnitTestCase
 {
     public function testScanPostView(): void
     {
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase");
-        $image_id_2 = $this->post_image("tests/favicon.png", "TeStCase");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "TeStCase");
+        $image_id_2 = $this->create_post("tests/favicon.png", "TeStCase");
 
         $text = "
         Look at http://example.com/post/view/{$image_id_1} there is an image
@@ -26,8 +26,8 @@ final class LinkScanTest extends ShimmiePHPUnitTestCase
 
     public function testScanPostHash(): void
     {
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase");
-        $image_id_2 = $this->post_image("tests/favicon.png", "TeStCase");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "TeStCase");
+        $image_id_2 = $this->create_post("tests/favicon.png", "TeStCase");
 
         $text = "
         Look at http://example.com/_images/feb01bab5698a11dd87416724c7a89e3/foobar.jpg
@@ -41,8 +41,8 @@ final class LinkScanTest extends ShimmiePHPUnitTestCase
 
     public function testNotTriggered(): void
     {
-        $this->post_image("tests/pbx_screenshot.jpg", "TeStCase");
-        $this->post_image("tests/favicon.png", "TeStCase");
+        $this->create_post("tests/pbx_screenshot.jpg", "TeStCase");
+        $this->create_post("tests/favicon.png", "TeStCase");
 
         $text = "Look at feb01bab5698a11dd87416724c7a89e3/foobar.jpg";
         $page = self::get_page("post/list", ["search" => $text]);

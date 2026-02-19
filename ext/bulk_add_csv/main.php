@@ -65,7 +65,7 @@ final class BulkAddCSV extends Extension
                 'rating' => $rating,
             ])));
 
-            if (count($event->images) === 0) {
+            if (count($event->posts) === 0) {
                 throw new UploadException("File type not recognised");
             } else {
                 if ($thumbfile->exists()) {

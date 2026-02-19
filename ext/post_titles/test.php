@@ -9,7 +9,7 @@ final class PostTitleTest extends ShimmiePHPUnitTestCase
     public function testTitleEdit(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         send_event(new PostInfoSetEvent($image, 0, new QueryArray(["title" => "My Photo"])));
@@ -21,7 +21,7 @@ final class PostTitleTest extends ShimmiePHPUnitTestCase
     public function testTitleSearch(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         send_event(new PostInfoSetEvent($image, 0, new QueryArray(["title" => "My Photo"])));

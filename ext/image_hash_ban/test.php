@@ -20,7 +20,7 @@ final class ImageBanTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
 
         // Post image
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
 
@@ -35,14 +35,14 @@ final class ImageBanTest extends ShimmiePHPUnitTestCase
 
         // Can't repost
         self::assertException(UploadException::class, function () {
-            $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+            $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         });
 
         // Remove ban
         send_event(new RemoveImageHashBanEvent($this->hash));
 
         // Can repost
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
     }

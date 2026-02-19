@@ -51,13 +51,13 @@ final class ResizeImage extends Extension
     {
         if (Ctx::$config->get(ResizeConfig::UPLOAD)
                 && $this->can_resize_mime($event->mime)) {
-            $image_obj = $event->images[0];
+            $image_obj = $event->posts[0];
 
             $width = Ctx::$config->get(ResizeConfig::DEFAULT_WIDTH);
             $height = Ctx::$config->get(ResizeConfig::DEFAULT_HEIGHT);
             $isanigif = 0;
             if ($image_obj->get_mime()->base === MimeType::GIF) {
-                $image_filename = Filesystem::warehouse_path(Post::IMAGE_DIR, $image_obj->hash);
+                $image_filename = Filesystem::warehouse_path(Post::MEDIA_DIR, $image_obj->hash);
                 $fh = \Safe\fopen($image_filename->str(), 'rb');
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 while (!feof($fh) && $isanigif < 2) {
@@ -135,7 +135,7 @@ final class ResizeImage extends Extension
                     $new_height
                 ));
 
-                if ($event->file_modified === true && $event->path !== $event->image->get_image_filename()) {
+                if ($event->file_modified === true && $event->path !== $event->image->get_media_filename()) {
                     // This means that we're dealing with a temp file that will need cleaned up
                     $event->path->unlink();
                 }
@@ -169,7 +169,7 @@ final class ResizeImage extends Extension
         }
 
         $hash = $image_obj->hash;
-        $image_filename  = Filesystem::warehouse_path(Post::IMAGE_DIR, $hash);
+        $image_filename  = Filesystem::warehouse_path(Post::MEDIA_DIR, $hash);
 
         $info = \Safe\getimagesize($image_filename->str());
         assert(!is_null($info));

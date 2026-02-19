@@ -8,7 +8,7 @@ final class PostDescriptionTest extends ShimmiePHPUnitTestCase
 {
     public function testDescription(): void
     {
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::log_in_as_admin();
 
         send_event(new PostDescriptionSetEvent($image_id, "This is a descriptive description."));

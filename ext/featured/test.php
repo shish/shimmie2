@@ -10,7 +10,7 @@ final class FeaturedTest extends ShimmiePHPUnitTestCase
     {
         // Set up
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
 
         # FIXME: test that regular users can't feature things
 
@@ -31,7 +31,7 @@ final class FeaturedTest extends ShimmiePHPUnitTestCase
         self::assertEquals(200, $page->code);
 
         // after deletion, there should be no feature
-        $this->delete_image($image_id);
+        $this->delete_post($image_id);
         self::get_page("post/list");
         self::assert_no_text("Featured Post");
     }

@@ -15,7 +15,7 @@ final class WordFilterTest extends ShimmiePHPUnitTestCase
     public function _doThings(string $in, string $out): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         send_event(new CommentPostingEvent($image_id, Ctx::$user, $in));
         self::get_page("post/view/$image_id");
         self::assert_text($out);

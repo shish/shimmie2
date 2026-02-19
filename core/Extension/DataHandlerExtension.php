@@ -50,7 +50,7 @@ abstract class DataHandlerExtension extends Extension
                         $tags = Tag::explode($existing->get_tag_list() . " " . $event->metadata['tags']);
                         send_event(new TagSetEvent($existing, $tags));
                     }
-                    $event->images[] = $existing;
+                    $event->posts[] = $existing;
                     return;
                 } else {
                     throw new UploadException(">>{$existing->id} already has hash {$existing->hash}");
@@ -82,14 +82,14 @@ abstract class DataHandlerExtension extends Extension
             send_event(new PostInfoSetEvent($image, $event->slot, $event->metadata));
 
             // If everything is OK, then move the file to the archive
-            $filename = Filesystem::warehouse_path(Post::IMAGE_DIR, $event->hash);
+            $filename = Filesystem::warehouse_path(Post::MEDIA_DIR, $event->hash);
             try {
                 $event->tmpname->copy($filename);
             } catch (\Exception $e) {
                 throw new UploadException("Failed to copy file from uploads ({$event->tmpname->str()}) to archive ({$filename->str()}): ".$e->getMessage());
             }
 
-            $event->images[] = $iae->image;
+            $event->posts[] = $iae->image;
         }
     }
 

@@ -131,7 +131,7 @@ final class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item $image->id because its video codec is not known");
         }
 
-        $original_file = Filesystem::warehouse_path(Post::IMAGE_DIR, $image->hash);
+        $original_file = Filesystem::warehouse_path(Post::MEDIA_DIR, $image->hash);
         $tmp_filename = shm_tempnam("transcode_video");
         $tmp_filename = $this->transcode_video($original_file, $image->video_codec, $target_mime, $tmp_filename);
         send_event(new MediaReplaceEvent($image, $tmp_filename));
