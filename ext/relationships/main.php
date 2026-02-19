@@ -128,6 +128,29 @@ final class Relationships extends Extension
     }
 
     #[EventListener]
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
+    {
+        $event->add_action("parent-child", "Set Parent Child", permission: RelationshipsPermission::BULK_PARENT_CHILD);
+    }
+
+    #[EventListener]
+    public function onBulkAction(BulkActionEvent $event): void
+    {
+        if (
+            Ctx::$user->can(RelationshipsPermission::BULK_PARENT_CHILD)
+            && ($event->action === "parent-child")
+        ) {
+            $prev_id = null;
+            foreach ($event->items as $image) {
+                if ($prev_id !== null) {
+                    send_event(new ImageRelationshipSetEvent($image->id, $prev_id));
+                }
+                $prev_id = $image->id;
+            }
+        }
+    }
+
+    #[EventListener]
     public function onPostDeletion(PostDeletionEvent $event): void
     {
         global $database;
