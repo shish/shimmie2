@@ -77,6 +77,18 @@ function iterator_map_to_array(callable $callback, \Iterator $iter): array
     return iterator_to_array(iterator_map($callback, $iter));
 }
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @param array<TKey, TValue> $items
+ * @return \Generator<TKey, TValue>
+ */
+function array_to_generator(array $items): \Generator
+{
+    yield from $items;
+}
+
 ///////////////////////////////////////////////////////////////////////
 // Input / Output Sanitising
 

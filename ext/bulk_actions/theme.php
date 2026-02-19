@@ -80,7 +80,7 @@ class BulkActionsTheme extends Themelet
     public function render_tag_input(): HTMLElement
     {
         return emptyHTML(
-            LABEL(INPUT(["type" => "checkbox", "style" => 'width:13px;', "name" => "bulk_tags_replace", "value" => true]), "Replace tags"),
+            LABEL(INPUT(["type" => "checkbox", "style" => 'width:13px;', "name" => "bulk_tags_replace", "value" => "true"]), "Replace tags"),
             INPUT(["type" => "text", "name" => "bulk_tags", "class" => "autocomplete_tags", "required" => true, "placeholder" => "Enter tags here"]),
         );
     }
