@@ -226,7 +226,7 @@ final class DanbooruApi extends Extension
                 "id" => $img->id,
                 "md5" => $img->hash,
                 "file_name" => $img->filename,
-                "file_url" => $img->get_image_link(),
+                "file_url" => $img->get_media_link(),
                 "height" => $img->height,
                 "width" => $img->width,
                 "preview_url" => $img->get_thumb_link(),
