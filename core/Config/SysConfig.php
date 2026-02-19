@@ -122,7 +122,7 @@ final class SysConfig
      */
     public static function getVersion(bool $full = true): string
     {
-        $ver = defined("VERSION") ? constant("VERSION") : "2.12.0";
+        $ver = defined("VERSION") ? constant("VERSION") : "2.13.0-dev";
         $time = defined("BUILD_TIME") ? substr(str_replace("-", "", constant("BUILD_TIME")), 0, 8) : null;
         $hash = defined("BUILD_HASH") ? substr(constant("BUILD_HASH"), 0, 7) : null;
         $git = file_exists(".git") ? "git" : null;
