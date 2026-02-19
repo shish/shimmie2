@@ -71,18 +71,18 @@ final class ZipFileHandler extends DataHandlerExtension
                 }
 
                 $database->with_savepoint(function () use ($zip_filename, $metadata, $tmpfile, $event) {
-                    $images = send_event(new DataUploadEvent(
+                    $posts = send_event(new DataUploadEvent(
                         $tmpfile,
                         basename($metadata["filename"]),
                         0,
                         $metadata
-                    ))->images;
+                    ))->posts;
 
-                    if (count($images) === 0) {
+                    if (count($posts) === 0) {
                         throw new UserError("Unable to import file $zip_filename");
                     }
-                    foreach ($images as $image) {
-                        $event->images[] = $image;
+                    foreach ($posts as $post) {
+                        $event->posts[] = $post;
                     }
                 });
 

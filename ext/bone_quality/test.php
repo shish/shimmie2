@@ -18,7 +18,7 @@ final class BoneQualityTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
 
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "tagme");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "tagme");
         self::get_page("bone_quality");
         self::assert_text("Congratulations");
         self::assert_text("tagme</a> remaining: <span>1");
@@ -37,7 +37,7 @@ final class BoneQualityTest extends ShimmiePHPUnitTestCase
 
         self::log_in_as_user();
 
-        $this->post_image("tests/pbx_screenshot.jpg", "tagme");
+        $this->create_post("tests/pbx_screenshot.jpg", "tagme");
         self::get_page("bone_quality");
         self::assert_no_text("Congratulations");
     }

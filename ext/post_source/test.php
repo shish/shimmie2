@@ -9,7 +9,7 @@ final class PostSourceTest extends ShimmiePHPUnitTestCase
     public function testSourceEdit(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         send_event(new PostInfoSetEvent($image, 0, new QueryArray(["source" => "example.com"])));
@@ -22,7 +22,7 @@ final class PostSourceTest extends ShimmiePHPUnitTestCase
     public function testSourceSearch(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
         send_event(new PostInfoSetEvent($image, 0, new QueryArray(["source" => "http://example.com"])));

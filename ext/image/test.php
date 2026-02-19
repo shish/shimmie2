@@ -9,7 +9,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
     public function testUserStats(): void
     {
         self::log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $this->create_post("tests/pbx_screenshot.jpg", "test");
 
         // broken with sqlite?
         self::get_page("user/test");
@@ -19,7 +19,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
     public function testServeImage(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
         $page = self::get_page("image/$image_id/moo.jpg");
         self::assertEquals(200, $page->code);
     }
@@ -27,7 +27,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
     public function testServeThumb(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
         $page = self::get_page("thumb/$image_id/moo.jpg");
         self::assertEquals(200, $page->code);
     }
@@ -35,7 +35,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
     public function testDelete(): void
     {
         self::log_in_as_admin();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
 
         self::log_in_as_user();
         self::assertException(PermissionDenied::class, function () use ($image_id) {
@@ -58,7 +58,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
     {
         UserClass::$known_classes["user"]->set_permission(ImagePermission::DELETE_OWN_IMAGE, true);
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
 
         self::log_in_as_user();
         # delete twice because Trash extension

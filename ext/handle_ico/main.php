@@ -11,7 +11,7 @@ final class IcoFileHandler extends DataHandlerExtension
 
     protected function media_check_properties(Post $image): MediaProperties
     {
-        $fp = \Safe\fopen($image->get_image_filename()->str(), "r");
+        $fp = \Safe\fopen($image->get_media_filename()->str(), "r");
         try {
             fseek($fp, 6); // skip header
             $subheader = \Safe\unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", \Safe\fread($fp, 16));

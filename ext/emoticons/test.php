@@ -9,7 +9,7 @@ final class EmoticonsTest extends ShimmiePHPUnitTestCase
     public function testEmoticons(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
         send_event(new CommentPostingEvent($image_id, Ctx::$user, ":cool: :beans:"));
 

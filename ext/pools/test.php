@@ -38,8 +38,8 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
     public function testCreate(): array
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "pbx");
 
         self::get_page("pool/new");
 
@@ -164,8 +164,8 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
     public function testNuke(): void
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "pbx");
 
         self::get_page("pool/new");
 

@@ -26,7 +26,7 @@ class ImageFileHandlerTheme extends Themelet
     {
         if (function_exists("exif_read_data")) {
             # FIXME: only read from jpegs?
-            $exif = @exif_read_data($image->get_image_filename()->str(), "IFD0", true);
+            $exif = @exif_read_data($image->get_media_filename()->str(), "IFD0", true);
             if ($exif) {
                 $info = [];
                 foreach ($exif as $key => $section) {

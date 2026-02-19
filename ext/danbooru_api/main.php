@@ -358,7 +358,7 @@ final class DanbooruApi extends Extension
 
                 //Log::debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
                 // If it went ok, grab the id for the newly uploaded image and pass it in the header
-                return $dae->images[0];
+                return $dae->posts[0];
             });
 
             $newid = make_link("post/view/" . $newimg->id)->asAbsolute();

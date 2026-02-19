@@ -11,7 +11,7 @@ final class ImageFileHandlerTest extends ShimmiePHPUnitTestCase
     public function testPixelHander(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
         //self::assert_response(302);
@@ -44,7 +44,7 @@ final class ImageFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertTrue(is_callable($encodefunc));
         $encodefunc($img, "{$tmp->str()}.$format");
 
-        $image_id = $this->post_image("{$tmp->str()}.$format", "pbx computer screenshot $format");
+        $image_id = $this->create_post("{$tmp->str()}.$format", "pbx computer screenshot $format");
         $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
     }

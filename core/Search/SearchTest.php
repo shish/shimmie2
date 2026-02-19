@@ -12,8 +12,8 @@ final class SearchTest extends ShimmiePHPUnitTestCase
     public function testWeirdTags(): void
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
 
         self::assert_search_results(["question?"], [$image_id_1]);
         self::assert_search_results(["question."], [$image_id_2]);
@@ -26,9 +26,9 @@ final class SearchTest extends ShimmiePHPUnitTestCase
     public function testOrder(): void
     {
         self::log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
-        $this->post_image("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
-        $this->post_image("tests/favicon.png", "another");
+        $this->create_post("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
+        $this->create_post("tests/bedroom_workshop.jpg", "question. colon_thing exclamation%");
+        $this->create_post("tests/favicon.png", "another");
 
         $is1 = Search::find_posts(0, null, ["order=random_4123"]);
         $ids1 = array_map(fn ($image) => $image->id, $is1);
@@ -52,8 +52,8 @@ final class SearchTest extends ShimmiePHPUnitTestCase
     public function testUpload(): array
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "thing computer screenshot pbx phone");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "thing computer computing bedroom workshop");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "thing computer screenshot pbx phone");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "thing computer computing bedroom workshop");
         self::log_out();
 
         # make sure both uploads were ok

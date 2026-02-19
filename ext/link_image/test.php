@@ -9,7 +9,7 @@ final class LinkImageTest extends ShimmiePHPUnitTestCase
     public function testLinkImage(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pie");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pie");
         self::get_page("post/view/$image_id");
 
         $matches = [];

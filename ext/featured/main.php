@@ -23,7 +23,7 @@ final class Featured extends Extension
             if (!is_null($fid)) {
                 $image = Post::by_id($fid);
                 if (!is_null($image)) {
-                    Ctx::$page->set_data($image->get_mime(), $image->get_image_filename()->get_contents());
+                    Ctx::$page->set_data($image->get_mime(), $image->get_media_filename()->get_contents());
                 }
             }
         }

@@ -17,7 +17,7 @@ final class ImageFileHandler extends DataHandlerExtension
 
     protected function media_check_properties(Post $image): MediaProperties
     {
-        $filename = $image->get_image_filename();
+        $filename = $image->get_media_filename();
         $mime = $image->get_mime();
 
         $lossless = self::is_lossless($filename, $mime);

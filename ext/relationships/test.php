@@ -19,9 +19,9 @@ final class RelationshipsTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
 
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
-        $image_id_3 = $this->post_image("tests/favicon.png", "pbx");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_3 = $this->create_post("tests/favicon.png", "pbx");
 
         $image_1 = Post::by_id_ex($image_id_1);
         $image_2 = Post::by_id_ex($image_id_2);
@@ -133,9 +133,9 @@ final class RelationshipsTest extends ShimmiePHPUnitTestCase
     public function testSetParentByTagBase(): array
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
-        $image_id_3 = $this->post_image("tests/favicon.png", "pbx");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "pbx");
+        $image_id_3 = $this->create_post("tests/favicon.png", "pbx");
 
         $image_1 = Post::by_id_ex($image_id_1);
         $image_2 = Post::by_id_ex($image_id_2);

@@ -15,7 +15,7 @@ final class ViewPostTest extends ShimmiePHPUnitTestCase
     public function testViewPage(): void
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "test");
 
         self::get_page("post/view/$image_id_1");
         self::assert_title("Post $image_id_1: test");
@@ -24,7 +24,7 @@ final class ViewPostTest extends ShimmiePHPUnitTestCase
     public function testViewInfo(): void
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "test");
 
         Ctx::$config->set(ImageConfig::INFO, '$size // $filesize // $ext');
         self::get_page("post/view/$image_id_1");
@@ -34,9 +34,9 @@ final class ViewPostTest extends ShimmiePHPUnitTestCase
     public function testPrevNext(): void
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "test2");
-        $image_id_3 = $this->post_image("tests/favicon.png", "test");
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "test");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "test2");
+        $image_id_3 = $this->create_post("tests/favicon.png", "test");
 
         // Front image: no next, has prev
         self::assertException(PostNotFound::class, function () use ($image_id_1) {
@@ -69,7 +69,7 @@ final class ViewPostTest extends ShimmiePHPUnitTestCase
     public function testPrevNextDisabledWhenOrdered(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
 
         self::get_page("post/view/$image_id");
         self::assert_text("Prev");
@@ -87,7 +87,7 @@ final class ViewPostTest extends ShimmiePHPUnitTestCase
     public function testView404(): void
     {
         self::log_in_as_user();
-        $image_id_1 = $this->post_image("tests/favicon.png", "test");
+        $image_id_1 = $this->create_post("tests/favicon.png", "test");
         $idp1 = $image_id_1 + 1;
 
         self::assertException(PostNotFound::class, function () use ($idp1) {

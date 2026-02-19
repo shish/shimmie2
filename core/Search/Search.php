@@ -207,7 +207,7 @@ final class Search
             // we're going to apply the offset / limit to the image_tags
             // subquery, and applying extra conditions to the top-level
             // query might reduce the total results below the target limit
-            && empty($params->img_conditions)
+            && empty($params->metadata_conditions)
             // We can only do this if we're sorting by ID, because
             // we're going to be using the image_tags table, which
             // only has image_id and tag_id, not any other columns
@@ -343,11 +343,11 @@ final class Search
          * Merge all the image metadata searches into one generic querylet
          * and append to the base querylet with "AND blah"
          */
-        if (!empty($params->img_conditions)) {
+        if (!empty($params->metadata_conditions)) {
             $n = 0;
             $img_sql = "";
             $img_vars = [];
-            foreach ($params->img_conditions as $iq) {
+            foreach ($params->metadata_conditions as $iq) {
                 if ($n++ > 0) {
                     $img_sql .= " AND";
                 }

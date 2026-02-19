@@ -9,7 +9,7 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
     public function testRandom(): void
     {
         self::log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
         self::log_out();
 
         $page = self::get_page("random_image/view");
@@ -35,7 +35,7 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
         });
 
         # enabled, image = text
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
         $page = self::get_page("post/list");
         $page->find_block("Random Post"); // will throw if missing
 
@@ -47,7 +47,7 @@ final class RandomImageTest extends ShimmiePHPUnitTestCase
         });
 
         # disabled, no image = no image
-        $this->delete_image($image_id);
+        $this->delete_post($image_id);
         $page = self::get_page("post/list");
         self::assertException(\Exception::class, function () use ($page) {
             $page->find_block("Random Post");

@@ -357,7 +357,7 @@ final class OuroborosAPI extends Extension
                     0,
                     $meta
                 ));
-                return $dae->images[0];
+                return $dae->posts[0];
             });
             $this->sendResponse(200, (string)make_link('post/view/' . $image->id), true);
         } catch (UploadException $e) {

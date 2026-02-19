@@ -11,7 +11,7 @@ class TombstonesTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
 
         // Post image
-        $image_id = self::post_image("tests/pbx_screenshot.jpg", "pbx");
+        $image_id = self::create_post("tests/pbx_screenshot.jpg", "pbx");
         $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
 

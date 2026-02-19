@@ -184,7 +184,7 @@ final class ImageIO extends Extension
             $file = $image->get_thumb_filename();
         } else {
             $mime = $image->get_mime();
-            $file = $image->get_image_filename();
+            $file = $image->get_media_filename();
         }
         if (!$file->exists()) {
             throw new PostNotFound("Image not found");
@@ -205,7 +205,7 @@ final class ImageIO extends Extension
             if ($type === "thumb") {
                 $page->set_file($mime, $file);
             } else {
-                $page->set_file($mime, $file, filename: $image->get_nice_image_name(), disposition: "inline");
+                $page->set_file($mime, $file, filename: $image->get_nice_media_name(), disposition: "inline");
             }
 
             if (Ctx::$config->get(ImageConfig::EXPIRES)) {

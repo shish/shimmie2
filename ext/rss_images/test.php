@@ -9,7 +9,7 @@ final class RSSImagesTest extends ShimmiePHPUnitTestCase
     public function testImageFeed(): void
     {
         self::log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::log_out();
 
         self::get_page('rss/images');
