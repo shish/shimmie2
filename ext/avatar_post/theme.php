@@ -15,7 +15,7 @@ class AvatarPostTheme extends Themelet
         $avatar_e = send_event(new BuildAvatarEvent(Ctx::$user));
         $current = $avatar_e->html;
 
-        $image = Image::by_id($image_id);
+        $image = Post::by_id($image_id);
         if (!$image) {
             throw new PostNotFound("Image $image_id not found");
         }
@@ -25,7 +25,7 @@ class AvatarPostTheme extends Themelet
         Ctx::$page->add_block(new Block("Avatar Editor", $this->avatar_editor_html($image)));
     }
 
-    public function avatar_editor_html(Image $image): HTMLElement
+    public function avatar_editor_html(Post $image): HTMLElement
     {
         $url = $image->get_thumb_link();
         return DIV(

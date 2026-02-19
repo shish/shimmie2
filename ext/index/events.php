@@ -20,7 +20,7 @@ class SearchTermParseEvent extends Event
     public bool $negative = false;
     /** @var string[] */
     public array $context = [];
-    /** @var ImgCondition[] */
+    /** @var MetadataCondition[] */
     public array $img_conditions = [];
     /** @var TagCondition[] */
     public array $tag_conditions = [];
@@ -60,10 +60,10 @@ class SearchTermParseEvent extends Event
 
     public function add_querylet(Querylet $q): void
     {
-        $this->add_img_condition(new ImgCondition($q, !$this->negative));
+        $this->add_img_condition(new MetadataCondition($q, !$this->negative));
     }
 
-    public function add_img_condition(ImgCondition $c): void
+    public function add_img_condition(MetadataCondition $c): void
     {
         $this->img_conditions[] = $c;
     }

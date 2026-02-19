@@ -13,7 +13,7 @@ class TranscodeImageTheme extends Themelet
      *
      * @param array<string, ?MimeType> $options
      */
-    public function get_transcode_html(Image $image, array $options): \MicroHTML\HTMLElement
+    public function get_transcode_html(Post $image, array $options): \MicroHTML\HTMLElement
     {
         return SHM_FORM(
             action: make_link("transcode/{$image->id}"),

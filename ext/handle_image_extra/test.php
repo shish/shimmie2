@@ -32,7 +32,7 @@ final class ExtraImageFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertEquals(200, $page->code);
 
         // check that it was converted to png
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         self::assertEquals("image/png", $image->get_mime());
     }
 }

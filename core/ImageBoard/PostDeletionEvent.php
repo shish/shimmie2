@@ -7,7 +7,7 @@ namespace Shimmie2;
 /**
  * An image is being deleted.
  */
-final class ImageDeletionEvent extends Event
+final class PostDeletionEvent extends Event
 {
     /**
      * Deletes an image.
@@ -16,7 +16,7 @@ final class ImageDeletionEvent extends Event
      * clean out related rows in their tables.
      */
     public function __construct(
-        public readonly Image $image,
+        public readonly Post $image,
         public readonly bool $force = false,
     ) {
         parent::__construct();

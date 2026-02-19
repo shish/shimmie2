@@ -63,7 +63,7 @@ final class ZipFileHandler extends DataHandlerExtension
                 }
 
                 // @phpstan-ignore-next-line - we know this is a string from the checks above
-                $image = Image::by_hash($metadata["hash"]);
+                $image = Post::by_hash($metadata["hash"]);
                 if ($image !== null) {
                     $skipped++;
                     Log::info(self::KEY, "$zip_filename already present, skipping");
@@ -108,7 +108,7 @@ final class ZipFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function media_check_properties(Image $image): ?MediaProperties
+    protected function media_check_properties(Post $image): ?MediaProperties
     {
         return null;
     }
@@ -118,7 +118,7 @@ final class ZipFileHandler extends DataHandlerExtension
         return false;
     }
 
-    protected function create_thumb(Image $image): bool
+    protected function create_thumb(Post $image): bool
     {
         return false;
     }
@@ -138,7 +138,7 @@ final class ZipFileHandler extends DataHandlerExtension
      *   ...
      * ]
      *
-     * Output (ImageInfoSetEvent format):
+     * Output (PostInfoSetEvent format):
      * [
      *   "abc123" => QueryArray([
      *     "hash" => "abc123",

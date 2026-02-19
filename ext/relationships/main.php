@@ -25,8 +25,8 @@ final class Relationships extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["parent_id"] = ImagePropType::INT;
-        Image::$prop_types["has_children"] = ImagePropType::BOOL;
+        Post::$prop_types["parent_id"] = PostPropType::INT;
+        Post::$prop_types["has_children"] = PostPropType::BOOL;
     }
 
     #[EventListener]
@@ -52,7 +52,7 @@ final class Relationships extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         if (Ctx::$user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)) {
             if ($event->params['tags'] ? !\Safe\preg_match('/parent[=:]/', $event->params->req("tags")) : true) { //Ignore parent if tags contain parent metatag
@@ -66,7 +66,7 @@ final class Relationships extends Extension
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         $this->theme->relationship_info($event->image);
     }
@@ -122,13 +122,13 @@ final class Relationships extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
+    public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_parent_editor_html($event->image), 45);
     }
 
     #[EventListener]
-    public function onImageDeletion(ImageDeletionEvent $event): void
+    public function onPostDeletion(PostDeletionEvent $event): void
     {
         global $database;
 
@@ -154,7 +154,7 @@ final class Relationships extends Extension
         if ($old_parent === $event->parent_id) {
             return;  // no change
         }
-        if (!Image::by_id($event->parent_id) || !Image::by_id($event->child_id)) {
+        if (!Post::by_id($event->parent_id) || !Post::by_id($event->child_id)) {
             return;  // one of the images doesn't exist
         }
 
@@ -167,14 +167,14 @@ final class Relationships extends Extension
     }
 
     /**
-     * @return Image[]
+     * @return Post[]
      */
     public static function get_children(int $image_id): array
     {
         global $database;
         $child_ids = $database->get_col("SELECT id FROM images WHERE parent_id = :pid ", ["pid" => $image_id]);
 
-        return Search::get_images($child_ids);
+        return Search::get_posts($child_ids);
     }
 
     private function remove_parent(int $imageID): void
@@ -213,7 +213,7 @@ final class Relationships extends Extension
     {
         global $database;
 
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
 
         $count = $database->get_one(
             "SELECT COUNT(*) FROM images WHERE id!=:id AND parent_id=:pid",
@@ -224,19 +224,19 @@ final class Relationships extends Extension
     }
 
     /**
-     * @return Image[]
+     * @return Post[]
      */
     public static function get_siblings(int $image_id): array
     {
         global $database;
 
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
 
         $sibling_ids = $database->get_col(
             "SELECT id FROM images WHERE id!=:id AND parent_id=:pid",
             ["id" => $image_id, "pid" => $image['parent_id']]
         );
-        $siblings = Search::get_images($sibling_ids);
+        $siblings = Search::get_posts($sibling_ids);
 
         return $siblings;
     }

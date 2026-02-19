@@ -57,7 +57,7 @@ class Tombstones extends Extension
             $post_id = $event->get_iarg('post_id');
             $tombstone = $database->get_row("SELECT * FROM tombstones WHERE post_id=:post_id", ["post_id" => $post_id]);
             if (!is_null($tombstone)) {
-                if (!is_null(Image::by_id($post_id))) {
+                if (!is_null(Post::by_id($post_id))) {
                     // SQLite can re-use IDs of deleted rows, so if the
                     // post exists, ignore the tombstone
                     return;
@@ -83,7 +83,7 @@ class Tombstones extends Extension
     }
 
     #[EventListener]
-    public function onImageDeletion(ImageDeletionEvent $event): void
+    public function onPostDeletion(PostDeletionEvent $event): void
     {
         global $database;
 

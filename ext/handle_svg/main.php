@@ -31,7 +31,7 @@ final class SVGFileHandler extends DataHandlerExtension
         }
     }
 
-    protected function media_check_properties(Image $image): MediaProperties
+    protected function media_check_properties(Post $image): MediaProperties
     {
         $msp = new MiniSVGParser($image->get_image_filename()->str());
         return new MediaProperties(
@@ -46,7 +46,7 @@ final class SVGFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function create_thumb(Image $image): bool
+    protected function create_thumb(Post $image): bool
     {
         try {
             // Normally we require imagemagick, but for unit tests we can use a no-op engine

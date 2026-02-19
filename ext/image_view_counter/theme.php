@@ -11,7 +11,7 @@ use function MicroHTML\{P,joinHTML};
 class ImageViewCounterTheme extends Themelet
 {
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function view_popular(array $images): void
     {

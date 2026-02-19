@@ -8,7 +8,7 @@ final class SearchParameters
 {
     /**
      * @param TagCondition[] $tag_conditions
-     * @param ImgCondition[] $img_conditions
+     * @param MetadataCondition[] $img_conditions
      */
     public function __construct(
         public readonly array $tag_conditions = [],

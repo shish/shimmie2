@@ -14,13 +14,13 @@ final class ReplaceFile extends Extension
     {
         if ($event->page_matches("replace/{image_id}", method: "GET", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id_ex($image_id);
+            $image = Post::by_id_ex($image_id);
             $this->theme->display_replace_page($image_id);
         }
 
         if ($event->page_matches("replace/{image_id}", method: "POST", permission: ReplaceFilePermission::REPLACE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id_ex($image_id);
+            $image = Post::by_id_ex($image_id);
 
             if (!empty($event->POST->get("url"))) {
                 $tmp_filename = shm_tempnam("transload");
@@ -38,7 +38,7 @@ final class ReplaceFile extends Extension
                 $limit = to_shorthand_int(Ctx::$config->get(UploadConfig::SIZE));
                 throw new UploadException("File too large ($size > $limit)");
             }
-            send_event(new ImageReplaceEvent($image, $tmp_filename));
+            send_event(new MediaReplaceEvent($image, $tmp_filename));
             if ($event->POST->get("source")) {
                 send_event(new SourceSetEvent($image, $event->POST->req("source")));
             }
@@ -48,7 +48,7 @@ final class ReplaceFile extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         /* In the future, could perhaps allow users to replace images that they own as well... */
         if (Ctx::$user->can(ReplaceFilePermission::REPLACE_IMAGE)) {
@@ -57,22 +57,22 @@ final class ReplaceFile extends Extension
     }
 
     #[EventListener]
-    public function onImageReplace(ImageReplaceEvent $event): void
+    public function onImageReplace(MediaReplaceEvent $event): void
     {
         $image = $event->image;
 
-        $duplicate = Image::by_hash($event->new_hash);
+        $duplicate = Post::by_hash($event->new_hash);
         if (!is_null($duplicate) && $duplicate->id !== $image->id) {
-            throw new ImageReplaceException("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
+            throw new MediaReplaceException("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
         }
 
         $image->remove_image_only(); // Actually delete the old image file from disk
 
-        $target = Filesystem::warehouse_path(Image::IMAGE_DIR, $event->new_hash);
+        $target = Filesystem::warehouse_path(Post::IMAGE_DIR, $event->new_hash);
         try {
             $event->tmp_filename->copy($target);
         } catch (\Exception $e) {
-            throw new ImageReplaceException("Failed to copy file from uploads ({$event->tmp_filename->str()}) to archive ({$target->str()}): {$e->getMessage()}");
+            throw new MediaReplaceException("Failed to copy file from uploads ({$event->tmp_filename->str()}) to archive ({$target->str()}): {$e->getMessage()}");
         }
         $event->tmp_filename->unlink();
 
@@ -80,7 +80,7 @@ final class ReplaceFile extends Extension
         $event->image->hash = $event->new_hash;
         $filesize = $target->filesize();
         if ($filesize === 0) {
-            throw new ImageReplaceException("Replacement file size is zero");
+            throw new MediaReplaceException("Replacement file size is zero");
         }
         $event->image->filesize = $filesize;
         $event->image->set_mime(MimeType::get_for_file($target));

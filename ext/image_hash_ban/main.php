@@ -92,7 +92,7 @@ final class ImageBan extends Extension
             $c_reason = $event->POST->get("c_reason");
             $c_image_id = $event->POST->get("c_image_id");
 
-            $image = !empty($c_image_id) ? Image::by_id_ex(int_escape($c_image_id)) : null;
+            $image = !empty($c_image_id) ? Post::by_id_ex(int_escape($c_image_id)) : null;
             $hash = !empty($c_hash) ? $c_hash : $image?->hash;
             $reason = !empty($c_reason) ? $c_reason : "DNP";
 
@@ -101,7 +101,7 @@ final class ImageBan extends Extension
                 $page->flash("Post ban added");
 
                 if ($image) {
-                    send_event(new ImageDeletionEvent($image));
+                    send_event(new PostDeletionEvent($image));
                     $page->flash("Post deleted");
                 }
 
@@ -171,7 +171,7 @@ final class ImageBan extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImageHashBanPermission::BAN_IMAGE)) {
             $event->add_part(SHM_SIMPLE_FORM(

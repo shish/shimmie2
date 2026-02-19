@@ -18,7 +18,7 @@ final class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         //self::assert_response(302);
-        self::assertNotNull(Image::by_id($image_id));
+        self::assertNotNull(Post::by_id($image_id));
     }
 
     public function testResLimitSmall(): void

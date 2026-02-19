@@ -373,7 +373,7 @@ class ArtistsTheme extends Themelet
      * @param ArtistAlias[] $aliases
      * @param ArtistMember[] $members
      * @param ArtistUrl[] $urls
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function show_artist(array $artist, array $aliases, array $members, array $urls, array $images, bool $userIsLogged, bool $userIsAdmin): void
     {

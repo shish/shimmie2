@@ -10,7 +10,7 @@ final class AuthorSetEvent extends Event
      * @param non-empty-string $author
      */
     public function __construct(
-        public Image $image,
+        public Post $image,
         public User $user,
         public string $author
     ) {
@@ -35,11 +35,11 @@ final class Artists extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["author"] = ImagePropType::STRING;
+        Post::$prop_types["author"] = PostPropType::STRING;
     }
 
     #[EventListener]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         $author = $event->get_param("author");
         if (Ctx::$user->can(ArtistsPermission::EDIT_IMAGE_ARTIST) && $author) {
@@ -48,7 +48,7 @@ final class Artists extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
+    public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
         $artistName = $this->get_artistName_by_imageID($event->image->id);
         if (Ctx::$user->can(ArtistsPermission::EDIT_ARTIST_INFO)) {
@@ -199,7 +199,7 @@ final class Artists extends Extension
             $userIsLogged = $user->can(ArtistsPermission::EDIT_ARTIST_INFO);
             $userIsAdmin = $user->can(ArtistsPermission::ADMIN);
 
-            $images = Search::find_images(limit: 4, terms: SearchTerm::explode($artist['name']));
+            $images = Search::find_posts(limit: 4, terms: SearchTerm::explode($artist['name']));
 
             $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
 

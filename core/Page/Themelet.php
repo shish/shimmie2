@@ -74,7 +74,7 @@ class Themelet
         return self::get_common()->build_tag($tag, $show_underscores, $show_category, $style);
     }
 
-    public function build_thumb(Image $image): HTMLElement
+    public function build_thumb(Post $image): HTMLElement
     {
         return self::get_common()->build_thumb($image);
     }

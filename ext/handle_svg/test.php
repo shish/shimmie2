@@ -13,7 +13,7 @@ final class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         self::get_page("post/view/$image_id"); // test for no crash
         self::get_page("image/$image_id/foo.svg"); // test for no crash
 
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         self::assertStringContainsString("www.w3.org", $image->get_image_filename()->get_contents());
 
         $page = self::get_page("thumb/$image_id/foo.jpg"); // check thumbnail was generated
@@ -30,7 +30,7 @@ final class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         self::get_page("post/view/$image_id");
         self::get_page("image/$image_id/foo.svg");
 
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         self::assertStringNotContainsString("script", $image->get_image_filename()->get_contents());
 
         $page = self::get_page("thumb/$image_id/foo.jpg"); // check thumbnail was generated

@@ -8,12 +8,12 @@ use function MicroHTML\{A, DIV, IMG};
 
 class FeaturedTheme extends Themelet
 {
-    public function display_featured(Image $image): void
+    public function display_featured(Post $image): void
     {
         Ctx::$page->add_block(new Block("Featured Post", $this->build_featured_html($image), "left", 3));
     }
 
-    public function build_featured_html(Image $image): \MicroHTML\HTMLElement
+    public function build_featured_html(Post $image): \MicroHTML\HTMLElement
     {
         $tsize = $image->get_thumb_size();
 

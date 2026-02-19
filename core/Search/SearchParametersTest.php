@@ -11,7 +11,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
     /**
      * @param string $tags
      * @param TagCondition[] $expected_tag_conditions
-     * @param ImgCondition[] $expected_img_conditions
+     * @param MetadataCondition[] $expected_img_conditions
      * @param string $expected_order
      */
     private function assert_TTC(
@@ -43,11 +43,11 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != TRUE")),
-                new ImgCondition(new Querylet("approved = TRUE")),
-                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                new MetadataCondition(new Querylet("trash != TRUE")),
+                new MetadataCondition(new Querylet("approved = TRUE")),
+                new MetadataCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
+                new MetadataCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
             ],
             "images.id DESC"
         );
@@ -60,12 +60,12 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != TRUE")),
-                new ImgCondition(new Querylet("approved = TRUE")),
-                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                new MetadataCondition(new Querylet("trash != TRUE")),
+                new MetadataCondition(new Querylet("approved = TRUE")),
+                new MetadataCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
-                new ImgCondition(new Querylet("images.hash = :hash", ["hash" => "1234567890"])),
+                new MetadataCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
+                new MetadataCondition(new Querylet("images.hash = :hash", ["hash" => "1234567890"])),
             ],
             "images.id DESC"
         );
@@ -78,12 +78,12 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != TRUE")),
-                new ImgCondition(new Querylet("approved = TRUE")),
-                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                new MetadataCondition(new Querylet("trash != TRUE")),
+                new MetadataCondition(new Querylet("approved = TRUE")),
+                new MetadataCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
-                new ImgCondition(new Querylet("width / :width1 = height / :height1", ['width1' => 42,
+                new MetadataCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
+                new MetadataCondition(new Querylet("width / :width1 = height / :height1", ['width1' => 42,
                 'height1' => 12345])),
             ],
             "images.id DESC"
@@ -97,11 +97,11 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
             [
             ],
             [
-                new ImgCondition(new Querylet("trash != TRUE")),
-                new ImgCondition(new Querylet("approved = TRUE")),
-                new ImgCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
+                new MetadataCondition(new Querylet("trash != TRUE")),
+                new MetadataCondition(new Querylet("approved = TRUE")),
+                new MetadataCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1])),
-                new ImgCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
+                new MetadataCondition(new Querylet("rating IN ('?', 's', 'q', 'e')", [])),
             ],
             "images.numeric_score DESC"
         );

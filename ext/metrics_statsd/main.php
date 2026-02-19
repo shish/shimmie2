@@ -74,7 +74,7 @@ final class StatsDInterface extends Extension
     }
 
     #[EventListener(priority: 99)]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         $this->stats["shimmie_events.info-sets"] = "1|c";
     }

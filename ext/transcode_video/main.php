@@ -27,7 +27,7 @@ final class TranscodeVideo extends Extension
     ];
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if ($event->image->video === true && $event->image->video_codec !== null && Ctx::$user->can(ImagePermission::EDIT_FILES)) {
             $options = self::get_output_options(VideoContainer::fromMimeType($event->image->get_mime()), $event->image->video_codec);
@@ -42,7 +42,7 @@ final class TranscodeVideo extends Extension
     {
         if ($event->page_matches("transcode_video/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
-            $image_obj = Image::by_id_ex($image_id);
+            $image_obj = Post::by_id_ex($image_id);
             $this->transcode_and_replace_video($image_obj, $event->POST->req('transcode_format'));
             Ctx::$page->set_redirect(make_link("post/view/".$image_id));
         }
@@ -116,7 +116,7 @@ final class TranscodeVideo extends Extension
         return $output;
     }
 
-    private function transcode_and_replace_video(Image $image, string $target_mime): bool
+    private function transcode_and_replace_video(Post $image, string $target_mime): bool
     {
         if ($image->get_mime()->base === $target_mime) {
             return false;
@@ -131,10 +131,10 @@ final class TranscodeVideo extends Extension
             throw new VideoTranscodeException("Cannot transcode item $image->id because its video codec is not known");
         }
 
-        $original_file = Filesystem::warehouse_path(Image::IMAGE_DIR, $image->hash);
+        $original_file = Filesystem::warehouse_path(Post::IMAGE_DIR, $image->hash);
         $tmp_filename = shm_tempnam("transcode_video");
         $tmp_filename = $this->transcode_video($original_file, $image->video_codec, $target_mime, $tmp_filename);
-        send_event(new ImageReplaceEvent($image, $tmp_filename));
+        send_event(new MediaReplaceEvent($image, $tmp_filename));
         return true;
     }
 

@@ -18,7 +18,7 @@ class CommentListTheme extends Themelet
     /**
      * Display a page with a list of images, and for each image, the image's comments.
      *
-     * @param array<array{0: Image, 1: Comment[]}> $images
+     * @param array<array{0: Post, 1: Comment[]}> $images
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {
@@ -108,12 +108,12 @@ class CommentListTheme extends Themelet
     /**
      * Show comments for an image.
      *
-     * @param Image $image
+     * @param Post $image
      * @param Comment[] $comments
      * @param bool $postbox
      * @param bool $comments_locked
      */
-    public function display_image_comments(Image $image, array $comments, bool $postbox, bool $comments_locked): void
+    public function display_image_comments(Post $image, array $comments, bool $postbox, bool $comments_locked): void
     {
         $this->show_anon_id = true;
         $html = emptyHTML();

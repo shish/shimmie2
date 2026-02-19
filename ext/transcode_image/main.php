@@ -39,7 +39,7 @@ final class TranscodeImage extends Extension
     ];
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::EDIT_FILES) && $event->context !== "report") {
             $engine = MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE));
@@ -55,7 +55,7 @@ final class TranscodeImage extends Extension
     {
         if ($event->page_matches("transcode/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             $image_id = $event->get_iarg('image_id');
-            $image_obj = Image::by_id_ex($image_id);
+            $image_obj = Post::by_id_ex($image_id);
             $this->transcode_and_replace_image($image_obj, new MimeType($event->POST->req('transcode_mime')));
             Ctx::$page->set_redirect(make_link("post/view/".$image_id));
         }
@@ -180,11 +180,11 @@ final class TranscodeImage extends Extension
         return $output;
     }
 
-    private function transcode_and_replace_image(Image $image, MimeType $target_mime): void
+    private function transcode_and_replace_image(Post $image, MimeType $target_mime): void
     {
-        $original_file = Filesystem::warehouse_path(Image::IMAGE_DIR, $image->hash);
+        $original_file = Filesystem::warehouse_path(Post::IMAGE_DIR, $image->hash);
         $tmp_filename = $this->transcode_image($original_file, $image->get_mime(), $target_mime);
-        send_event(new ImageReplaceEvent($image, $tmp_filename));
+        send_event(new MediaReplaceEvent($image, $tmp_filename));
     }
 
     private function transcode_image(Path $source_name, MimeType $source_mime, MimeType $target_mime): Path

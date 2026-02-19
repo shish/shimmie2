@@ -8,7 +8,7 @@ use function MicroHTML\{AUDIO, SOURCE, emptyHTML};
 
 class AudioFileHandlerTheme extends Themelet
 {
-    public function build_media(Image $image): \MicroHTML\HTMLElement
+    public function build_media(Post $image): \MicroHTML\HTMLElement
     {
         $ilink = $image->get_image_link();
 

@@ -15,7 +15,7 @@ final class LiveFeed extends Extension
     }
 
     #[EventListener(priority: 99)]
-    public function onImageAddition(ImageAdditionEvent $event): void
+    public function onPostAddition(PostAdditionEvent $event): void
     {
         $this->msg(
             make_link("post/view/".$event->image->id)->asAbsolute(). " - ".

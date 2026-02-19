@@ -40,7 +40,7 @@ final class AvatarPost extends AvatarExtension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(UserAccountsPermission::CHANGE_USER_SETTING)) {
             $event->add_button("Set Image As Avatar", "set_avatar/".$event->image->id);
@@ -67,7 +67,7 @@ final class AvatarPost extends AvatarExtension
         if ($id === null) {
             return null;
         }
-        $image = Image::by_id($id);
+        $image = Post::by_id($id);
         if (!$image) {
             $user_config->delete(AvatarPostUserConfig::AVATAR_ID);
             return null;

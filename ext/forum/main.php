@@ -83,7 +83,7 @@ final class ForumThread
     }
 }
 
-/** @phpstan-type Post array{id:int,thread_id:int,user_id:int,date:string,message:string,edited:bool|int} */
+/** @phpstan-type ForumPostArray array{id:int,thread_id:int,user_id:int,date:string,message:string,edited:bool|int} */
 final class ForumPost
 {
     public User $owner;
@@ -98,7 +98,7 @@ final class ForumPost
         $this->owner = User::by_id_dangerously_cached($owner_id);
     }
 
-    /** @param Post $row */
+    /** @param ForumPostArray $row */
     public static function from_row(array $row): ForumPost
     {
         return new ForumPost(
@@ -113,7 +113,7 @@ final class ForumPost
 
     public static function by_id(int $id, int $thread_id): ForumPost
     {
-        /** @var ?Post */
+        /** @var ?ForumPostArray */
         $row = Ctx::$database->get_row(
             'SELECT * FROM forum_posts
             WHERE id = :id
@@ -130,7 +130,7 @@ final class ForumPost
     /** @return ForumPost[] */
     public static function get_all_posts(int $thread_id, int $page_n = 0, int $posts_per_page = 15): array
     {
-        /** @var Post[] */
+        /** @var ForumPostArray[] */
         $posts = Ctx::$database->get_all(
             'SELECT * FROM forum_posts
             WHERE thread_id = :thread_id

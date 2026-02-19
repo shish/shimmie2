@@ -21,7 +21,7 @@ final class Featured extends Extension
         if ($event->page_matches("featured_image/download")) {
             $fid = Ctx::$config->get(FeaturedConfig::ID);
             if (!is_null($fid)) {
-                $image = Image::by_id($fid);
+                $image = Post::by_id($fid);
                 if (!is_null($image)) {
                     Ctx::$page->set_data($image->get_mime(), $image->get_image_filename()->get_contents());
                 }
@@ -30,9 +30,9 @@ final class Featured extends Extension
         if ($event->page_matches("featured_image/view")) {
             $fid = Ctx::$config->get(FeaturedConfig::ID);
             if (!is_null($fid)) {
-                $image = Image::by_id($fid);
+                $image = Post::by_id($fid);
                 if (!is_null($image)) {
-                    send_event(new DisplayingImageEvent($image));
+                    send_event(new DisplayingPostEvent($image));
                 }
             }
         }
@@ -46,7 +46,7 @@ final class Featured extends Extension
             $image = cache_get_or_set(
                 "featured_image_object:$fid",
                 function () use ($fid) {
-                    $image = Image::by_id($fid);
+                    $image = Post::by_id($fid);
                     if ($image) { // make sure the object is fully populated before saving
                         $image->get_tag_array();
                     }
@@ -66,7 +66,7 @@ final class Featured extends Extension
     }
 
     #[EventListener]
-    public function onImageDeletion(ImageDeletionEvent $event): void
+    public function onPostDeletion(PostDeletionEvent $event): void
     {
         if ($event->image->id === Ctx::$config->get(FeaturedConfig::ID)) {
             Ctx::$config->delete(FeaturedConfig::ID);
@@ -74,7 +74,7 @@ final class Featured extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(FeaturedPermission::EDIT_FEATURE) && $event->context === "view") {
             $event->add_button("Feature This", "featured_image/set/{$event->image->id}");

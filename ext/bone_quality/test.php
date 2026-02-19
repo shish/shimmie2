@@ -23,7 +23,7 @@ final class BoneQualityTest extends ShimmiePHPUnitTestCase
         self::assert_text("Congratulations");
         self::assert_text("tagme</a> remaining: <span>1");
 
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         send_event(new TagSetEvent($image, ["new_tag"]));
 
         self::get_page("bone_quality");

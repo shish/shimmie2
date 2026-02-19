@@ -12,7 +12,7 @@ final class Trash extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["trash"] = ImagePropType::BOOL;
+        Post::$prop_types["trash"] = PostPropType::BOOL;
     }
 
     #[EventListener]
@@ -25,7 +25,7 @@ final class Trash extends Extension
         }
     }
 
-    private function check_permissions(Image $image): bool
+    private function check_permissions(Post $image): bool
     {
         if ($image['trash'] === true && !Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
             return false;
@@ -45,7 +45,7 @@ final class Trash extends Extension
     }
 
     #[EventListener(priority: 10)]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         if (!$this->check_permissions(($event->image))) {
             Ctx::$page->set_redirect(make_link());
@@ -53,7 +53,7 @@ final class Trash extends Extension
     }
 
     #[EventListener(priority: 10)] // Needs to be early to intercept delete events
-    public function onImageDeletion(ImageDeletionEvent $event): void
+    public function onPostDeletion(PostDeletionEvent $event): void
     {
         if ($event->force !== true && $event->image['trash'] !== true) {
             self::set_trash($event->image->id, true);
@@ -129,7 +129,7 @@ final class Trash extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if ($event->image['trash'] === true && Ctx::$user->can(TrashPermission::VIEW_TRASH)) {
             $event->add_button("Restore From Trash", "trash_restore/".$event->image->id);

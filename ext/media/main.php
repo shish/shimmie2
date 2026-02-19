@@ -23,7 +23,7 @@ final class Media extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         if ($event->page_matches("media_rescan/{image_id}", method: "POST", permission: MediaPermission::RESCAN_MEDIA)) {
-            $image = Image::by_id_ex($event->get_iarg('image_id'));
+            $image = Post::by_id_ex($event->get_iarg('image_id'));
 
             send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();
@@ -33,7 +33,7 @@ final class Media extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
             $event->add_button("Scan Media Properties", "media_rescan/{$event->image->id}");
@@ -78,7 +78,7 @@ final class Media extends Extension
             ->setDescription('Refresh metadata for a given post')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $uid = $input->getArgument('id_or_hash');
-                $image = Image::by_id_or_hash($uid);
+                $image = Post::by_id_or_hash($uid);
                 if ($image) {
                     send_event(new MediaCheckPropertiesEvent($image));
                     $image->save_to_db();

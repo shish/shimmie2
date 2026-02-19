@@ -12,12 +12,12 @@ final class Approval extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["approved"] = ImagePropType::BOOL;
-        Image::$prop_types["approved_by_id"] = ImagePropType::INT;
+        Post::$prop_types["approved"] = PostPropType::BOOL;
+        Post::$prop_types["approved_by_id"] = PostPropType::INT;
     }
 
     #[EventListener]
-    public function onImageAddition(ImageAdditionEvent $event): void
+    public function onPostAddition(PostAdditionEvent $event): void
     {
         if (defined("UNITTEST") || Ctx::$user->can(ApprovalPermission::BYPASS_IMAGE_APPROVAL)) {
             self::approve_image($event->image->id);
@@ -76,7 +76,7 @@ final class Approval extends Extension
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         if (!$this->check_permissions($event->image)) {
             Ctx::$page->set_redirect(make_link());
@@ -175,7 +175,7 @@ final class Approval extends Extension
         );
     }
 
-    private function check_permissions(Image $image): bool
+    private function check_permissions(Post $image): bool
     {
         return (
             $image['approved']
@@ -196,7 +196,7 @@ final class Approval extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ApprovalPermission::APPROVE_IMAGE)) {
             if ($event->image['approved'] === true) {

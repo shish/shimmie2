@@ -14,7 +14,7 @@ class FutabaCommentListTheme extends CommentListTheme
     public bool $post_page = true;
 
     /**
-     * @param array<array{0: Image, 1: Comment[]}> $images
+     * @param array<array{0: Post, 1: Comment[]}> $images
      */
     public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post): void
     {

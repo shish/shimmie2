@@ -9,7 +9,7 @@ final class Eokm extends Extension
     public const KEY = "eokm";
 
     #[EventListener(priority: 40)] // early, to veto ImageUploadEvent
-    public function onImageAddition(ImageAdditionEvent $event): void
+    public function onPostAddition(PostAdditionEvent $event): void
     {
         $username = Ctx::$config->get(EokmConfig::USERNAME);
         $password = Ctx::$config->get(EokmConfig::PASSWORD);

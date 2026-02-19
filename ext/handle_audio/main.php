@@ -9,7 +9,7 @@ final class AudioFileHandler extends DataHandlerExtension
     public const KEY = "handle_audio";
     public const SUPPORTED_MIME = [MimeType::MP3, MimeType::OGG_AUDIO, MimeType::FLAC];
 
-    protected function media_check_properties(Image $image): MediaProperties
+    protected function media_check_properties(Post $image): MediaProperties
     {
         try {
             $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFPROBE_PATH));
@@ -38,7 +38,7 @@ final class AudioFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function create_thumb(Image $image): bool
+    protected function create_thumb(Post $image): bool
     {
         (new Path("ext/handle_audio/thumb.jpg"))->copy($image->get_thumb_filename());
         return true;

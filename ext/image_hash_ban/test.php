@@ -26,7 +26,7 @@ final class ImageBanTest extends ShimmiePHPUnitTestCase
 
         // Ban & delete
         send_event(new AddImageHashBanEvent($this->hash, "test hash ban"));
-        send_event(new ImageDeletionEvent(Image::by_id_ex($image_id), true));
+        send_event(new PostDeletionEvent(Post::by_id_ex($image_id), true));
 
         // Check deleted
         self::assertException(PostNotFound::class, function () use ($image_id) {

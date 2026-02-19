@@ -48,19 +48,19 @@ final class RSSImages extends Extension
             if (Ctx::$config->get(RSSImagesConfig::RSS_LIMIT) && $page_number > 9) {
                 return;
             }
-            $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
+            $images = Search::find_posts(($page_number - 1) * $page_size, $page_size, $search_terms);
             $this->do_rss($images, $search_terms, $page_number);
         }
     }
 
     #[EventListener]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         Ctx::$cache->delete("rss-item-image:{$event->image->id}");
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      * @param search-term-array $search_terms
      */
     private function do_rss(array $images, array $search_terms, int $page_number): void
@@ -104,7 +104,7 @@ final class RSSImages extends Extension
         Ctx::$page->set_data(MimeType::RSS, $xml);
     }
 
-    private function thumb(Image $image): HTMLElement
+    private function thumb(Post $image): HTMLElement
     {
         $link = make_link("post/view/{$image->id}")->asAbsolute();
         $tags = $image->get_tag_list();

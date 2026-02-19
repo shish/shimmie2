@@ -10,7 +10,7 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "s"));
 
         # search for it in various ways
@@ -30,7 +30,7 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set("ext_rating_anonymous_privs", ["s", "q"]);
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         send_event(new RatingSetEvent($image, "e"));
 
         # the explicit image shouldn't show up in anon's searches
@@ -43,10 +43,10 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         // post a safe image and an explicit image
         self::log_in_as_user();
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "pbx");
-        $image_e = Image::by_id_ex($image_id_e);
+        $image_e = Post::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_s = Image::by_id_ex($image_id_s);
+        $image_s = Post::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
 
         // user is allowed to see all
@@ -81,20 +81,20 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_s = Image::by_id_ex($image_id_s);
+        $image_s = Post::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
         $image_id_q = $this->post_image("tests/favicon.png", "favicon");
-        $image_q = Image::by_id_ex($image_id_q);
+        $image_q = Post::by_id_ex($image_id_q);
         send_event(new RatingSetEvent($image_q, "q"));
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
-        $image_e = Image::by_id_ex($image_id_e);
+        $image_e = Post::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
         Ctx::$config->set("ext_rating_user_privs", ["s", "q"]);
         Ctx::$user->get_config()->set(RatingsUserConfig::DEFAULTS, ["s"]);
 
-        self::assertEquals(1, Search::count_images(["rating=s"]), "UserClass has access to safe, show safe");
-        self::assertEquals(2, Search::count_images(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
-        self::assertEquals(1, Search::count_images(), "If search doesn't specify anything, check the user defaults");
+        self::assertEquals(1, Search::count_posts(["rating=s"]), "UserClass has access to safe, show safe");
+        self::assertEquals(2, Search::count_posts(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
+        self::assertEquals(1, Search::count_posts(), "If search doesn't specify anything, check the user defaults");
     }
 }

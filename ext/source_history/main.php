@@ -40,7 +40,7 @@ final class SourceHistory extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         $event->add_button("View Source History", "source_history/{$event->image->id}", 20);
     }
@@ -129,7 +129,7 @@ final class SourceHistory extends Extension
 
         Log::debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
 
-        $image = Image::by_id_ex($stored_image_id);
+        $image = Post::by_id_ex($stored_image_id);
 
         // all should be ok so we can revert by firing the SetUserSources event.
         send_event(new SourceSetEvent($image, $stored_source));
@@ -299,7 +299,7 @@ final class SourceHistory extends Extension
 
                 Log::debug("source_history", 'Reverting source of >>'.$stored_image_id.' to ['.$stored_source.']');
 
-                $image = Image::by_id_ex($stored_image_id);
+                $image = Post::by_id_ex($stored_image_id);
 
                 // all should be ok so we can revert by firing the SetSources event.
                 send_event(new SourceSetEvent($image, $stored_source));
@@ -313,7 +313,7 @@ final class SourceHistory extends Extension
     /**
      * This function is called just before an images source is changed.
      */
-    private function add_source_history(Image $image, string $source): void
+    private function add_source_history(Post $image, string $source): void
     {
         global $database;
 

@@ -22,7 +22,7 @@ final class TagList extends Extension
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         if (Ctx::$config->get(TagListConfig::LENGTH) > 0) {
             $type = Ctx::$config->get(TagListConfig::IMAGE_TYPE);
@@ -66,7 +66,7 @@ final class TagList extends Extension
         );
     }
 
-    private function add_related_block(Image $image): void
+    private function add_related_block(Post $image): void
     {
         $omitted_tags = self::get_omitted_tags();
         $starting_tags = Ctx::$database->get_col("SELECT tag_id FROM image_tags WHERE image_id = :image_id", ["image_id" => $image->id]);
@@ -101,7 +101,7 @@ final class TagList extends Extension
         }
     }
 
-    private function add_tags_block(Image $image): void
+    private function add_tags_block(Post $image): void
     {
         /** @var array<array{tag: tag-string, count: int}> $tags */
         $tags = Ctx::$database->get_all("

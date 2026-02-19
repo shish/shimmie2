@@ -16,9 +16,9 @@ class TombstonesTest extends ShimmiePHPUnitTestCase
         self::assertEquals(200, $page->code);
 
         // Ban & delete
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         send_event(new AddImageHashBanEvent($image->hash, "test hash ban"));
-        send_event(new ImageDeletionEvent($image, true));
+        send_event(new PostDeletionEvent($image, true));
 
         // Check deleted
         self::assertException(PostNotFound::class, function () use ($image_id) {

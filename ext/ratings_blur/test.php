@@ -12,7 +12,7 @@ final class RatingsBlurTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_s = Image::by_id_ex($image_id_s);
+        $image_s = Post::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
 
         // the safe image should not insert a blur class
@@ -20,7 +20,7 @@ final class RatingsBlurTest extends ShimmiePHPUnitTestCase
         self::assert_no_text("blur");
 
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
-        $image_e = Image::by_id_ex($image_id_e);
+        $image_e = Post::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
         // the explicit image should insert a blur class
@@ -36,7 +36,7 @@ final class RatingsBlurTest extends ShimmiePHPUnitTestCase
         $this->create_test_user($this->username);
 
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
-        $image_e = Image::by_id_ex($image_id_e);
+        $image_e = Post::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
         // the explicit image should not insert a blur class
@@ -44,7 +44,7 @@ final class RatingsBlurTest extends ShimmiePHPUnitTestCase
         self::assert_no_text("blur");
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_s = Image::by_id_ex($image_id_s);
+        $image_s = Post::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
 
         // the safe image should insert a blur class
@@ -74,7 +74,7 @@ final class RatingsBlurTest extends ShimmiePHPUnitTestCase
         Ctx::$user->get_config()->set(RatingsBlurUserConfig::USER_DEFAULTS, ["s"]);
 
         $image_id_e = $this->post_image("tests/bedroom_workshop.jpg", "bedroom");
-        $image_e = Image::by_id_ex($image_id_e);
+        $image_e = Post::by_id_ex($image_id_e);
         send_event(new RatingSetEvent($image_e, "e"));
 
         // the explicit image should not insert a blur class
@@ -82,7 +82,7 @@ final class RatingsBlurTest extends ShimmiePHPUnitTestCase
         self::assert_no_text("blur");
 
         $image_id_s = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image_s = Image::by_id_ex($image_id_s);
+        $image_s = Post::by_id_ex($image_id_s);
         send_event(new RatingSetEvent($image_s, "s"));
 
         // the safe image should insert a blur class

@@ -18,7 +18,7 @@ final class DataUploadEvent extends Event
     public MimeType $mime;
     public int $size;
 
-    /** @var Image[] */
+    /** @var Post[] */
     public array $images = [];
     public bool $handled = false;
     public bool $merged = false;

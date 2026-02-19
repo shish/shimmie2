@@ -10,15 +10,12 @@ final class ImageResizeException extends ServerError
 {
 }
 
-/**
- *	This class handles image resize requests.
- */
 final class ResizeImage extends Extension
 {
     public const KEY = "resize";
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (
             Ctx::$user->can(ImagePermission::EDIT_FILES) &&
@@ -60,7 +57,7 @@ final class ResizeImage extends Extension
             $height = Ctx::$config->get(ResizeConfig::DEFAULT_HEIGHT);
             $isanigif = 0;
             if ($image_obj->get_mime()->base === MimeType::GIF) {
-                $image_filename = Filesystem::warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
+                $image_filename = Filesystem::warehouse_path(Post::IMAGE_DIR, $image_obj->hash);
                 $fh = \Safe\fopen($image_filename->str(), 'rb');
                 //check if gif is animated (via https://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 while (!feof($fh) && $isanigif < 2) {
@@ -73,7 +70,7 @@ final class ResizeImage extends Extension
 
                 //Need to generate thumbnail again...
                 //This only seems to be an issue if one of the sizes was set to 0.
-                $image_obj = Image::by_id_ex($image_obj->id); //Must be a better way to grab the new hash than setting this again..
+                $image_obj = Post::by_id_ex($image_obj->id); //Must be a better way to grab the new hash than setting this again..
                 send_event(new ThumbnailGenerationEvent($image_obj, true));
 
                 Log::info("resize", ">>{$image_obj->id} has been resized to: ".$width."x".$height);
@@ -88,7 +85,7 @@ final class ResizeImage extends Extension
         if ($event->page_matches("resize/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id_ex($image_id);
+            $image = Post::by_id_ex($image_id);
             /* Check if options were given to resize an image. */
             $width = int_escape($event->POST->get('resize_width'));
             $height = int_escape($event->POST->get('resize_height'));
@@ -159,7 +156,7 @@ final class ResizeImage extends Extension
 
     // Private functions
     /* ----------------------------- */
-    private function resize_image(Image $image_obj, int $width, int $height): void
+    private function resize_image(Post $image_obj, int $width, int $height): void
     {
         if (($height <= 0) && ($width <= 0)) {
             throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
@@ -172,7 +169,7 @@ final class ResizeImage extends Extension
         }
 
         $hash = $image_obj->hash;
-        $image_filename  = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash);
+        $image_filename  = Filesystem::warehouse_path(Post::IMAGE_DIR, $hash);
 
         $info = \Safe\getimagesize($image_filename->str());
         assert(!is_null($info));
@@ -195,7 +192,7 @@ final class ResizeImage extends Extension
             ResizeType::STRETCH
         ));
 
-        send_event(new ImageReplaceEvent($image_obj, $tmp_filename));
+        send_event(new MediaReplaceEvent($image_obj, $tmp_filename));
 
         Log::info("resize", "Resized >>{$image_obj->id} - New hash: {$image_obj->hash}");
     }
@@ -203,7 +200,7 @@ final class ResizeImage extends Extension
     /**
      * @return array{0: positive-int, 1: positive-int}
      */
-    private function calc_new_size(Image $image_obj, int $width, int $height): array
+    private function calc_new_size(Post $image_obj, int $width, int $height): array
     {
         /* Calculate the new size of the image */
         if ($height > 0 && $width > 0) {

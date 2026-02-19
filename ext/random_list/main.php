@@ -32,7 +32,7 @@ final class RandomList extends Extension
             $images_per_page = Ctx::$config->get(RandomListConfig::LIST_COUNT);
             $random_images = [];
             for ($i = 0; $i < $images_per_page; $i++) {
-                $random_image = Image::by_random($search_terms);
+                $random_image = Post::by_random($search_terms);
                 if (!$random_image) {
                     continue;
                 }

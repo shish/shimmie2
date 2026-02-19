@@ -13,7 +13,7 @@ use function MicroHTML\{INPUT,P};
 class Danbooru2IndexTheme extends IndexTheme
 {
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function display_page(array $images): void
     {
@@ -58,7 +58,7 @@ class Danbooru2IndexTheme extends IndexTheme
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     protected function build_table(array $images, ?string $query): HTMLElement
     {

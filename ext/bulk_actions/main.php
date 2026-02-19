@@ -197,12 +197,12 @@ final class BulkActions extends Extension
 
     /**
      * @param int[] $data
-     * @return \Generator<Image>
+     * @return \Generator<Post>
      */
     private function yield_items(array $data): \Generator
     {
         foreach ($data as $id) {
-            $image = Image::by_id($id);
+            $image = Post::by_id($id);
             if ($image !== null) {
                 yield $image;
             }
@@ -210,12 +210,12 @@ final class BulkActions extends Extension
     }
 
     /**
-     * @return \Generator<Image>
+     * @return \Generator<Post>
      */
     private function yield_search_results(string $query): \Generator
     {
         $terms = SearchTerm::explode($query);
-        return Search::find_images_iterable(0, null, $terms);
+        return Search::find_posts_iterable(0, null, $terms);
     }
 
     /**
@@ -228,7 +228,7 @@ final class BulkActions extends Extension
     }
 
     /**
-     * @param iterable<Image> $posts
+     * @param iterable<Post> $posts
      * @return array{0: int, 1: int}
      */
     private function delete_posts(iterable $posts): array
@@ -243,7 +243,7 @@ final class BulkActions extends Extension
                         send_event(new AddImageHashBanEvent($post->hash, $reason));
                     }
                 }
-                send_event(new ImageDeletionEvent($post));
+                send_event(new PostDeletionEvent($post));
                 $total++;
                 $size += $post->filesize;
             } catch (\Exception $e) {
@@ -254,7 +254,7 @@ final class BulkActions extends Extension
     }
 
     /**
-     * @param iterable<Image> $items
+     * @param iterable<Post> $items
      */
     private function tag_items(iterable $items, string $tags, bool $replace): int
     {
@@ -299,7 +299,7 @@ final class BulkActions extends Extension
     }
 
     /**
-     * @param iterable<Image> $items
+     * @param iterable<Post> $items
      */
     private function set_source(iterable $items, string $source): int
     {
