@@ -14,7 +14,7 @@ class SVGFileHandlerTheme extends Themelet
             'id' => 'main_image',
             'class' => 'shm-main-image',
             'alt' => 'main image',
-            'src' => $image->get_image_link(),
+            'src' => $image->get_media_link(),
             'data-width' => $image->width,
             'data-height' => $image->height,
         ]);

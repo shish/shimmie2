@@ -9,11 +9,11 @@ final class ImageConfig extends ConfigGroup
     public const KEY = "image";
     public ?string $title = "Post Manager";
 
-    #[ConfigMeta("Image URL format", ConfigType::STRING, advanced: true)]
-    public const ILINK = 'image_ilink';
+    #[ConfigMeta("Media URL format", ConfigType::STRING, advanced: true)]
+    public const MEDIA_LINK = 'image_ilink';
 
     #[ConfigMeta("Thumbnail URL format", ConfigType::STRING, advanced: true)]
-    public const TLINK = 'image_tlink';
+    public const THUMBNAIL_LINK = 'image_tlink';
 
     #[ConfigMeta("Post info", ConfigType::STRING)]
     public const INFO = 'image_info';

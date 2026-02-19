@@ -109,7 +109,7 @@ final class RSSImages extends Extension
         $link = make_link("post/view/{$image->id}")->asAbsolute();
         $tags = $image->get_tag_list();
         $thumb_url = $image->get_thumb_link()->asAbsolute();
-        $image_url = $image->get_image_link()->asAbsolute();
+        $image_url = $image->get_media_link()->asAbsolute();
         $posted = date(DATE_RSS, \Safe\strtotime($image->posted));
         $content = (string)DIV(P($this->theme->build_thumb($image)));
 
