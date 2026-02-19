@@ -82,7 +82,7 @@ final class ImageIO extends Extension
                     INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),
                     INPUT(["type" => 'submit', "value" => 'Delete', "onclick" => 'return confirm("Delete the image?");', "id" => "image_delete_button"]),
                 ]
-            ));
+            ), position: 9999);
         }
     }
 
