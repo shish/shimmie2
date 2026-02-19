@@ -378,10 +378,7 @@ final class CommentList extends Extension
     #[EventListener]
     public function onDisplayingPost(DisplayingPostEvent $event): void
     {
-        $comments_locked = (bool)Ctx::$database->get_one(
-            "SELECT comments_locked FROM images WHERE id = :id",
-            ["id" => $event->image->id]
-        );
+        $comments_locked = $event->image["comments_locked"];
 
         $can_post = Ctx::$user->can(CommentPermission::CREATE_COMMENT) &&
                     (!$comments_locked || Ctx::$user->can(CommentPermission::BYPASS_COMMENT_LOCK));
