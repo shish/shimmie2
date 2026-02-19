@@ -405,13 +405,13 @@ function generate_key(int $length = 20): string
     return $randomString;
 }
 
-function shm_tempnam(string $prefix = ""): Path
+function shm_tempnam(string $prefix = "", string $suffix = ""): Path
 {
     if (!is_dir("data/temp")) {
         mkdir("data/temp");
     }
     $temp = \Safe\realpath("data/temp");
-    return new Path(\Safe\tempnam($temp, $prefix));
+    return new Path(\Safe\tempnam($temp, $prefix) . $suffix);
 }
 
 function shm_tempdir(string $prefix = ""): Path
