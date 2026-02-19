@@ -104,7 +104,7 @@ jobs:
       - name: Check new version works
         run: |
           php index.php page:get / > new.out
-          grep -q 'Welcome to Shimmie 2.12' new.out || (cat new.out && false)
+          grep -q 'Welcome to Shimmie 2.13' new.out || (cat new.out && false)
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
