@@ -9,7 +9,7 @@ namespace Shimmie2;
  *
  * @implements \ArrayAccess<string, string|string[]>
  */
-final class QueryArray implements \ArrayAccess
+final class QueryArray implements \ArrayAccess, \JsonSerializable
 {
     /**
      * @param array<string, string|string[]> $params
@@ -89,5 +89,13 @@ final class QueryArray implements \ArrayAccess
     public function offsetUnset(mixed $offset): void
     {
         unset($this->params[$offset]);
+    }
+
+    /**
+     * @return array<string, string|string[]>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->params;
     }
 }

@@ -74,6 +74,10 @@ final class FilesystemTest extends TestCase
             Filesystem::path_to_tags(new Path("/foo/bar/123 - cake pie.jpg"))
         );
         self::assertEquals(
+            ["baz", "qux", "foo", "bar"],
+            Filesystem::path_to_tags(new Path("foo/bar/123 - baz qux.jpg"))
+        );
+        self::assertEquals(
             ["bacon", "lemon"],
             Filesystem::path_to_tags(new Path("\\bacon\\lemon\\baz.jpg"))
         );
