@@ -42,7 +42,7 @@ class IndexTheme extends Themelet
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function display_page(array $images): void
     {
@@ -84,7 +84,7 @@ class IndexTheme extends Themelet
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     protected function build_table(array $images, ?string $query): HTMLElement
     {
@@ -113,7 +113,7 @@ class IndexTheme extends Themelet
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     protected function display_page_header(array $images): void
     {
@@ -135,7 +135,7 @@ class IndexTheme extends Themelet
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     protected function display_page_images(array $images): void
     {

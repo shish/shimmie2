@@ -8,7 +8,7 @@ use function MicroHTML\{A, DIV, IMG, SCRIPT, SELECT, SPAN, emptyHTML};
 
 class CBZFileHandlerTheme extends Themelet
 {
-    public function build_media(Image $image): \MicroHTML\HTMLElement
+    public function build_media(Post $image): \MicroHTML\HTMLElement
     {
         $data_href = Url::base();
         $ilink = $image->get_image_link();

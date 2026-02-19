@@ -234,7 +234,7 @@ final class AutoTagger extends Extension
             $image_ids = $database->get_col_iterable("SELECT image_id FROM  image_tags WHERE tag_id = :tag_id", ["tag_id" => $tag_id]);
             foreach ($image_ids as $image_id) {
                 $image_id = (int) $image_id;
-                $image = Image::by_id_ex($image_id);
+                $image = Post::by_id_ex($image_id);
                 send_event(new TagSetEvent($image, $image->get_tag_array()));
             }
         }

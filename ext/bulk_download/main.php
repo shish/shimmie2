@@ -54,7 +54,7 @@ final class BulkDownload extends Extension
                 }
 
                 if ($include_metadata) {
-                    $image_info = send_event(new ImageInfoGetEvent($image))->params;
+                    $image_info = send_event(new PostInfoGetEvent($image))->params;
                     $image_info["hash"] = $image->hash;
                     $image_info["filename"] = $image->filename;
                     $image_info["_filename"] = $image->get_nice_image_name();

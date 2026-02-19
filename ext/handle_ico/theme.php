@@ -8,7 +8,7 @@ use function MicroHTML\IMG;
 
 class IcoFileHandlerTheme extends Themelet
 {
-    public function build_media(Image $image): \MicroHTML\HTMLElement
+    public function build_media(Post $image): \MicroHTML\HTMLElement
     {
         return IMG([
             'src' => $image->get_image_link(),

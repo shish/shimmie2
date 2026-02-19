@@ -8,7 +8,7 @@ use function MicroHTML\{A, BR, SOURCE, VIDEO, emptyHTML};
 
 class VideoFileHandlerTheme extends Themelet
 {
-    public function build_media(Image $image): \MicroHTML\HTMLElement
+    public function build_media(Post $image): \MicroHTML\HTMLElement
     {
         $src = $image->get_image_link();
 

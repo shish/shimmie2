@@ -11,7 +11,7 @@ use MicroHTML\HTMLElement;
 
 class ViewPostTheme extends Themelet
 {
-    public function display_meta_headers(Image $image): void
+    public function display_meta_headers(Post $image): void
     {
         $page = Ctx::$page;
         $h_metatags = str_replace(" ", ", ", $image->get_tag_list());
@@ -33,7 +33,7 @@ class ViewPostTheme extends Themelet
      * @param HTMLElement[] $editor_parts
      * @param HTMLElement[] $sidebar_parts
      */
-    public function display_page(Image $image, array $editor_parts, array $sidebar_parts): void
+    public function display_page(Post $image, array $editor_parts, array $sidebar_parts): void
     {
         $page = Ctx::$page;
         $page->set_title("Post {$image->id}: ".$image->get_tag_list());
@@ -86,7 +86,7 @@ class ViewPostTheme extends Themelet
         return false;
     }
 
-    protected function build_pin(Image $image): HTMLElement
+    protected function build_pin(Post $image): HTMLElement
     {
         if ($this->is_ordered_search()) {
             return A(["href" => make_link()], "Index");
@@ -100,7 +100,7 @@ class ViewPostTheme extends Themelet
         }
     }
 
-    protected function build_navigation(Image $image): HTMLElement
+    protected function build_navigation(Post $image): HTMLElement
     {
         $pin = $this->build_pin($image);
 
@@ -128,7 +128,7 @@ class ViewPostTheme extends Themelet
      * @param HTMLElement[] $editor_parts
      * @param HTMLElement[] $sidebar_parts
      */
-    protected function build_info(Image $image, array $editor_parts, array $sidebar_parts = []): HTMLElement
+    protected function build_info(Post $image, array $editor_parts, array $sidebar_parts = []): HTMLElement
     {
         if (count($editor_parts) === 0) {
             return emptyHTML($image->is_locked() ? "[Post Locked]" : "");
@@ -168,7 +168,7 @@ class ViewPostTheme extends Themelet
         );
     }
 
-    protected function build_stats(Image $image): HTMLElement
+    protected function build_stats(Post $image): HTMLElement
     {
         $owner = $image->get_owner()->name;
         $ip = Ctx::$user->can(IPBanPermission::VIEW_IP) ? " ({$image->owner_ip})" : "";

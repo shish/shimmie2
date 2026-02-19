@@ -8,7 +8,7 @@ use function MicroHTML\IMG;
 
 class SVGFileHandlerTheme extends Themelet
 {
-    public function build_media(Image $image): \MicroHTML\HTMLElement
+    public function build_media(Post $image): \MicroHTML\HTMLElement
     {
         return IMG([
             'id' => 'main_image',

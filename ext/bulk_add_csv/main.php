@@ -69,7 +69,7 @@ final class BulkAddCSV extends Extension
                 throw new UploadException("File type not recognised");
             } else {
                 if ($thumbfile->exists()) {
-                    $thumbfile->copy(Filesystem::warehouse_path(Image::THUMBNAIL_DIR, $event->hash));
+                    $thumbfile->copy(Filesystem::warehouse_path(Post::THUMBNAIL_DIR, $event->hash));
                 }
             }
         });

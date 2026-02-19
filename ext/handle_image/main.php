@@ -15,7 +15,7 @@ final class ImageFileHandler extends DataHandlerExtension
         MimeType::AVIF,
     ];
 
-    protected function media_check_properties(Image $image): MediaProperties
+    protected function media_check_properties(Post $image): MediaProperties
     {
         $filename = $image->get_image_filename();
         $mime = $image->get_mime();
@@ -57,7 +57,7 @@ final class ImageFileHandler extends DataHandlerExtension
         return $info && in_array($info[2], $valid);
     }
 
-    protected function create_thumb(Image $image): bool
+    protected function create_thumb(Post $image): bool
     {
         try {
             ThumbnailUtil::create_image_thumb($image);

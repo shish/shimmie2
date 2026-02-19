@@ -7,7 +7,7 @@ namespace Shimmie2;
 final class MediaCheckPropertiesEvent extends Event
 {
     public function __construct(
-        public readonly Image $image
+        public readonly Post $image
     ) {
         parent::__construct();
     }

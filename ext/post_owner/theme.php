@@ -10,7 +10,7 @@ use MicroHTML\HTMLElement;
 
 class PostOwnerTheme extends Themelet
 {
-    public function get_owner_editor_html(Image $image): HTMLElement
+    public function get_owner_editor_html(Post $image): HTMLElement
     {
         $owner = $image->get_owner()->name;
         $date = SHM_DATE($image->posted);

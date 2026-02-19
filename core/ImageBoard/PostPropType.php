@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-enum ImagePropType
+enum PostPropType
 {
     case BOOL;
     case INT;

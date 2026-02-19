@@ -73,7 +73,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param array<Image> $images
+     * @param array<Post> $images
      */
     public function display_note_list(array $images, int $pageNumber, int $totalPages): void
     {
@@ -86,7 +86,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param array<Image> $images
+     * @param array<Post> $images
      */
     public function display_note_requests(array $images, int $pageNumber, int $totalPages): void
     {

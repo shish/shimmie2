@@ -10,12 +10,12 @@ use MicroHTML\HTMLElement;
 
 class RandomImageTheme extends Themelet
 {
-    public function display_random(Image $image): void
+    public function display_random(Post $image): void
     {
         Ctx::$page->add_block(new Block("Random Post", $this->build_random_html($image), "left", 8));
     }
 
-    public function build_random_html(Image $image): HTMLElement
+    public function build_random_html(Post $image): HTMLElement
     {
         $tsize = $image->get_thumb_size();
 

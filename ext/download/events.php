@@ -9,7 +9,7 @@ class ImageDownloadingEvent extends Event
     public bool $file_modified = false;
 
     public function __construct(
-        public Image $image,
+        public Post $image,
         public Path $path,
         public MimeType $mime,
         public QueryArray $params

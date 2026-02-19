@@ -25,11 +25,11 @@ final class Favorites extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["favorites"] = ImagePropType::INT;
+        Post::$prop_types["favorites"] = PostPropType::INT;
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(FavouritesPermission::EDIT_FAVOURITES)) {
             $user_id = Ctx::$user->id;
@@ -49,7 +49,7 @@ final class Favorites extends Extension
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         $people = $this->list_persons_who_have_favorited($event->image);
         if (count($people) > 0) {
@@ -75,7 +75,7 @@ final class Favorites extends Extension
     #[EventListener]
     public function onUserPageBuilding(UserPageBuildingEvent $event): void
     {
-        $i_favorites_count = Search::count_images(["favorited_by={$event->display_user->name}"]);
+        $i_favorites_count = Search::count_posts(["favorited_by={$event->display_user->name}"]);
         $i_days_old = ((time() - \Safe\strtotime($event->display_user->join_date)) / 86400) + 1;
         $h_favorites_rate = sprintf("%.1f", ($i_favorites_count / $i_days_old));
         $favorites_link = search_link(["favorited_by={$event->display_user->name}"]);
@@ -86,7 +86,7 @@ final class Favorites extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         $action = $event->get_param("favorite_action");
         if (
@@ -107,7 +107,7 @@ final class Favorites extends Extension
     // FIXME: this should be handled by the foreign key. Check that it
     // is, and then remove this
     #[EventListener]
-    public function onImageDeletion(ImageDeletionEvent $event): void
+    public function onPostDeletion(PostDeletionEvent $event): void
     {
         Ctx::$database->execute("DELETE FROM user_favorites WHERE image_id=:image_id", ["image_id" => $event->image->id]);
     }
@@ -251,7 +251,7 @@ final class Favorites extends Extension
     /**
      * @return string[]
      */
-    private function list_persons_who_have_favorited(Image $image): array
+    private function list_persons_who_have_favorited(Post $image): array
     {
         global $database;
 

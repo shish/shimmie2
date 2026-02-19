@@ -18,9 +18,9 @@ final class NumericScoreVote
     public int $score;
 
     #[Field]
-    public function post(): Image
+    public function post(): Post
     {
-        return Image::by_id_ex($this->image_id);
+        return Post::by_id_ex($this->image_id);
     }
 
     #[Field]
@@ -30,7 +30,7 @@ final class NumericScoreVote
     }
 
     #[Field(extends: "Post")]
-    public static function score(Image $post): int
+    public static function score(Post $post): int
     {
         global $database;
         if ($post['score'] ?? null) {
@@ -46,7 +46,7 @@ final class NumericScoreVote
      * @return NumericScoreVote[]
      */
     #[Field(extends: "Post", type: "[NumericScoreVote!]!")]
-    public static function votes(Image $post): array
+    public static function votes(Post $post): array
     {
         global $database;
         $rows = $database->get_all(
@@ -65,7 +65,7 @@ final class NumericScoreVote
     }
 
     #[Field(extends: "Post", type: "Int!")]
-    public static function my_vote(Image $post): int
+    public static function my_vote(Post $post): int
     {
         return Ctx::$database->get_one(
             "SELECT score FROM numeric_score_votes WHERE image_id=:image_id AND user_id=:user_id",
@@ -104,11 +104,11 @@ final class NumericScore extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["numeric_score"] = ImagePropType::INT;
+        Post::$prop_types["numeric_score"] = PostPropType::INT;
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         if (Ctx::$user->can(NumericScorePermission::CREATE_VOTE)) {
             $this->theme->get_voter($event->image);
@@ -122,9 +122,9 @@ final class NumericScore extends Extension
             $this->theme->get_nuller($event->display_user);
         }
 
-        $n_up = Search::count_images(["upvoted_by={$event->display_user->name}"]);
+        $n_up = Search::count_posts(["upvoted_by={$event->display_user->name}"]);
         $link_up = search_link(["upvoted_by={$event->display_user->name}"]);
-        $n_down = Search::count_images(["downvoted_by={$event->display_user->name}"]);
+        $n_down = Search::count_posts(["downvoted_by={$event->display_user->name}"]);
         $link_down = search_link(["downvoted_by={$event->display_user->name}"]);
         $event->add_part(emptyHTML(
             A(["href" => $link_up], "$n_up Upvotes"),
@@ -251,7 +251,7 @@ final class NumericScore extends Extension
 
             //filter images by score != 0 + date > limit to max images on one page > order from highest to lowest score
             $ids = $database->get_col($sql, $args);
-            $images = Search::get_images($ids);
+            $images = Search::get_posts($ids);
             $this->theme->view_popular($images, $current, $b_dte, $f_dte);
         }
     }
@@ -264,7 +264,7 @@ final class NumericScore extends Extension
     }
 
     #[EventListener]
-    public function onImageDeletion(ImageDeletionEvent $event): void
+    public function onPostDeletion(PostDeletionEvent $event): void
     {
         Ctx::$database->execute("DELETE FROM numeric_score_votes WHERE image_id=:id", ["id" => $event->image->id]);
     }

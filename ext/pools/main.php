@@ -88,7 +88,7 @@ final class Pool
     }
 }
 
-function _image_to_id(Image $image): int
+function _image_to_id(Post $image): int
 {
     return $image->id;
 }
@@ -104,7 +104,7 @@ final class Pools extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["image_order"] = ImagePropType::INT;
+        Post::$prop_types["image_order"] = PostPropType::INT;
     }
 
     #[EventListener]
@@ -230,7 +230,7 @@ final class Pools extends Extension
             self::assert_permission($user, $pool);
 
             $image_ids = $database->get_col("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", ["pid" => $pool_id]);
-            $images = array_filter(array_map(Image::by_id(...), $image_ids));
+            $images = array_filter(array_map(Post::by_id(...), $image_ids));
             $this->theme->edit_pool($pool, $images);
         }
         if ($event->page_matches("pool/order/{pool_id}")) {
@@ -246,7 +246,7 @@ final class Pools extends Extension
                 ORDER BY pool_images.image_order ASC",
                 ["pid" => $pool_id]
             );
-            $images = array_map(fn ($row) => new Image($row), $image_rows);
+            $images = array_map(fn ($row) => new Post($row), $image_rows);
             $this->theme->edit_order($pool, $images);
         }
         if ($event->page_matches("pool/save_order/{pool_id}", method: "POST")) {
@@ -298,7 +298,7 @@ final class Pools extends Extension
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
 
-            $images = Search::find_images(
+            $images = Search::find_posts(
                 limit: Ctx::$config->get(PoolsConfig::MAX_IMPORT_RESULTS),
                 terms: SearchTerm::explode($event->POST->req("pool_tag"))
             );
@@ -381,7 +381,7 @@ final class Pools extends Extension
      * to the Next image in the pool.
      */
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         if (Ctx::$config->get(PoolsConfig::INFO_ON_VIEW_IMAGE)) {
             $imageID = $event->image->id;
@@ -403,7 +403,7 @@ final class Pools extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         global $database;
         if (Ctx::$config->get(PoolsConfig::ADDER_ON_VIEW_IMAGE) && Ctx::$user->can(PoolsPermission::UPDATE)) {
@@ -770,7 +770,7 @@ final class Pools extends Extension
 
         $images = [];
         foreach ($result as $singleResult) {
-            $images[] = Image::by_id_ex((int) $singleResult["image_id"]);
+            $images[] = Post::by_id_ex((int) $singleResult["image_id"]);
         }
 
         $this->theme->view_pool($pool, $images, $pageNumber + 1, $totalPages);

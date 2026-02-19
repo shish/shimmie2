@@ -13,7 +13,7 @@ class TranscodeVideoTheme extends Themelet
      *
      * @param array<string, ?VideoContainer> $options
      */
-    public function get_transcode_html(Image $image, array $options): \MicroHTML\HTMLElement
+    public function get_transcode_html(Post $image, array $options): \MicroHTML\HTMLElement
     {
         return SHM_SIMPLE_FORM(
             make_link("transcode_video/{$image->id}"),

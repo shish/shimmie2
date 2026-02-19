@@ -10,7 +10,7 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
 
         // Original
         self::get_page("post/view/$image_id");
@@ -26,7 +26,7 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
 
         $e = self::assertException(TagSetException::class, function () use ($image) {
             send_event(new TagSetEvent($image, []));

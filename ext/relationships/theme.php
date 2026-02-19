@@ -12,9 +12,9 @@ use function MicroHTML\{INPUT};
 
 class RelationshipsTheme extends Themelet
 {
-    public function relationship_info(Image $image): void
+    public function relationship_info(Post $image): void
     {
-        $parent = Search::get_images([$image['parent_id']]);
+        $parent = Search::get_posts([$image['parent_id']]);
         if (!empty($parent)) {
             $visible_siblings = Relationships::has_siblings($image->id)
                 ? Relationships::get_siblings($image->id)
@@ -27,7 +27,7 @@ class RelationshipsTheme extends Themelet
                 A(["href" => "#", "id" => "relationships-parent-toggle", "class" => "shm-relationships-parent-toggle"], "« hide"),
                 DIV(
                     ["class" => "shm-relationships-parent-thumbs"],
-                    DIV(["class" => "shm-parent-thumbs"], $this->build_thumb(Image::by_id_ex($image['parent_id']))),
+                    DIV(["class" => "shm-parent-thumbs"], $this->build_thumb(Post::by_id_ex($image['parent_id']))),
                     DIV(["class" => "shm-sibling-thumbs"], joinHTML("", array_map(fn ($s) => $this->build_thumb($s), $visible_siblings))),
                 )
             );
@@ -54,7 +54,7 @@ class RelationshipsTheme extends Themelet
         }
     }
 
-    public function get_parent_editor_html(Image $image): HTMLElement
+    public function get_parent_editor_html(Post $image): HTMLElement
     {
         return SHM_POST_INFO(
             "Parent",

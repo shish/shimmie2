@@ -11,7 +11,7 @@ class RandomListTheme extends Themelet
 {
     /**
      * @param search-term-array $search_terms
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function display_page(array $search_terms, array $images): void
     {

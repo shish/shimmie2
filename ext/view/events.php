@@ -9,18 +9,14 @@ use MicroHTML\HTMLElement;
 use function MicroHTML\{INPUT};
 
 /*
- * DisplayingImageEvent:
- *   $image -- the image being displayed
- *   $page  -- the page to display on
- *
- * Sent when an image is ready to display. Extensions who
+ * Sent when a post is ready to display. Extensions who
  * wish to appear on the "view" page should listen for this,
- * which only appears when an image actually exists.
+ * which only appears when a post actually exists.
  */
-class DisplayingImageEvent extends Event
+class DisplayingPostEvent extends Event
 {
     public function __construct(
-        public Image $image
+        public Post $image
     ) {
         parent::__construct();
     }
@@ -29,10 +25,10 @@ class DisplayingImageEvent extends Event
 /**
  * @extends PartListBuildingEvent<HTMLElement>
  */
-class ImageAdminBlockBuildingEvent extends PartListBuildingEvent
+class PostAdminBlockBuildingEvent extends PartListBuildingEvent
 {
     public function __construct(
-        public Image $image,
+        public Post $image,
         public User $user,
         public string $context
     ) {
@@ -58,13 +54,13 @@ class ImageAdminBlockBuildingEvent extends PartListBuildingEvent
 /**
  * @extends PartListBuildingEvent<HTMLElement>
  */
-class ImageInfoBoxBuildingEvent extends PartListBuildingEvent
+class PostInfoBoxBuildingEvent extends PartListBuildingEvent
 {
     /** @var HTMLElement[] */
     private array $sidebar_parts = [];
 
     public function __construct(
-        public Image $image,
+        public Post $image,
         public User $user
     ) {
         parent::__construct();
@@ -93,12 +89,12 @@ class ImageInfoBoxBuildingEvent extends PartListBuildingEvent
 
 
 /**
- * Collect post metadata in a format usable by ImageInfoSetEvent
+ * Collect post metadata in a format usable by PostInfoSetEvent
  */
-class ImageInfoGetEvent extends Event
+class PostInfoGetEvent extends Event
 {
     public function __construct(
-        public Image $image,
+        public Post $image,
         public QueryArray $params = new QueryArray(),
     ) {
         parent::__construct();
@@ -106,10 +102,10 @@ class ImageInfoGetEvent extends Event
 }
 
 
-class ImageInfoSetEvent extends Event
+class PostInfoSetEvent extends Event
 {
     public function __construct(
-        public Image $image,
+        public Post $image,
         public int $slot,
         public QueryArray $params
     ) {

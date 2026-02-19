@@ -21,7 +21,7 @@ final class TagSetException extends UserError
 
 final class TagSetEvent extends Event
 {
-    public Image $image;
+    public Post $image;
     /** @var list<tag-string> */
     public array $old_tags;
     /** @var list<tag-string> */
@@ -32,7 +32,7 @@ final class TagSetEvent extends Event
     /**
      * @param tag-string[] $tags
      */
-    public function __construct(Image $image, array $tags)
+    public function __construct(Post $image, array $tags)
     {
         parent::__construct();
         $this->image    = $image;
@@ -148,13 +148,13 @@ final class PostTags extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoGet(ImageInfoGetEvent $event): void
+    public function onPostInfoGet(PostInfoGetEvent $event): void
     {
         $event->params['tags'] = $event->image->get_tag_list();
     }
 
     #[EventListener]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         if (
             Ctx::$user->can(PostTagsPermission::EDIT_IMAGE_TAG) && (
@@ -210,7 +210,7 @@ final class PostTags extends Extension
     }
 
     #[EventListener]
-    public function onImageDeletion(ImageDeletionEvent $event): void
+    public function onPostDeletion(PostDeletionEvent $event): void
     {
         $event->image->delete_tags_from_image();
     }
@@ -239,7 +239,7 @@ final class PostTags extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
+    public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_tag_editor_html($event->image), 40);
     }
@@ -286,7 +286,7 @@ final class PostTags extends Extension
         Log::info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
         if (count($search_set) === 1 && count($replace_set) === 1) {
-            $images = Search::find_images(limit: 10, terms: $replace_set);
+            $images = Search::find_posts(limit: 10, terms: $replace_set);
             if (count($images) === 0) {
                 Log::info("tag_edit", "No images found with target tag, doing in-place rename");
                 $database->execute(
@@ -312,7 +312,7 @@ final class PostTags extends Extension
                 $search_forward[] = "id<$last_id";
             }
 
-            $images = Search::find_images(limit: 100, terms: $search_forward);
+            $images = Search::find_posts(limit: 100, terms: $search_forward);
             if (count($images) === 0) {
                 break;
             }

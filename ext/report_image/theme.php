@@ -8,7 +8,7 @@ use function MicroHTML\{A, B, BR, P, TABLE, TBODY, TD, THEAD, TR, emptyHTML, joi
 use function MicroHTML\{INPUT};
 
 /**
- * @phpstan-type Report array{id: int, image: Image, reason: string, reporter_name: string}
+ * @phpstan-type Report array{id: int, image: Post, reason: string, reporter_name: string}
  */
 class ReportImageTheme extends Themelet
 {
@@ -19,7 +19,7 @@ class ReportImageTheme extends Themelet
     {
         $tbody = TBODY();
         foreach ($reports as $report) {
-            $iabbe = send_event(new ImageAdminBlockBuildingEvent($report['image'], Ctx::$user, "report"));
+            $iabbe = send_event(new PostAdminBlockBuildingEvent($report['image'], Ctx::$user, "report"));
 
             $tbody->appendChild(TR(
                 TD($this->build_thumb($report['image'])),
@@ -62,7 +62,7 @@ class ReportImageTheme extends Themelet
     /**
      * @param ImageReport[] $reports
      */
-    public function display_image_banner(Image $image, array $reports): void
+    public function display_image_banner(Post $image, array $reports): void
     {
         $html = emptyHTML();
         $public = Ctx::$config->get(ReportImageConfig::SHOW_INFO);

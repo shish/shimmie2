@@ -24,7 +24,7 @@ final class RotateImage extends Extension
     public const SUPPORTED_MIME = [MimeType::JPEG, MimeType::PNG, MimeType::GIF, MimeType::WEBP];
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(ImagePermission::EDIT_FILES)
                 && MimeType::matches_array($event->image->get_mime(), self::SUPPORTED_MIME)) {
@@ -43,7 +43,7 @@ final class RotateImage extends Extension
         if ($event->page_matches("rotate/{image_id}", method: "POST", permission: ImagePermission::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = $event->get_iarg('image_id');
-            Image::by_id_ex($image_id);
+            Post::by_id_ex($image_id);
             /* Check if options were given to rotate an image. */
             $deg = int_escape($event->POST->req('rotate_deg'));
 
@@ -62,10 +62,10 @@ final class RotateImage extends Extension
             throw new ImageRotateException("Invalid options for rotation angle. ($deg)");
         }
 
-        $image_obj = Image::by_id_ex($image_id);
+        $image_obj = Post::by_id_ex($image_id);
         $hash = $image_obj->hash;
 
-        $image_filename  = Filesystem::warehouse_path(Image::IMAGE_DIR, $hash);
+        $image_filename  = Filesystem::warehouse_path(Post::IMAGE_DIR, $hash);
         if (!$image_filename->exists()) {
             throw new ImageRotateException("{$image_filename->str()} does not exist.");
         }
@@ -122,9 +122,9 @@ final class RotateImage extends Extension
 
         $new_hash = $tmp_filename->md5();
         /* Move the new image into the main storage location */
-        $target = Filesystem::warehouse_path(Image::IMAGE_DIR, $new_hash);
+        $target = Filesystem::warehouse_path(Post::IMAGE_DIR, $new_hash);
         $tmp_filename->copy($target);
-        send_event(new ImageReplaceEvent($image_obj, $tmp_filename));
+        send_event(new MediaReplaceEvent($image_obj, $tmp_filename));
 
         Log::info("rotate", "Rotated >>{$image_id} - New hash: {$new_hash}");
     }

@@ -31,14 +31,14 @@ final class LinkScan extends Extension
         $matches = [];
         \Safe\preg_match_all("/post\/view\/(\d+)/", $text, $matches);
         foreach ($matches[1] as $match) {
-            $img = Image::by_id((int)$match);
+            $img = Post::by_id((int)$match);
             if ($img) {
                 $ids[] = $img->id;
             }
         }
         \Safe\preg_match_all("/\b([0-9a-fA-F]{32})\b/", $text, $matches);
         foreach ($matches[1] as $match) {
-            $img = Image::by_hash($match);
+            $img = Post::by_hash($match);
             if ($img) {
                 $ids[] = $img->id;
             }

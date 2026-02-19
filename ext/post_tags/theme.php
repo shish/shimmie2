@@ -24,7 +24,7 @@ class PostTagsTheme extends Themelet
         Ctx::$page->add_block(new Block("Mass Tag Edit", $html));
     }
 
-    public function get_tag_editor_html(Image $image): HTMLElement
+    public function get_tag_editor_html(Post $image): HTMLElement
     {
         $tag_links = [];
         foreach ($image->get_tag_array() as $tag) {

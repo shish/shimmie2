@@ -12,7 +12,7 @@ final class VideoFileHandler extends DataHandlerExtension
         MimeType::WEBM,
     ];
 
-    protected function media_check_properties(Image $image): MediaProperties
+    protected function media_check_properties(Post $image): MediaProperties
     {
         $video = false;
         $audio = false;
@@ -69,7 +69,7 @@ final class VideoFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function create_thumb(Image $image): bool
+    protected function create_thumb(Post $image): bool
     {
         $inname = $image->get_image_filename();
         $outname = $image->get_thumb_filename();

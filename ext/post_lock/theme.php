@@ -10,7 +10,7 @@ use function MicroHTML\{INPUT};
 
 class PostLockTheme extends Themelet
 {
-    public function get_lock_editor_html(Image $image): HTMLElement
+    public function get_lock_editor_html(Post $image): HTMLElement
     {
         return SHM_POST_INFO(
             "Metadata Locked",

@@ -8,7 +8,7 @@ use function MicroHTML\{BR, IMG, joinHTML};
 
 class ImageFileHandlerTheme extends Themelet
 {
-    public function build_media(Image $image): \MicroHTML\HTMLElement
+    public function build_media(Post $image): \MicroHTML\HTMLElement
     {
         return IMG([
             'id' => 'main_image',
@@ -22,7 +22,7 @@ class ImageFileHandlerTheme extends Themelet
         ]);
     }
 
-    public function display_metadata(Image $image): void
+    public function display_metadata(Post $image): void
     {
         if (function_exists("exif_read_data")) {
             # FIXME: only read from jpegs?

@@ -14,7 +14,7 @@ final class ImageViewCounter extends Extension
 
     # Adds view to database if needed
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         global $database;
 
@@ -55,7 +55,7 @@ final class ImageViewCounter extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
+    public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
         global $database;
 
@@ -104,7 +104,7 @@ final class ImageViewCounter extends Extension
                 ORDER BY total_views DESC
                 LIMIT 100
             ");
-            $images = Search::get_images($popular_ids);
+            $images = Search::get_posts($popular_ids);
             $this->theme->view_popular($images);
         }
     }

@@ -7,8 +7,6 @@ namespace Shimmie2;
 use GQLA\{Field, Query, Type};
 
 /**
- * Class Image
- *
  * An object representing an entry in the images table.
  *
  * As of 2.2, this no longer necessarily represents an
@@ -18,7 +16,7 @@ use GQLA\{Field, Query, Type};
  * @implements \ArrayAccess<string, mixed>
  */
 #[Type(name: "Post")]
-final class Image implements \ArrayAccess
+final class Post implements \ArrayAccess
 {
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
@@ -63,7 +61,7 @@ final class Image implements \ArrayAccess
     public ?int $length = null;
     public ?Path $tmp_file = null;
 
-    /** @var array<string, ImagePropType> */
+    /** @var array<string, PostPropType> */
     public static array $prop_types = [];
     /** @var array<string, mixed> */
     private array $dynamic_props = [];
@@ -105,9 +103,9 @@ final class Image implements \ArrayAccess
                         $value = null;
                     } else {
                         $value = match(static::$prop_types[$name]) {
-                            ImagePropType::BOOL => bool_escape((string)$value),
-                            ImagePropType::INT => int_escape((string)$value),
-                            ImagePropType::STRING => (string)$value,
+                            PostPropType::BOOL => bool_escape((string)$value),
+                            PostPropType::INT => int_escape((string)$value),
+                            PostPropType::STRING => (string)$value,
                         };
                     }
                     $this->dynamic_props[$name] = $value;
@@ -165,17 +163,17 @@ final class Image implements \ArrayAccess
     }
 
     #[Query(name: "post")]
-    public static function by_id(int $post_id): ?Image
+    public static function by_id(int $post_id): ?Post
     {
         if ($post_id > 2 ** 32) {
             // for some reason bots query huge numbers and pollute the DB error logs...
             return null;
         }
         $row = Ctx::$database->get_row("SELECT * FROM images WHERE images.id=:id", ["id" => $post_id]);
-        return ($row ? new Image($row) : null);
+        return ($row ? new Post($row) : null);
     }
 
-    public static function by_id_ex(int $post_id): Image
+    public static function by_id_ex(int $post_id): Post
     {
         $maybe_post = static::by_id($post_id);
         if (!is_null($maybe_post)) {
@@ -187,27 +185,27 @@ final class Image implements \ArrayAccess
     /**
      * @param hash-string $hash
      */
-    public static function by_hash(string $hash): ?Image
+    public static function by_hash(string $hash): ?Post
     {
         $hash = strtolower($hash);
         $row = Ctx::$database->get_row("SELECT images.* FROM images WHERE hash=:hash", ["hash" => $hash]);
-        return ($row ? new Image($row) : null);
+        return ($row ? new Post($row) : null);
     }
 
     /**
      * @param numeric-string|hash-string $id
      */
-    public static function by_id_or_hash(string $id): ?Image
+    public static function by_id_or_hash(string $id): ?Post
     {
-        return (is_numberish($id) && strlen($id) !== 32) ? Image::by_id((int)$id) : Image::by_hash($id);
+        return (is_numberish($id) && strlen($id) !== 32) ? Post::by_id((int)$id) : Post::by_hash($id);
     }
 
     /**
      * @param search-term-array $terms
      */
-    public static function by_random(array $terms = [], int $limit_range = 0): ?Image
+    public static function by_random(array $terms = [], int $limit_range = 0): ?Post
     {
-        $max = Search::count_images($terms);
+        $max = Search::count_posts($terms);
         if ($max < 1) {
             return null;
         }        // From Issue #22 - opened by HungryFeline on May 30, 2011.
@@ -215,7 +213,7 @@ final class Image implements \ArrayAccess
             $max = $limit_range;
         }
         $rand = mt_rand(0, $max - 1);
-        $set = Search::find_images($rand, 1, $terms);
+        $set = Search::find_posts($rand, 1, $terms);
         if (count($set) > 0) {
             return $set[0];
         } else {
@@ -235,7 +233,7 @@ final class Image implements \ArrayAccess
      *
      * @param search-term-array $terms
      */
-    public function get_next(array $terms = [], bool $next = true): ?Image
+    public function get_next(array $terms = [], bool $next = true): ?Post
     {
         if ($next) {
             $gtlt = "<";
@@ -247,7 +245,7 @@ final class Image implements \ArrayAccess
 
         $terms[] = 'id'. $gtlt . $this->id;
         $terms[] = 'order:id_'. strtolower($dir);
-        $images = Search::find_images(0, 1, $terms);
+        $images = Search::find_posts(0, 1, $terms);
         return (count($images) > 0) ? $images[0] : null;
     }
 
@@ -256,7 +254,7 @@ final class Image implements \ArrayAccess
      *
      * @param search-term-array $terms
      */
-    public function get_prev(array $terms = []): ?Image
+    public function get_prev(array $terms = []): ?Post
     {
         return $this->get_next($terms, false);
     }

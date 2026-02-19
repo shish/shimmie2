@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 /**
- * An image is being replaced.
+ * An post's file is being replaced.
  */
-final class ImageReplaceEvent extends Event
+final class MediaReplaceEvent extends Event
 {
     /** @var non-empty-string */
     public readonly string $old_hash;
@@ -22,7 +22,7 @@ final class ImageReplaceEvent extends Event
      * the old image file and thumbnail from the disk.
      */
     public function __construct(
-        public Image $image,
+        public Post $image,
         public Path $tmp_filename,
     ) {
         parent::__construct();

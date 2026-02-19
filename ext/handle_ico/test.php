@@ -20,7 +20,7 @@ final class IcoFileHandlerTest extends ShimmiePHPUnitTestCase
         $page = self::get_page("post/view/$image_id");
         self::assertEquals(200, $page->code);
 
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         self::assertEquals("ico", $image->get_ext());
 
         # FIXME: test that the thumb works

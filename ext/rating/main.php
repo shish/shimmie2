@@ -51,7 +51,7 @@ final class RatingSetException extends UserError
 final class RatingSetEvent extends Event
 {
     public function __construct(
-        public Image $image,
+        public Post $image,
         public string $rating
     ) {
         parent::__construct();
@@ -80,10 +80,10 @@ final class Ratings extends Extension
         $this->search_regexp = "/^rating[=:](?:(\*|[" . $codes . "]+)|(" .
             implode("|", $search_terms) . "|".implode("|", self::UNRATED_KEYWORDS)."))$/iD";
 
-        Image::$prop_types["rating"] = ImagePropType::STRING;
+        Post::$prop_types["rating"] = PostPropType::STRING;
     }
 
-    private function check_permissions(Image $image): bool
+    private function check_permissions(Post $image): bool
     {
         $user_view_level = Ratings::get_user_class_privs(Ctx::$user);
         if (!in_array($image['rating'], $user_view_level)) {
@@ -104,7 +104,7 @@ final class Ratings extends Extension
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         /**
          * Deny images upon insufficient permissions.
@@ -126,7 +126,7 @@ final class Ratings extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
+    public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
         $event->add_part(
             $this->theme->get_image_rater_html(
@@ -139,7 +139,7 @@ final class Ratings extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoGet(ImageInfoGetEvent $event): void
+    public function onPostInfoGet(PostInfoGetEvent $event): void
     {
         $rating = $event->image['rating'];
         if ($rating !== null) {
@@ -148,7 +148,7 @@ final class Ratings extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         if (
             Ctx::$user->can(RatingsPermission::EDIT_IMAGE_RATING) && (
@@ -238,7 +238,7 @@ final class Ratings extends Extension
 
             $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs(Ctx::$user));
             $rating = $ratings[0];
-            $image = Image::by_id_ex($event->image_id);
+            $image = Post::by_id_ex($event->image_id);
             send_event(new RatingSetEvent($image, $rating));
         }
     }
@@ -322,7 +322,7 @@ final class Ratings extends Extension
         if ($event->page_matches("admin/bulk_rate", method: "POST", permission: RatingsPermission::BULK_EDIT_IMAGE_RATING)) {
             $n = 0;
             while (true) {
-                $images = Search::find_images($n, 100, SearchTerm::explode($event->POST->req("query")));
+                $images = Search::find_posts($n, 100, SearchTerm::explode($event->POST->req("query")));
                 if (count($images) === 0) {
                     break;
                 }

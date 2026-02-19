@@ -50,7 +50,7 @@ class _SafeOuroborosImage
     public string $sample_url = '';
     public ?int $sample_width = null;
 
-    public function __construct(Image $img)
+    public function __construct(Post $img)
     {
         // author
         $author = $img->get_owner();
@@ -294,7 +294,7 @@ final class OuroborosAPI extends Extension
     {
         $handler = Ctx::$config->get(UploadConfig::COLLISION_HANDLER);
         if (!empty($md5) && !($handler === 'merge')) {
-            $img = Image::by_hash($md5);
+            $img = Post::by_hash($md5);
             if (!is_null($img)) {
                 $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
                 return;
@@ -330,7 +330,7 @@ final class OuroborosAPI extends Extension
             return;
         }
         // @phpstan-ignore-next-line
-        $img = Image::by_hash($meta->req('hash'));
+        $img = Post::by_hash($meta->req('hash'));
         if (!is_null($img)) {
             $handler = Ctx::$config->get(UploadConfig::COLLISION_HANDLER);
             if ($handler === 'merge') {
@@ -372,7 +372,7 @@ final class OuroborosAPI extends Extension
     protected function postShow(?int $id = null): void
     {
         if (!is_null($id)) {
-            $post = new _SafeOuroborosImage(Image::by_id_ex($id));
+            $post = new _SafeOuroborosImage(Post::by_id_ex($id));
             $this->sendData('post', [$post]);
         } else {
             $this->sendResponse(424, 'ID is mandatory');
@@ -386,7 +386,7 @@ final class OuroborosAPI extends Extension
     protected function postIndex(int $limit, int $page, array $terms): void
     {
         $start = ($page - 1) * $limit;
-        $results = Search::find_images(max($start, 0), min($limit, 100), $terms);
+        $results = Search::find_posts(max($start, 0), min($limit, 100), $terms);
         $posts = [];
         foreach ($results as $img) {
             $posts[] = new _SafeOuroborosImage($img);

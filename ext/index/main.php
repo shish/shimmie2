@@ -55,7 +55,7 @@ final class Index extends Extension
                 );
             }
 
-            $total_pages = (int)ceil(Search::count_images($search_terms) / Ctx::$config->get(IndexConfig::IMAGES));
+            $total_pages = (int)ceil(Search::count_posts($search_terms) / Ctx::$config->get(IndexConfig::IMAGES));
             if ($search_results_limit && $total_pages > $search_results_limit / $page_size && !Ctx::$user->can(IndexPermission::BIG_SEARCH)) {
                 $total_pages = (int)ceil($search_results_limit / $page_size);
             }
@@ -66,13 +66,13 @@ final class Index extends Extension
                     // extra caching for the first few post/list pages
                     $images = cache_get_or_set(
                         "post-list:$page_number",
-                        fn () => Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms),
+                        fn () => Search::find_posts(($page_number - 1) * $page_size, $page_size, $search_terms),
                         60
                     );
                 }
             }
             if (is_null($images)) {
-                $images = Search::find_images(($page_number - 1) * $page_size, $page_size, $search_terms);
+                $images = Search::find_posts(($page_number - 1) * $page_size, $page_size, $search_terms);
             }
 
             $count_images = count($images);
@@ -121,7 +121,7 @@ final class Index extends Extension
             ->setDescription('Search the database and print results')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $query = SearchTerm::explode($input->getArgument('query'));
-                $items = Search::find_images(limit: 1000, terms: $query);
+                $items = Search::find_posts(limit: 1000, terms: $query);
                 foreach ($items as $item) {
                     $output->writeln($item->hash);
                 }

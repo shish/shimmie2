@@ -10,7 +10,7 @@ use MicroHTML\HTMLElement;
 
 class NumericScoreTheme extends Themelet
 {
-    public function get_voter(Image $image): void
+    public function get_voter(Post $image): void
     {
         $vote_form = function (int $image_id, int $vote, string $text): HTMLElement {
             return SHM_SIMPLE_FORM(
@@ -63,7 +63,7 @@ class NumericScoreTheme extends Themelet
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function view_popular(
         array $images,

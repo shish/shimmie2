@@ -12,7 +12,7 @@ final class PrivateImage extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["private"] = ImagePropType::BOOL;
+        Post::$prop_types["private"] = PostPropType::BOOL;
     }
 
     #[EventListener]
@@ -22,7 +22,7 @@ final class PrivateImage extends Extension
 
         if ($event->page_matches("privatize_image/{image_id}", method: "POST", permission: PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id_ex($image_id);
+            $image = Post::by_id_ex($image_id);
             if ($image->owner_id !== $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to private.");
             }
@@ -33,7 +33,7 @@ final class PrivateImage extends Extension
 
         if ($event->page_matches("publicize_image/{image_id}", method: "POST")) {
             $image_id = $event->get_iarg('image_id');
-            $image = Image::by_id_ex($image_id);
+            $image = Post::by_id_ex($image_id);
             if ($image->owner_id !== $user->id && !$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
                 throw new PermissionDenied("Cannot set another user's image to public.");
             }
@@ -56,7 +56,7 @@ final class PrivateImage extends Extension
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         if (
             $event->image['private'] === true
@@ -157,7 +157,7 @@ final class PrivateImage extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if ((Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE) && Ctx::$user->id === $event->image->owner_id) || Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)) {
             if ($event->image['private'] === false) {
@@ -169,7 +169,7 @@ final class PrivateImage extends Extension
     }
 
     #[EventListener]
-    public function onImageAddition(ImageAdditionEvent $event): void
+    public function onPostAddition(PostAdditionEvent $event): void
     {
         if (Ctx::$user->get_config()->get(PrivateImageUserConfig::SET_DEFAULT) && Ctx::$user->can(PrivateImagePermission::SET_PRIVATE_IMAGE)) {
             self::privatize_image($event->image->id);

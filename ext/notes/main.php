@@ -16,7 +16,7 @@ final class Notes extends Extension
     #[EventListener]
     public function onInitExt(InitExtEvent $event): void
     {
-        Image::$prop_types["notes"] = ImagePropType::INT;
+        Post::$prop_types["notes"] = PostPropType::INT;
     }
 
     #[EventListener]
@@ -172,7 +172,7 @@ final class Notes extends Extension
     }
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         $this->theme->display_note_system(
             $event->image->id,
@@ -183,7 +183,7 @@ final class Notes extends Extension
     }
 
     #[EventListener]
-    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event): void
+    public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
         if (Ctx::$user->can(NotesPermission::CREATE)) {
             $event->add_part($this->theme->note_button($event->image->id));
@@ -358,7 +358,7 @@ final class Notes extends Extension
 
         $images = [];
         foreach ($image_ids as $id) {
-            $images[] = Image::by_id_ex($id);
+            $images[] = Post::by_id_ex($id);
         }
 
         $this->theme->display_note_list($images, $pageNumber + 1, $totalPages);
@@ -386,7 +386,7 @@ final class Notes extends Extension
 
         $images = [];
         while ($row = $result->fetch()) {
-            $images[] = Image::by_id_ex($row["image_id"]);
+            $images[] = Post::by_id_ex($row["image_id"]);
         }
 
         $this->theme->display_note_requests($images, $pageNumber + 1, $totalPages);

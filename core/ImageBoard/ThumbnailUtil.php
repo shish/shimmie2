@@ -100,7 +100,7 @@ final class ThumbnailUtil
         return [$max_width, $max_height];
     }
 
-    public static function create_image_thumb(Image $image, ?MediaEngine $engine = null): void
+    public static function create_image_thumb(Post $image, ?MediaEngine $engine = null): void
     {
         self::create_scaled_image(
             $image->get_image_filename(),

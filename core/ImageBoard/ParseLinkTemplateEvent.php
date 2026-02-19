@@ -14,9 +14,9 @@ final class ParseLinkTemplateEvent extends Event
 {
     public string $link;
     public string $text;
-    public readonly Image $image;
+    public readonly Post $image;
 
-    public function __construct(string $link, Image $image)
+    public function __construct(string $link, Post $image)
     {
         parent::__construct();
         $this->link = $link;

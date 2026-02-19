@@ -7,7 +7,7 @@ namespace Shimmie2;
 final class SourceSetEvent extends Event
 {
     public function __construct(
-        public Image $image,
+        public Post $image,
         public string $source
     ) {
         parent::__construct();
@@ -30,7 +30,7 @@ final class PostSource extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoGet(ImageInfoGetEvent $event): void
+    public function onPostInfoGet(PostInfoGetEvent $event): void
     {
         $source = $event->image->get_source();
         if ($source !== null) {
@@ -39,7 +39,7 @@ final class PostSource extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoSet(ImageInfoSetEvent $event): void
+    public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         $source = $event->get_param('source');
         if (is_null($source) && Ctx::$config->get(UploadConfig::TLSOURCE)) {
@@ -62,7 +62,7 @@ final class PostSource extends Extension
     }
 
     #[EventListener]
-    public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event): void
+    public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_source_editor_html($event->image), 41);
     }
@@ -97,7 +97,7 @@ final class PostSource extends Extension
         if ($matches = $event->matches("/^source[=:](.*)$/i")) {
             $source = ($matches[1] !== "none" ? $matches[1] : "");
             send_event(new CheckStringContentEvent($source, type: StringType::URL));
-            send_event(new SourceSetEvent(Image::by_id_ex($event->image_id), $source));
+            send_event(new SourceSetEvent(Post::by_id_ex($event->image_id), $source));
         }
     }
 
@@ -133,7 +133,7 @@ final class PostSource extends Extension
                 $search_forward[] = "id<$last_id";
             }
 
-            $images = Search::find_images(limit: 100, terms: $search_forward);
+            $images = Search::find_posts(limit: 100, terms: $search_forward);
             if (count($images) === 0) {
                 break;
             }

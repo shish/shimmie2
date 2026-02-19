@@ -15,7 +15,7 @@ final class ThumbnailGenerationEvent extends Event
      * Request a thumbnail be made for an image object
      */
     public function __construct(
-        public readonly Image $image,
+        public readonly Post $image,
         public readonly bool $force = false
     ) {
         parent::__construct();

@@ -142,7 +142,7 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function view_pool(Pool $pool, array $images, int $pageNumber, int $totalPages): void
     {
@@ -203,7 +203,7 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function pool_result(array $images, Pool $pool): void
     {
@@ -230,7 +230,7 @@ class PoolsTheme extends Themelet
      * HERE WE DISPLAY THE POOL ORDERER.
      * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH A TEXT INPUT TO SET A NUMBER AND CHANGE THE ORDER
      *
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function edit_order(Pool $pool, array $images): void
     {
@@ -260,7 +260,7 @@ class PoolsTheme extends Themelet
      * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH
      * A CHECKBOX TO SELECT WHICH IMAGE WE WANT TO REMOVE
      *
-     * @param Image[] $images
+     * @param Post[] $images
      */
     public function edit_pool(Pool $pool, array $images): void
     {

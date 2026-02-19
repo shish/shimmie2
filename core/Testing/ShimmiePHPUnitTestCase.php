@@ -63,7 +63,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         // Rolling back the transaction will remove any metadata,
         // but we also want to delete any uploaded files.
         foreach (Ctx::$database->get_col("SELECT id FROM images") as $image_id) {
-            send_event(new ImageDeletionEvent(Image::by_id_ex((int)$image_id), true));
+            send_event(new PostDeletionEvent(Post::by_id_ex((int)$image_id), true));
         }
 
         Ctx::$database->execute("ROLLBACK TO test_start");
@@ -212,7 +212,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
      */
     protected function assert_search_results(array $tags, array $results, string $message = ''): void
     {
-        $images = Search::find_images(0, null, $tags);
+        $images = Search::find_posts(0, null, $tags);
         $ids = [];
         foreach ($images as $image) {
             $ids[] = $image->id;
@@ -268,9 +268,9 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     protected function delete_image(int $image_id): void
     {
-        $img = Image::by_id($image_id);
+        $img = Post::by_id($image_id);
         if ($img) {
-            send_event(new ImageDeletionEvent($img, true));
+            send_event(new PostDeletionEvent($img, true));
         }
     }
 }

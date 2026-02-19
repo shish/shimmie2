@@ -18,7 +18,7 @@ final class RandomImage extends Extension
         ) {
             $action = $event->get_arg('action');
             $search_terms = SearchTerm::explode($event->get_arg('search', ""));
-            $image = Image::by_random($search_terms);
+            $image = Post::by_random($search_terms);
             if (!$image) {
                 throw new PostNotFound("Couldn't find any posts randomly");
             }
@@ -26,7 +26,7 @@ final class RandomImage extends Extension
             if ($action === "download") {
                 send_event(new ImageDownloadingEvent($image, $image->get_image_filename(), $image->get_mime(), $event->GET));
             } elseif ($action === "view") {
-                send_event(new DisplayingImageEvent($image));
+                send_event(new DisplayingPostEvent($image));
             } elseif ($action === "widget") {
                 $page = Ctx::$page;
                 $page->set_data(MimeType::HTML, (string)$this->theme->build_thumb($image));
@@ -38,7 +38,7 @@ final class RandomImage extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event): void
     {
         if (Ctx::$config->get(RandomImageConfig::SHOW_RANDOM_BLOCK)) {
-            $image = Image::by_random($event->search_terms);
+            $image = Post::by_random($event->search_terms);
             if (!is_null($image)) {
                 $this->theme->display_random($image);
             }

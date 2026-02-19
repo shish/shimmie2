@@ -11,7 +11,7 @@ final class ZoomLightbox extends Extension
     public const KEY = "zoom_lightbox";
 
     #[EventListener]
-    public function onDisplayingImage(DisplayingImageEvent $event): void
+    public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         $data_href = Url::base();
         Ctx::$page->add_html_header(SCRIPT(["src" => "{$data_href}/ext/zoom_lightbox/glightbox.min.js", "defer" => true]), 10);

@@ -8,7 +8,7 @@ use function MicroHTML\{A, IMG, joinHTML};
 
 class ReverseSearchLinksTheme extends Themelet
 {
-    public function reverse_search_block(Image $image): void
+    public function reverse_search_block(Post $image): void
     {
         $url = (string)$image->get_thumb_link()->asAbsolute();
         $links = [

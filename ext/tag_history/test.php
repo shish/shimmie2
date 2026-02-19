@@ -13,7 +13,7 @@ final class TagHistoryTest extends ShimmiePHPUnitTestCase
         // Set original
         self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "old_tag");
-        Image::by_id_ex($image_id);
+        Post::by_id_ex($image_id);
 
         // Check post
         self::get_page("post/view/$image_id");
@@ -36,7 +36,7 @@ final class TagHistoryTest extends ShimmiePHPUnitTestCase
         // Set original
         self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "old_tag");
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
 
         // Modify tags
         send_event(new TagSetEvent($image, ["new_tag"]));
@@ -64,7 +64,7 @@ final class TagHistoryTest extends ShimmiePHPUnitTestCase
         // Set original
         self::log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "old_tag");
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         $revert_id = $database->get_one(
             "SELECT id FROM tag_histories WHERE image_id = :image_id ORDER BY id DESC LIMIT 1",
             ["image_id" => $image_id],

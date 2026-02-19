@@ -33,12 +33,12 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertCount(2, $dae->images);
 
         // Check first image - should have tags from filename
-        $image1 = Image::by_hash($test_image_1->md5());
+        $image1 = Post::by_hash($test_image_1->md5());
         self::assertNotNull($image1, "First image should be imported");
         self::assertEqualsCanonicalizing(["foo", "bar", "baz", "qux"], $image1->get_tag_array(), "First image should have tags from filename");
 
         // Check second image - should have tags from filename
-        $image2 = Image::by_hash($test_image_2->md5());
+        $image2 = Post::by_hash($test_image_2->md5());
         self::assertNotNull($image2, "Second image should be imported");
         self::assertEqualsCanonicalizing(["foo", "bar"], $image2->get_tag_array(), "Second image should have tags from filename");
 
@@ -99,7 +99,7 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertCount(2, $dae->images);
 
         // Check first image - should have tags and metadata from export.json
-        $image1 = Image::by_hash($hash1);
+        $image1 = Post::by_hash($hash1);
         self::assertNotNull($image1, "First image should be imported");
         $tags1 = $image1->get_tag_array();
         self::assertContains("test", $tags1);
@@ -109,7 +109,7 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertEquals("screenshot.jpg", $image1->filename);
 
         // Check second image - should have tags and metadata from export.json
-        $image2 = Image::by_hash($hash2);
+        $image2 = Post::by_hash($hash2);
         self::assertNotNull($image2, "Second image should be imported");
         $tags2 = $image2->get_tag_array();
         self::assertContains("test", $tags2);
@@ -131,7 +131,7 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
 
         // First, upload an image directly
         $image_id = self::post_image($test_image, "original");
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         $original_hash = $image->hash;
 
         // Now create a zip with the same image
@@ -153,7 +153,7 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertCount(0, $dae->images);
 
         // Original image should still exist with original tags
-        $image_check = Image::by_hash($original_hash);
+        $image_check = Post::by_hash($original_hash);
         self::assertNotNull($image_check);
         $tags = $image_check->get_tag_array();
         self::assertContains("original", $tags);

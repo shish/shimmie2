@@ -20,7 +20,7 @@ class ReplaceFileTheme extends Themelet
         $max_size = Ctx::$config->get(UploadConfig::SIZE);
         $max_kb = to_shorthand_int($max_size);
 
-        $image = Image::by_id_ex($image_id);
+        $image = Post::by_id_ex($image_id);
         $thumbnail = $this->build_thumb($image);
 
         $form = SHM_FORM(make_link("replace/".$image_id), multipart: true);
