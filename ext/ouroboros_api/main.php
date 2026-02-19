@@ -62,7 +62,7 @@ class _SafeOuroborosImage
         $this->width = intval($img->width);
         $this->file_ext = $img->get_ext();
         $this->file_size = intval($img->filesize);
-        $this->file_url = (string)$img->get_image_link()->asAbsolute();
+        $this->file_url = (string)$img->get_media_link()->asAbsolute();
         $this->md5 = $img->hash;
 
         // meta
@@ -97,7 +97,7 @@ class _SafeOuroborosImage
         // sample (use the full image here)
         $this->sample_height = intval($img->height);
         $this->sample_width = intval($img->width);
-        $this->sample_url = (string)$img->get_image_link()->asAbsolute();
+        $this->sample_url = (string)$img->get_media_link()->asAbsolute();
     }
 }
 

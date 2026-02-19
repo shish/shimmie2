@@ -10,7 +10,7 @@ class AudioFileHandlerTheme extends Themelet
 {
     public function build_media(Post $image): \MicroHTML\HTMLElement
     {
-        $ilink = $image->get_image_link();
+        $ilink = $image->get_media_link();
 
         return emptyHTML(
             AUDIO(

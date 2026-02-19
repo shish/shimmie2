@@ -10,7 +10,7 @@ class VideoFileHandlerTheme extends Themelet
 {
     public function build_media(Post $image): \MicroHTML\HTMLElement
     {
-        $src = $image->get_image_link();
+        $src = $image->get_media_link();
 
         return emptyHTML(
             VIDEO(

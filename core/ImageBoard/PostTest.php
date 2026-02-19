@@ -22,7 +22,7 @@ final class PostTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set(SetupConfig::NICE_URLS, true);
         self::assertEquals(
             "/test/_images/feb01bab5698a11dd87416724c7a89e3/1%20-%20ACDC.jpg",
-            (string)$image->get_image_link()
+            (string)$image->get_media_link()
         );
         self::assertEquals(
             "/test/_thumbs/feb01bab5698a11dd87416724c7a89e3/thumb.jpg",
@@ -32,7 +32,7 @@ final class PostTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set(SetupConfig::NICE_URLS, false);
         self::assertEquals(
             "/test/index.php?q=image%2F1%2F1%2520-%2520ACDC.jpg",
-            (string)$image->get_image_link()
+            (string)$image->get_media_link()
         );
         self::assertEquals(
             "/test/index.php?q=thumb%2F1%2Fthumb.jpg",

@@ -370,15 +370,15 @@ final class Post implements \ArrayAccess
     /**
      * Get the URL for the full size image
      */
-    public function get_image_link(): Url
+    public function get_media_link(): Url
     {
-        return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id/$id%20-%20$tags.$ext');
+        return $this->get_link(ImageConfig::MEDIA_LINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id/$id%20-%20$tags.$ext');
     }
 
     #[Field(name: "image_link")]
     public function graphql_image_link(): string
     {
-        return (string)$this->get_image_link();
+        return (string)$this->get_media_link();
     }
 
     /**
@@ -402,7 +402,7 @@ final class Post implements \ArrayAccess
     {
         $mime = new MimeType(Ctx::$config->get(ThumbnailConfig::MIME));
         $ext = FileExtension::get_for_mime($mime);
-        return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
+        return $this->get_link(ImageConfig::THUMBNAIL_LINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id/thumb.'.$ext);
     }
 
     #[Field(name: "thumb_link")]

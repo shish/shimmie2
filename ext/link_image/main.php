@@ -25,7 +25,7 @@ final class LinkImage extends Extension
 
         return [
             'thumb_src' => $image->get_thumb_link()->asAbsolute(),
-            'image_src' => $image->get_image_link()->asAbsolute(),
+            'image_src' => $image->get_media_link()->asAbsolute(),
             'post_link' => make_link("post/view/{$image->id}")->asAbsolute(),
             'text_link' => $text_link
         ];
