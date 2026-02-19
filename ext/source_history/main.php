@@ -18,10 +18,10 @@ final class SourceHistory extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if ($event->page_matches("source_history/revert", method: "POST", permission: PostTagsPermission::EDIT_IMAGE_TAG)) {
+        if ($event->page_matches("source_history/revert", method: "POST", permission: PostSourcePermission::EDIT_IMAGE_SOURCE)) {
             // this is a request to revert to a previous version of the source
             $this->process_revert_request((int)$event->POST->req('revert'));
-        } elseif ($event->page_matches("source_history/bulk_revert", method: "POST", permission: BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
+        } elseif ($event->page_matches("source_history/bulk_revert", method: "POST", permission: PostSourcePermission::BULK_EDIT_IMAGE_SOURCE)) {
             $this->process_bulk_revert_request();
         } elseif ($event->page_matches("source_history/all/{page}")) {
             $page_id = $event->get_iarg('page');
@@ -55,7 +55,7 @@ final class SourceHistory extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event): void
     {
         if ($event->parent === "system") {
-            if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
+            if (Ctx::$user->can(PostSourcePermission::BULK_EDIT_IMAGE_SOURCE)) {
                 $event->add_nav_link(make_link('source_history/all/1'), "Source Changes", ["source_history"]);
             }
         }
@@ -64,7 +64,7 @@ final class SourceHistory extends Extension
     #[EventListener]
     public function onUserBlockBuilding(UserBlockBuildingEvent $event): void
     {
-        if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
+        if (Ctx::$user->can(PostSourcePermission::BULK_EDIT_IMAGE_SOURCE)) {
             $event->add_link("Source Changes", make_link("source_history/all/1"));
         }
     }

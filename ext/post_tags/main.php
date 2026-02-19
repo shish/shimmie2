@@ -216,6 +216,32 @@ final class PostTags extends Extension
     }
 
     #[EventListener]
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
+    {
+        $event->add_action("tag", "Tag", "t", "", $this->theme->render_tag_input(), 10, permission: PostTagsPermission::BULK_EDIT_IMAGE_TAG);
+    }
+
+    #[EventListener]
+    public function onBulkAction(BulkActionEvent $event): void
+    {
+        if ($event->action === "tag") {
+            if (!isset($event->params['bulk_tags'])) {
+                return;
+            }
+            if (Ctx::$user->can(PostTagsPermission::BULK_EDIT_IMAGE_TAG)) {
+                $tags = $event->params['bulk_tags'];
+                $replace = false;
+                if (isset($event->params['bulk_tags_replace']) &&  $event->params['bulk_tags_replace'] === "true") {
+                    $replace = true;
+                }
+
+                $i = $this->tag_items($event->items, $tags, $replace);
+                $event->log_action("Tagged $i items");
+            }
+        }
+    }
+
+    #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
         $this->theme->display_mass_editor();
@@ -331,5 +357,50 @@ final class PostTags extends Extension
                 $database->begin_transaction();
             }
         }
+    }
+
+    /**
+     * @param iterable<Post> $items
+     */
+    private function tag_items(iterable $items, string $tags, bool $replace): int
+    {
+        $tags = Tag::explode($tags);
+
+        $pos_tag_array = [];
+        $neg_tag_array = [];
+        foreach ($tags as $new_tag) {
+            if (str_starts_with($new_tag, '-')) {
+                $new_tag = substr($new_tag, 1);
+                assert($new_tag !== '');
+                $neg_tag_array[] = $new_tag;
+            } else {
+                $pos_tag_array[] = $new_tag;
+            }
+        }
+
+        $total = 0;
+        if ($replace) {
+            foreach ($items as $image) {
+                send_event(new TagSetEvent($image, $tags));
+                $total++;
+            }
+        } else {
+            foreach ($items as $image) {
+                $img_tags = array_map(strtolower(...), $image->get_tag_array());
+
+                if (!empty($neg_tag_array)) {
+                    $neg_tag_array = array_map(strtolower(...), $neg_tag_array);
+                    $img_tags = array_merge($pos_tag_array, $img_tags);
+                    $img_tags = array_diff($img_tags, $neg_tag_array);
+                } else {
+                    $img_tags = array_merge($tags, $img_tags);
+                }
+                $img_tags = array_filter($img_tags, fn ($tag) => !empty($tag));
+                send_event(new TagSetEvent($image, $img_tags));
+                $total++;
+            }
+        }
+
+        return $total;
     }
 }

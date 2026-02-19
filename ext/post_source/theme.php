@@ -67,4 +67,13 @@ class PostSourceTheme extends Themelet
             ])
         );
     }
+
+    public function render_source_input(): HTMLElement
+    {
+        return INPUT([
+            "type" => "text",
+            "name" => "bulk_source",
+            "placeholder" => "Enter source here"
+        ]);
+    }
 }

@@ -125,8 +125,6 @@ final class BulkActions extends Extension
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
         $event->add_action("delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10, permission: ImagePermission::DELETE_IMAGE);
-        $event->add_action("tag", "Tag", "t", "", $this->theme->render_tag_input(), 10, permission: BulkActionsPermission::BULK_EDIT_IMAGE_TAG);
-        $event->add_action("source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10, permission: BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE);
     }
 
     #[EventListener]
@@ -137,31 +135,6 @@ final class BulkActions extends Extension
                 if (Ctx::$user->can(ImagePermission::DELETE_IMAGE)) {
                     $i = $this->delete_posts($event->items);
                     $event->log_action("Deleted $i[0] items, totaling ".human_filesize($i[1]));
-                }
-                break;
-            case "tag":
-                if (!isset($event->params['bulk_tags'])) {
-                    return;
-                }
-                if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_TAG)) {
-                    $tags = $event->params['bulk_tags'];
-                    $replace = false;
-                    if (isset($event->params['bulk_tags_replace']) &&  $event->params['bulk_tags_replace'] === "true") {
-                        $replace = true;
-                    }
-
-                    $i = $this->tag_items($event->items, $tags, $replace);
-                    $event->log_action("Tagged $i items");
-                }
-                break;
-            case "source":
-                if (!isset($event->params['bulk_source'])) {
-                    return;
-                }
-                if (Ctx::$user->can(BulkActionsPermission::BULK_EDIT_IMAGE_SOURCE)) {
-                    $source = $event->params['bulk_source'];
-                    $i = $this->set_source($event->items, $source);
-                    $event->log_action("Set source for $i items");
                 }
                 break;
         }
@@ -253,65 +226,5 @@ final class BulkActions extends Extension
         return [$total, $size];
     }
 
-    /**
-     * @param iterable<Post> $items
-     */
-    private function tag_items(iterable $items, string $tags, bool $replace): int
-    {
-        $tags = Tag::explode($tags);
 
-        $pos_tag_array = [];
-        $neg_tag_array = [];
-        foreach ($tags as $new_tag) {
-            if (str_starts_with($new_tag, '-')) {
-                $new_tag = substr($new_tag, 1);
-                assert($new_tag !== '');
-                $neg_tag_array[] = $new_tag;
-            } else {
-                $pos_tag_array[] = $new_tag;
-            }
-        }
-
-        $total = 0;
-        if ($replace) {
-            foreach ($items as $image) {
-                send_event(new TagSetEvent($image, $tags));
-                $total++;
-            }
-        } else {
-            foreach ($items as $image) {
-                $img_tags = array_map(strtolower(...), $image->get_tag_array());
-
-                if (!empty($neg_tag_array)) {
-                    $neg_tag_array = array_map(strtolower(...), $neg_tag_array);
-                    $img_tags = array_merge($pos_tag_array, $img_tags);
-                    $img_tags = array_diff($img_tags, $neg_tag_array);
-                } else {
-                    $img_tags = array_merge($tags, $img_tags);
-                }
-                $img_tags = array_filter($img_tags, fn ($tag) => !empty($tag));
-                send_event(new TagSetEvent($image, $img_tags));
-                $total++;
-            }
-        }
-
-        return $total;
-    }
-
-    /**
-     * @param iterable<Post> $items
-     */
-    private function set_source(iterable $items, string $source): int
-    {
-        $total = 0;
-        foreach ($items as $image) {
-            try {
-                send_event(new SourceSetEvent($image, $source));
-                $total++;
-            } catch (\Exception $e) {
-                Ctx::$page->flash("Error while setting source for {$image->id}: " . $e->getMessage());
-            }
-        }
-        return $total;
-    }
 }
