@@ -19,7 +19,7 @@ jobs:
 
       - name: Check and set sys_config
         run: |
-          grep ${{ steps.get_version.outputs.VERSION }} core/sys_config.php
+          grep ${{ steps.get_version.outputs.VERSION }} core/Config/SysConfig.php
           echo "define('BUILD_TIME', '$(date +'%Y-%m-%dT%H:%M:%S')');" >> core/Config/SysConfig.php
           echo "define('BUILD_HASH', '$GITHUB_SHA');" >> core/Config/SysConfig.php
 
