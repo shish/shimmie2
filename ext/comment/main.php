@@ -410,11 +410,7 @@ final class CommentList extends Extension
     #[EventListener]
     public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
-        $comments_locked = (bool)Ctx::$database->get_one(
-            "SELECT comments_locked FROM images WHERE id = :id",
-            ["id" => $event->image->id]
-        );
-        $event->add_part($this->theme->get_comments_lock_editor_html($comments_locked), 42);
+        $event->add_part($this->theme->get_comments_lock_editor_html($event->image["comments_locked"]), 42);
     }
 
     #[EventListener]
