@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class ImageDownloadingEvent extends Event
+class MediaDownloadingEvent extends Event
 {
     public bool $file_modified = false;
 

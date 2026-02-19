@@ -62,7 +62,7 @@ final class TranscodeImage extends Extension
     }
 
     #[EventListener]
-    public function onImageDownloading(ImageDownloadingEvent $event): void
+    public function onMediaDownloading(MediaDownloadingEvent $event): void
     {
         if (
             Ctx::$config->get(TranscodeImageConfig::GET_ENABLED) &&

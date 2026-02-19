@@ -34,7 +34,7 @@ final class Trash extends Extension
     }
 
     #[EventListener(priority: 10)]
-    public function onImageDownloading(ImageDownloadingEvent $event): void
+    public function onMediaDownloading(MediaDownloadingEvent $event): void
     {
         /**
          * Deny images upon insufficient permissions.

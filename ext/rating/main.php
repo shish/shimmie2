@@ -93,7 +93,7 @@ final class Ratings extends Extension
     }
 
     #[EventListener]
-    public function onImageDownloading(ImageDownloadingEvent $event): void
+    public function onMediaDownloading(MediaDownloadingEvent $event): void
     {
         /**
          * Deny images upon insufficient permissions.
