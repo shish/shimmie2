@@ -10,4 +10,7 @@ final class PostSourcePermission extends PermissionGroup
 
     #[PermissionMeta("Edit post source")]
     public const EDIT_IMAGE_SOURCE = "edit_image_source";
+
+    #[PermissionMeta("Bulk edit post source")]
+    public const BULK_EDIT_IMAGE_SOURCE = "bulk_edit_image_source";
 }

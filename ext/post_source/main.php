@@ -102,6 +102,27 @@ final class PostSource extends Extension
     }
 
     #[EventListener]
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
+    {
+        $event->add_action("source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10, permission: PostSourcePermission::BULK_EDIT_IMAGE_SOURCE);
+    }
+
+    #[EventListener]
+    public function onBulkAction(BulkActionEvent $event): void
+    {
+        if ($event->action === "source") {
+            if (!isset($event->params['bulk_source'])) {
+                return;
+            }
+            if (Ctx::$user->can(PostSourcePermission::BULK_EDIT_IMAGE_SOURCE)) {
+                $source = $event->params['bulk_source'];
+                $i = $this->set_source($event->items, $source);
+                $event->log_action("Set source for $i items");
+            }
+        }
+    }
+
+    #[EventListener]
     public function onUploadHeaderBuilding(UploadHeaderBuildingEvent $event): void
     {
         $event->add_part("Source", 11);
@@ -117,6 +138,23 @@ final class PostSource extends Extension
     public function onUploadSpecificBuilding(UploadSpecificBuildingEvent $event): void
     {
         $event->add_part($this->theme->get_upload_specific_html($event->suffix), 11);
+    }
+
+    /**
+     * @param iterable<Post> $items
+     */
+    private function set_source(iterable $items, string $source): int
+    {
+        $total = 0;
+        foreach ($items as $image) {
+            try {
+                send_event(new SourceSetEvent($image, $source));
+                $total++;
+            } catch (\Exception $e) {
+                Ctx::$page->flash("Error while setting source for {$image->id}: " . $e->getMessage());
+            }
+        }
+        return $total;
     }
 
     private function mass_source_edit(string $terms, string $source): void

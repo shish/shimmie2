@@ -11,6 +11,9 @@ final class PostTagsPermission extends PermissionGroup
     #[PermissionMeta("Edit post tag")]
     public const EDIT_IMAGE_TAG = "edit_image_tag";
 
+    #[PermissionMeta("Bulk edit post tag")]
+    public const BULK_EDIT_IMAGE_TAG = "bulk_edit_image_tag";
+
     #[PermissionMeta("Mass tag edit")]
     public const MASS_TAG_EDIT = "mass_tag_edit";
 }
