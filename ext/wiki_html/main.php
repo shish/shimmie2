@@ -14,7 +14,7 @@ final class WikiHtml extends Extension
         $can_use_html = Ctx::$user->can(WikiHtmlPermission::USE_HTML) || Ctx::$user->can(WikiPermission::ADMIN);
 
         if (!$can_use_html) {
-            $event->wikipage->body = str_ireplace(['[html]', '[/html]'], ['&#91;html&#93;', '&#91;/html&#93;'], $event->wikipage->body);
+            throw new UserError("You are not allowed to use [html] tags in this location or lack the required permissions.");
         }
     }
 
@@ -28,7 +28,7 @@ final class WikiHtml extends Extension
             if (!$can_use_html || !$is_wiki_save) {
                 array_walk_recursive($_POST, function (mixed &$value): void {
                     if (is_string($value) && stripos($value, '[html]') !== false) {
-                        $value = str_ireplace(['[html]', '[/html]'], ['&#91;html&#93;', '&#91;/html&#93;'], $value);
+                        throw new UserError("You are not allowed to use [html] tags in this location or lack the required permissions.");
                     }
                 });
             }
