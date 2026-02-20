@@ -40,7 +40,7 @@
         "shish/microbundler": "^1.0.2",
         "shish/microcrud": "^2.4",
         "shish/microhtml": "^2.7.0",
-        "shish/microotlp": "^0.0.13",
+        "shish/microotlp": "^0.0.15",
         "shish/gqla": "^1.1.1",
         "thecodingmachine/safe": "^3.4",
         "enshrined/svg-sanitize": "^0.22",
