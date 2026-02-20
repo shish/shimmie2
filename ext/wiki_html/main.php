@@ -40,19 +40,36 @@ final class WikiHtml extends Extension
     {
         $formatted = $event->formatted ?? "";
 
-        $result = preg_replace_callback(
-            '/\[html\](.*?)\[\/html\]/is',
-            function (array $matches): string {
-                $html = htmlspecialchars_decode($matches[1], ENT_QUOTES);
+        if (stripos($formatted, '[html]') === false) {
+            return;
+        }
 
-                $html = preg_replace('/<br\s*\/?>/i', '', $html) ?? $html;
-                $html = preg_replace('/<\/?p>/i', '', $html) ?? $html;
+        $result = "";
+        $offset = 0;
 
-                return $html;
-            },
-            $formatted
-        );
+        $block_elements = 'ul|ol|li|div|h[1-6]|details|summary|blockquote|table|tr|td|th';
 
-        $event->formatted = $result ?? $formatted;
+        while (($start = stripos($formatted, '[html]', $offset)) !== false) {
+            $end = stripos($formatted, '[/html]', $start);
+
+            if ($end === false) {
+                break;
+            }
+
+            $result .= substr($formatted, $offset, $start - $offset);
+            $inner_content = substr($formatted, $start + 6, $end - ($start + 6));
+
+            $decoded = htmlspecialchars_decode($inner_content, ENT_QUOTES);
+
+            $decoded = preg_replace('/(<\/?(?:' . $block_elements . ')[^>]*>)\s*<br\s*\/?>/i', '$1', $decoded) ?? $decoded;
+            $decoded = preg_replace('/<br\s*\/?>\s*(<\/?(?:' . $block_elements . ')[^>]*>)/i', '$1', $decoded) ?? $decoded;
+            $decoded = preg_replace('/<p>\s*(<\/?(?:' . $block_elements . ')[^>]*>)\s*<\/p>/i', '$1', $decoded) ?? $decoded;
+
+            $result .= $decoded;
+            $offset = $end + 7;
+        }
+
+        $result .= substr($formatted, $offset);
+        $event->formatted = $result;
     }
 }
