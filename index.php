@@ -39,11 +39,9 @@ Ctx::setTracer(new \MicroOTLP\Client(
     resourceAttributes: [
         'service.name' => 'shimmie2',
         'service.instance.id' => gethostname() ?: 'unknown',
+        'service.version' => SysConfig::getVersion(),
     ],
-    scopeAttributes: [
-        'name' => 'shimmie2',
-        'version' => SysConfig::getVersion(),
-    ],
+    scopeAttributes: [],
 ));
 // Override TS to show that bootstrapping started in the past
 Ctx::setRootSpan(Ctx::$tracer->startSpan("Root", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9)));
