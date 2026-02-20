@@ -18,4 +18,15 @@ final class WikiHtmlTest extends ShimmiePHPUnitTestCase
         self::assertStringContainsString('<div class="wiki-container">', $event->formatted);
         self::assertStringNotContainsString('&lt;', $event->formatted);
     }
+    public function testUnauthorizedUserThrowsError(): void
+    {
+        self::log_in_as_user();
+
+        $this->expectException(UserError::class);
+
+        $wikipage = new WikiPage();
+        $wikipage->body = "[html]<b>Hacker text</b>[/html]";
+
+        send_event(new WikiUpdateEvent(Ctx::$user, $wikipage));
+    }
 }
