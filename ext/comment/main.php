@@ -89,7 +89,7 @@ final class Comment
         $rows = Ctx::$database->get_all(
             'SELECT * FROM comments
             WHERE image_id = :image_id
-            ORDER BY id DESC',
+            ORDER BY id ASC',
             ['image_id' => $image_id]
         );
         return self::multi_row($rows);
