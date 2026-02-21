@@ -8,8 +8,8 @@ final class ReCaptchaInfo extends ExtensionInfo
 {
     public const KEY = "recaptcha";
 
-    public string $name = "ReCaptcha";
+    public string $name = "reCAPTCHA";
     public array $authors = self::SHISH_AUTHOR;
     public ExtensionCategory $category = ExtensionCategory::MODERATION;
-    public string $description = "Adds ReCaptcha to various pages";
+    public string $description = "Adds reCAPTCHA to various pages";
 }
