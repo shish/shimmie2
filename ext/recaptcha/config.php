@@ -7,6 +7,7 @@ namespace Shimmie2;
 final class ReCaptchaConfig extends ConfigGroup
 {
     public const KEY = "recaptcha";
+    public ?string $title = "reCAPTCHA";
 
     #[ConfigMeta("Secret key", ConfigType::STRING)]
     public const RECAPTCHA_PRIVKEY = "api_recaptcha_privkey";
