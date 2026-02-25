@@ -81,6 +81,7 @@ final class PolyfillsTest extends TestCase
     {
         self::assertEquals(null, parse_shorthand_int("foo"));
         self::assertEquals(-1, parse_shorthand_int("-1"));
+        self::assertEquals(0, parse_shorthand_int("0"));
         self::assertEquals(33554432, parse_shorthand_int("32M"));
         self::assertEquals(44441, parse_shorthand_int("43.4KB"));
         self::assertEquals(1231231231, parse_shorthand_int("1231231231"));
