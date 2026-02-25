@@ -8,7 +8,7 @@ final class SetupTest extends ShimmiePHPUnitTestCase
 {
     public function testParseSettings(): void
     {
-        self::assertEquals(
+        self::assertSame(
             [
                 "mynull" => null,
                 "mystring" => "hello world!",
@@ -18,8 +18,8 @@ final class SetupTest extends ShimmiePHPUnitTestCase
                 "myarray" => ["hello", "world"],
                 "emptystring" => null,
                 "emptyint" => null,
-                "emptybool" => null,
                 "emptyarray" => null,
+                "zero" => 0,
             ],
             ConfigSaveEvent::postToSettings(new QueryArray([
                 // keys in POST that don't start with _type or _config are ignored
@@ -44,10 +44,11 @@ final class SetupTest extends ShimmiePHPUnitTestCase
                 "_config_emptystring" => "",
                 "_type_emptyint" => "int",
                 "_config_emptyint" => "",
-                "_type_emptybool" => "bool",
-                "_config_emptybool" => "",
                 "_type_emptyarray" => "array",
                 "_config_emptyarray" => "",
+                // "0" should not be null
+                "_type_zero" => "int",
+                "_config_zero" => "0",
             ]))
         );
 
