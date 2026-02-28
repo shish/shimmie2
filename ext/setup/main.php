@@ -59,7 +59,7 @@ final class ConfigSaveEvent extends Event
                     $settings[$key] = $value;
                 } elseif ($type === "int") {
                     assert(!is_array($value));
-                    $settings[$key] = $value ? parse_shorthand_int($value) : null;
+                    $settings[$key] = $value !== null ? parse_shorthand_int($value) : null;
                 } elseif ($type === "bool") {
                     $settings[$key] = $value === "on";
                 } elseif ($type === "array") {

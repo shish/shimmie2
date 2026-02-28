@@ -81,6 +81,7 @@ final class ET extends Extension
                 'title' => $config->get(SetupConfig::TITLE),
                 'theme' => $config->get(SetupConfig::THEME),
                 'url'   => (string)(make_link("")->asAbsolute()),
+                'nice_urls' => Url::are_niceurls_enabled(),
             ],
             "versions" => [
                 'shimmie' => SysConfig::getVersion(),
@@ -89,6 +90,7 @@ final class ET extends Extension
                 'db'      => $database->get_driver_id()->value . " " . $database->get_version(),
                 'os'      => php_uname(),
                 'server'  =>  $_SERVER["SERVER_SOFTWARE"] ?? 'unknown',
+                'client'  =>  $_SERVER["HTTP_USER_AGENT"] ?? 'unknown',
             ],
             "extensions" => [
                 "core" => $core_exts,

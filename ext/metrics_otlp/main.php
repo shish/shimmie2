@@ -14,15 +14,107 @@ final class MetricsOTLP extends Extension
     public function onInitExt(InitExtEvent $event): void
     {
         $event->add_shutdown_handler(function () {
-            Ctx::$tracer->logCounter("shimmie.requests", 1, attributes: ["type" => $this->type]);
-            // $this->stats["shimmie.$type.time"] = (ftime() - $_SERVER["REQUEST_TIME_FLOAT"])."|ms";
-            // $this->stats["shimmie.$type.time-db"] = Ctx::$database->dbtime."|ms";
-            Ctx::$tracer->logGauge("shimmie.memory", memory_get_peak_usage(true), attributes: ["type" => $this->type]);
-            Ctx::$tracer->logGauge("shimmie.files", count(get_included_files()), attributes: ["type" => $this->type]);
-            Ctx::$tracer->logGauge("shimmie.queries", Ctx::$database->query_count, attributes: ["type" => $this->type]);
-            Ctx::$tracer->logGauge("shimmie.events", Ctx::$event_bus->event_count, attributes: ["type" => $this->type]);
-            Ctx::$tracer->logGauge("shimmie.cache_hits", Ctx::$cache->get("__etc_cache_hits", -1), attributes: ["type" => $this->type]);
-            Ctx::$tracer->logGauge("shimmie.cache_misses", Ctx::$cache->get("__etc_cache_misses", -1), attributes: ["type" => $this->type]);
+            Ctx::$tracer->logCounter(
+                "shimmie.global.requests",
+                1,
+                unit: "requests",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logCounter(
+                "shimmie.global.queries",
+                Ctx::$database->query_count,
+                unit: "queries",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logCounter(
+                "shimmie.global.events",
+                Ctx::$event_bus->event_count,
+                unit: "events",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logCounter(
+                "shimmie.global.cache_hits",
+                Ctx::$cache->get("__etc_cache_hits", -1),
+                unit: "hits",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logCounter(
+                "shimmie.global.cache_misses",
+                Ctx::$cache->get("__etc_cache_misses", -1),
+                unit: "misses",
+                attributes: ["type" => $this->type],
+            );
+
+            $durationBounds = [
+                0.005, 0.010, 0.025,
+                0.050, 0.100, 0.250,
+                0.500, 1.000, 2.500,
+                5.000, 10.000
+            ];
+            Ctx::$tracer->logHistogramValue(
+                "shimmie.request.duration",
+                microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"],
+                $durationBounds,
+                unit: "seconds",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logHistogramValue(
+                "shimmie.request.db_duration",
+                Ctx::$database->dbtime,
+                $durationBounds,
+                unit: "seconds",
+                attributes: ["type" => $this->type],
+            );
+
+            $memoryBounds = [
+                1 << 20,   // 1MB
+                2 << 20,   // 2MB
+                4 << 20,
+                8 << 20,
+                16 << 20,
+                32 << 20,
+                64 << 20,
+            ];
+            Ctx::$tracer->logHistogramValue(
+                "shimmie.request.memory",
+                memory_get_peak_usage(true),
+                $memoryBounds,
+                unit: "bytes",
+                attributes: ["type" => $this->type],
+            );
+
+            $countBounds = [
+                0, 1, 2, 5, 10, 20, 50, 100, 200, 500
+            ];
+            Ctx::$tracer->logHistogramValue(
+                "shimmie.request.queries",
+                Ctx::$database->query_count,
+                $countBounds,
+                unit: "queries",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logHistogramValue(
+                "shimmie.request.events",
+                Ctx::$event_bus->event_count,
+                $countBounds,
+                unit: "events",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logHistogramValue(
+                "shimmie.request.cache_hits",
+                Ctx::$cache->get("__etc_cache_hits", -1),
+                $countBounds,
+                unit: "hits",
+                attributes: ["type" => $this->type],
+            );
+            Ctx::$tracer->logHistogramValue(
+                "shimmie.request.cache_misses",
+                Ctx::$cache->get("__etc_cache_misses", -1),
+                $countBounds,
+                unit: "misses",
+                attributes: ["type" => $this->type],
+            );
+
             Ctx::$tracer->flushMetrics(Ctx::$config->get(OTLPCommonConfig::HOST));
         });
     }
