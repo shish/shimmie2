@@ -41,7 +41,7 @@ class Automatic1111Tagger extends Extension
                 if (count($all_tags) > count($current_tags)) {
                     $all_tags = array_filter($all_tags, fn ($t) => strtolower($t) !== 'tagme');
                     send_event(new TagSetEvent($image_obj, $all_tags));
-                    if (Ctx::$config->get(Automatic1111TaggerConfig::MODEL) != "wd-v1-4-moat-tagger.v2") {
+                    if (Ctx::$config->get(Automatic1111TaggerConfig::MODEL) !== "wd-v1-4-moat-tagger.v2") {
                         $post_id = $event->get_iarg('post_id');
                         $image_obj = Post::by_id_ex($post_id);
                         $image_contents = $image_obj->get_thumb_filename()->get_contents();
