@@ -219,7 +219,7 @@ final class Approval extends Extension
     #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        if (in_array("approved:no", $event->search_terms)) {
+        if (in_array("approved:no", $event->search_terms) || in_array("approved=no", $event->search_terms)) {
             $event->add_action("approve-post", "Approve", "a", permission: ApprovalPermission::APPROVE_IMAGE);
         } else {
             $event->add_action("disapprove-post", "Disapprove", permission: ApprovalPermission::APPROVE_IMAGE);
