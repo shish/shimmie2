@@ -31,12 +31,12 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
         $e = self::assertException(TagSetException::class, function () use ($image) {
             send_event(new TagSetEvent($image, []));
         });
-        self::assertEquals("Tried to set zero tags", $e->getMessage());
+        self::assertSame("Tried to set zero tags", $e->getMessage());
 
         $e = self::assertException(TagSetException::class, function () use ($image) {
             send_event(new TagSetEvent($image, ["*test*"]));
         });
-        self::assertEquals("Can't set a tag which contains a wildcard (*)", $e->getMessage());
+        self::assertSame("Can't set a tag which contains a wildcard (*)", $e->getMessage());
     }
 
     public function testTagEdit_tooLong(): void

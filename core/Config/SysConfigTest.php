@@ -12,6 +12,6 @@ final class SysConfigTest extends ShimmiePHPUnitTestCase
         SysConfig::getDatabaseTimeout();
         SysConfig::getCacheDsn();
         SysConfig::getTimezone();
-        self::assertEquals(1.0, 1.0);
+        self::assertSame(1.0, 1.0);
     }
 }

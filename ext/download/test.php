@@ -10,6 +10,6 @@ final class DownloadTest extends ShimmiePHPUnitTestCase
     {
         $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         self::get_page("image/$image_id/moo.jpg");
-        self::assertEquals(PageMode::FILE, Ctx::$page->mode);
+        self::assertSame(PageMode::FILE, Ctx::$page->mode);
     }
 }

@@ -15,7 +15,7 @@ final class TagToolsTest extends ShimmiePHPUnitTestCase
 
         // Validate problem
         $page = self::get_page("post/view/$image_id_1");
-        self::assertEquals("Post $image_id_1: TeStCase$ts", $page->title);
+        self::assertSame("Post $image_id_1: TeStCase$ts", $page->title);
 
         // Fix
         send_event(new AdminActionEvent('lowercase_all_tags', new QueryArray([])));
@@ -45,12 +45,21 @@ final class TagToolsTest extends ShimmiePHPUnitTestCase
             ["tag" => "tes$ts", "count" => 42]
         );
 
+        // Validate problem
+        self::assertSame(
+            42,
+            $database->get_one(
+                "SELECT count FROM tags WHERE tag = :tag",
+                ["tag" => "tes$ts"]
+            )
+        );
+
         // Fix
         send_event(new AdminActionEvent('recount_tag_use', new QueryArray([])));
 
         // Validate fix
-        self::assertEquals(
-            0,
+        self::assertSame(
+            null,
             $database->get_one(
                 "SELECT count FROM tags WHERE tag = :tag",
                 ["tag" => "tes$ts"]

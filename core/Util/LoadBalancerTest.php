@@ -10,7 +10,7 @@ final class LoadBalancerTest extends TestCase
 {
     public function test_load_balancing_parse(): void
     {
-        self::assertEquals(
+        self::assertSame(
             ["foo" => 10, "bar" => 5, "baz" => 5, "quux" => 0],
             LoadBalancer::parse_load_balancer_config("foo=10,bar=5,baz=5,quux=0")
         );
@@ -22,11 +22,11 @@ final class LoadBalancerTest extends TestCase
         $array_config = ["foo" => 10, "bar" => 5, "baz" => 5, "quux" => 0];
         $hash = "7ac19c10d6859415";
 
-        self::assertEquals(
+        self::assertSame(
             $array_config,
             LoadBalancer::parse_load_balancer_config($string_config)
         );
-        self::assertEquals(
+        self::assertSame(
             "foo",
             LoadBalancer::choose_load_balancer_node($array_config, $hash)
         );
@@ -38,7 +38,7 @@ final class LoadBalancerTest extends TestCase
         for ($i = 0; $i < 2000; $i++) {
             $results[LoadBalancer::choose_load_balancer_node($array_config, (string)$i)]++;
         }
-        self::assertEquals(
+        self::assertSame(
             ["foo" => 1001, "bar" => 502, "baz" => 497, "quux" => 0],
             $results
         );
@@ -50,7 +50,7 @@ final class LoadBalancerTest extends TestCase
         $ext = "jpg";
 
         // pseudo-randomly select one of the image servers, balanced in given ratio
-        self::assertEquals(
+        self::assertSame(
             "https://foo.mycdn.com/7ac19c10d6859415.jpg",
             LoadBalancer::load_balance_url("https://{foo=10,bar=5,baz=5,quux=0}.mycdn.com/$hash.$ext", $hash)
         );

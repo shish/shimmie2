@@ -45,7 +45,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
         ];
         self::post_page("upload", ["tags0" => "foo bar"]);
         self::assert_response(302);
-        self::assertEquals(4, $database->get_one("SELECT COUNT(*) FROM images"));
+        self::assertSame(4, $database->get_one("SELECT COUNT(*) FROM images"));
         // FIXME: image IDs get allocated even when transactions are rolled back,
         // so these IDs are not necessarily correct
         // self::assertStringStartsWith("/test/post/list/id%3D4%2C3%2C2%2C1/1", $page->redirect);
@@ -85,6 +85,6 @@ final class UploadTest extends ShimmiePHPUnitTestCase
             $this->create_post("data/huge.jpg", "test");
         });
         unlink("data/huge.jpg");
-        self::assertEquals("File too large (3.0MB > 1.0MB)", $e->getMessage());
+        self::assertSame("File too large (3.0MB > 1.0MB)", $e->getMessage());
     }
 }

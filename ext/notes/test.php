@@ -9,19 +9,19 @@ final class NotesTest extends ShimmiePHPUnitTestCase
     public function testList(): void
     {
         $page = self::get_page("note/list");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     public function testRequests(): void
     {
         $page = self::get_page("note/requests");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     public function testUpdated(): void
     {
         $page = self::get_page("note/updated");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     // self::get_page("note/history/$note_id");

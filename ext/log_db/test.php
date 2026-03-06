@@ -15,14 +15,14 @@ final class LogDatabaseTest extends ShimmiePHPUnitTestCase
         self::get_page("log/view", ["r_user" => "demo"]);
 
         $page = self::get_page("log/view", ["r_priority" => "10"]);
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     public function testMessageRender(): void
     {
         $col = new MessageColumn("message", "Message");
         $html = $col->display(["priority" => 10, "message" => "Commented on Post #123 and then ate <script>cheese</script>"]);
-        self::assertEquals(
+        self::assertSame(
             "<span class='level-debug'>Commented on <a href='/test/post/view/123'>&gt;&gt;123</a> and then ate &lt;script&gt;cheese&lt;/script&gt;</span>",
             (string)$html
         );

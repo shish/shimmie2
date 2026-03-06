@@ -15,6 +15,6 @@ final class LinkImageTest extends ShimmiePHPUnitTestCase
         $matches = [];
         self::assertNotFalse(\Safe\preg_match("#value='https?://.*/(post/view/[0-9]+)'#", $this->page_to_text(), $matches));
         $page = self::get_page($matches[1]);
-        self::assertEquals("Post $image_id: pie", $page->title);
+        self::assertSame("Post $image_id: pie", $page->title);
     }
 }
