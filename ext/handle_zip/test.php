@@ -105,8 +105,8 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertContains("test", $tags1);
         self::assertContains("metadata", $tags1);
         self::assertContains("screenshot", $tags1);
-        self::assertEquals("http://example.com/image1.jpg", $image1->source);
-        self::assertEquals("screenshot.jpg", $image1->filename);
+        self::assertSame("http://example.com/image1.jpg", $image1->source);
+        self::assertSame("screenshot.jpg", $image1->filename);
 
         // Check second image - should have tags and metadata from export.json
         $image2 = Post::by_hash($hash2);
@@ -115,8 +115,8 @@ final class ZipFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertContains("test", $tags2);
         self::assertContains("metadata", $tags2);
         self::assertContains("favicon", $tags2);
-        self::assertEquals("http://example.com/image2.png", $image2->source);
-        self::assertEquals("favicon.png", $image2->filename);
+        self::assertSame("http://example.com/image2.png", $image2->source);
+        self::assertSame("favicon.png", $image2->filename);
 
         // Cleanup
         $zip_path->unlink();

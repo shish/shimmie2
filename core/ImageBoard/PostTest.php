@@ -12,29 +12,29 @@ final class PostTest extends ShimmiePHPUnitTestCase
         $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "AC/DC");
         $image = Post::by_id_ex($image_id_1);
         self::assertNull($image->source);
-        self::assertEquals("pbx_screenshot.jpg", $image->filename);
+        self::assertSame("pbx_screenshot.jpg", $image->filename);
 
-        self::assertEquals(
+        self::assertSame(
             "1 - ACDC.jpg",
             $image->get_nice_media_name()
         );
 
         Ctx::$config->set(SetupConfig::NICE_URLS, true);
-        self::assertEquals(
+        self::assertSame(
             "/test/_images/feb01bab5698a11dd87416724c7a89e3/1%20-%20ACDC.jpg",
             (string)$image->get_media_link()
         );
-        self::assertEquals(
+        self::assertSame(
             "/test/_thumbs/feb01bab5698a11dd87416724c7a89e3/thumb.jpg",
             (string)$image->get_thumb_link()
         );
 
         Ctx::$config->set(SetupConfig::NICE_URLS, false);
-        self::assertEquals(
+        self::assertSame(
             "/test/index.php?q=image%2F1%2F1%2520-%2520ACDC.jpg",
             (string)$image->get_media_link()
         );
-        self::assertEquals(
+        self::assertSame(
             "/test/index.php?q=thumb%2F1%2Fthumb.jpg",
             (string)$image->get_thumb_link()
         );

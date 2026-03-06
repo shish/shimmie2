@@ -8,13 +8,13 @@ final class TagCategoriesTest extends ShimmiePHPUnitTestCase
 {
     public function testParsing(): void
     {
-        self::assertEquals("artist", TagCategories::get_tag_category("artist:bob"));
-        self::assertEquals("bob", TagCategories::get_tag_body("artist:bob"));
+        self::assertSame("artist", TagCategories::get_tag_category("artist:bob"));
+        self::assertSame("bob", TagCategories::get_tag_body("artist:bob"));
 
-        self::assertEquals(null, TagCategories::get_tag_category("bob"));
-        self::assertEquals("bob", TagCategories::get_tag_body("bob"));
+        self::assertSame(null, TagCategories::get_tag_category("bob"));
+        self::assertSame("bob", TagCategories::get_tag_body("bob"));
 
-        self::assertEquals(null, TagCategories::get_tag_category("notacategory:bob"));
-        self::assertEquals("notacategory:bob", TagCategories::get_tag_body("notacategory:bob"));
+        self::assertSame(null, TagCategories::get_tag_category("notacategory:bob"));
+        self::assertSame("notacategory:bob", TagCategories::get_tag_body("notacategory:bob"));
     }
 }

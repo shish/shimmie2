@@ -10,9 +10,9 @@ class MicroHTMLTest extends TestCase
 {
     public function test_date(): void
     {
-        self::assertEquals(
+        self::assertSame(
             "<time datetime='2012-06-23T16:14:22+00:00'>June 23, 2012; 16:14</time>",
-            SHM_DATE("2012-06-23 16:14:22")
+            (string)SHM_DATE("2012-06-23 16:14:22")
         );
     }
 }

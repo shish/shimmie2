@@ -146,7 +146,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     protected function assert_response(int $code): void
     {
-        self::assertEquals($code, Ctx::$page->code);
+        self::assertSame($code, Ctx::$page->code);
     }
 
     /**
@@ -217,7 +217,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         foreach ($images as $image) {
             $ids[] = $image->id;
         }
-        self::assertEquals($results, $ids, $message);
+        self::assertSame($results, $ids, $message);
     }
 
     protected function assertException(string $type, callable $function, string $message = ''): \Exception

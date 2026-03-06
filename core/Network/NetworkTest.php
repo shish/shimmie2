@@ -37,7 +37,7 @@ Content-Length: 1234
 X-Forwarded-For: 1.2.3.4
 ";
 
-        self::assertEquals([
+        self::assertSame([
             "Content-Type" => "text/html",
             "Content-Length" => "1234",
             "X-Forwarded-For" => "1.2.3.4",
@@ -51,8 +51,8 @@ X-Forwarded-For: 1.2.3.4
             "Content-Length" => "1234",
             "x-forwarded-for" => "1.2.3.4",
         ];
-        self::assertEquals("text/html", Network::find_header($headers, "Content-Type"));
-        self::assertEquals("1.2.3.4", Network::find_header($headers, "X-Forwarded-For"));
+        self::assertSame("text/html", Network::find_header($headers, "Content-Type"));
+        self::assertSame("1.2.3.4", Network::find_header($headers, "X-Forwarded-For"));
     }
 
 }

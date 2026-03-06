@@ -129,7 +129,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
         $page = self::post_page("pool/remove_posts/$pool_id", [
             "check" => [(string)($image_ids[0]), (string)($image_ids[1])]
         ]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         return [$pool_id, $image_ids];
     }
@@ -142,7 +142,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
         $page = self::post_page("pool/add_posts/$pool_id", [
             "check" => [(string)($image_ids[0]), (string)($image_ids[1])]
         ]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
     }
 
     /**
@@ -156,7 +156,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
         $page = self::post_page("pool/edit_description/$pool_id", [
             "description" => "Updated description"
         ]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         return [$pool_id, $image_ids];
     }
@@ -178,6 +178,6 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
         send_event(new PoolAddPostsEvent($pool_id, [$image_id_1, $image_id_2]));
 
         $page = self::post_page("pool/nuke/$pool_id");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
     }
 }

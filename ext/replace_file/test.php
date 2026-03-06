@@ -24,11 +24,11 @@ final class ReplaceFileTest extends ShimmiePHPUnitTestCase
         // check that the image is original
         $image = Post::by_id_ex($image_id);
         $old_hash = \Safe\md5_file("tests/pbx_screenshot.jpg");
-        //self::assertEquals("pbx_screenshot.jpg", $image->filename);
+        //self::assertSame("pbx_screenshot.jpg", $image->filename);
         self::assertEquals("image/jpeg", $image->get_mime());
-        self::assertEquals(19774, $image->filesize);
-        self::assertEquals(640, $image->width);
-        self::assertEquals($old_hash, $image->hash);
+        self::assertSame(19774, $image->filesize);
+        self::assertSame(640, $image->width);
+        self::assertSame($old_hash, $image->hash);
 
         // replace it
         // create a copy because the file is deleted after upload
@@ -49,15 +49,15 @@ final class ReplaceFileTest extends ShimmiePHPUnitTestCase
         self::assertEquals("/test/post/view/$image_id", $page->redirect);
 
         // check that there's still one image
-        self::assertEquals(1, $database->get_one("SELECT COUNT(*) FROM images"));
+        self::assertSame(1, $database->get_one("SELECT COUNT(*) FROM images"));
 
         // check that the image was replaced
         $image = Post::by_id_ex($image_id);
-        // self::assertEquals("favicon.png", $image->filename); // TODO should we update filename?
+        // self::assertSame("favicon.png", $image->filename); // TODO should we update filename?
         self::assertEquals("image/png", $image->get_mime());
-        self::assertEquals(246, $image->filesize);
-        self::assertEquals(16, $image->width);
-        self::assertEquals(md5_file("tests/favicon.png"), $image->hash);
+        self::assertSame(246, $image->filesize);
+        self::assertSame(16, $image->width);
+        self::assertSame(md5_file("tests/favicon.png"), $image->hash);
 
         // check that new files exist and old files don't
         self::assertFalse(Filesystem::warehouse_path(Post::MEDIA_DIR, $old_hash)->exists());

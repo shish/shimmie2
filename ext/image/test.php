@@ -21,7 +21,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
         $page = self::get_page("image/$image_id/moo.jpg");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     public function testServeThumb(): void
@@ -29,7 +29,7 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->create_post("tests/pbx_screenshot.jpg", "test");
         $page = self::get_page("thumb/$image_id/moo.jpg");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     public function testDelete(): void
@@ -45,9 +45,9 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
         # delete twice because Trash extension
         $page = self::post_page("image/delete", ['image_id' => "$image_id"]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
         $page = self::post_page("image/delete", ['image_id' => "$image_id"]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         self::assertException(PostNotFound::class, function () use ($image_id) {
             self::get_page("image/$image_id/moo.jpg");
@@ -63,9 +63,9 @@ final class ImageIOTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         # delete twice because Trash extension
         $page = self::post_page("image/delete", ['image_id' => "$image_id"]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
         $page = self::post_page("image/delete", ['image_id' => "$image_id"]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         self::assertException(PostNotFound::class, function () use ($image_id) {
             self::get_page("image/$image_id/moo.jpg");

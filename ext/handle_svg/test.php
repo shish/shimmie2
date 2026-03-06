@@ -17,7 +17,7 @@ final class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertStringContainsString("www.w3.org", $image->get_media_filename()->get_contents());
 
         $page = self::get_page("thumb/$image_id/foo.jpg"); // check thumbnail was generated
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
 
         # FIXME: test that the thumb works
         # FIXME: test that it gets displayed properly
@@ -34,6 +34,6 @@ final class SVGFileHandlerTest extends ShimmiePHPUnitTestCase
         self::assertStringNotContainsString("script", $image->get_media_filename()->get_contents());
 
         $page = self::get_page("thumb/$image_id/foo.jpg"); // check thumbnail was generated
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 }

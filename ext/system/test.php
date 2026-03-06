@@ -9,6 +9,6 @@ final class SystemTest extends ShimmiePHPUnitTestCase
     public function testView(): void
     {
         $page = self::get_page("system");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
     }
 }

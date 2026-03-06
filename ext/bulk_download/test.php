@@ -26,7 +26,7 @@ final class BulkDownloadTest extends ShimmiePHPUnitTestCase
         ));
 
         // Check that page is set to file mode
-        self::assertEquals(PageMode::FILE, Ctx::$page->mode);
+        self::assertSame(PageMode::FILE, Ctx::$page->mode);
         self::assertEquals(MimeType::ZIP, Ctx::$page->mime);
         self::assertNotNull(Ctx::$page->file);
         self::assertTrue(Ctx::$page->file->is_file());
@@ -38,7 +38,7 @@ final class BulkDownloadTest extends ShimmiePHPUnitTestCase
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $files[] = $zip->getNameIndex($i);
         }
-        self::assertEquals([
+        self::assertSame([
             "$image_id_1 - export test1.jpg",
             "$image_id_2 - export test2.png",
             BulkDownload::EXPORT_INFO_FILE_NAME,
@@ -55,13 +55,13 @@ final class BulkDownloadTest extends ShimmiePHPUnitTestCase
         self::assertArrayHasKey("hash", $metadata[0]);
         self::assertArrayHasKey("filename", $metadata[0]);
         self::assertArrayHasKey("tags", $metadata[0]);
-        self::assertEquals($image1->hash, $metadata[0]["hash"]);
+        self::assertSame($image1->hash, $metadata[0]["hash"]);
 
         // Verify second image metadata
         self::assertArrayHasKey("hash", $metadata[1]);
         self::assertArrayHasKey("filename", $metadata[1]);
         self::assertArrayHasKey("tags", $metadata[1]);
-        self::assertEquals($image2->hash, $metadata[1]["hash"]);
+        self::assertSame($image2->hash, $metadata[1]["hash"]);
 
         // Check that image files are in the zip
         self::assertNotFalse($zip->locateName($metadata[0]['_filename']));

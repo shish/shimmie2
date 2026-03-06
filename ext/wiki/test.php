@@ -9,7 +9,7 @@ final class WikiTest extends ShimmiePHPUnitTestCase
     public function testIndex(): void
     {
         $page = self::get_page("wiki");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
     }
 
     public function testList(): void

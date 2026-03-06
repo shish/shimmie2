@@ -15,6 +15,6 @@ final class HelpPagesTest extends ShimmiePHPUnitTestCase
     public function test_page(): void
     {
         $e = send_event(new HelpPageBuildingEvent("test"));
-        self::assertEquals(0, count($e->get_parts()));
+        self::assertSame(0, count($e->get_parts()));
     }
 }
