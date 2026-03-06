@@ -67,13 +67,13 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         Ctx::$user->get_config()->set(RatingsUserConfig::DEFAULTS, ["s", "q", "e"]);
         $next = $image_s->get_next();
         self::assertNotNull($next);
-        self::assertEquals($next->id, $image_id_e);
+        self::assertSame($next->id, $image_id_e);
 
         // If the user prefers to see only safe images by default, then
         // going to the safe image and clicking next should not show
         // the explicit image (See bug #984)
         Ctx::$user->get_config()->set(RatingsUserConfig::DEFAULTS, ["s"]);
-        self::assertEquals($image_s->get_next(), null);
+        self::assertSame($image_s->get_next(), null);
     }
 
     public function testCountImages(): void
@@ -93,8 +93,8 @@ final class RatingsTest extends ShimmiePHPUnitTestCase
         Ctx::$config->set("ext_rating_user_privs", ["s", "q"]);
         Ctx::$user->get_config()->set(RatingsUserConfig::DEFAULTS, ["s"]);
 
-        self::assertEquals(1, Search::count_posts(["rating=s"]), "UserClass has access to safe, show safe");
-        self::assertEquals(2, Search::count_posts(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
-        self::assertEquals(1, Search::count_posts(), "If search doesn't specify anything, check the user defaults");
+        self::assertSame(1, Search::count_posts(["rating=s"]), "UserClass has access to safe, show safe");
+        self::assertSame(2, Search::count_posts(["rating=*"]), "UserClass has access to s/q - if user asks for everything, show those two but hide e");
+        self::assertSame(1, Search::count_posts(), "If search doesn't specify anything, check the user defaults");
     }
 }

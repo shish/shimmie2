@@ -34,11 +34,11 @@ final class TermsTest extends ShimmiePHPUnitTestCase
     public function testAcceptTerms(): void
     {
         $page = self::request('POST', 'accept_terms/post/list');
-        self::assertEquals($page->mode, PageMode::REDIRECT);
+        self::assertSame($page->mode, PageMode::REDIRECT);
         self::assertEquals($page->redirect, make_link('post/list'));
 
         $page = self::request('POST', 'accept_terms/');
-        self::assertEquals($page->mode, PageMode::REDIRECT);
+        self::assertSame($page->mode, PageMode::REDIRECT);
         self::assertEquals($page->redirect, make_link(''));
     }
 }

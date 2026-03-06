@@ -45,43 +45,43 @@ final class FilesystemTest extends TestCase
 
     public function test_path_to_tags(): void
     {
-        self::assertEquals(
+        self::assertSame(
             [],
             Filesystem::path_to_tags(new Path("nope.jpg"))
         );
-        self::assertEquals(
+        self::assertSame(
             [],
             Filesystem::path_to_tags(new Path("\\"))
         );
-        self::assertEquals(
+        self::assertSame(
             [],
             Filesystem::path_to_tags(new Path("/"))
         );
-        self::assertEquals(
+        self::assertSame(
             [],
             Filesystem::path_to_tags(new Path("C:\\"))
         );
-        self::assertEquals(
+        self::assertSame(
             ["tag", "test"],
             Filesystem::path_to_tags(new Path("123 - test tag.jpg"))
         );
-        self::assertEquals(
+        self::assertSame(
             ["foo", "bar"],
             Filesystem::path_to_tags(new Path("/foo/bar/baz.jpg"))
         );
-        self::assertEquals(
+        self::assertSame(
             ["cake", "pie", "foo", "bar"],
             Filesystem::path_to_tags(new Path("/foo/bar/123 - cake pie.jpg"))
         );
-        self::assertEquals(
+        self::assertSame(
             ["baz", "qux", "foo", "bar"],
             Filesystem::path_to_tags(new Path("foo/bar/123 - baz qux.jpg"))
         );
-        self::assertEquals(
+        self::assertSame(
             ["bacon", "lemon"],
             Filesystem::path_to_tags(new Path("\\bacon\\lemon\\baz.jpg"))
         );
-        self::assertEquals(
+        self::assertSame(
             ["category:tag"],
             Filesystem::path_to_tags(new Path("/category:/tag/baz.jpg"))
         );

@@ -14,25 +14,25 @@ final class AutoCompleteTest extends ShimmiePHPUnitTestCase
 
         self::log_out();
         $page = self::get_page('api/internal/autocomplete', ["s" => "not-a-tag"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
-        self::assertEquals("[]", $page->data);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
+        self::assertSame("[]", $page->data);
 
         $page = self::get_page('api/internal/autocomplete', ["s" => "li"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
-        self::assertEquals('{"link":{"newtag":null,"count":1}}', $page->data);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
+        self::assertSame('{"link":{"newtag":null,"count":1}}', $page->data);
 
         $page = self::get_page('api/internal/autocomplete', ["s" => "pr"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
-        self::assertEquals('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
+        self::assertSame('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
 
         # regression test for #1797, underscores stop tab-completion working
         $page = self::get_page('api/internal/autocomplete', ["s" => "prince_"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
-        self::assertEquals('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
+        self::assertSame('{"prince_zelda":{"newtag":"link","count":1}}', $page->data);
     }
 
     public function testCategories(): void
@@ -41,19 +41,19 @@ final class AutoCompleteTest extends ShimmiePHPUnitTestCase
         $this->create_post("tests/pbx_screenshot.jpg", "artist:bob");
 
         $page = self::get_page('api/internal/autocomplete', ["s" => "bob"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
-        self::assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
+        self::assertSame('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
 
         $page = self::get_page('api/internal/autocomplete', ["s" => "art"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
-        self::assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
+        self::assertSame('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
 
         $page = self::get_page('api/internal/autocomplete', ["s" => "artist:"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
-        self::assertEquals('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
+        self::assertSame('{"artist:bob":{"newtag":null,"count":1}}', $page->data);
     }
 
     public function testCyrillic(): void
@@ -65,14 +65,14 @@ final class AutoCompleteTest extends ShimmiePHPUnitTestCase
 
         // check that lowercase search returns all three cases of matching words
         $page = self::get_page('api/internal/autocomplete', ["s" => "со"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
         self::assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
 
         // check that uppercase search returns all three cases of matching words
         $page = self::get_page('api/internal/autocomplete', ["s" => "СО"]);
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
         self::assertEqualsCanonicalizing(["СОЮЗ", "советских", "Социалистических"], array_keys(json_decode($page->data, true)));
     }
 }

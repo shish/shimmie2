@@ -26,7 +26,7 @@ final class FavoritesTest extends ShimmiePHPUnitTestCase
 
         # Favourite shown on index
         $page = self::get_page("post/list/favorited_by=test/1");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         # Favourite shown on user page
         self::get_page("user/test");
