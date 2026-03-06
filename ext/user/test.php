@@ -9,7 +9,7 @@ final class UserPageTest extends ShimmiePHPUnitTestCase
     public function testUserPage(): void
     {
         $page = self::get_page('user');
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         self::get_page('user/demo');
         self::assert_title("demo's Page");
@@ -70,7 +70,7 @@ final class UserPageTest extends ShimmiePHPUnitTestCase
             'pass2' => 'testnew',
             'email' => '',
         ]);
-        self::assertEquals(302, $page->code);
+        self::assertSame(302, $page->code);
         User::by_name('testnew');
     }
 }

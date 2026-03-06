@@ -31,8 +31,8 @@ final class ExtManagerTest extends ShimmiePHPUnitTestCase
     {
         // Test as anonymous user - should see DEFAULT visibility extensions only
         $page = self::get_page('api/internal/extensions');
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
         $data = json_decode($page->data, true);
         self::assertIsArray($data);
         // Should contain extensions with DEFAULT visibility (autocomplete doesn't set visibility, so defaults to DEFAULT)
@@ -41,8 +41,8 @@ final class ExtManagerTest extends ShimmiePHPUnitTestCase
         // Test as admin - should see both DEFAULT and ADMIN visibility extensions
         self::log_in_as_admin();
         $page = self::get_page('api/internal/extensions');
-        self::assertEquals(200, $page->code);
-        self::assertEquals(PageMode::DATA, $page->mode);
+        self::assertSame(200, $page->code);
+        self::assertSame(PageMode::DATA, $page->mode);
         $admin_data = json_decode($page->data, true);
         self::assertIsArray($admin_data);
         // Admin should see at least as many extensions as anonymous users

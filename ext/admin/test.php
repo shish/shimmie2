@@ -20,15 +20,15 @@ final class AdminPageTest extends ShimmiePHPUnitTestCase
 
         self::log_in_as_admin();
         $page = self::get_page('admin');
-        self::assertEquals(200, $page->code);
-        self::assertEquals("Admin Tools", $page->title);
+        self::assertSame(200, $page->code);
+        self::assertSame("Admin Tools", $page->title);
     }
 
     public function testAct(): void
     {
         self::log_in_as_admin();
         $page = self::post_page('admin/test');
-        self::assertEquals("test", $page->data);
+        self::assertSame("test", $page->data);
     }
 
     // does this belong here??

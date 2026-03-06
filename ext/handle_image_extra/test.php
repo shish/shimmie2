@@ -29,7 +29,7 @@ final class ExtraImageFileHandlerTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->create_post($tmp->str().".bmp", "pbx computer screenshot");
         $page = self::get_page("post/view/$image_id");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
 
         // check that it was converted to png
         $image = Post::by_id_ex($image_id);
