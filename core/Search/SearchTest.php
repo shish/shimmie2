@@ -32,17 +32,17 @@ final class SearchTest extends ShimmiePHPUnitTestCase
 
         $is1 = Search::find_posts(0, null, ["order=random_4123"]);
         $ids1 = array_map(fn ($image) => $image->id, $is1);
-        self::assertEquals(3, count($ids1));
+        self::assertSame(3, count($ids1));
 
         $is2 = Search::find_posts(0, null, ["order=random_4123"]);
         $ids2 = array_map(fn ($image) => $image->id, $is2);
-        self::assertEquals(3, count($ids1));
+        self::assertSame(3, count($ids1));
 
         $is3 = Search::find_posts(0, null, ["order=random_6543"]);
         $ids3 = array_map(fn ($image) => $image->id, $is3);
-        self::assertEquals(3, count($ids3));
+        self::assertSame(3, count($ids3));
 
-        self::assertEquals($ids1, $ids2);
+        self::assertSame($ids1, $ids2);
         self::assertNotEquals($ids1, $ids3);
     }
 

@@ -13,7 +13,7 @@ class TombstonesTest extends ShimmiePHPUnitTestCase
         // Post image
         $image_id = self::create_post("tests/pbx_screenshot.jpg", "pbx");
         $page = self::get_page("post/view/$image_id");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
 
         // Ban & delete
         $image = Post::by_id_ex($image_id);

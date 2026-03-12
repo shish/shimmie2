@@ -25,23 +25,23 @@ final class NumericScoreTest extends ShimmiePHPUnitTestCase
 
         # test search by score
         $page = self::get_page("post/list/score=1/1");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         $page = self::get_page("post/list/score>0/1");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         $page = self::get_page("post/list/score>-5/1");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         $page = self::get_page("post/list/-score>5/1");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         $page = self::get_page("post/list/-score<-5/1");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         # test search by vote
         $page = self::get_page("post/list/upvoted_by=test/1");
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
 
         # and downvote
         self::get_page("post/list/downvoted_by=test/1");

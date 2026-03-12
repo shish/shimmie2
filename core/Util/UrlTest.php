@@ -20,7 +20,7 @@ final class UrlTest extends TestCase
     public static function assertUrlEquals(string $a, Url $b, string $message = ""): void
     {
         $cmp = "Expected: $a\nActual:   $b";
-        parent::assertEquals($a, $b, empty($message) ? $cmp : $message);
+        parent::assertSame($a, (string)$b, empty($message) ? $cmp : $message);
     }
 
     public function test_parse(): void
@@ -115,15 +115,15 @@ final class UrlTest extends TestCase
 
         Ctx::$config->set(SetupConfig::NICE_URLS, $nice_urls);
 
-        self::assertEquals(
+        self::assertSame(
             ["bar", "foo"],
             $gst(["foo", "bar"])
         );
-        self::assertEquals(
+        self::assertSame(
             ["AC/DC"],
             $gst(["AC/DC"])
         );
-        self::assertEquals(
+        self::assertSame(
             ["cat*", "rating=?"],
             $gst(["rating=?", "cat*"]),
         );
@@ -181,7 +181,7 @@ final class UrlTest extends TestCase
 
     public function test_path_decode(): void
     {
-        self::assertEquals(
+        self::assertSame(
             "/post/list/AC%2FDC/1",
             Url::parse("/post/list/AC%2FDC/1")->getPath()
         );

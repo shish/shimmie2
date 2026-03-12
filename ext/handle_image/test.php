@@ -13,7 +13,7 @@ final class ImageFileHandlerTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         $page = self::get_page("post/view/$image_id");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
         //self::assert_response(302);
 
         # FIXME: test that the thumb works
@@ -46,7 +46,7 @@ final class ImageFileHandlerTest extends ShimmiePHPUnitTestCase
 
         $image_id = $this->create_post("{$tmp->str()}.$format", "pbx computer screenshot $format");
         $page = self::get_page("post/view/$image_id");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     public function tearDown(): void

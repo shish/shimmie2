@@ -67,11 +67,11 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         self::assertFalse($e->negative);
 
         $e = new SearchTermParseEvent(1, "foo", ["foo"]);
-        self::assertEquals("foo", $e->term);
+        self::assertSame("foo", $e->term);
         self::assertFalse($e->negative);
 
         $e = new SearchTermParseEvent(1, "-foo", ["-foo"]);
-        self::assertEquals("foo", $e->term);
+        self::assertSame("foo", $e->term);
         self::assertTrue($e->negative);
 
         self::assertException(SearchTermParseException::class, function () {
@@ -124,7 +124,7 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         // post/next and post/prev use additional tags internally,
         // but those ones shouldn't count towards the limit
         $page = self::get_page("post/next/$image_id_2", ["search" => "asdf"]);
-        self::assertEquals(PageMode::REDIRECT, $page->mode);
+        self::assertSame(PageMode::REDIRECT, $page->mode);
         self::assertEquals($page->redirect, make_link("post/view/$image_id_1", fragment: "search=asdf"));
     }
 }

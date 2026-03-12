@@ -12,7 +12,7 @@ final class ImageBanTest extends ShimmiePHPUnitTestCase
     {
         self::log_in_as_admin();
         $page = self::get_page("image_hash_ban/list");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 
     public function testBan(): void
@@ -22,7 +22,7 @@ final class ImageBanTest extends ShimmiePHPUnitTestCase
         // Post image
         $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $page = self::get_page("post/view/$image_id");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
 
         // Ban & delete
         send_event(new AddImageHashBanEvent($this->hash, "test hash ban"));
@@ -44,6 +44,6 @@ final class ImageBanTest extends ShimmiePHPUnitTestCase
         // Can repost
         $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $page = self::get_page("post/view/$image_id");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 }

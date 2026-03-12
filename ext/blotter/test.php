@@ -24,7 +24,7 @@ final class BlotterTest extends ShimmiePHPUnitTestCase
         self::log_in_as_admin();
 
         $page = self::get_page("blotter/editor");
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
         //$this->set_field("entry_text", "blotter testing");
         //$this->click("Add");
         //self::assert_text("blotter testing");

@@ -22,7 +22,7 @@ final class DanbooruApiTest extends ShimmiePHPUnitTestCase
         self::get_page("api/danbooru/find_tags", ["name" => "data"]);
 
         $page = self::get_page("api/danbooru/post/show/$image_id");
-        self::assertEquals(302, $page->code);
+        self::assertSame(302, $page->code);
 
         self::get_page("post/list/md5:17fc89f372ed3636e28bd25cc7f3bac1/1");
         //self::assert_title(new PatternExpectation("/^Image \d+: data/"));

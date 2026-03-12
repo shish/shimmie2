@@ -14,7 +14,7 @@ final class XMLSitemapTest extends ShimmiePHPUnitTestCase
             $xml->unlink();
         }
         $page = self::get_page('sitemap.xml');
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
 
         self::log_in_as_user();
         $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
@@ -24,10 +24,10 @@ final class XMLSitemapTest extends ShimmiePHPUnitTestCase
             $xml->unlink();
         }
         $page = self::get_page('sitemap.xml');
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
 
         // check caching
         $page = self::get_page('sitemap.xml');
-        self::assertEquals(200, $page->code);
+        self::assertSame(200, $page->code);
     }
 }
