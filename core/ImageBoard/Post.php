@@ -179,7 +179,7 @@ final class Post implements \ArrayAccess
         if (!is_null($maybe_post)) {
             return $maybe_post;
         }
-        throw new PostNotFound("Image $post_id not found");
+        throw new PostNotFound("Post $post_id not found");
     }
 
     /**
