@@ -34,6 +34,7 @@ final class AliasEditorTest extends ShimmiePHPUnitTestCase
         self::assert_no_text("test1");
 
         self::post_page('alias/add', ['c_oldtag' => 'test1', 'c_newtag' => 'test2']);
+        Ctx::$cache->clear();
         self::get_page('alias/list');
         self::assert_text("test1");
         self::get_page("alias/export/aliases.csv");
@@ -62,6 +63,7 @@ final class AliasEditorTest extends ShimmiePHPUnitTestCase
         self::assert_no_text("multi");
 
         send_event(new AddAliasEvent("onetag", "multi tag"));
+        Ctx::$cache->clear();
         self::get_page('alias/list');
         self::assert_text("multi");
         self::assert_text("tag");

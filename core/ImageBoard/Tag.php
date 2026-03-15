@@ -93,20 +93,24 @@ final class Tag
                 $tag = substr($tag, 1);
             }
 
-            $newtags = Ctx::$database->get_one(
-                "
-					SELECT newtag
-					FROM aliases
-					WHERE LOWER(oldtag)=LOWER(:tag)
-				",
-                ["tag" => $tag]
+            $aliases = cache_get_or_set(
+                "aliases-$tag",
+                function () use ($tag) {
+                    $newtags = Ctx::$database->get_one(
+                        "SELECT newtag
+                        FROM aliases
+                        WHERE LOWER(oldtag)=LOWER(:tag)",
+                        ["tag" => $tag]
+                    );
+                    if (empty($newtags)) {
+                        //tag has no alias, use old tag
+                        return [$tag];
+                    } else {
+                        return explode(" ", $newtags); // Tag::explode($newtags); - recursion can be infinite
+                    }
+                },
+                60
             );
-            if (empty($newtags)) {
-                //tag has no alias, use old tag
-                $aliases = [$tag];
-            } else {
-                $aliases = explode(" ", $newtags); // Tag::explode($newtags); - recursion can be infinite
-            }
 
             foreach ($aliases as $alias) {
                 if (!in_array($alias, $processed_tags)) {
