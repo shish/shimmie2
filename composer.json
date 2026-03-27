@@ -1,4 +1,5 @@
 {
+    "$schema": "https://getcomposer.org/schema.json",
     "name": "shish/shimmie2",
     "description": "A tag-based image gallery",
     "type": "project",
