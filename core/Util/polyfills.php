@@ -473,10 +473,13 @@ function load_cache(?string $dsn): CacheInterface
     $c = null;
     if ($dsn && !isset($_GET['DISABLE_CACHE'])) {
         $url = parse_url($dsn);
-        if ($url) {
+        if ($url && isset($url['scheme'])) {
             if ($url['scheme'] === "memcached" || $url['scheme'] === "memcache") {
                 $memcache = new \Memcached();
-                $memcache->addServer($url['host'], $url['port']);
+                $memcache->addServer(
+                    $url['host'] ?? "127.0.0.1",
+                    $url['port'] ?? 11211,
+                );
                 $c = new \Sabre\Cache\Memcached($memcache);
             } elseif ($url['scheme'] === "apc") {
                 $c = new \Sabre\Cache\Apcu();
