@@ -307,7 +307,7 @@ final class CronUploader extends Extension
                 }
                 try {
                     $result = $database->with_savepoint(function () use ($img, $output_subdir) {
-                        Log::info(self::NAME, "Adding file: {$img[0]} - tags: {$img[2]}");
+                        Log::info(self::NAME, "Adding file: {$img[0] -> str()} - tags: {$img[2]}");
                         $result = $this->add_image($img[0], $img[1], $img[2]);
                         $this->move_uploaded($img[0], $img[1], $output_subdir, false);
                         return $result;
@@ -432,7 +432,7 @@ final class CronUploader extends Extension
                 $tags = Filesystem::path_to_tags(new Path($relativePath));
 
                 yield [
-                    0 => $fullpath,
+                    0 => new Path($fullpath),
                     1 => pathinfo($fullpath, PATHINFO_BASENAME),
                     2 => $tags
                 ];
