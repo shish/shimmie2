@@ -408,7 +408,9 @@ final class CronUploader extends Extension
             return true;
         }
 
-        if (array_key_exists("extension", $info) && in_array(strtolower($info['extension']), self::PARTIAL_DOWNLOAD_EXTENSIONS)) {
+	$ext = strtolower($info['extension'] ?? '');
+
+        if (array_key_exists("extension", $info) && in_array(strtolower($info['extension']), self::PARTIAL_DOWNLOAD_EXTENSIONS) || ($ext === 'json')) {
             return true;
         }
 
@@ -428,8 +430,29 @@ final class CronUploader extends Extension
         foreach (new \RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath) && !$this->is_skippable_file($fullpath)) {
                 $relativePath = substr($fullpath, strlen($base->str()));
-                assert(!empty($relativePath), "Relative path cannot be empty");
-                $tags = Filesystem::path_to_tags(new Path($relativePath));
+		assert(!empty($relativePath), "Relative path cannot be empty");
+		//get tags from path
+		$tags = Filesystem::path_to_tags(new Path($relativePath));
+		//get tags from json file
+		$pos = strrpos($fullpath, '.');
+		$json_path = substr($fullpath, 0, $pos === false ? null : $pos) . '.json';
+		if (file_exists($json_path) && is_readable($json_path)) {
+			$json_content = file_get_contents($json_path);
+			if ($json_content !== false && trim($json_content) !== '') {
+				$data = json_decode($json_content, true);
+				if (is_array($data) && isset($data['tags'])) {
+					$json_tags = $data['tags'];
+					if (is_string($json_tags)) {
+						$json_tags = preg_split('/[\s,]+/', trim($json_tags));
+					}
+					if (is_array($json_tags)) {
+						$tags = array_merge($tags, $json_tags);
+						$tags = array_unique($tags);
+						Log::info(self::NAME, "JSON tags merged for {$fullpath}: " . implode(' ', $json_tags));
+					}
+				}
+			}
+		}
 
                 yield [
                     0 => new Path($fullpath),
@@ -445,3 +468,4 @@ final class CronUploader extends Extension
         return Filesystem::join_path($this->get_user_dir(), "uploads.log");
     }
 }
+
