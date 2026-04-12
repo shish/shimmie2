@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, DIV, IMG, SCRIPT, SELECT, SPAN, emptyHTML};
+use function MicroHTML\{A, DIV, IMG, SCRIPT, SELECT, SPAN, emptyHTML, rawHTML};
 
 class CBZFileHandlerTheme extends Themelet
 {
@@ -29,7 +29,7 @@ class CBZFileHandlerTheme extends Themelet
             SCRIPT(["src" => "{$data_href}/ext/handle_cbz/jszip-utils.min.js"]),
             SCRIPT(["src" => "{$data_href}/ext/handle_cbz/jszip.min.js"]),
             SCRIPT(["src" => "{$data_href}/ext/handle_cbz/comic.js"]),
-            SCRIPT("window.comic = new Comic('comicMain', '$ilink');")
+            SCRIPT(rawHTML("window.comic = new Comic('comicMain', '$ilink');"))
         );
     }
 }
