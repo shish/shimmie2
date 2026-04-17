@@ -94,6 +94,7 @@ class Database
     /**
      * @template T
      * @param callable():T $callback
+     * @param literal-string $name
      * @return T
      */
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
@@ -101,13 +102,13 @@ class Database
         $span = Ctx::$tracer->startSpan("Savepoint $name");
         try {
             // doing string interpolation because bound parameters don't work here
-            $this->execute("SAVEPOINT $name");  // @phpstan-ignore-line
+            $this->execute("SAVEPOINT $name");
             $ret = $callback();
-            $this->execute("RELEASE SAVEPOINT $name");  // @phpstan-ignore-line
+            $this->execute("RELEASE SAVEPOINT $name");
             $span->end(success: true);
             return $ret;
         } catch (\Exception $e) {
-            $this->execute("ROLLBACK TO SAVEPOINT $name");  // @phpstan-ignore-line
+            $this->execute("ROLLBACK TO SAVEPOINT $name");
             $span->end(success: false, message: (string) $e);
             throw $e;
         }
