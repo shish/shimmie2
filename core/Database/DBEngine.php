@@ -22,5 +22,9 @@ abstract class DBEngine
 
     abstract public function get_version(PDO $db): string;
 
+    /**
+     * @param literal-string $channel
+     * @param ?string $data
+     */
     abstract public function notify(PDO $db, string $channel, ?string $data = null): void;
 }
