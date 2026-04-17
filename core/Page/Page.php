@@ -81,11 +81,30 @@ class Page
      * The counterpart for get_cookie, this works like php's
      * setcookie method, but prepends the site-wide cookie prefix to
      * the $name argument before doing anything.
+     *
+     * @param string $name Cookie name (will be prefixed with "shm_")
+     * @param string $value Cookie value
+     * @param int $time Expiration time (Unix timestamp)
+     * @param bool $secure Send only over HTTPS (default: true, auto-detect based on request)
+     * @param bool $httponly Prevent JavaScript access (default: true)
+     * @param 'Strict'|'Lax'|'None' $samesite SameSite attribute
      */
-    public function add_cookie(string $name, string $value, int $time): void
-    {
+    public function add_cookie(
+        string $name,
+        string $value,
+        int $time,
+        ?bool $secure = null,
+        bool $httponly = true,
+        string $samesite = 'Lax'
+    ): void {
         $path = ((string)Url::base()) . "/";
-        $this->cookies[] = new Cookie("shm_$name", $value, $time, $path);
+
+        // Auto-detect secure flag based on current request if not explicitly set
+        if ($secure === null) {
+            $secure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+        }
+
+        $this->cookies[] = new Cookie("shm_$name", $value, $time, $path, $secure, $httponly, $samesite);
     }
 
     public function get_cookie(string $name): ?string
@@ -108,7 +127,19 @@ class Page
                 header($head);
             }
             foreach ($this->cookies as $c) {
-                setcookie($c->name, $c->value, $c->time, $c->path);
+                /** @var 'Strict'|'Lax'|'None' $samesite */
+                $samesite = $c->samesite;
+                setcookie(
+                    $c->name,
+                    $c->value,
+                    [
+                        'expires' => $c->time,
+                        'path' => $c->path,
+                        'secure' => $c->secure,
+                        'httponly' => $c->httponly,
+                        'samesite' => $samesite
+                    ]
+                );
             }
         } else {
             throw new ServerError("Headers have already been sent to the client.");
