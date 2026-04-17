@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (preg_match('/_(images|thumbs)\/([0-9a-f]{32})\//', $_SERVER["REQUEST_URI"], $matches)) {
     $silo = $matches[1];
     $hash = $matches[2];
