@@ -395,14 +395,13 @@ function human_filesize(int $bytes, int $decimals = 2): string
  */
 function generate_key(int $length = 20): string
 {
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $randomString = '';
-
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters [rand(0, strlen($characters) - 1)];
-    }
-
-    return $randomString;
+    // Generate enough random bytes to ensure we have at least $length characters after base64 encoding
+    // Base64 encoding produces 4 characters for every 3 bytes, so we need ceil($length * 3 / 4) bytes
+    $bytes_needed = (int)ceil($length * 3 / 4);
+    assert($bytes_needed > 0, "Length must be a positive integer");
+    $bytes = random_bytes($bytes_needed);
+    $encoded = rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
+    return substr($encoded, 0, $length);
 }
 
 function shm_tempnam(string $prefix = "", string $suffix = ""): Path
