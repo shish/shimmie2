@@ -195,7 +195,7 @@ jobs:
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
       # upload the contents of /tmp/digests
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: digests-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
