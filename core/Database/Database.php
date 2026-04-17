@@ -157,6 +157,12 @@ class Database
         $this->get_engine()->set_timeout($this->get_db(), $time);
     }
 
+    /**
+     * Send a notification to the database.
+     *
+     * @param literal-string $channel The notification channel name (must be a compile-time constant to prevent SQL injection)
+     * @param ?string $data Optional data payload
+     */
     public function notify(string $channel, ?string $data = null): void
     {
         $this->get_engine()->notify($this->get_db(), $channel, $data);
