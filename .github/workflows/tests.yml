@@ -163,7 +163,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -179,7 +179,7 @@ jobs:
       # build and push an anonymous image
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           platforms: ${{ matrix.platform }}
           tags: ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}
@@ -195,7 +195,7 @@ jobs:
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
       # upload the contents of /tmp/digests
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: digests-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
@@ -216,13 +216,13 @@ jobs:
           fetch-tags: true
           fetch-depth: 0
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       # get all files in /tmp/digests
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: ${{ runner.temp }}/digests
           pattern: digests-*
