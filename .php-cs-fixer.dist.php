@@ -9,9 +9,11 @@ $_phpcs_finder = PhpCsFixer\Finder::create()
 
 $_phpcs_config = new PhpCsFixer\Config();
 return $_phpcs_config
+  ->setRiskyAllowed(true)
   ->setRules([
     '@PSR12' => true,
     // 'strict_param' => true,
+    'declare_strict_types' => true,
     'array_syntax' => ['syntax' => 'short'],
     'no_unused_imports' => true,
     // 'modernize_strpos' => true,
