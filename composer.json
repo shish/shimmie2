@@ -52,7 +52,7 @@
         "naroga/redis-cache": "^1.2",
         "symfony/console": "^8.0",
         "symfony/yaml": "^8.0",
-        "jfcherng/php-diff": "^6.16"
+        "jfcherng/php-diff": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^12.5",
