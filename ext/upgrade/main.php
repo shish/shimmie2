@@ -210,5 +210,11 @@ final class Upgrade extends Extension
             $this->set_version(21);
             $database->begin_transaction();
         }
+
+        if ($this->get_version() < 22) {
+            Log::info("upgrade", "Adding last_active column to users table");
+            $database->execute("ALTER TABLE users ADD COLUMN last_active TIMESTAMP NULL");
+            $this->set_version(22);
+        }
     }
 }
