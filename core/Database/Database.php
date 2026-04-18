@@ -369,7 +369,7 @@ class Database
             $this->connect_engine();
         }
         $data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore-next-line - non-literal string is handled very carefully
         $this->execute($this->get_engine()->create_table_sql($name, $data));
     }
 
@@ -391,6 +391,10 @@ class Database
         return $this->get_db();
     }
 
+    /**
+     * @param literal-string $table
+     * @param literal-string $column
+     */
     public function standardise_boolean(string $table, string $column, bool $include_postgres = false): void
     {
         $d = $this->get_driver_id();
@@ -400,19 +404,19 @@ class Database
             # So we can cast directly from ENUM to BOOLEAN which gives us a
             # column of values 'true' and 'invalid but who cares lol', which
             # we can then UPDATE to be 'true' and 'false'.
-            $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");  // @phpstan-ignore-line
-            $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");  // @phpstan-ignore-line
+            $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");
+            $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");
         }
         if ($d === DatabaseDriverID::SQLITE) {
             # SQLite doesn't care about column types at all, everything is
             # text, so we can in-place replace a char with a bool
-            $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");  // @phpstan-ignore-line
+            $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");
         }
         if ($d === DatabaseDriverID::PGSQL && $include_postgres) {
-            $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");  // @phpstan-ignore-line
-            $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");  // @phpstan-ignore-line
-            $this->execute("ALTER TABLE $table DROP COLUMN $column");  // @phpstan-ignore-line
-            $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");  // @phpstan-ignore-line
+            $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");
+            $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");
+            $this->execute("ALTER TABLE $table DROP COLUMN $column");
+            $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");
         }
     }
 
