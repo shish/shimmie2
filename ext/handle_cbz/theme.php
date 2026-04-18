@@ -14,7 +14,7 @@ class CBZFileHandlerTheme extends Themelet
         $ilink = $image->get_media_link();
         return emptyHTML(
             DIV(
-                ["id" => "comicMain"],
+                ["id" => "comicMain", "data-comic-file" => $ilink],
                 DIV(
                     ["class" => "comicPager"],
                     SELECT(["id" => "comicPageList"])
@@ -28,8 +28,7 @@ class CBZFileHandlerTheme extends Themelet
             ),
             SCRIPT(["src" => "{$data_href}/ext/handle_cbz/jszip-utils.min.js"]),
             SCRIPT(["src" => "{$data_href}/ext/handle_cbz/jszip.min.js"]),
-            SCRIPT(["src" => "{$data_href}/ext/handle_cbz/comic.js"]),
-            SCRIPT("window.comic = new Comic('comicMain', '$ilink');")
+            SCRIPT(["src" => "{$data_href}/ext/handle_cbz/comic.js"])
         );
     }
 }
