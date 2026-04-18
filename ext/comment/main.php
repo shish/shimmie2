@@ -511,7 +511,7 @@ final class CommentList extends Extension
         }
 
         // window doesn't work as an SQL param because it's inside quotes >_<
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore-next-line - window_sql is handled carefully
         $result = Ctx::$database->get_all("
 			SELECT *
 			FROM comments

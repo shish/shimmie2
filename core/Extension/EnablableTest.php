@@ -15,8 +15,7 @@ final class EnablableTest extends TestCase
         $prop->setValue(null, null);
         self::assertNull($prop->getValue());
         Enablable::get_enabled_extensions();
-        // phpstan doesn't know that we changed the value
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore-next-line - phpstan doesn't know that we changed the value
         self::assertContains("admin", $prop->getValue());
     }
 }
