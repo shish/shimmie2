@@ -70,7 +70,7 @@ class TracingCache implements CacheInterface
      * @param mixed $default
      * @return iterable<mixed>
      */
-    // @phpstan-ignore-next-line
+    // @phpstan-ignore-next-line - parent class has incomplete type annotations
     public function getMultiple($keys, $default = null)
     {
         $span = $this->tracer->startSpan("Cache Get Multiple", ["keys" => $keys]);
@@ -82,7 +82,7 @@ class TracingCache implements CacheInterface
     /**
      * @param array<string, mixed> $values
      */
-    // @phpstan-ignore-next-line
+    // @phpstan-ignore-next-line - parent class has incomplete type annotations
     public function setMultiple($values, $ttl = null)
     {
         $span = $this->tracer->startSpan("Cache Set Multiple", ["keys" => array_keys($values)]);
@@ -94,7 +94,7 @@ class TracingCache implements CacheInterface
     /**
      * @param string[] $keys
      */
-    // @phpstan-ignore-next-line
+    // @phpstan-ignore-next-line - parent class has incomplete type annotations
     public function deleteMultiple($keys)
     {
         $span = $this->tracer->startSpan("Cache Delete Multiple", ["keys" => $keys]);

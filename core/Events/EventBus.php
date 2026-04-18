@@ -118,8 +118,8 @@ final class EventBus
             foreach ($listeners as $_id => $listener) {
                 [$listener, $method] = $listener;
 
-                // @phpstan-ignore-next-line
-                $class_name = $this->namespaced_class_name(get_class($listener));
+                // @phpstan-ignore-next-line - phpstan thinks get_class can return false?
+                $class_name = $this->namespaced_class_name(\get_class($listener));
                 $classes[] = $class_name;
                 $t[] = "[\$$class_name, '$method']";
             }
@@ -167,7 +167,7 @@ final class EventBus
             if ($this->deadline && ftime() > $this->deadline) {
                 throw new TimeoutException("Timeout while sending $event_name");
             }
-            // @phpstan-ignore-next-line
+            // @phpstan-ignore-next-line - phpstan thinks get_class can return false?
             $sListener = Ctx::$tracer->startSpan($this->namespaced_class_name(\get_class($listener)));
             $listener->$method($event);
             $sListener->end();

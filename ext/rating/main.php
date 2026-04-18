@@ -196,8 +196,8 @@ final class Ratings extends Extension
     {
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {
-            $set = Ratings::privs_to_sql(Ratings::get_user_default_ratings());
-            $event->add_querylet(new Querylet("rating IN ($set)"));
+            $set = Ratings::get_user_default_ratings();
+            $event->add_querylet(new Querylet("rating IN :ratings", ["ratings" => $set]));
         }
 
         if ($matches = $event->matches($this->search_regexp)) {
@@ -213,8 +213,7 @@ final class Ratings extends Extension
                 $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs(Ctx::$user));
             }
 
-            $set = "'" . join("', '", $ratings) . "'";
-            $event->add_querylet(new Querylet("rating IN ($set)"));
+            $event->add_querylet(new Querylet("rating IN :ratings", ["ratings" => $ratings]));
         }
     }
 
@@ -406,21 +405,6 @@ final class Ratings extends Extension
         $selected = Ctx::$user->get_config()->get(RatingsUserConfig::DEFAULTS) ?? $available;
 
         return array_intersect($available, $selected);
-    }
-
-    /**
-     * @param string[] $privs
-     */
-    public static function privs_to_sql(array $privs): string
-    {
-        $arr = [];
-        foreach ($privs as $i) {
-            $arr[] = "'" . $i . "'";
-        }
-        if (count($arr) === 0) {
-            return "' '";
-        }
-        return join(', ', $arr);
     }
 
     public static function rating_to_human(string $rating): string

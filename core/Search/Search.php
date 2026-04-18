@@ -227,18 +227,17 @@ final class Search
                 static::$_search_path[] = "invalid_tag";
                 $query = new Querylet("SELECT $columns FROM images WHERE 1=0");
             } else {
-                $set = implode(', ', $tag_array);
                 $query = new Querylet("
                     SELECT $columns
                     FROM images INNER JOIN (
                         SELECT DISTINCT it.image_id
                         FROM image_tags it
-                        WHERE it.tag_id IN ($set)
+                        WHERE it.tag_id IN :tag_array
                         ORDER BY it.image_id DESC
                         LIMIT :limit OFFSET :offset
                     ) a on a.image_id = images.id
                     WHERE 1=1
-                ", ["limit" => $limit, "offset" => $offset]);
+                ", ["limit" => $limit, "offset" => $offset, "tag_array" => $tag_array]);
                 // don't offset at the image level because
                 // we already offset at the image_tags level
                 $limit = null;
