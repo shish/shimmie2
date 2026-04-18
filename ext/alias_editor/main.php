@@ -98,6 +98,52 @@ final class AliasEditor extends Extension
         }
     }
 
+    #[EventListener(priority: 5)]
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
+    {
+        global $database;
+
+        // Check if this is the first time we're upgrading the alias database
+        // If so, check for existing tables that the installer or upgrader may have created
+        if ($this->get_version() < 1) {
+            // Check if the aliases table already exists (from old installer/upgrader)
+            $table_exists = false;
+            try {
+                $database->execute("SELECT COUNT(*) FROM aliases");
+                $table_exists = true;
+            } catch (DatabaseException $e) {
+                // Table doesn't exist, which is fine
+            }
+
+            if (!$table_exists) {
+                Log::info("alias_editor", "Creating aliases table");
+                $database->create_table("aliases", "
+                    oldtag VARCHAR(128) NOT NULL,
+                    newtag VARCHAR(128) NOT NULL,
+                    PRIMARY KEY (oldtag)
+                ");
+                $database->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", []);
+            } else {
+                Log::info("alias_editor", "Aliases table already exists, adopting it");
+            }
+
+            $this->set_version(1);
+        }
+
+        if ($this->get_version() < 2) {
+            Log::info("alias_editor", "Changing alias tag columns to VARCHAR(255)");
+            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
+                $database->execute('ALTER TABLE aliases ALTER COLUMN oldtag SET DATA TYPE VARCHAR(255)');
+                $database->execute('ALTER TABLE aliases ALTER COLUMN newtag SET DATA TYPE VARCHAR(255)');
+            } elseif ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
+                $database->execute('ALTER TABLE aliases MODIFY COLUMN oldtag VARCHAR(255) NOT NULL');
+                $database->execute('ALTER TABLE aliases MODIFY COLUMN newtag VARCHAR(255) NOT NULL');
+            }
+
+            $this->set_version(2);
+        }
+    }
+
     /**
      * Add alias *after* mass tag editing, else the MTE will
      * search for the images and be redirected to the alias,
@@ -153,6 +199,21 @@ final class AliasEditor extends Extension
         if (Ctx::$user->can(AliasEditorPermission::MANAGE_ALIAS_LIST)) {
             $event->add_link("Alias Editor", make_link("alias/list"));
         }
+    }
+
+    /**
+     * @return tag-string[]
+     */
+    public static function get_aliases(string $tag): array
+    {
+        $newtags = Ctx::$database->get_one(
+            "SELECT newtag FROM aliases WHERE LOWER(oldtag)=LOWER(:tag)",
+            ["tag" => $tag]
+        );
+        if (empty($newtags)) {
+            return [];
+        }
+        return array_values(array_filter(explode(" ", $newtags), fn ($s) => $s !== ''));
     }
 
     private function get_alias_csv(Database $database): string
