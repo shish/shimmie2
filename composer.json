@@ -36,7 +36,7 @@
         "ext-fileinfo": "*",
         "ifixit/php-akismet": "^1.0",
         "google/recaptcha": "^1.1",
-        "shish/ffsphp": "^1.5",
+        "shish/ffsphp": "^1.6",
         "shish/microbundler": "^1.1.0",
         "shish/microcrud": "^2.5",
         "shish/microhtml": "^2.8",
@@ -52,7 +52,7 @@
         "naroga/redis-cache": "^1.2",
         "symfony/console": "^8.0",
         "symfony/yaml": "^8.0",
-        "jfcherng/php-diff": "^6.16"
+        "jfcherng/php-diff": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^12.5",
