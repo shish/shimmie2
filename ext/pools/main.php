@@ -44,6 +44,9 @@ final class PoolDeletionEvent extends Event
     }
 }
 
+/**
+ * @phpstan-import-type PoolRow from Pools
+ */
 final class Pool
 {
     public int $id;
@@ -56,16 +59,7 @@ final class Pool
     public int $posts;
 
     /**
-     * @param array{
-     *     id: string|int,
-     *     user_id: string|int,
-     *     user_name: ?string,
-     *     public: string|bool,
-     *     title: string,
-     *     description: string,
-     *     date: string,
-     *     posts: string|int,
-     * } $row
+     * @param PoolRow $row
      */
     public function __construct(array $row)
     {
@@ -94,6 +88,7 @@ function _image_to_id(Post $image): int
 }
 
 /**
+ * @phpstan-type PoolRow array{id:string|int,user_id:string|int,user_name:?string,public:string|bool,title:string,description:string,date:string,posts:string|int}
  * @phpstan-type PoolHistoryRow array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
  * @extends Extension<PoolsTheme>
  */
@@ -570,20 +565,25 @@ final class Pools extends Extension
             $order_by = "ORDER BY p.posts DESC";
         }
 
-        $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
-
-        // @phpstan-ignore-next-line
-        $pools = array_map(fn ($row) => new Pool($row), Ctx::$database->get_all("
+        /** @var PoolRow[] */
+        $rows = Ctx::$database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
 			INNER JOIN users AS u
 			ON p.user_id = u.id
-			$where_clause
+			WHERE SCORE_ILIKE(title, :search)
 			$order_by
 			LIMIT :l OFFSET :o
-		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]));
-        // @phpstan-ignore-next-line
-        $totalPages = (int) ceil((int) Ctx::$database->get_one("SELECT COUNT(*) FROM pools " . $where_clause) / $poolsPerPage);
+		", [
+            "l" => $poolsPerPage,
+            "o" => $pageNumber * $poolsPerPage,
+            "search" => $search,
+        ]);
+        $pools = array_map(fn ($row) => new Pool($row), $rows);
+        $totalPages = (int) ceil((int) Ctx::$database->get_one(
+            "SELECT COUNT(*) FROM pools WHERE SCORE_ILIKE(title, :search)",
+            ["search" => $search]
+        ) / $poolsPerPage);
 
         $this->theme->list_pools($pools, $search, $pageNumber + 1, $totalPages);
     }
@@ -619,8 +619,8 @@ final class Pools extends Extension
      */
     private function get_single_pool(int $poolID): Pool
     {
+        /** @var PoolRow */
         $row = Ctx::$database->get_row("SELECT * FROM pools WHERE id=:id", ["id" => $poolID]);
-        // @phpstan-ignore-next-line
         return new Pool($row);
     }
 
@@ -629,8 +629,8 @@ final class Pools extends Extension
      */
     private function get_single_pool_from_title(string $poolTitle): ?Pool
     {
+        /** @var PoolRow|null */
         $row = Ctx::$database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
-        // @phpstan-ignore-next-line
         return $row ? new Pool($row) : null;
     }
 
@@ -650,8 +650,8 @@ final class Pools extends Extension
      */
     private function get_last_userpool(int $userID): Pool
     {
+        /** @var PoolRow */
         $row = Ctx::$database->get_row("SELECT * FROM pools WHERE user_id=:uid ORDER BY id DESC", ["uid" => $userID]);
-        // @phpstan-ignore-next-line
         return new Pool($row);
     }
 
@@ -738,35 +738,34 @@ final class Pools extends Extension
             INNER JOIN images AS i ON i.id = p.image_id
             WHERE p.pool_id = :pid
         ";
-        $params = [];
+        $params = ["pid" => $poolID];
 
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
         if (RatingsInfo::is_enabled()) {
-            $query .= "AND i.rating IN (" . Ratings::privs_to_sql(Ratings::get_user_class_privs(Ctx::$user)) . ")";
+            $query .= "AND i.rating IN :ratings";
+            $params["ratings"] = Ratings::get_user_class_privs(Ctx::$user);
         }
         if (TrashInfo::is_enabled()) {
             $query .= " AND trash != TRUE";
         }
 
         $result = Ctx::$database->get_all(
-            // @phpstan-ignore-next-line
             "
-					SELECT p.image_id FROM pool_images p
-					$query
-					ORDER BY p.image_order ASC
-					LIMIT :l OFFSET :o",
-            [
-                "pid" => $poolID,
+				SELECT p.image_id FROM pool_images p
+				$query
+				ORDER BY p.image_order ASC
+				LIMIT :l OFFSET :o
+			",
+            $params + [
                 "l" => $imagesPerPage,
                 "o" => $pageNumber * $imagesPerPage,
-            ] + $params
+            ]
         );
 
         $totalPages = (int) ceil((int) Ctx::$database->get_one(
-            // @phpstan-ignore-next-line
             "SELECT COUNT(*) FROM pool_images p $query",
-            ["pid" => $poolID] + $params
+            $params
         ) / $imagesPerPage);
 
         $images = [];

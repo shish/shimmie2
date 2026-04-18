@@ -692,16 +692,16 @@
         },
         {
             "name": "shish/ffsphp",
-            "version": "v1.6.0",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/ffsphp.git",
-                "reference": "3a21ddddca20be4391a149f08a633c6679bb10bd"
+                "reference": "52b89ab2c436297a842754bf3b67bfe15bf3e24b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/ffsphp/zipball/3a21ddddca20be4391a149f08a633c6679bb10bd",
-                "reference": "3a21ddddca20be4391a149f08a633c6679bb10bd",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/52b89ab2c436297a842754bf3b67bfe15bf3e24b",
+                "reference": "52b89ab2c436297a842754bf3b67bfe15bf3e24b",
                 "shasum": ""
             },
             "require": {
@@ -735,9 +735,9 @@
             "homepage": "https://github.com/shish/ffsphp",
             "support": {
                 "issues": "https://github.com/shish/ffsphp/issues",
-                "source": "https://github.com/shish/ffsphp/tree/v1.6.0"
+                "source": "https://github.com/shish/ffsphp/tree/v1.7.0"
             },
-            "time": "2026-04-18T12:50:42+00:00"
+            "time": "2026-04-18T21:50:55+00:00"
         },
         {
             "name": "shish/gqla",

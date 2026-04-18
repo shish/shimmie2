@@ -82,18 +82,21 @@ final class TagList extends Extension
                 SELECT it2.tag_id
                 FROM image_tags AS it1
                     INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id
-                        AND it2.tag_id NOT IN (".implode(",", array_merge($omitted_tags, $starting_tags)).")
+                        AND it2.tag_id NOT IN :omitted_tags
                 WHERE
-                    it1.tag_id IN (".implode(",", $starting_tags).")
+                    it1.tag_id IN :starting_tags
                 GROUP BY it2.tag_id
             ) A ON A.tag_id = tags.id
 			ORDER BY count DESC
 			LIMIT :tag_list_length
 		";
 
-        $args = ["tag_list_length" => Ctx::$config->get(TagListConfig::LENGTH)];
+        $args = [
+            "tag_list_length" => Ctx::$config->get(TagListConfig::LENGTH),
+            "starting_tags" => $starting_tags,
+            "omitted_tags" => array_merge($omitted_tags, $starting_tags),
+        ];
 
-        // @phpstan-ignore-next-line
         $tags = Ctx::$database->get_all($query, $args);
         /** @var array<array{tag: tag-string, count: int}> $tags */
         if (count($tags) > 0) {
@@ -133,21 +136,23 @@ final class TagList extends Extension
                     WHERE count > 0
                     ORDER BY count DESC
                     LIMIT :popular_tag_list_length
-                    ";
+                ";
             } else {
                 $query = "
                     SELECT tag, count
                     FROM tags
                     WHERE count > 0
-                        AND id NOT IN (".(implode(",", $omitted_tags)).")
+                        AND id NOT IN :omitted_tags
                     ORDER BY count DESC
                     LIMIT :popular_tag_list_length
-                    ";
+                ";
             }
 
-            $args = ["popular_tag_list_length" => Ctx::$config->get(TagListConfig::POPULAR_TAG_LIST_LENGTH)];
+            $args = [
+                "popular_tag_list_length" => Ctx::$config->get(TagListConfig::POPULAR_TAG_LIST_LENGTH),
+                "omitted_tags" => $omitted_tags,
+            ];
 
-            // @phpstan-ignore-next-line
             $tags = Ctx::$database->get_all($query, $args);
 
             Ctx::$cache->set("popular_tags", $tags, 600);
@@ -221,16 +226,19 @@ final class TagList extends Extension
 					FROM image_tags AS it1 -- Got other images with the same tags
 					    INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id
 					    -- And filter out unwanted tags
-                            AND it2.tag_id NOT IN (".implode(",", array_merge($omitted_tags, $starting_tags)).")
+                            AND it2.tag_id NOT IN :omitted_tags
 					WHERE
-                    it1.tag_id IN (".implode(",", $starting_tags).")
+                    it1.tag_id IN :starting_tags
 					GROUP BY it2.tag_id) A ON A.tag_id = t.id
 					ORDER BY A.calc_count
 					DESC LIMIT :limit
 				";
-                $args = ["limit" => $limit];
+                $args = [
+                    "limit" => $limit,
+                    "starting_tags" => $starting_tags,
+                    "omitted_tags" => array_merge($omitted_tags, $starting_tags),
+                ];
 
-                // @phpstan-ignore-next-line
                 $related_tags = Ctx::$database->get_all($query, $args);
             } else {
                 $related_tags = [];
