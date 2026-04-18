@@ -7,7 +7,7 @@ namespace Shimmie2;
 use function MicroHTML\{A, DIV, IMG, INPUT, OPTION, SELECT, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR};
 
 /**
- * @phpstan-type Tip array{id: int, image: string, text: string, enable: bool}
+ * @phpstan-type TipRow array{id: int, image: string, text: string, enable: bool}
  */
 class TipsTheme extends Themelet
 {
@@ -53,7 +53,7 @@ class TipsTheme extends Themelet
     }
 
     /**
-     * @param Tip $tip
+     * @param TipRow $tip
      */
     public function showTip(array $tip): void
     {
@@ -68,7 +68,7 @@ class TipsTheme extends Themelet
     }
 
     /**
-     * @param Tip[] $tips
+     * @param TipRow[] $tips
      */
     public function showAll(array $tips): void
     {

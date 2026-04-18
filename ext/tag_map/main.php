@@ -63,8 +63,9 @@ final class TagMap extends Extension
      */
     private function get_map_data(string $starts_with, int $tags_min): array
     {
-        global $database;
+        $database = Ctx::$database;
 
+        /** @var array<array{tag: non-empty-string, scaled: float}> */
         return $database->get_all("
             SELECT
                 tag,
@@ -81,7 +82,7 @@ final class TagMap extends Extension
      */
     private function get_alphabetic_data(string $starts_with, int $tags_min): array
     {
-        global $database;
+        $database = Ctx::$database;
 
         return $database->get_pairs("
             SELECT tag, count
@@ -97,7 +98,7 @@ final class TagMap extends Extension
      */
     private function get_popularity_data(int $tags_min): array
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Make sure that the value of $tags_min is at least 1.
         // Otherwise the database will complain if you try to do: LOG(0)
@@ -105,6 +106,7 @@ final class TagMap extends Extension
             $tags_min = 1;
         }
 
+        /** @var array<array{tag: non-empty-string, count: int, scaled: float}> */
         return $database->get_all("
             SELECT tag, count, FLOOR(LOG(10, count)) AS scaled
             FROM tags

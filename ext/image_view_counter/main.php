@@ -16,7 +16,7 @@ final class ImageViewCounter extends Extension
     #[EventListener]
     public function onDisplayingPost(DisplayingPostEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $imgid = $event->image->id;
 
@@ -28,7 +28,7 @@ final class ImageViewCounter extends Extension
 				WHERE ipaddress=:ipaddress AND timestamp >:lasthour AND image_id =:image_id
 			",
             [
-                "ipaddress" => Network::get_real_ip(),
+                "ipaddress" => (string)Network::get_real_ip(),
                 "lasthour" => time() - $this->view_interval,
                 "image_id" => $imgid
             ]
@@ -49,7 +49,7 @@ final class ImageViewCounter extends Extension
                 "image_id" => $imgid,
                 "user_id" => Ctx::$user->id,
                 "timestamp" => time(),
-                "ipaddress" => Network::get_real_ip(),
+                "ipaddress" => (string)Network::get_real_ip(),
             ]
         );
     }
@@ -57,7 +57,7 @@ final class ImageViewCounter extends Extension
     #[EventListener]
     public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (Ctx::$user->can(ImageViewCounterPermission::SEE_IMAGE_VIEW_COUNTS)) {
             $view_count = (string)$database->get_one(
@@ -72,7 +72,7 @@ final class ImageViewCounter extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (Ctx::$config->get("image_viewcounter_installed") !== null) {
             $this->set_version(1);
@@ -92,7 +92,7 @@ final class ImageViewCounter extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($event->page_matches("popular_images")) {
             $popular_ids = $database->get_col("

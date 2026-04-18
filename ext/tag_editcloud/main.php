@@ -28,7 +28,7 @@ final class TagEditCloud extends Extension
      */
     private function get_cloud_data(Post $image): array|null
     {
-        global $database;
+        $database = Ctx::$database;
 
         $sort_method = Ctx::$config->get(TagEditCloudConfig::SORT);
         $tags_min = Ctx::$config->get(TagEditCloudConfig::MIN_USAGE);
@@ -43,6 +43,7 @@ final class TagEditCloud extends Extension
                 }
                 $relevant_tag_ids = implode(',', array_map(fn ($t) => Tag::get_or_create_id($t), $relevant_tags));
 
+                /** @var array<array{tag: string, scaled: float, count: int}> $tag_data */
                 $tag_data = Ctx::$database->get_all(
                     // @phpstan-ignore-next-line
                     "
@@ -61,6 +62,7 @@ final class TagEditCloud extends Extension
                 /** @noinspection PhpMissingBreakStatementInspection */
             case 'c':
                 if (TagCategoriesInfo::is_enabled()) {
+                    /** @var array<array{tag: string, scaled: float, count: int}> $tag_data */
                     $tag_data = $database->get_all(
                         "
                         SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
@@ -82,6 +84,7 @@ final class TagEditCloud extends Extension
             case 'p':
             default:
                 $order_by = $sort_method === 'a' ? "tag" : "count DESC";
+                /** @var array<array{tag: string, scaled: float, count: int}> $tag_data */
                 $tag_data = $database->get_all(
                     "
 					SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count

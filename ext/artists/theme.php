@@ -11,10 +11,10 @@ use MicroHTML\HTMLElement;
 use function MicroHTML\{INPUT,P,emptyHTML};
 
 /**
- * @phpstan-import-type ArtistArtist from Artists
- * @phpstan-import-type ArtistAlias from Artists
- * @phpstan-import-type ArtistMember from Artists
- * @phpstan-import-type ArtistUrl from Artists
+ * @phpstan-import-type ArtistRow from Artists
+ * @phpstan-import-type ArtistAliasRow from Artists
+ * @phpstan-import-type ArtistMemberRow from Artists
+ * @phpstan-import-type ArtistUrlRow from Artists
  */
 class ArtistsTheme extends Themelet
 {
@@ -77,10 +77,10 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistArtist $artist
-     * @param ArtistAlias[] $aliases
-     * @param ArtistMember[] $members
-     * @param ArtistUrl[] $urls
+     * @param ArtistRow $artist
+     * @param ArtistAliasRow[] $aliases
+     * @param ArtistMemberRow[] $members
+     * @param ArtistUrlRow[] $urls
      */
     public function show_artist_editor(array $artist, array $aliases, array $members, array $urls): void
     {
@@ -200,8 +200,8 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-    * @param ArtistArtist[] $artists
-    */
+     * @param ArtistRow[] $artists
+     */
     public function list_artists(array $artists, int $pageNumber, int $totalPages): void
     {
         $deletionLinkActionArray = [
@@ -324,7 +324,7 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistAlias $alias
+     * @param ArtistAliasRow $alias
      */
     public function show_alias_editor(array $alias): void
     {
@@ -339,7 +339,7 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistUrl $url
+     * @param ArtistUrlRow $url
      */
     public function show_url_editor(array $url): void
     {
@@ -354,7 +354,7 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistMember $member
+     * @param ArtistMemberRow $member
      */
     public function show_member_editor(array $member): void
     {
@@ -369,10 +369,10 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistArtist $artist
-     * @param ArtistAlias[] $aliases
-     * @param ArtistMember[] $members
-     * @param ArtistUrl[] $urls
+     * @param ArtistRow $artist
+     * @param ArtistAliasRow[] $aliases
+     * @param ArtistMemberRow[] $members
+     * @param ArtistUrlRow[] $urls
      * @param Post[] $images
      */
     public function show_artist(array $artist, array $aliases, array $members, array $urls, array $images, bool $userIsLogged, bool $userIsAdmin): void
@@ -395,7 +395,7 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistAlias[] $aliases
+     * @param ArtistAliasRow[] $aliases
      */
     private function render_aliases(array $aliases, bool $userIsLogged, bool $userIsAdmin): string
     {
@@ -444,7 +444,7 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistMember[] $members
+     * @param ArtistMemberRow[] $members
      */
     private function render_members(array $members, bool $userIsLogged, bool $userIsAdmin): string
     {
@@ -491,7 +491,7 @@ class ArtistsTheme extends Themelet
     }
 
     /**
-     * @param ArtistUrl[] $urls
+     * @param ArtistUrlRow[] $urls
      */
     private function render_urls(array $urls, bool $userIsLogged, bool $userIsAdmin): string
     {
