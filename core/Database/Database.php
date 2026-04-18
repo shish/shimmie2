@@ -374,16 +374,16 @@ class Database
     }
 
     /**
-     * Returns the number of tables present in the current database.
+     * @return array<string>
      */
+    public function get_table_names(): array
+    {
+        return $this->get_db()->getTableNames();
+    }
+
     public function count_tables(): int
     {
-        $sql = match ($this->get_engine()->id) {
-            DatabaseDriverID::MYSQL => "SHOW TABLES",
-            DatabaseDriverID::PGSQL => "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
-            DatabaseDriverID::SQLITE => "SELECT name FROM sqlite_master WHERE type = 'table'",
-        };
-        return count($this->get_col($sql));
+        return count($this->get_table_names());
     }
 
     public function raw_db(): PDO
