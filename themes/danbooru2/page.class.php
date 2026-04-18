@@ -105,9 +105,7 @@ class Danbooru2Page extends Page
             $header = ($block->header === "Posts") ? "&nbsp;" : $block->header;
             $html->appendChild(H3(["data-toggle-sel" => "#{$block->id}", "class" => $hidable ? "shm-toggler" : ""], $header));
         }
-        if (!empty($block->body)) {
-            $html->appendChild(DIV(['class' => "blockbody"], $block->body));
-        }
+        $html->appendChild(DIV(['class' => "blockbody"], $block->body));
         return $html;
     }
 
