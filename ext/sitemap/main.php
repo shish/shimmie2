@@ -38,7 +38,7 @@ final class XMLSitemap extends Extension
     // Full sitemap
     private function handle_full_sitemap(): string
     {
-        global $database;
+        $database = Ctx::$database;
 
         $urls = [];
 

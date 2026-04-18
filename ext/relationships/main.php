@@ -32,7 +32,7 @@ final class Relationships extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD parent_id INT");
@@ -153,7 +153,7 @@ final class Relationships extends Extension
     #[EventListener]
     public function onPostDeletion(PostDeletionEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($event->image['has_children']) {
             $database->execute("UPDATE images SET parent_id = NULL WHERE parent_id = :iid", ["iid" => $event->image->id]);
@@ -167,7 +167,7 @@ final class Relationships extends Extension
     #[EventListener]
     public function onImageRelationshipSet(ImageRelationshipSetEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $old_parent = $database->get_one("SELECT parent_id FROM images WHERE id = :cid", ["cid" => $event->child_id]);
         if (!is_null($old_parent)) {
@@ -194,7 +194,7 @@ final class Relationships extends Extension
      */
     public static function get_children(int $image_id): array
     {
-        global $database;
+        $database = Ctx::$database;
         $child_ids = $database->get_col("SELECT id FROM images WHERE parent_id = :pid ", ["pid" => $image_id]);
 
         return Search::get_posts($child_ids);
@@ -202,7 +202,7 @@ final class Relationships extends Extension
 
     private function remove_parent(int $imageID): void
     {
-        global $database;
+        $database = Ctx::$database;
         $parentID = $database->get_one("SELECT parent_id FROM images WHERE id = :iid", ["iid" => $imageID]);
 
         if ($parentID) {
@@ -213,7 +213,7 @@ final class Relationships extends Extension
 
     private function set_has_children(int $parent_id): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Doesn't work on pgsql
         // $database->execute("
@@ -234,7 +234,7 @@ final class Relationships extends Extension
 
     public static function has_siblings(int $image_id): bool
     {
-        global $database;
+        $database = Ctx::$database;
 
         $image = Post::by_id_ex($image_id);
 
@@ -251,7 +251,7 @@ final class Relationships extends Extension
      */
     public static function get_siblings(int $image_id): array
     {
-        global $database;
+        $database = Ctx::$database;
 
         $image = Post::by_id_ex($image_id);
 

@@ -8,7 +8,7 @@ final class NotATagTest extends ShimmiePHPUnitTestCase
 {
     public function testUntags(): void
     {
-        global $database;
+        $database = Ctx::$database;
         $database->execute("DELETE FROM untags");
         $database->execute("INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)", ["tag" => "face", "redirect" => "no-body-parts.html"]);
 

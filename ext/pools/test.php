@@ -14,7 +14,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
 
         // Clean up any leftovers to create a fresh test env
         self::log_in_as_admin();
-        global $database;
+        $database = Ctx::$database;
         foreach ($database->get_col("SELECT id FROM pools") as $pool_id) {
             send_event(new PoolDeletionEvent((int)$pool_id));
         }

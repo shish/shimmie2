@@ -29,7 +29,7 @@ class RegenThumbTheme extends Themelet
 
     public function display_admin_block(): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $options = [OPTION(["value" => ''], "All")];
         $results = $database->get_all("SELECT mime, count(*) count FROM images group by mime");

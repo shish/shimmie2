@@ -60,7 +60,7 @@ final class AliasEditor extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $page = Ctx::$page;
 
         if ($event->page_matches("alias/add", method: "POST", permission: AliasEditorPermission::MANAGE_ALIAS_LIST)) {
@@ -142,9 +142,7 @@ final class AliasEditor extends Extension
     #[EventListener(priority: 60)]
     public function onAddAlias(AddAliasEvent $event): void
     {
-        global $database;
-
-        $row = $database->get_row(
+        $row = Ctx::$database->get_row(
             "SELECT * FROM aliases WHERE lower(oldtag)=lower(:oldtag)",
             ["oldtag" => $event->oldtag]
         );
@@ -152,7 +150,7 @@ final class AliasEditor extends Extension
             throw new AddAliasException("{$row['oldtag']} is already an alias for {$row['newtag']}");
         }
 
-        $row = $database->get_row(
+        $row = Ctx::$database->get_row(
             "SELECT * FROM aliases WHERE lower(oldtag)=lower(:newtag)",
             ["newtag" => $event->newtag]
         );
@@ -160,7 +158,7 @@ final class AliasEditor extends Extension
             throw new AddAliasException("{$row['oldtag']} is itself an alias for {$row['newtag']}");
         }
 
-        $database->execute(
+        Ctx::$database->execute(
             "INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)",
             ["oldtag" => $event->oldtag, "newtag" => $event->newtag]
         );
@@ -170,8 +168,7 @@ final class AliasEditor extends Extension
     #[EventListener]
     public function onDeleteAlias(DeleteAliasEvent $event): void
     {
-        global $database;
-        $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $event->oldtag]);
+        Ctx::$database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $event->oldtag]);
         Log::info("alias_editor", "Deleted alias for {$event->oldtag}", "Deleted alias");
     }
 

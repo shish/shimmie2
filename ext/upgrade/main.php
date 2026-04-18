@@ -20,7 +20,7 @@ final class Upgrade extends Extension
             ->setDescription('Run DB schema updates, if automatic updates are disabled')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $output->writeln("Running DB Upgrade");
-                global $database;
+                $database = Ctx::$database;
                 $database->set_timeout(null); // These updates can take a little bit
                 send_event(new DatabaseUpgradeEvent());
                 return Command::SUCCESS;
@@ -30,7 +30,7 @@ final class Upgrade extends Extension
     #[EventListener(priority: 5)]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (!file_exists("data/index.php")) {
             file_put_contents("data/index.php", "<?php\n// Silence is golden...\n");

@@ -138,7 +138,7 @@ final class PrivateImage extends Extension
 
     public static function privatize_image(int $image_id): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $database->execute(
             "UPDATE images SET private = TRUE WHERE id = :id AND private = FALSE",
@@ -148,7 +148,7 @@ final class PrivateImage extends Extension
 
     public static function publicize_image(int $image_id): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $database->execute(
             "UPDATE images SET private = FALSE WHERE id = :id AND private = TRUE",
@@ -220,7 +220,7 @@ final class PrivateImage extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN private BOOLEAN NOT NULL DEFAULT FALSE");

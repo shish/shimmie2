@@ -18,7 +18,7 @@ class TagEditCloudTheme extends Themelet
      */
     public function build_tag_map(array $tag_data, array $post_tags): HTMLElement
     {
-        global $database;
+        $database = Ctx::$database;
 
         $used_first = Ctx::$config->get(TagEditCloudConfig::USED_FIRST);
         $def_count = Ctx::$config->get(TagEditCloudConfig::DEF_COUNT);

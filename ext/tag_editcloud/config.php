@@ -31,7 +31,7 @@ final class TagEditCloudConfig extends ConfigGroup
      */
     public static function get_sort_options(): array
     {
-        global $database;
+        $database = Ctx::$database;
         $sort_by = [
             'Alphabetical' => 'a',
             'Popularity' => 'p',

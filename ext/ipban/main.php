@@ -89,7 +89,7 @@ final class IPBan extends Extension
     #[EventListener(priority: 10)]
     public function onUserLogin(UserLoginEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Get lists of banned IPs and banned networks
         $ips = Ctx::$cache->get("ip_bans");
@@ -239,7 +239,7 @@ final class IPBan extends Extension
     #[EventListener]
     public function onRemoveIPBan(RemoveIPBanEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $ban = $database->get_row("SELECT * FROM bans WHERE id = :id", ["id" => $event->id]);
         if ($ban) {
             $database->execute("DELETE FROM bans WHERE id = :id", ["id" => $event->id]);

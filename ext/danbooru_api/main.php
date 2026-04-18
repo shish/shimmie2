@@ -97,7 +97,7 @@ final class DanbooruApi extends Extension
      */
     private function api_find_tags(PageRequestEvent $event): HTMLElement
     {
-        global $database;
+        $database = Ctx::$database;
         $params = $event->GET;
 
         $results = [];
@@ -273,7 +273,7 @@ final class DanbooruApi extends Extension
      */
     private function api_add_post(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $page = Ctx::$page;
 
         // Check first if a login was supplied, if it wasn't check if the user is logged in via cookie

@@ -246,7 +246,7 @@ final class Ratings extends Extension
     #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $results = $database->get_col("SELECT DISTINCT rating FROM images ORDER BY rating");
         $original_values = [];
@@ -452,7 +452,7 @@ final class Ratings extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT '?'");
@@ -512,7 +512,7 @@ final class Ratings extends Extension
 
     private function set_rating(int $image_id, string $rating, string $old_rating): void
     {
-        global $database;
+        $database = Ctx::$database;
         if ($old_rating !== $rating) {
             $database->execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating' => $rating, 'id' => $image_id]);
             Log::info("rating", "Rating for >>{$image_id} set to: ".self::rating_to_human($rating));

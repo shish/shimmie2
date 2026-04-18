@@ -20,7 +20,7 @@ final class S3 extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("s3_sync_queue", "
@@ -35,7 +35,7 @@ final class S3 extends Extension
     #[EventListener]
     public function onAdminBuilding(AdminBuildingEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
         $html = SHM_SIMPLE_FORM(
             make_link("admin/s3_process"),
@@ -48,7 +48,7 @@ final class S3 extends Extension
     #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         if ($event->action === "s3_process") {
             foreach ($database->get_all(
                 "SELECT * FROM s3_sync_queue ORDER BY time ASC LIMIT :count",
@@ -74,7 +74,7 @@ final class S3 extends Extension
             ->addOption('count', 'c', InputOption::VALUE_REQUIRED, 'Number of items to process')
             ->setDescription('Process the S3 queue')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
-                global $database;
+                $database = Ctx::$database;
                 $count = $database->get_one("SELECT COUNT(*) FROM s3_sync_queue");
                 $output->writeln("{$count} items in queue");
                 foreach ($database->get_all(
@@ -257,7 +257,7 @@ final class S3 extends Extension
 
     private function enqueue(string $hash, string $action): void
     {
-        global $database;
+        $database = Ctx::$database;
         $database->execute("DELETE FROM s3_sync_queue WHERE hash = :hash", ["hash" => $hash]);
         $database->execute("
             INSERT INTO s3_sync_queue (hash, action)
@@ -267,7 +267,7 @@ final class S3 extends Extension
 
     private function dequeue(string $hash): void
     {
-        global $database;
+        $database = Ctx::$database;
         $database->execute("DELETE FROM s3_sync_queue WHERE hash = :hash", ["hash" => $hash]);
     }
 }
