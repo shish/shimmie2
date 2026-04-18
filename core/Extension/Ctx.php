@@ -25,24 +25,18 @@ final class Ctx
 
     public static function setConfig(Config $_config): Config
     {
-        global $config;
-        $config = $_config;
         self::$config = $_config;
         return $_config;
     }
 
     public static function setUser(User $_user): User
     {
-        global $user;
-        $user = $_user;
         self::$user = $_user;
         return $_user;
     }
 
     public static function setDatabase(Database $_database): Database
     {
-        global $database;
-        $database = $_database;
         self::$database = $_database;
         return $_database;
     }
@@ -55,8 +49,6 @@ final class Ctx
 
     public static function setPage(Page $_page): Page
     {
-        global $page;
-        $page = $_page;
         self::$page = $_page;
         return $_page;
     }
