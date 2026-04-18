@@ -99,6 +99,10 @@ class Database
      */
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
     {
+        if (!preg_match('/^[a-z][a-z0-9_]*$/i', $name)) {
+            throw new \InvalidArgumentException("Invalid savepoint name: must match [a-z][a-z0-9_]*");
+        }
+
         $span = Ctx::$tracer->startSpan("Savepoint $name");
         try {
             // doing string interpolation because bound parameters don't work here

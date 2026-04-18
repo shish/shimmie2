@@ -48,6 +48,10 @@ class PostgreSQL extends DBEngine
      */
     public function notify(PDO $db, string $channel, ?string $data = null): void
     {
+        if (!preg_match('/^[a-z][a-z0-9_]*$/i', $channel)) {
+            throw new \InvalidArgumentException("Invalid channel name: must match [a-z][a-z0-9_]*");
+        }
+
         if ($data) {
             $db->exec("NOTIFY $channel, " . $db->quote($data));
         } else {
