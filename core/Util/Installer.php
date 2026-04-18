@@ -252,13 +252,6 @@ final class Installer
                 );
             }
 
-            $db->create_table("aliases", "
-                oldtag VARCHAR(128) NOT NULL,
-                newtag VARCHAR(128) NOT NULL,
-                PRIMARY KEY (oldtag)
-            ");
-            $db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", []);
-
             $db->create_table("config", "
                 name VARCHAR(128) NOT NULL,
                 value TEXT,
