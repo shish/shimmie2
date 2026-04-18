@@ -127,7 +127,7 @@ final class UserPage extends Extension
     #[EventListener]
     public function onUserLogin(UserLoginEvent $event): void
     {
-        Ctx::setUser($event->user);
+        Ctx::$user = $event->user;
 
         // Update last_active if it's out of date (not today)
         $current_date = date('Y-m-d');

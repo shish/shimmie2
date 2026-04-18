@@ -32,23 +32,23 @@ if (file_exists("data/test-trace.json")) {
 
 sanitize_php();
 _set_up_shimmie_environment();
-Ctx::setTracer(new \MicroOTLP\Client());
-Ctx::setRootSpan(Ctx::$tracer->startSpan("Root"));
+Ctx::$tracer = new \MicroOTLP\Client();
+Ctx::$root_span = Ctx::$tracer->startSpan("Root");
 $sBoot = Ctx::$tracer->startSpan("Test Bootstrap");
 _load_ext_files();
-Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
-Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
+Ctx::$cache = load_cache(SysConfig::getCacheDsn());
+Ctx::$database = new Database(SysConfig::getDatabaseDsn());
 Installer::create_dirs();
 Installer::create_tables(Ctx::$database);
-Ctx::setConfig(new DatabaseConfig(Ctx::$database));
+Ctx::$config = new DatabaseConfig(Ctx::$database);
 Ctx::$config->set(ThumbnailConfig::ENGINE, "static");
 Ctx::$config->set(SetupConfig::NICE_URLS, true);
 _load_theme_files();
-Ctx::setPage(new Page());
-Ctx::setEventBus(new EventBus());
+Ctx::$page = new Page();
+Ctx::$event_bus = new EventBus();
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
-Ctx::setUser(User::get_anonymous());
+Ctx::$user = User::get_anonymous();
 send_event(new UserCreationEvent("demo", "demo", "demo", "demo@demo.com", false));
 send_event(new UserCreationEvent("test", "test", "test", "test@test.com", false));
 // in mysql, CREATE TABLE commits transactions, so after the database
