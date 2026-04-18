@@ -19,7 +19,7 @@ final class TagTools extends Extension
     #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         switch ($event->action) {
             case "set_tag_case":
                 $database->execute(

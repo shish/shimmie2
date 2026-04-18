@@ -15,7 +15,7 @@ final class ReplaceFileTest extends ShimmiePHPUnitTestCase
     }
     public function testReplace(): void
     {
-        global $database;
+        $database = Ctx::$database;
         self::log_in_as_admin();
 
         // upload an image

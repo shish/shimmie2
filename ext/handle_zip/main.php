@@ -13,7 +13,7 @@ final class ZipFileHandler extends DataHandlerExtension
     #[EventListener]
     public function onDataUpload(DataUploadEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (!$this->supported_mime($event->mime)) {
             return;

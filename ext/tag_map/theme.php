@@ -134,7 +134,7 @@ class TagMapTheme extends Themelet
 
     protected function build_az(int $tags_min): HTMLElement
     {
-        global $database;
+        $database = Ctx::$database;
 
         $tag_data = $database->get_col("
 			SELECT DISTINCT

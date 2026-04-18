@@ -17,7 +17,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
     // Because $this->create_post() sends the event directly
     public function testRawUpload(): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         self::log_in_as_user();
         $_FILES = [

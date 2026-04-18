@@ -99,7 +99,7 @@ final class GraphQLTest extends ShimmiePHPUnitTestCase
 
     public function testUpload(): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         self::log_in_as_user();
         $_FILES = [

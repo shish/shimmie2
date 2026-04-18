@@ -32,7 +32,7 @@ final class NumericScoreVote
     #[Field(extends: "Post")]
     public static function score(Post $post): int
     {
-        global $database;
+        $database = Ctx::$database;
         if ($post['score'] ?? null) {
             return $post['score'];
         }
@@ -48,7 +48,7 @@ final class NumericScoreVote
     #[Field(extends: "Post", type: "[NumericScoreVote!]!")]
     public static function votes(Post $post): array
     {
-        global $database;
+        $database = Ctx::$database;
         $rows = $database->get_all(
             "SELECT * FROM numeric_score_votes WHERE image_id=:image_id",
             ['image_id' => $post->id]
@@ -136,7 +136,7 @@ final class NumericScore extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $user = Ctx::$user;
         $page = Ctx::$page;
 
@@ -392,7 +392,7 @@ final class NumericScore extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN numeric_score INTEGER NOT NULL DEFAULT 0");
@@ -416,7 +416,7 @@ final class NumericScore extends Extension
 
     private function add_vote(int $image_id, int $user_id, int $score): void
     {
-        global $database;
+        $database = Ctx::$database;
         $database->execute(
             "DELETE FROM numeric_score_votes WHERE image_id=:imageid AND user_id=:userid",
             ["imageid" => $image_id, "userid" => $user_id]

@@ -104,7 +104,7 @@ final class RelationshipsTest extends ShimmiePHPUnitTestCase
     {
         [$image_1, $image_2, $image_3] = $this->testChangeParent();
 
-        global $database;
+        $database = Ctx::$database;
         $database->execute(
             "UPDATE images SET parent_id=NULL, has_children=FALSE"
         );

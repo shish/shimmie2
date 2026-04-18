@@ -16,7 +16,7 @@ final class TagCategories extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             // primary extension database, holds all our stuff!
@@ -75,7 +75,7 @@ final class TagCategories extends Extension
     #[EventListener]
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($matches = $event->matches("/^(.+)_?tags(:|<=|<|=|>|>=)([0-9]+)$/i")) {
             $type = strtolower($matches[1]);
@@ -111,7 +111,7 @@ final class TagCategories extends Extension
      */
     public static function getKeyedDict(): array
     {
-        global $database;
+        $database = Ctx::$database;
         static $tc_keyed_dict = null;
 
         if (is_null($tc_keyed_dict)) {
@@ -174,7 +174,7 @@ final class TagCategories extends Extension
 
     public function page_update(): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (!isset($_POST['tc_status']) and
            !isset($_POST['tc_category']) and

@@ -171,7 +171,7 @@ final class Index extends Extension
     #[EventListener(priority: 95)] // we want to turn a search term into a TagCondition only if nobody did anything else with that term
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($matches = $event->matches("/^filesize(:|<=|<|=|>|>=)(\d+[kmg]?b?)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";

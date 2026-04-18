@@ -20,7 +20,7 @@ final class MimeSystem extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // These upgrades are primarily for initializing mime types on upgrade, and for adjusting mime types whenever an
         // adjustment needs to be made to the mime types.

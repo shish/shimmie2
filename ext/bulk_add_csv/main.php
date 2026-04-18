@@ -57,7 +57,7 @@ final class BulkAddCSV extends Extension
      */
     private function add_image(Path $tmpname, string $filename, array $tags, string $source, string $rating, Path $thumbfile): void
     {
-        global $database;
+        $database = Ctx::$database;
         $database->with_savepoint(function () use ($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
             $event = send_event(new DataUploadEvent($tmpname, basename($filename), 0, new QueryArray([
                 'tags' => Tag::implode($tags),

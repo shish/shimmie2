@@ -18,7 +18,7 @@ final class ETServer extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $page = Ctx::$page;
 
         if ($event->page_matches("register.php", method: "POST", authed: false)) {
@@ -202,7 +202,7 @@ final class ETServer extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // shortcut to latest
         if ($this->get_version() < 1) {

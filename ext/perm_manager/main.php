@@ -35,7 +35,7 @@ final class PermManager extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Note - `users` should _not_ have a foreign key to `user_classes` because
         // there can be classes that are outside of the database.
