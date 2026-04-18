@@ -178,4 +178,47 @@ final class SQLTest extends ShimmiePHPUnitTestCase
         self::assertTrue(bool_escape(Ctx::$database->get_one("SELECT TRUE = :true", ["true" => true])), "TRUE comparison");
         self::assertTrue(bool_escape(Ctx::$database->get_one("SELECT FALSE = :false", ["false" => false])), "FALSE comparison");
     }
+
+    /**
+     * Validate that CURRENT_TIMESTAMP and now() with DATE() work consistently across all databases
+     * to return date in 'Y-m-d' format (used for last_active tracking)
+     */
+    public function test_date_format(): void
+    {
+        // Verify it matches PHP's date('Y-m-d') format
+        $php_date = date('Y-m-d');
+
+        // Test CURRENT_TIMESTAMP
+        $date_result_ct = Ctx::$database->get_one("SELECT DATE(CURRENT_TIMESTAMP)");
+        self::assertMatchesRegularExpression(
+            '/^\d{4}-\d{2}-\d{2}$/',
+            $date_result_ct,
+            "DATE(CURRENT_TIMESTAMP) should return YYYY-MM-DD format"
+        );
+        self::assertSame(
+            $php_date,
+            $date_result_ct,
+            "DATE(CURRENT_TIMESTAMP) should match PHP date('Y-m-d')"
+        );
+
+        // Test now()
+        $date_result_now = Ctx::$database->get_one("SELECT DATE(now())");
+        self::assertMatchesRegularExpression(
+            '/^\d{4}-\d{2}-\d{2}$/',
+            $date_result_now,
+            "DATE(now()) should return YYYY-MM-DD format"
+        );
+        self::assertSame(
+            $php_date,
+            $date_result_now,
+            "DATE(now()) should match PHP date('Y-m-d')"
+        );
+
+        // Both should return the same value
+        self::assertSame(
+            $date_result_ct,
+            $date_result_now,
+            "DATE(CURRENT_TIMESTAMP) and DATE(now()) should return the same value"
+        );
+    }
 }
