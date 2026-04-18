@@ -287,13 +287,10 @@ final class NumericScore extends Extension
         // if you try to recount all the images in one go
         Ctx::$event_bus->set_timeout(null);
         foreach (array_chunk($image_ids, 100) as $chunk) {
-            $id_list = implode(",", $chunk);
             Ctx::$database->execute(
-                // @phpstan-ignore-next-line
-                "DELETE FROM numeric_score_votes WHERE user_id=:user_id AND image_id IN (".$id_list.")",
-                ['user_id' => $user_id]
+                "DELETE FROM numeric_score_votes WHERE user_id=:user_id AND image_id IN :id_list",
+                ['user_id' => $user_id, 'id_list' => $chunk]
             );
-            // @phpstan-ignore-next-line
             Ctx::$database->execute("
 				UPDATE images
 				SET numeric_score=COALESCE(
@@ -304,7 +301,8 @@ final class NumericScore extends Extension
 					),
 					0
 				)
-				WHERE images.id IN (".$id_list.")");
+				WHERE images.id IN :id_list
+			", ['id_list' => $chunk]);
         }
     }
 

@@ -158,6 +158,8 @@ final class Index extends Extension
                 foreach ($q->variables as $key => $val) {
                     if (is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);
+                    } elseif (is_array($val)) {
+                        $sql_str = str_replace(":$key", \Safe\json_encode($val), $sql_str);
                     } else {
                         $sql_str = str_replace(":$key", (string)$val, $sql_str);
                     }
