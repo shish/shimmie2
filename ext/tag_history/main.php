@@ -48,7 +48,7 @@ final class TagHistory extends Extension
     #[EventListener]
     public function onTagSet(TagSetEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $new_tags = Tag::implode($event->new_tags);
         $old_tags = Tag::implode($event->old_tags);
@@ -87,7 +87,7 @@ final class TagHistory extends Extension
             "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
-            ["image_id" => $event->image->id, "tags" => $new_tags, "user_id" => Ctx::$user->id, "user_ip" => Network::get_real_ip()]
+            ["image_id" => $event->image->id, "tags" => $new_tags, "user_id" => Ctx::$user->id, "user_ip" => (string)Network::get_real_ip()]
         );
         $entries++;
 
@@ -130,7 +130,7 @@ final class TagHistory extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("tag_histories", "
@@ -238,7 +238,7 @@ final class TagHistory extends Extension
      */
     private function get_tag_history_from_revert(int $revert_id): ?array
     {
-        global $database;
+        $database = Ctx::$database;
         $row = $database->get_row("
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
@@ -252,7 +252,7 @@ final class TagHistory extends Extension
      */
     private function get_tag_history_from_id(int $image_id): array
     {
-        global $database;
+        $database = Ctx::$database;
         $entries = $database->get_all(
             "
 				SELECT tag_histories.*, users.name
@@ -273,7 +273,7 @@ final class TagHistory extends Extension
      */
     private function get_global_tag_history(int $page_id): array
     {
-        global $database;
+        $database = Ctx::$database;
         return $database->get_all("
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
@@ -288,7 +288,7 @@ final class TagHistory extends Extension
      */
     public static function get_previous_tags(int $image_id, int $id): ?array
     {
-        global $database;
+        $database = Ctx::$database;
         $row = $database->get_row("
 				SELECT tags
 				FROM tag_histories
@@ -304,7 +304,7 @@ final class TagHistory extends Extension
      */
     private function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $select_code = [];
         $select_args = [];

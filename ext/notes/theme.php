@@ -10,8 +10,8 @@ use function MicroHTML\{FORM, INPUT, SCRIPT};
 use MicroHTML\HTMLElement;
 
 /**
- * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
- * @phpstan-type Note array{id:int,x1:int,y1:int,height:int,width:int,note:string}
+ * @phpstan-type NoteHistoryRow array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
+ * @phpstan-type NoteRow array{id:int,x1:int,y1:int,height:int,width:int,note:string}
  */
 class NotesTheme extends Themelet
 {
@@ -45,7 +45,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param Note[] $recovered_notes
+     * @param NoteRow[] $recovered_notes
      */
     public function display_note_system(int $image_id, array $recovered_notes, bool $adminOptions, bool $editOptions): void
     {
@@ -99,7 +99,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param NoteHistory[] $history
+     * @param NoteHistoryRow[] $history
      */
     protected function history_list(array $history, bool $allowRevert): HTMLElement
     {
@@ -129,7 +129,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param NoteHistory $fields
+     * @param NoteHistoryRow $fields
      */
     protected function history_entry(array $fields, bool $revertable): HTMLElement
     {
@@ -158,7 +158,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param NoteHistory[] $history
+     * @param NoteHistoryRow[] $history
      */
     public function display_histories(array $history, int $pageNumber, int $totalPages): void
     {
@@ -169,7 +169,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param NoteHistory[] $history
+     * @param NoteHistoryRow[] $history
      */
     public function display_history(array $history, int $pageNumber, int $totalPages): void
     {
@@ -180,7 +180,7 @@ class NotesTheme extends Themelet
     }
 
     /**
-     * @param NoteHistory[] $history
+     * @param NoteHistoryRow[] $history
      */
     public function display_image_history(array $history, int $imageID, int $pageNumber, int $totalPages): void
     {

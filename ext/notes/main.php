@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 /**
- * @phpstan-type NoteHistory array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
- * @phpstan-type Note array{id:int,x1:int,y1:int,height:int,width:int,note:string}
+ * @phpstan-type NoteHistoryRow array{image_id:int,note_id:int,review_id:int,user_name:string,note:string,date:string}
+ * @phpstan-type NoteRow array{id:int,x1:int,y1:int,height:int,width:int,note:string}
  * @extends Extension<NotesTheme>
  */
 final class Notes extends Extension
@@ -241,7 +241,7 @@ final class Notes extends Extension
 
     private function add_new_note(): int
     {
-        global $database;
+        $database = Ctx::$database;
 
         $note = \Safe\json_decode(\Safe\file_get_contents('php://input'), true);
 
@@ -253,12 +253,12 @@ final class Notes extends Extension
                 'enable' => 1,
                 'image_id' => $note['image_id'],
                 'user_id' => Ctx::$user->id,
-                'user_ip' => Network::get_real_ip(),
-                'x1' => $note['x1'],
-                'y1' => $note['y1'],
-                'height' => $note['height'],
-                'width' => $note['width'],
-                'note' => $note['note'],
+                'user_ip' => (string)Network::get_real_ip(),
+                'x1' => (int)$note['x1'],
+                'y1' => (int)$note['y1'],
+                'height' => (int)$note['height'],
+                'width' => (int)$note['width'],
+                'note' => (string)$note['note'],
             ]
         );
 
@@ -339,7 +339,7 @@ final class Notes extends Extension
 
     private function get_notes_list(int $pageNumber): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $notesPerPage = Ctx::$config->get(NotesConfig::NOTES_PER_PAGE);
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
@@ -366,7 +366,7 @@ final class Notes extends Extension
 
     private function get_notes_requests(int $pageNumber): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $requestsPerPage = Ctx::$config->get(NotesConfig::REQUESTS_PER_PAGE);
 
@@ -394,7 +394,7 @@ final class Notes extends Extension
 
     private function add_history(int $noteEnable, int $noteID, int $imageID, int $noteX1, int $noteY1, int $noteHeight, int $noteWidth, string $noteText): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $reviewID = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]);
         $reviewID = $reviewID + 1;
@@ -405,28 +405,29 @@ final class Notes extends Extension
 				VALUES (:note_enable, :note_id, :review_id, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)
 			",
             [
-                'note_enable' => $noteEnable,
+                'enable' => $noteEnable,
                 'note_id' => $noteID,
                 'review_id' => $reviewID,
                 'image_id' => $imageID,
                 'user_id' => Ctx::$user->id,
-                'user_ip' => Network::get_real_ip(),
+                'user_ip' => (string)Network::get_real_ip(),
                 'x1' => $noteX1,
                 'y1' => $noteY1,
                 'height' => $noteHeight,
                 'width' => $noteWidth,
-                'note' => $noteText
+                'note' => $noteText,
             ]
         );
     }
 
     private function get_histories(int $pageNumber): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
         //ORDER BY IMAGE & DATE
+        /** @var array<NoteHistoryRow> $histories */
         $histories = $database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
             FROM note_histories AS h
@@ -444,10 +445,11 @@ final class Notes extends Extension
 
     private function get_history(int $noteID, int $pageNumber): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
+        /** @var array<NoteHistoryRow> $histories */
         $histories = $database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
             FROM note_histories AS h
@@ -459,11 +461,7 @@ final class Notes extends Extension
             ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
         );
 
-        $count = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]);
-        if ($count === 0) {
-            throw new HistoryNotFound("No note history for Note #$noteID was found.");
-        }
-        $totalPages = (int) ceil($count / $historiesPerPage);
+        $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
 
         $this->theme->display_history($histories, $pageNumber + 1, $totalPages);
     }
@@ -472,7 +470,7 @@ final class Notes extends Extension
     {
         $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
-        /** @var array<NoteHistory> $histories */
+        /** @var array<NoteHistoryRow> $histories */
         $histories = Ctx::$database->get_all(
             "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
             FROM note_histories AS h
@@ -501,21 +499,25 @@ final class Notes extends Extension
      */
     private function revert_history(int $noteID, int $reviewID): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $history = $database->get_row(
             "SELECT * FROM note_histories WHERE note_id = :note_id AND review_id = :review_id",
             ['note_id' => $noteID, 'review_id' => $reviewID]
         );
 
-        $noteEnable = $history['note_enable'];
-        $noteID = $history['note_id'];
-        $imageID = $history['image_id'];
-        $noteX1 = $history['x1'];
-        $noteY1 = $history['y1'];
-        $noteHeight = $history['height'];
-        $noteWidth = $history['width'];
-        $noteText = $history['note'];
+        if ($history === null) {
+            throw new \Exception("History entry not found");
+        }
+
+        $noteEnable = (int)$history['note_enable'];
+        $noteID = (int)$history['note_id'];
+        $imageID = (int)$history['image_id'];
+        $noteX1 = (int)$history['x1'];
+        $noteY1 = (int)$history['y1'];
+        $noteHeight = (int)$history['height'];
+        $noteWidth = (int)$history['width'];
+        $noteText = (string)$history['note'];
 
         $database->execute("
 			UPDATE notes

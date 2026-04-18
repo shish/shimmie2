@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 /**
- * @phpstan-type BlotterEntry array{id:int,entry_date:string,entry_text:string,important:bool}
+ * @phpstan-type BlotterRow array{id:int,entry_date:string,entry_text:string,important:bool}
  * @extends Extension<BlotterTheme>
  */
 final class Blotter extends Extension
@@ -65,7 +65,7 @@ final class Blotter extends Extension
     {
         $database = Ctx::$database;
         if ($event->page_matches("blotter/editor", method: "GET", permission: BlotterPermission::ADMIN)) {
-            /** @var BlotterEntry[] $entries */
+            /** @var BlotterRow[] $entries */
             $entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
             $this->theme->display_editor($entries);
         }
@@ -87,7 +87,7 @@ final class Blotter extends Extension
             Ctx::$page->set_redirect(make_link("blotter/editor"));
         }
         if ($event->page_matches("blotter/list", method: "GET")) {
-            /** @var BlotterEntry[] $entries */
+            /** @var BlotterRow[] $entries */
             $entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
             $this->theme->display_blotter_page($entries);
         }
@@ -99,7 +99,7 @@ final class Blotter extends Extension
 
     private function display_blotter(): void
     {
-        /** @var BlotterEntry[] $entries */
+        /** @var BlotterRow[] $entries */
         $entries = Ctx::$database->get_all(
             'SELECT * FROM blotter ORDER BY id DESC LIMIT :limit',
             ["limit" => Ctx::$config->get(BlotterConfig::RECENT)]

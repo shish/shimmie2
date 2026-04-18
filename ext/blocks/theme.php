@@ -7,12 +7,12 @@ namespace Shimmie2;
 use function MicroHTML\{INPUT, OPTION, SELECT, TABLE, TD, TEXTAREA, TH, TR};
 
 /**
- * @phpstan-type BlockArray array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}
+ * @phpstan-type BlockRow array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}
  */
 class BlocksTheme extends Themelet
 {
     /**
-     * @param array<BlockArray> $blocks
+     * @param array<BlockRow> $blocks
      */
     public function display_blocks(array $blocks): void
     {
