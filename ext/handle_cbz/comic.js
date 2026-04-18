@@ -1,23 +1,34 @@
-function Comic(root, comicURL) {
+function Comic(rootElement) {
     let self = this;
 
-    this.root = document.getElementById(root);
+    this.root = rootElement;
     this.comicPages = [];
     this.comicPage = 0;
     this.comicZip = null;
+
+    let comicURL = rootElement.dataset.comicFile;
+    if (!comicURL) {
+        throw new Error(
+            "Comic root element must have data-comic-file attribute",
+        );
+    }
 
     this.setComic = function (zip) {
         let self = this;
         self.comicZip = zip;
 
         // Shimmie-specific; nullify existing back / forward
-        document.querySelector("LINK[rel='previous']").remove();
-        document.querySelector("LINK[rel='next']").remove();
+        let prevLink = document.querySelector("LINK[rel='previous']");
+        let nextLink = document.querySelector("LINK[rel='next']");
+        if (prevLink) prevLink.remove();
+        if (nextLink) nextLink.remove();
 
         zip.forEach(function (relativePath, file) {
             self.comicPages.push(relativePath);
         });
         self.comicPages.sort();
+
+        let pageList = self.root.querySelector("#comicPageList");
         for (let i = 0; i < self.comicPages.length; i++) {
             let op = document.createElement("OPTION");
             op.value = i;
@@ -28,7 +39,7 @@ function Comic(root, comicURL) {
                 self.comicPages.length +
                 " - " +
                 self.comicPages[i];
-            document.getElementById("comicPageList").appendChild(op);
+            pageList.appendChild(op);
         }
         self.setPage(0);
     };
@@ -42,23 +53,23 @@ function Comic(root, comicURL) {
             .then(function (arrayBufferView) {
                 let blob = new Blob([arrayBufferView], { type: "image/jpeg" });
                 let urlCreator = window.URL || window.webkitURL;
-                document.getElementById("comicPage").src =
+                self.root.querySelector("#comicPage").src =
                     urlCreator.createObjectURL(blob);
             });
-        document.getElementById("comicPageList").value = self.comicPage;
+        self.root.querySelector("#comicPageList").value = self.comicPage;
     };
 
     this.prev = function () {
         if (self.comicPage > 0) {
             self.setPage(self.comicPage - 1);
-            document.getElementById("comicMain").scrollIntoView();
+            self.root.scrollIntoView();
         }
     };
 
     this.next = function () {
         if (self.comicPage < self.comicPages.length) {
             self.setPage(self.comicPage + 1);
-            document.getElementById("comicMain").scrollIntoView();
+            self.root.scrollIntoView();
         }
     };
 
@@ -78,7 +89,7 @@ function Comic(root, comicURL) {
     };
 
     this.onPageChanged = function (e) {
-        self.setPage(parseInt(document.getElementById("comicPageList").value));
+        self.setPage(parseInt(self.root.querySelector("#comicPageList").value));
     };
 
     JSZipUtils.getBinaryContent(comicURL, function (err, data) {
@@ -91,16 +102,23 @@ function Comic(root, comicURL) {
     });
 
     document.addEventListener("keyup", this.onKeyUp);
-    document.getElementById("comicNext").addEventListener("click", this.next);
-    document.getElementById("comicPrev").addEventListener("click", this.prev);
-    document
-        .getElementById("comicPageList")
+    self.root.querySelector("#comicNext").addEventListener("click", this.next);
+    self.root.querySelector("#comicPrev").addEventListener("click", this.prev);
+    self.root
+        .querySelector("#comicPageList")
         .addEventListener("change", this.onPageChanged);
-    document
-        .getElementById("comicPageList")
+    self.root
+        .querySelector("#comicPageList")
         .addEventListener("keyup", function (e) {
             e.stopPropagation();
         });
 
     return this;
 }
+
+// Auto-initialize all comics on page load
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-comic-file]").forEach(function (element) {
+        new Comic(element);
+    });
+});
