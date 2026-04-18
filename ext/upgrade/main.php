@@ -107,12 +107,8 @@ final class Upgrade extends Extension
             Log::info("upgrade", "Changing tag column to VARCHAR(255)");
             if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute('ALTER TABLE tags ALTER COLUMN tag SET DATA TYPE VARCHAR(255)');
-                $database->execute('ALTER TABLE aliases ALTER COLUMN oldtag SET DATA TYPE VARCHAR(255)');
-                $database->execute('ALTER TABLE aliases ALTER COLUMN newtag SET DATA TYPE VARCHAR(255)');
             } elseif ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $database->execute('ALTER TABLE tags MODIFY COLUMN tag VARCHAR(255) NOT NULL');
-                $database->execute('ALTER TABLE aliases MODIFY COLUMN oldtag VARCHAR(255) NOT NULL');
-                $database->execute('ALTER TABLE aliases MODIFY COLUMN newtag VARCHAR(255) NOT NULL');
             }
 
             $this->set_version(14);
