@@ -48,15 +48,15 @@ Ctx::setRootSpan(Ctx::$tracer->startSpan("Root", startTime: (int)($_SERVER["REQU
 $sBoot = Ctx::$tracer->startSpan("Bootstrap", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9));
 _load_ext_files();
 // Depends on core files
-$cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
-$database = Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
+Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
+Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
 // $config depends on _load_ext_files (to load config.php files and
 // calculate defaults) and $cache (to cache config values)
-$config = Ctx::setConfig(new DatabaseConfig($database));
+Ctx::setConfig(new DatabaseConfig(Ctx::$database));
 // theme files depend on $config (theme name is a config value)
 _load_theme_files();
 // $page depends on theme files (to load theme-specific Page class)
-$page = Ctx::setPage(Themelet::get_theme_class(Page::class) ?? new Page());
+Ctx::setPage(Themelet::get_theme_class(Page::class) ?? new Page());
 // $event_bus depends on ext/*/main.php being loaded
 Ctx::setEventBus(new EventBus());
 $sBoot->end();
