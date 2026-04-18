@@ -93,19 +93,12 @@ final class Tag
                 $tag = substr($tag, 1);
             }
 
-            $newtags = Ctx::$database->get_one(
-                "
-					SELECT newtag
-					FROM aliases
-					WHERE LOWER(oldtag)=LOWER(:tag)
-				",
-                ["tag" => $tag]
-            );
+            $newtags = AliasEditor::get_aliases($tag);
             if (empty($newtags)) {
                 //tag has no alias, use old tag
                 $aliases = [$tag];
             } else {
-                $aliases = explode(" ", $newtags); // Tag::explode($newtags); - recursion can be infinite
+                $aliases = $newtags;
             }
 
             foreach ($aliases as $alias) {
