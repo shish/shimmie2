@@ -75,7 +75,7 @@ function get_memory_limit(): int
     // If the system limit is less than Shimmie needs, try to
     // raise the limit
     if (ini_set("memory_limit", "$shimmie_limit") !== false) {
-        $php_limit = parse_shorthand_int(ini_get("memory_limit")) ?? $shimmie_limit;
+        $php_limit = parse_shorthand_int(ini_get("memory_limit"));
     }
 
     // Whether we managed to raise the limit, or we're stuck with
