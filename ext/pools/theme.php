@@ -10,7 +10,7 @@ use function MicroHTML\emptyHTML;
 use MicroHTML\HTMLElement;
 
 /**
- * @phpstan-type PoolHistory array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
+ * @phpstan-type PoolHistoryRow array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
  */
 class PoolsTheme extends Themelet
 {
@@ -294,7 +294,7 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * @param PoolHistory[] $histories
+     * @param PoolHistoryRow[] $histories
      */
     public function show_history(array $histories, int $pageNumber, int $totalPages): void
     {
@@ -343,7 +343,7 @@ class PoolsTheme extends Themelet
     }
 
     /**
-     * @param array<int,string> $options
+     * @param array<string,string> $options
      */
     public function get_bulk_pool_selector(array $options): HTMLElement
     {

@@ -22,10 +22,10 @@ final class AuthorSetEvent extends Event
 }
 
 /**
- * @phpstan-type ArtistArtist array{id:int,artist_id:int,user_name:non-empty-string,name:non-empty-string,notes:string,type:string,posts:int}
- * @phpstan-type ArtistAlias array{id:int,alias:non-empty-string}
- * @phpstan-type ArtistMember array{id:int,name:non-empty-string}
- * @phpstan-type ArtistUrl array{id:int,url:non-empty-string}
+ * @phpstan-type ArtistRow array{id:int,artist_id:int,user_name:non-empty-string,name:non-empty-string,notes:string,type:string,posts:int}
+ * @phpstan-type ArtistAliasRow array{id:int,alias:non-empty-string}
+ * @phpstan-type ArtistMemberRow array{id:int,name:non-empty-string}
+ * @phpstan-type ArtistUrlRow array{id:int,url:non-empty-string}
  * @extends Extension<ArtistsTheme>
  */
 final class Artists extends Extension
@@ -417,31 +417,31 @@ final class Artists extends Extension
     }
 
     /**
-     * @return ArtistAlias
+     * @return ArtistAliasRow
      */
     private function get_alias_by_id(int $aliasID): array
     {
-        /** @var ArtistAlias $row */
+        /** @var ArtistAliasRow $row */
         $row = Ctx::$database->get_row("SELECT * FROM artist_alias WHERE id = :id", ['id' => $aliasID]);
         return $row;
     }
 
     /**
-     * @return ArtistUrl
+     * @return ArtistUrlRow
      */
     private function get_url_by_id(int $urlID): array
     {
-        /** @var ArtistUrl $row */
+        /** @var ArtistUrlRow $row */
         $row = Ctx::$database->get_row("SELECT * FROM artist_urls WHERE id = :id", ['id' => $urlID]);
         return $row;
     }
 
     /**
-     * @return ArtistMember
+     * @return ArtistMemberRow
      */
     private function get_member_by_id(int $memberID): array
     {
-        /** @var ArtistMember $row */
+        /** @var ArtistMemberRow $row */
         $row = Ctx::$database->get_row("SELECT * FROM artist_members WHERE id = :id", ['id' => $memberID]);
         return $row;
     }
@@ -637,11 +637,11 @@ final class Artists extends Extension
     }
 
     /**
-     * @return ArtistArtist
+     * @return ArtistRow
      */
     private function get_artist(int $artistID): array
     {
-        /** @var ArtistArtist $result */
+        /** @var ArtistRow $result */
         $result = Ctx::$database->get_row(
             "SELECT * FROM artists WHERE id = :id",
             ['id' => $artistID]
@@ -650,11 +650,11 @@ final class Artists extends Extension
     }
 
     /**
-     * @return ArtistMember[]
+     * @return ArtistMemberRow[]
      */
     private function get_members(int $artistID): array
     {
-        /** @var ArtistMember[] $result */
+        /** @var ArtistMemberRow[] $result */
         $result = Ctx::$database->get_all(
             "SELECT * FROM artist_members WHERE artist_id = :artist_id",
             ['artist_id' => $artistID]
@@ -663,11 +663,11 @@ final class Artists extends Extension
     }
 
     /**
-     * @return ArtistUrl[]
+     * @return ArtistUrlRow[]
      */
     private function get_urls(int $artistID): array
     {
-        /** @var ArtistUrl[] $result */
+        /** @var ArtistUrlRow[] $result */
         $result = Ctx::$database->get_all(
             "SELECT id, url FROM artist_urls WHERE artist_id = :artist_id",
             ['artist_id' => $artistID]
@@ -706,7 +706,7 @@ final class Artists extends Extension
     {
         $artistsPerPage = Ctx::$config->get(ArtistsConfig::ARTISTS_PER_PAGE);
 
-        /** @var ArtistArtist[] $listing */
+        /** @var ArtistRow[] $listing */
         $listing = Ctx::$database->get_all(
             "
                 (
@@ -818,7 +818,7 @@ final class Artists extends Extension
     }
 
     /**
-     * @return ArtistAlias[]
+     * @return ArtistAliasRow[]
      */
     private function get_alias(int $artistID): array
     {

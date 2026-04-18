@@ -9,7 +9,7 @@ use function MicroHTML\{A, B, BR, DIV, INPUT, LABEL, LI, P, TABLE, TD, TH, TR, U
 use MicroHTML\HTMLElement;
 
 /**
- * @phpstan-type HistoryEntry array{image_id:int,id:int,source:string,date_set:string,user_id:string,user_ip:string,name:string}
+ * @phpstan-type HistoryRow array{image_id:int,id:int,source:string,date_set:string,user_id:string,user_ip:string,name:string}
  */
 class SourceHistoryTheme extends Themelet
 {
@@ -17,7 +17,7 @@ class SourceHistoryTheme extends Themelet
     private array $messages = [];
 
     /**
-     * @param HistoryEntry[] $history
+     * @param HistoryRow[] $history
      */
     public function display_history_page(int $image_id, array $history): void
     {
@@ -28,7 +28,7 @@ class SourceHistoryTheme extends Themelet
     }
 
     /**
-     * @param HistoryEntry[] $history
+     * @param HistoryRow[] $history
      */
     public function display_global_page(array $history, int $page_number): void
     {
@@ -90,7 +90,7 @@ class SourceHistoryTheme extends Themelet
     }
 
     /**
-     * @param HistoryEntry[] $history
+     * @param HistoryRow[] $history
      */
     protected function history_list(array $history, bool $select_2nd): HTMLElement
     {
@@ -115,7 +115,7 @@ class SourceHistoryTheme extends Themelet
     }
 
     /**
-     * @param HistoryEntry $fields
+     * @param HistoryRow $fields
      */
     protected function history_entry(array $fields, bool $selected): HTMLElement
     {

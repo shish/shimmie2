@@ -54,16 +54,7 @@ final class PM
     }
 
     /**
-     * @param array{
-     *     id: string|int,
-     *     from_id: string|int,
-     *     from_ip: string,
-     *     to_id: string|int,
-     *     subject: string,
-     *     message: string,
-     *     is_read: string|bool,
-     *     sent_date: string
-     * } $row
+     * @param array{id: string|int, from_id: string|int, from_ip: string, to_id: string|int, subject: string, message: string, is_read: string|bool, sent_date: string} $row
      */
     public static function from_row(array $row): PM
     {
@@ -86,7 +77,7 @@ final class PM
     #[Field(extends: "User", name: "private_messages", type: "[PrivateMessage!]")]
     public static function get_pms(User $duser): ?array
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (!Ctx::$user->can(PrivMsgPermission::READ_PM)) {
             return null;
@@ -96,6 +87,7 @@ final class PM
         }
 
         $pms = [];
+        /** @var array<array{id: string|int, from_id: string|int, from_ip: string, to_id: string|int, subject: string, message: string, is_read: string|bool, sent_date: string}> $arr */
         $arr = $database->get_all(
             "SELECT * FROM private_message WHERE to_id = :to_id ORDER BY sent_date DESC",
             ["to_id" => $duser->id]
@@ -109,7 +101,7 @@ final class PM
     #[Field(extends: "User", name: "private_message_unread_count")]
     public static function count_unread_pms(User $duser): ?int
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (!Ctx::$user->can(PrivMsgPermission::READ_PM)) {
             return null;
@@ -144,7 +136,7 @@ final class PrivMsg extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // shortcut to latest
         if ($this->get_version() < 1) {
@@ -224,11 +216,12 @@ final class PrivMsg extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $user = Ctx::$user;
         $page = Ctx::$page;
         if ($event->page_matches("pm/read/{pm_id}", permission: PrivMsgPermission::READ_PM)) {
             $pm_id = $event->get_iarg('pm_id');
+            /** @var array{id: string|int, from_id: string|int, from_ip: string, to_id: string|int, subject: string, message: string, is_read: string|bool, sent_date: string}|null $pm */
             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
             if (is_null($pm)) {
                 throw new ObjectNotFound("No such PM");

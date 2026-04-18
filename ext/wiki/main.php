@@ -67,7 +67,7 @@ final class WikiPage
     public function __construct(?array $row = null)
     {
         //assert(!empty($row));
-        global $database;
+        $database = Ctx::$database;
 
         if (!is_null($row)) {
             $this->id = (int)$row['id'];
@@ -107,7 +107,7 @@ final class Wiki extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("wiki_pages", "
@@ -310,8 +310,9 @@ final class Wiki extends Extension
      */
     public static function get_history(string $title): array
     {
-        global $database;
+        $database = Ctx::$database;
         // first try and get the actual page
+        /** @var array<array{revision: string, date: string}> */
         return $database->get_all(
             "
 				SELECT revision, date
