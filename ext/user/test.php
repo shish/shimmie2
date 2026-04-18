@@ -44,6 +44,7 @@ final class UserPageTest extends ShimmiePHPUnitTestCase
     # FIXME: test password reset
     public function testUserList(): void
     {
+        self::log_in_as_admin();
         self::get_page('user_admin/list');
         self::assert_text("demo");
     }
