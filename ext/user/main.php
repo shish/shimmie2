@@ -237,7 +237,7 @@ final class UserPage extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $user = Ctx::$user;
         $page = Ctx::$page;
 
@@ -688,7 +688,7 @@ final class UserPage extends Extension
      */
     private function count_upload_ips(User $duser): array
     {
-        global $database;
+        $database = Ctx::$database;
         return $database->get_pairs("
 				SELECT
 					owner_ip,
@@ -704,7 +704,7 @@ final class UserPage extends Extension
      */
     private function count_comment_ips(User $duser): array
     {
-        global $database;
+        $database = Ctx::$database;
         return $database->get_pairs("
 				SELECT
 					owner_ip,
@@ -723,7 +723,7 @@ final class UserPage extends Extension
         if (!LogDatabaseInfo::is_enabled()) {
             return [];
         }
-        global $database;
+        $database = Ctx::$database;
         return $database->get_pairs("
 				SELECT
 					address,
@@ -736,7 +736,7 @@ final class UserPage extends Extension
 
     private function delete_user(int $uid, bool $with_images = false, bool $with_comments = false): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         Ctx::$event_bus->set_timeout(null);
 

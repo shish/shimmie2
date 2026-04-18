@@ -28,7 +28,7 @@ final class UserConfigEditor extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($event->page_matches("user_config", method: "GET", permission: UserAccountsPermission::CHANGE_USER_SETTING)) {
             $blocks = [];

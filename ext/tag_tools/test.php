@@ -35,7 +35,7 @@ final class TagToolsTest extends ShimmiePHPUnitTestCase
     # FIXME: make sure the admin tools actually work
     public function testRecount(): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Create a problem
         $ts = time(); // we need a tag that hasn't been used before

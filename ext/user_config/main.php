@@ -11,7 +11,7 @@ final class UserConfig extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("user_config", "

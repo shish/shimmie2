@@ -13,7 +13,7 @@ final class BrowserSearch extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Add in header code to let the browser know that the search plugin exists
         // We need to build the data for the header

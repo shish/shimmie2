@@ -28,7 +28,7 @@ final class PostTitles extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN title varchar(255) NULL");

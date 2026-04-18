@@ -36,7 +36,7 @@ class Tombstones extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         if ($this->get_version() < 1) {
             $database->create_table("tombstones", "
 				post_id INTEGER NOT NULL,
@@ -51,7 +51,7 @@ class Tombstones extends Extension
     #[EventListener(priority: 20)] // Before /post/view
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($event->page_matches("post/view/{post_id}")) {
             $post_id = $event->get_iarg('post_id');
@@ -85,7 +85,7 @@ class Tombstones extends Extension
     #[EventListener]
     public function onPostDeletion(PostDeletionEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $hash = $event->image->hash;
         $date = date("Y-m-d H:i");

@@ -120,7 +120,7 @@ final class Trash extends Extension
 
     public static function set_trash(int $image_id, bool $trash): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $database->execute(
             "UPDATE images SET trash = :trash WHERE id = :id",
@@ -164,7 +164,7 @@ final class Trash extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN trash BOOLEAN NOT NULL DEFAULT FALSE");

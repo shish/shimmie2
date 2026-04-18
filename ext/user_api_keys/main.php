@@ -12,7 +12,7 @@ final class UserApiKeys extends Extension
     #[EventListener(priority: 6)] // This needs to happen before any other events, but after db upgrade
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($event->GET->get("api_key")) {
             $user_id = $database->get_one(

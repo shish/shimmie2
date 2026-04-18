@@ -59,7 +59,7 @@ final class TagHistoryTest extends ShimmiePHPUnitTestCase
     #[Depends("testHistoryWhenModifying")]
     public function testHistoryWhenReverting(): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // Set original
         self::log_in_as_admin();

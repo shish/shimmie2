@@ -10,13 +10,13 @@ final class TipsTest extends ShimmiePHPUnitTestCase
     {
         parent::setUp();
         // Delete default tips so we can test from a blank slate
-        global $database;
+        $database = Ctx::$database;
         $database->execute("DELETE FROM tips");
     }
 
     public function testImageless(): void
     {
-        global $database;
+        $database = Ctx::$database;
         self::log_in_as_admin();
 
         self::get_page("tips/list");
@@ -34,7 +34,7 @@ final class TipsTest extends ShimmiePHPUnitTestCase
 
     public function testImaged(): void
     {
-        global $database;
+        $database = Ctx::$database;
         self::log_in_as_admin();
 
         self::get_page("tips/list");
@@ -52,7 +52,7 @@ final class TipsTest extends ShimmiePHPUnitTestCase
 
     public function testDisabled(): void
     {
-        global $database;
+        $database = Ctx::$database;
         self::log_in_as_admin();
 
         self::get_page("tips/list");
