@@ -1,14 +1,22 @@
 version: 2
 updates:
-  - package-ecosystem: "composer"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    groups:
-      minor-bumps:
-        applies-to: version-updates
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: monthly
+- package-ecosystem: composer
+  directory: /
+  schedule:
+    interval: monthly
+  groups:
+    minor-bumps:
+      applies-to: version-updates
+      patterns:
+      - '*'
+      update-types:
+      - minor
+      - patch
+- package-ecosystem: docker
+  directory: /
+  schedule:
+    interval: monthly

@@ -35,30 +35,30 @@ if (!file_exists("data/config/shimmie.conf.php")) {
 @include_once "data/config/extensions.conf.php";
 
 _set_up_shimmie_environment();
-Ctx::setTracer(new \MicroOTLP\Client(
+Ctx::$tracer = new \MicroOTLP\Client(
     resourceAttributes: [
         'service.name' => 'shimmie2',
         'service.instance.id' => gethostname() ?: 'unknown',
         'service.version' => SysConfig::getVersion(),
     ],
     scopeAttributes: [],
-));
+);
 // Override TS to show that bootstrapping started in the past
-Ctx::setRootSpan(Ctx::$tracer->startSpan("Root", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9)));
+Ctx::$root_span = Ctx::$tracer->startSpan("Root", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9));
 $sBoot = Ctx::$tracer->startSpan("Bootstrap", startTime: (int)($_SERVER["REQUEST_TIME_FLOAT"] * 1e9));
 _load_ext_files();
 // Depends on core files
-$cache = Ctx::setCache(load_cache(SysConfig::getCacheDsn()));
-$database = Ctx::setDatabase(new Database(SysConfig::getDatabaseDsn()));
+Ctx::$cache = load_cache(SysConfig::getCacheDsn());
+Ctx::$database = new Database(SysConfig::getDatabaseDsn());
 // $config depends on _load_ext_files (to load config.php files and
 // calculate defaults) and $cache (to cache config values)
-$config = Ctx::setConfig(new DatabaseConfig($database));
+Ctx::$config = new DatabaseConfig(Ctx::$database);
 // theme files depend on $config (theme name is a config value)
 _load_theme_files();
 // $page depends on theme files (to load theme-specific Page class)
-$page = Ctx::setPage(Themelet::get_theme_class(Page::class) ?? new Page());
+Ctx::$page = Themelet::get_theme_class(Page::class) ?? new Page();
 // $event_bus depends on ext/*/main.php being loaded
-Ctx::setEventBus(new EventBus());
+Ctx::$event_bus = new EventBus();
 $sBoot->end();
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\

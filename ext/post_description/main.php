@@ -22,7 +22,7 @@ final class PostDescription extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("image_descriptions", "
@@ -38,7 +38,7 @@ final class PostDescription extends Extension
     #[EventListener]
     public function onPostInfoGet(PostInfoGetEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $description = (string) $database->get_one(
             "SELECT description FROM image_descriptions WHERE image_id = :id",
             ["id" => $event->image->id]
@@ -60,7 +60,7 @@ final class PostDescription extends Extension
     #[EventListener]
     public function onPostDescriptionSet(PostDescriptionSetEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $database->execute("
             DELETE
@@ -77,7 +77,7 @@ final class PostDescription extends Extension
     #[EventListener]
     public function onPostInfoBoxBuilding(PostInfoBoxBuildingEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $description = (string) $database->get_one(
             "SELECT description FROM image_descriptions WHERE image_id = :id",

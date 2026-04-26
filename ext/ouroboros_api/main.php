@@ -400,7 +400,7 @@ final class OuroborosAPI extends Extension
 
     protected function tagIndex(int $limit, int $page, string $order, string $name, string $name_pattern): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         // This class will only exist if the tag map plugin is enabled
         $tags_min = Ctx::$config->get(TagMapConfig::TAGS_MIN);

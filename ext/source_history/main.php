@@ -72,7 +72,7 @@ final class SourceHistory extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("source_histories", "
@@ -182,7 +182,7 @@ final class SourceHistory extends Extension
      */
     private function get_source_history_from_revert(int $revert_id): ?array
     {
-        global $database;
+        $database = Ctx::$database;
         $row = $database->get_row("
 				SELECT source_histories.*, users.name
 				FROM source_histories
@@ -196,7 +196,7 @@ final class SourceHistory extends Extension
      */
     private function get_source_history_from_id(int $image_id): array
     {
-        global $database;
+        $database = Ctx::$database;
         $entries = $database->get_all(
             "
 				SELECT source_histories.*, users.name
@@ -217,7 +217,7 @@ final class SourceHistory extends Extension
      */
     private function get_global_source_history(int $page_id): array
     {
-        global $database;
+        $database = Ctx::$database;
         return $database->get_all("
 				SELECT source_histories.*, users.name
 				FROM source_histories
@@ -232,7 +232,7 @@ final class SourceHistory extends Extension
      */
     private function process_revert_all_changes(?string $name, ?string $ip, ?string $date): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $select_code = [];
         $select_args = [];
@@ -272,14 +272,13 @@ final class SourceHistory extends Extension
 
         foreach ($result as $image_id) {
             // Get the first source history that was done before the given IP edit
-            // @phpstan-ignore-next-line
             $row = Ctx::$database->get_row('
 				SELECT id, source
 				FROM source_histories
-				WHERE image_id='.$image_id.'
+				WHERE image_id=:image_id
 				AND NOT ('.implode(" AND ", $select_code).')
 				ORDER BY date_set DESC, id DESC LIMIT 1
-			', $select_args);
+			', $select_args + ['image_id' => $image_id]);
 
             if (!empty($row)) {
                 $revert_id = $row['id'];
@@ -315,7 +314,7 @@ final class SourceHistory extends Extension
      */
     private function add_source_history(Post $image, string $source): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $new_source = $source;
         $old_source = $image->source;
@@ -354,7 +353,7 @@ final class SourceHistory extends Extension
             "
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (:image_id, :source, :user_id, :user_ip, now())",
-            ["image_id" => $image->id, "source" => $new_source, "user_id" => Ctx::$user->id, "user_ip" => Network::get_real_ip()]
+            ["image_id" => $image->id, "source" => $new_source, "user_id" => Ctx::$user->id, "user_ip" => (string)Network::get_real_ip()]
         );
         $entries++;
 

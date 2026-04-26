@@ -6,36 +6,6 @@ namespace Shimmie2;
 
 use MicroHTML\HTMLElement;
 
-/**
- * @param mixed[] ...$args
- */
-function TAGS(...$args): HTMLElement
-{
-    return new HTMLElement("tags", $args);
-}
-/**
- * @param mixed[] ...$args
- */
-function TAG(...$args): HTMLElement
-{
-    return new HTMLElement("tag", $args);
-}
-/**
- * @param mixed[] ...$args
- */
-function POSTS(...$args): HTMLElement
-{
-    return new HTMLElement("posts", $args);
-}
-/**
- * @param mixed[] ...$args
- */
-function POST(...$args): HTMLElement
-{
-    return new HTMLElement("post", $args);
-}
-
-
 final class DanbooruApi extends Extension
 {
     public const KEY = "danbooru_api";
@@ -97,7 +67,7 @@ final class DanbooruApi extends Extension
      */
     private function api_find_tags(PageRequestEvent $event): HTMLElement
     {
-        global $database;
+        $database = Ctx::$database;
         $params = $event->GET;
 
         $results = [];
@@ -143,14 +113,14 @@ final class DanbooruApi extends Extension
         }
 
         // Tag results collected, build XML output
-        $xml = TAGS();
+        $xml = new HTMLElement("tags", []);
         foreach ($results as $tag) {
-            $xml->appendChild(TAG([
+            $xml->appendChild(new HTMLElement("tag", [[
                 "type" => "0",
                 "counts" => $tag[0],
                 "name" => $tag[1],
                 "id" => $tag[2],
-            ]));
+            ]]));
         }
         return $xml;
     }
@@ -212,7 +182,7 @@ final class DanbooruApi extends Extension
 
         // Now we have the array $results filled with Image objects
         // Let's display them
-        $xml = POSTS(["count" => $count, "offset" => $start]);
+        $xml = new HTMLElement("posts", [["count" => $count, "offset" => $start]]);
         foreach ($results as $img) {
             // Sanity check to see if $img is really an image object
             // If it isn't (e.g. someone requested an invalid md5 or id), break out of the this
@@ -222,7 +192,7 @@ final class DanbooruApi extends Extension
             $taglist = $img->get_tag_list();
             $owner = $img->get_owner();
             $previewsize = $img->get_thumb_size();
-            $xml->appendChild(TAG([
+            $xml->appendChild(new HTMLElement("post", [[
                 "id" => $img->id,
                 "md5" => $img->hash,
                 "file_name" => $img->filename,
@@ -239,7 +209,7 @@ final class DanbooruApi extends Extension
                 "source" => $img->source,
                 "score" => 0,
                 "author" => $owner->name
-            ]));
+            ]]));
         }
         return $xml;
     }
@@ -273,7 +243,7 @@ final class DanbooruApi extends Extension
      */
     private function api_add_post(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $page = Ctx::$page;
 
         // Check first if a login was supplied, if it wasn't check if the user is logged in via cookie

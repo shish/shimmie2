@@ -112,17 +112,14 @@ final class AutoTagger extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
-
-        // Create the database tables
         if ($this->get_version() < 1) {
-            $database->create_table("auto_tag", "
-                    tag VARCHAR(128) NOT NULL PRIMARY KEY,
-                    additional_tags VARCHAR(2000) NOT NULL
-                ");
+            Ctx::$database->create_table("auto_tag", "
+                tag VARCHAR(128) NOT NULL PRIMARY KEY,
+                additional_tags VARCHAR(2000) NOT NULL
+            ");
 
-            if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
-                $database->execute('CREATE INDEX auto_tag_lower_tag_idx ON auto_tag ((lower(tag)))');
+            if (Ctx::$database->get_driver_id() === DatabaseDriverID::PGSQL) {
+                Ctx::$database->execute('CREATE INDEX auto_tag_lower_tag_idx ON auto_tag ((lower(tag)))');
             }
             $this->set_version(1);
         }
@@ -187,8 +184,7 @@ final class AutoTagger extends Extension
 
     private function add_auto_tag(string $tag, string $additional_tags): void
     {
-        global $database;
-        $existing_tags = $database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag" => $tag]);
+        $existing_tags = Ctx::$database->get_one("SELECT additional_tags FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag" => $tag]);
         if (!is_null($existing_tags)) {
             // Auto Tags already exist, so we will append new tags to the existing one
             $tag = Tag::sanitize($tag);
@@ -200,7 +196,7 @@ final class AutoTagger extends Extension
                 }
             }
 
-            $database->execute(
+            Ctx::$database->execute(
                 "UPDATE auto_tag set additional_tags=:existing_tags where tag=:tag",
                 ["tag" => $tag, "existing_tags" => Tag::implode($existing_tags)]
             );
@@ -212,7 +208,7 @@ final class AutoTagger extends Extension
             $tag = Tag::sanitize($tag);
             $additional_tags = Tag::explode($additional_tags);
 
-            $database->execute(
+            Ctx::$database->execute(
                 "INSERT INTO auto_tag(tag, additional_tags) VALUES(:tag, :additional_tags)",
                 ["tag" => $tag, "additional_tags" => Tag::implode($additional_tags)]
             );
@@ -228,10 +224,9 @@ final class AutoTagger extends Extension
 
     private function apply_new_auto_tag(string $tag): void
     {
-        global $database;
-        $tag_id = $database->get_one("SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)", ["tag" => $tag]);
+        $tag_id = Ctx::$database->get_one("SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)", ["tag" => $tag]);
         if (!empty($tag_id)) {
-            $image_ids = $database->get_col_iterable("SELECT image_id FROM  image_tags WHERE tag_id = :tag_id", ["tag_id" => $tag_id]);
+            $image_ids = Ctx::$database->get_col_iterable("SELECT image_id FROM image_tags WHERE tag_id = :tag_id", ["tag_id" => $tag_id]);
             foreach ($image_ids as $image_id) {
                 $image_id = (int) $image_id;
                 $image = Post::by_id_ex($image_id);
@@ -242,9 +237,7 @@ final class AutoTagger extends Extension
 
     private function remove_auto_tag(string $tag): void
     {
-        global $database;
-
-        $database->execute("DELETE FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag" => $tag]);
+        Ctx::$database->execute("DELETE FROM auto_tag WHERE LOWER(tag)=LOWER(:tag)", ["tag" => $tag]);
     }
 
     /**
@@ -253,12 +246,10 @@ final class AutoTagger extends Extension
      */
     private function apply_auto_tags(array $tags_mixed): array
     {
-        global $database;
-
         while (true) {
             $new_tags = [];
             foreach ($tags_mixed as $tag) {
-                $additional_tags = $database->get_one(
+                $additional_tags = Ctx::$database->get_one(
                     "SELECT additional_tags FROM auto_tag WHERE LOWER(tag) = LOWER(:input)",
                     ["input" => $tag]
                 );

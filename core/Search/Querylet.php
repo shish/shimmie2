@@ -18,12 +18,14 @@ namespace Shimmie2;
  *
  * SELECT * FROM images WHERE id = :id AND rating = :rating ORDER BY id DESC
  * ["id" => 123, "rating" => "safe"]
+ *
+ * @phpstan-import-type QueryParams from Database
  */
 final class Querylet
 {
     /**
      * @param string $sql
-     * @param sql-params-array $variables
+     * @param QueryParams $variables
      */
     public function __construct(
         public string $sql,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 /**
- * @phpstan-type BlockArray array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}
+ * @phpstan-type BlockRow array{id:int,title:string,area:string,priority:int,userclass:string,pages:string,content:string}
  * @extends Extension<BlocksTheme>
  */
 final class Blocks extends Extension
@@ -15,7 +15,7 @@ final class Blocks extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         if ($this->get_version() < 1) {
             $database->create_table("blocks", "
 				id SCORE_AIPK,
@@ -56,7 +56,7 @@ final class Blocks extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $page = Ctx::$page;
 
         $blocks = cache_get_or_set("blocks", fn () => $database->get_all("SELECT * FROM blocks"), 600);
@@ -98,7 +98,7 @@ final class Blocks extends Extension
             $page->set_redirect(make_link("blocks/list"));
         }
         if ($event->page_matches("blocks/list", permission: BlocksPermission::MANAGE_BLOCKS)) {
-            /** @var array<BlockArray> $bs */
+            /** @var array<BlockRow> $bs */
             $bs = $database->get_all("SELECT * FROM blocks ORDER BY area, priority");
             $this->theme->display_blocks($bs);
         }

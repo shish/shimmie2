@@ -35,6 +35,7 @@ final class WikiDeletePageEvent extends Event
     }
 }
 
+/** @phpstan-type WikiPageRow array{id:string|int,owner_id:string|int,owner_ip:string,date:string,title:string,revision:string|int,locked:string|bool,body:string} */
 #[Type(name: "WikiPage")]
 final class WikiPage
 {
@@ -53,21 +54,12 @@ final class WikiPage
     public string $body;
 
     /**
-     * @param array{
-     *     id: string|int,
-     *     owner_id: string|int,
-     *     owner_ip: string,
-     *     date: string,
-     *     title: string,
-     *     revision: string|int,
-     *     locked: string|bool,
-     *     body: string
-     * }|null $row
+     * @param WikiPageRow|null $row
      */
     public function __construct(?array $row = null)
     {
         //assert(!empty($row));
-        global $database;
+        $database = Ctx::$database;
 
         if (!is_null($row)) {
             $this->id = (int)$row['id'];
@@ -99,7 +91,10 @@ final class WikiPage
     }
 }
 
-/** @extends Extension<WikiTheme> */
+/**
+ * @phpstan-import-type WikiPageRow from WikiPage
+ * @extends Extension<WikiTheme>
+ */
 final class Wiki extends Extension
 {
     public const KEY = "wiki";
@@ -107,7 +102,7 @@ final class Wiki extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->create_table("wiki_pages", "
@@ -310,8 +305,9 @@ final class Wiki extends Extension
      */
     public static function get_history(string $title): array
     {
-        global $database;
+        $database = Ctx::$database;
         // first try and get the actual page
+        /** @var array<array{revision: string, date: string}> */
         return $database->get_all(
             "
 				SELECT revision, date
@@ -327,6 +323,7 @@ final class Wiki extends Extension
     public static function get_page(string $title, ?int $revision = null): WikiPage
     {
         // first try and get the actual page
+        /** @var WikiPageRow|null */
         $row = Ctx::$database->get_row(
             "
 				SELECT *
@@ -340,6 +337,7 @@ final class Wiki extends Extension
 
         // fall back to wiki:default
         if (empty($row)) {
+            /** @var WikiPageRow|null */
             $row = Ctx::$database->get_row("
                 SELECT *
                 FROM wiki_pages
@@ -362,10 +360,9 @@ final class Wiki extends Extension
 
             // correct the default
             $row["title"] = $title;
-            $row["owner_id"] = Ctx::$config->get(UserAccountsConfig::ANON_ID);
+            $row["owner_id"] = Ctx::$config->get(UserAccountsConfig::ANON_ID) ?? 0;
         }
 
-        // @phpstan-ignore-next-line
         return new WikiPage($row);
     }
 }

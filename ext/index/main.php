@@ -158,6 +158,8 @@ final class Index extends Extension
                 foreach ($q->variables as $key => $val) {
                     if (is_string($val)) {
                         $sql_str = str_replace(":$key", "'$val'", $sql_str);
+                    } elseif (is_array($val)) {
+                        $sql_str = str_replace(":$key", \Safe\json_encode($val), $sql_str);
                     } else {
                         $sql_str = str_replace(":$key", (string)$val, $sql_str);
                     }
@@ -171,7 +173,7 @@ final class Index extends Extension
     #[EventListener(priority: 95)] // we want to turn a search term into a TagCondition only if nobody did anything else with that term
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($matches = $event->matches("/^filesize(:|<=|<|=|>|>=)(\d+[kmg]?b?)$/i")) {
             $cmp = ltrim($matches[1], ":") ?: "=";

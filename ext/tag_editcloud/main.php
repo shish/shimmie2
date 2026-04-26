@@ -28,7 +28,7 @@ final class TagEditCloud extends Extension
      */
     private function get_cloud_data(Post $image): array|null
     {
-        global $database;
+        $database = Ctx::$database;
 
         $sort_method = Ctx::$config->get(TagEditCloudConfig::SORT);
         $tags_min = Ctx::$config->get(TagEditCloudConfig::MIN_USAGE);
@@ -43,24 +43,30 @@ final class TagEditCloud extends Extension
                 }
                 $relevant_tag_ids = implode(',', array_map(fn ($t) => Tag::get_or_create_id($t), $relevant_tags));
 
+                /** @var array<array{tag: string, scaled: float, count: int}> $tag_data */
                 $tag_data = Ctx::$database->get_all(
-                    // @phpstan-ignore-next-line
                     "
 					SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
 					FROM image_tags it1
 					JOIN image_tags it2 USING(image_id)
 					JOIN tags t1 ON it1.tag_id = t1.id
 					JOIN tags t2 ON it2.tag_id = t2.id
-					WHERE t1.count >= :tag_min2 AND t1.id IN ($relevant_tag_ids)
+					WHERE t1.count >= :tag_min2 AND t1.id IN :relevant_tag_ids
 					GROUP BY t2.tag
 					ORDER BY count DESC
 					LIMIT :limit",
-                    ["tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count]
+                    [
+                        "tag_min1" => $tags_min,
+                        "tag_min2" => $tags_min,
+                        "limit" => $max_count,
+                        "relevant_tag_ids" => $relevant_tag_ids,
+                    ]
                 );
                 break;
                 /** @noinspection PhpMissingBreakStatementInspection */
             case 'c':
                 if (TagCategoriesInfo::is_enabled()) {
+                    /** @var array<array{tag: string, scaled: float, count: int}> $tag_data */
                     $tag_data = $database->get_all(
                         "
                         SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
@@ -82,6 +88,7 @@ final class TagEditCloud extends Extension
             case 'p':
             default:
                 $order_by = $sort_method === 'a' ? "tag" : "count DESC";
+                /** @var array<array{tag: string, scaled: float, count: int}> $tag_data */
                 $tag_data = $database->get_all(
                     "
 					SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count

@@ -55,6 +55,7 @@ final class UserTable extends Table
             // Added later, for admins only
             // new TextColumn("email", "Email"),
             new DateColumn("joindate", "Join Date"),
+            new DateColumn("last_active", "Last Active"),
             new UserActionColumn(),
         ]);
         $this->order_by = ["id DESC"];
@@ -126,7 +127,20 @@ final class UserPage extends Extension
     #[EventListener]
     public function onUserLogin(UserLoginEvent $event): void
     {
-        Ctx::setUser($event->user);
+        Ctx::$user = $event->user;
+
+        // Update last_active if it's out of date (not today)
+        $current_date = date('Y-m-d');
+        $last_active = Ctx::$database->get_one(
+            "SELECT DATE(last_active) FROM users WHERE id = :id",
+            ["id" => $event->user->id]
+        );
+        if ($last_active !== $current_date) {
+            Ctx::$database->execute(
+                "UPDATE users SET last_active = now() WHERE id = :id",
+                ["id" => $event->user->id]
+            );
+        }
     }
 
     #[EventListener]
@@ -223,7 +237,7 @@ final class UserPage extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $user = Ctx::$user;
         $page = Ctx::$page;
 
@@ -279,7 +293,7 @@ final class UserPage extends Extension
             $page->set_redirect(make_link("admin"));
             $page->flash("Created new user");
         }
-        if ($event->page_matches("user_admin/list", method: "GET")) {
+        if ($event->page_matches("user_admin/list", method: "GET", permission: UserAccountsPermission::EDIT_USER_PASSWORD)) {
             $t = new UserTable($database->raw_db());
             $t->token = $user->get_auth_token();
             $t->inputs = $event->GET->toArray();
@@ -674,7 +688,7 @@ final class UserPage extends Extension
      */
     private function count_upload_ips(User $duser): array
     {
-        global $database;
+        $database = Ctx::$database;
         return $database->get_pairs("
 				SELECT
 					owner_ip,
@@ -690,7 +704,7 @@ final class UserPage extends Extension
      */
     private function count_comment_ips(User $duser): array
     {
-        global $database;
+        $database = Ctx::$database;
         return $database->get_pairs("
 				SELECT
 					owner_ip,
@@ -709,7 +723,7 @@ final class UserPage extends Extension
         if (!LogDatabaseInfo::is_enabled()) {
             return [];
         }
-        global $database;
+        $database = Ctx::$database;
         return $database->get_pairs("
 				SELECT
 					address,
@@ -722,7 +736,7 @@ final class UserPage extends Extension
 
     private function delete_user(int $uid, bool $with_images = false, bool $with_comments = false): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         Ctx::$event_bus->set_timeout(null);
 

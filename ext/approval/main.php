@@ -50,7 +50,7 @@ final class Approval extends Extension
     #[EventListener]
     public function onAdminAction(AdminActionEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $action = $event->action;
         $event->redirect = true;
@@ -163,7 +163,7 @@ final class Approval extends Extension
 
     public static function approve_image(int $image_id): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $database->execute(
             "UPDATE images SET approved = TRUE, approved_by_id = :approved_by_id WHERE id = :id AND approved = FALSE",
@@ -174,7 +174,7 @@ final class Approval extends Extension
 
     public static function disapprove_image(int $image_id): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $database->execute(
             "UPDATE images SET approved = FALSE, approved_by_id = NULL WHERE id = :id AND approved = TRUE",
@@ -256,7 +256,7 @@ final class Approval extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN approved BOOLEAN NOT NULL DEFAULT FALSE");

@@ -49,10 +49,10 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         // - the database (we roll back the transaction)
         // - the event bus (this is static)
         // - the tracer (we want one trace for the whole test suite)
-        Ctx::setUser(User::get_anonymous());
-        Ctx::setPage(new Page());
-        Ctx::setCache(load_cache(null));
-        Ctx::setConfig(new DatabaseConfig(Ctx::$database));
+        Ctx::$user = User::get_anonymous();
+        Ctx::$page = new Page();
+        Ctx::$cache = load_cache(null);
+        Ctx::$config = new DatabaseConfig(Ctx::$database);
 
         $sSetUp->end();
         self::$innerSpan = Ctx::$tracer->startSpan("test");
@@ -104,7 +104,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $_GET = $get_args;
         $_POST = $post_args;
         $_COOKIE = $cookies;
-        Ctx::setPage(new Page());
+        Ctx::$page = new Page();
         send_event(new PageRequestEvent($method, $page_name, $get_args, $post_args));
         if (Ctx::$page->mode === PageMode::REDIRECT) {
             Ctx::$page->set_code(302);

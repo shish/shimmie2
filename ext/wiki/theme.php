@@ -48,7 +48,7 @@ class WikiTheme extends Themelet
 
     public function display_list_page(?WikiPage $nav_page = null): void
     {
-        global $database;
+        $database = Ctx::$database;
         if (is_null($nav_page)) {
             $nav_page = new WikiPage();
             $nav_page->body = "";
@@ -134,7 +134,7 @@ class WikiTheme extends Themelet
 
     protected function format_wiki_page(WikiPage $page): HTMLElement
     {
-        global $database;
+        $database = Ctx::$database;
 
         $text = "{body}";
 

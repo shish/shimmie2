@@ -8,6 +8,9 @@ use FFSPHP\{PDO, PDOStatement};
 
 /**
  * A class for controlled database access
+ *
+ * @phpstan-import-type BindableParam from \FFSPHP\PDO
+ * @phpstan-type QueryParams array<string, BindableParam>
  */
 class Database
 {
@@ -94,20 +97,25 @@ class Database
     /**
      * @template T
      * @param callable():T $callback
+     * @param literal-string $name
      * @return T
      */
     public function with_savepoint(callable $callback, string $name = "sp"): mixed
     {
+        if (!preg_match('/^[a-z][a-z0-9_]*$/i', $name)) {
+            throw new \InvalidArgumentException("Invalid savepoint name: must match [a-z][a-z0-9_]*");
+        }
+
         $span = Ctx::$tracer->startSpan("Savepoint $name");
         try {
             // doing string interpolation because bound parameters don't work here
-            $this->execute("SAVEPOINT $name");  // @phpstan-ignore-line
+            $this->execute("SAVEPOINT $name");
             $ret = $callback();
-            $this->execute("RELEASE SAVEPOINT $name");  // @phpstan-ignore-line
+            $this->execute("RELEASE SAVEPOINT $name");
             $span->end(success: true);
             return $ret;
         } catch (\Exception $e) {
-            $this->execute("ROLLBACK TO SAVEPOINT $name");  // @phpstan-ignore-line
+            $this->execute("ROLLBACK TO SAVEPOINT $name");
             $span->end(success: false, message: (string) $e);
             throw $e;
         }
@@ -133,7 +141,7 @@ class Database
     }
 
     /**
-     * @param sql-params-array $args
+     * @param QueryParams $args
      */
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
@@ -157,13 +165,19 @@ class Database
         $this->get_engine()->set_timeout($this->get_db(), $time);
     }
 
+    /**
+     * Send a notification to the database.
+     *
+     * @param literal-string $channel The notification channel name (must be a compile-time constant to prevent SQL injection)
+     * @param ?string $data Optional data payload
+     */
     public function notify(string $channel, ?string $data = null): void
     {
         $this->get_engine()->notify($this->get_db(), $channel, $data);
     }
 
     /**
-     * @param sql-params-array $args
+     * @param QueryParams $args
      */
     public function _execute(string $query, array $args = []): PDOStatement
     {
@@ -184,7 +198,7 @@ class Database
      * Execute an SQL query with no return
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      */
     public function execute(string $query, array $args = []): PDOStatement
     {
@@ -198,7 +212,7 @@ class Database
      * Execute an SQL query and return a 2D array.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      * @return array<array<string, mixed>>
      */
     public function get_all(string $query, array $args = []): array
@@ -213,7 +227,7 @@ class Database
      * Execute an SQL query and return a iterable object for use with generators.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      */
     public function get_all_iterable(string $query, array $args = []): PDOStatement
     {
@@ -227,7 +241,7 @@ class Database
      * Execute an SQL query and return a single row.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      * @return array<string, mixed>|null
      */
     public function get_row(string $query, array $args = []): ?array
@@ -242,7 +256,7 @@ class Database
      * Execute an SQL query and return the first column of each row.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      * @return list<mixed>
      */
     public function get_col(string $query, array $args = []): array
@@ -258,7 +272,7 @@ class Database
      * Execute an SQL query and return the first column of each row as a single iterable object.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      * @return \Generator<mixed>
      */
     public function get_col_iterable(string $query, array $args = []): \Generator
@@ -275,7 +289,7 @@ class Database
      * Execute an SQL query and return the the first column => the second column.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      * @return array<string, mixed>
      */
     public function get_pairs(string $query, array $args = []): array
@@ -291,7 +305,7 @@ class Database
      * Execute an SQL query and return the the first column => the second column as an iterable object.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      * @return \Generator<string, mixed>
      */
     public function get_pairs_iterable(string $query, array $args = []): \Generator
@@ -308,7 +322,7 @@ class Database
      * Execute an SQL query and return a single value, or null.
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      */
     public function get_one(string $query, array $args = []): mixed
     {
@@ -322,7 +336,7 @@ class Database
      * Execute an SQL query and returns a bool indicating if any data was returned
      *
      * @param literal-string $query
-     * @param sql-params-array $args
+     * @param QueryParams $args
      */
     public function exists(string $query, array $args = []): bool
     {
@@ -358,21 +372,21 @@ class Database
             $this->connect_engine();
         }
         $data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore-next-line - non-literal string is handled very carefully
         $this->execute($this->get_engine()->create_table_sql($name, $data));
     }
 
     /**
-     * Returns the number of tables present in the current database.
+     * @return array<string>
      */
+    public function get_table_names(): array
+    {
+        return $this->get_db()->getTableNames();
+    }
+
     public function count_tables(): int
     {
-        $sql = match ($this->get_engine()->id) {
-            DatabaseDriverID::MYSQL => "SHOW TABLES",
-            DatabaseDriverID::PGSQL => "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
-            DatabaseDriverID::SQLITE => "SELECT name FROM sqlite_master WHERE type = 'table'",
-        };
-        return count($this->get_col($sql));
+        return count($this->get_table_names());
     }
 
     public function raw_db(): PDO
@@ -380,6 +394,10 @@ class Database
         return $this->get_db();
     }
 
+    /**
+     * @param literal-string $table
+     * @param literal-string $column
+     */
     public function standardise_boolean(string $table, string $column, bool $include_postgres = false): void
     {
         $d = $this->get_driver_id();
@@ -389,19 +407,19 @@ class Database
             # So we can cast directly from ENUM to BOOLEAN which gives us a
             # column of values 'true' and 'invalid but who cares lol', which
             # we can then UPDATE to be 'true' and 'false'.
-            $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");  // @phpstan-ignore-line
-            $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");  // @phpstan-ignore-line
+            $this->execute("ALTER TABLE $table MODIFY COLUMN $column BOOLEAN;");
+            $this->execute("UPDATE $table SET $column=0 WHERE $column=2;");
         }
         if ($d === DatabaseDriverID::SQLITE) {
             # SQLite doesn't care about column types at all, everything is
             # text, so we can in-place replace a char with a bool
-            $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");  // @phpstan-ignore-line
+            $this->execute("UPDATE $table SET $column = ($column IN ('Y', 1))");
         }
         if ($d === DatabaseDriverID::PGSQL && $include_postgres) {
-            $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");  // @phpstan-ignore-line
-            $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");  // @phpstan-ignore-line
-            $this->execute("ALTER TABLE $table DROP COLUMN $column");  // @phpstan-ignore-line
-            $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");  // @phpstan-ignore-line
+            $this->execute("ALTER TABLE $table ADD COLUMN {$column}_b BOOLEAN DEFAULT FALSE NOT NULL");
+            $this->execute("UPDATE $table SET {$column}_b = ($column = 'Y')");
+            $this->execute("ALTER TABLE $table DROP COLUMN $column");
+            $this->execute("ALTER TABLE $table RENAME COLUMN {$column}_b TO $column");
         }
     }
 

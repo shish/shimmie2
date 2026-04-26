@@ -20,7 +20,7 @@ final class Upgrade extends Extension
             ->setDescription('Run DB schema updates, if automatic updates are disabled')
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 $output->writeln("Running DB Upgrade");
-                global $database;
+                $database = Ctx::$database;
                 $database->set_timeout(null); // These updates can take a little bit
                 send_event(new DatabaseUpgradeEvent());
                 return Command::SUCCESS;
@@ -30,7 +30,7 @@ final class Upgrade extends Extension
     #[EventListener(priority: 5)]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if (!file_exists("data/index.php")) {
             file_put_contents("data/index.php", "<?php\n// Silence is golden...\n");
@@ -56,7 +56,7 @@ final class Upgrade extends Extension
                 $tables = $database->get_col("SHOW TABLES");
                 foreach ($tables as $table) {
                     Log::info("upgrade", "converting $table to innodb");
-                    // @phpstan-ignore-next-line
+                    // @phpstan-ignore-next-line - SHOW TABLES will give valid table names
                     Ctx::$database->execute("ALTER TABLE $table ENGINE=INNODB");
                 }
             }
@@ -107,12 +107,8 @@ final class Upgrade extends Extension
             Log::info("upgrade", "Changing tag column to VARCHAR(255)");
             if ($database->get_driver_id() === DatabaseDriverID::PGSQL) {
                 $database->execute('ALTER TABLE tags ALTER COLUMN tag SET DATA TYPE VARCHAR(255)');
-                $database->execute('ALTER TABLE aliases ALTER COLUMN oldtag SET DATA TYPE VARCHAR(255)');
-                $database->execute('ALTER TABLE aliases ALTER COLUMN newtag SET DATA TYPE VARCHAR(255)');
             } elseif ($database->get_driver_id() === DatabaseDriverID::MYSQL) {
                 $database->execute('ALTER TABLE tags MODIFY COLUMN tag VARCHAR(255) NOT NULL');
-                $database->execute('ALTER TABLE aliases MODIFY COLUMN oldtag VARCHAR(255) NOT NULL');
-                $database->execute('ALTER TABLE aliases MODIFY COLUMN newtag VARCHAR(255) NOT NULL');
             }
 
             $this->set_version(14);
@@ -213,6 +209,12 @@ final class Upgrade extends Extension
             $database->execute("UPDATE images SET lossless = FALSE, video = TRUE WHERE ext IN ('flv','mp4','m4v','ogv','webm')");
             $this->set_version(21);
             $database->begin_transaction();
+        }
+
+        if ($this->get_version() < 22) {
+            Log::info("upgrade", "Adding last_active column to users table");
+            $database->execute("ALTER TABLE users ADD COLUMN last_active TIMESTAMP NULL");
+            $this->set_version(22);
         }
     }
 }

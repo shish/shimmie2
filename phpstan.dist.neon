@@ -28,7 +28,6 @@ parameters:
     # an ordered list of search terms, in the order the user specified them
     search-term-array: list<search-term-string>
     header-array: "array<string,string|string[]>"
-    sql-params-array: "array<string,string|int|bool|null>"
   ignoreErrors:
     - message: '#Function .* is unsafe to use.*$#'
     - message: '#Path in include_once\(\) "data/.*" is not a file or it does not exist.#'

@@ -197,7 +197,7 @@ final class Favorites extends Extension
     #[EventListener]
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         if ($this->get_version() < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN favorites INTEGER NOT NULL DEFAULT 0");
@@ -228,7 +228,7 @@ final class Favorites extends Extension
 
     private function add_vote(int $image_id, int $user_id, bool $do_set): void
     {
-        global $database;
+        $database = Ctx::$database;
         if ($do_set) {
             if (!$database->get_row("select 1 from user_favorites where image_id=:image_id and user_id=:user_id", ["image_id" => $image_id, "user_id" => $user_id])) {
                 $database->execute(
@@ -253,7 +253,7 @@ final class Favorites extends Extension
      */
     private function list_persons_who_have_favorited(Post $image): array
     {
-        global $database;
+        $database = Ctx::$database;
 
         return $database->get_col(
             "SELECT name FROM users WHERE id IN (SELECT user_id FROM user_favorites WHERE image_id = :image_id) ORDER BY name",

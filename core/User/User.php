@@ -95,11 +95,6 @@ final class User
             if ($user_by_name->get_session_id() === $session) {
                 $user = $user_by_name;
             }
-            // For 2.12, check old session IDs and convert to new IDs
-            if (md5($user_by_name->passhash . Network::get_session_ip()) === $session) {
-                $user = $user_by_name;
-                $user->set_login_cookie();
-            }
             Ctx::$cache->set("user-session-obj:$name-$session", $user, 600);
         }
         return $user;
@@ -168,10 +163,6 @@ final class User
             }
         }
 
-        if ($my_user->passhash === md5(strtolower($name) . $pass)) {
-            Log::info("core-user", "Migrating from md5 to bcrypt for $name");
-            $my_user->set_password($pass);
-        }
         assert(!is_null($my_user->passhash));
         if (password_verify($pass, $my_user->passhash)) {
             Log::info("core-user", "Logged in as $name ({$my_user->class->name})");

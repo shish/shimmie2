@@ -8,7 +8,7 @@ use GQLA\{Field, Mutation, Type};
 
 use function MicroHTML\{emptyHTML};
 
-/** @phpstan-type DBComment array{id:int,image_id:int,owner_id:int,owner_ip:string,posted:string,comment:string,edited:bool|int} */
+/** @phpstan-type CommentRow array{id:int,image_id:int,owner_id:int,owner_ip:string,posted:string,comment:string,edited:bool|int} */
 #[Type(name: "Comment")]
 final class Comment
 {
@@ -29,7 +29,7 @@ final class Comment
         $this->owner = User::by_id_dangerously_cached($owner_id);
     }
 
-    /** @param DBComment $row */
+    /** @param CommentRow $row */
     public static function from_row(array $row): Comment
     {
         return new Comment(
@@ -43,7 +43,7 @@ final class Comment
         );
     }
 
-    /** @param DBComment[] $rows
+    /** @param CommentRow[] $rows
      * @return Comment[] */
     private static function multi_row(array $rows): array
     {
@@ -56,7 +56,7 @@ final class Comment
 
     public static function by_id(int $id): Comment
     {
-        /** @var ?DBComment */
+        /** @var ?CommentRow */
         $row = Ctx::$database->get_row(
             'SELECT * FROM comments
             WHERE id = :id;',
@@ -72,7 +72,7 @@ final class Comment
     /** @return Comment[] */
     public static function get_all(int $limit, int $offset = 0): array
     {
-        /** @var DBComment[] */
+        /** @var CommentRow[] */
         $rows = Ctx::$database->get_all(
             'SELECT * FROM comments
             ORDER BY id DESC
@@ -85,7 +85,7 @@ final class Comment
     /** @return Comment[] */
     public static function get_all_from_image(int $image_id): array
     {
-        /** @var DBComment[] */
+        /** @var CommentRow[] */
         $rows = Ctx::$database->get_all(
             'SELECT * FROM comments
             WHERE image_id = :image_id
@@ -98,7 +98,7 @@ final class Comment
     /** @return Comment[] */
     public static function get_all_from_user(int $user_id, int $limit, int $offset = 0): array
     {
-        /** @var DBComment[] */
+        /** @var CommentRow[] */
         $rows = Ctx::$database->get_all(
             'SELECT * FROM comments
             WHERE owner_id = :owner_id
@@ -242,7 +242,7 @@ final class CommentList extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $page = Ctx::$page;
         if ($event->page_matches("comment/add", method: "POST", permission: CommentPermission::CREATE_COMMENT)) {
             $image_id = int_escape($event->POST->req('image_id'));
@@ -511,7 +511,7 @@ final class CommentList extends Extension
         }
 
         // window doesn't work as an SQL param because it's inside quotes >_<
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore-next-line - window_sql is handled carefully
         $result = Ctx::$database->get_all("
 			SELECT *
 			FROM comments

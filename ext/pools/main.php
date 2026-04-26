@@ -44,6 +44,9 @@ final class PoolDeletionEvent extends Event
     }
 }
 
+/**
+ * @phpstan-import-type PoolRow from Pools
+ */
 final class Pool
 {
     public int $id;
@@ -56,16 +59,7 @@ final class Pool
     public int $posts;
 
     /**
-     * @param array{
-     *     id: string|int,
-     *     user_id: string|int,
-     *     user_name: ?string,
-     *     public: string|bool,
-     *     title: string,
-     *     description: string,
-     *     date: string,
-     *     posts: string|int,
-     * } $row
+     * @param PoolRow $row
      */
     public function __construct(array $row)
     {
@@ -94,7 +88,8 @@ function _image_to_id(Post $image): int
 }
 
 /**
- * @phpstan-type PoolHistory array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
+ * @phpstan-type PoolRow array{id:string|int,user_id:string|int,user_name:?string,public:string|bool,title:string,description:string,date:string,posts:string|int}
+ * @phpstan-type PoolHistoryRow array{id:int,pool_id:int,title:string,user_name:string,action:int,images:string,count:int,date:string}
  * @extends Extension<PoolsTheme>
  */
 final class Pools extends Extension
@@ -183,7 +178,7 @@ final class Pools extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $user = Ctx::$user;
         $page = Ctx::$page;
         if (
@@ -262,7 +257,7 @@ final class Pools extends Extension
                             UPDATE pool_images
                             SET image_order = :ord
                             WHERE pool_id = :pid AND image_id = :iid",
-                        ["ord" => $value, "pid" => $pool_id, "iid" => $imageID]
+                        ["ord" => (int)$value, "pid" => $pool_id, "iid" => $imageID]
                     );
                 }
             }
@@ -274,7 +269,7 @@ final class Pools extends Extension
             self::assert_permission($user, $pool);
 
             $database->with_savepoint(function () use ($pool_id) {
-                global $database;
+                $database = Ctx::$database;
                 $result = $database->execute(
                     "SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order DESC",
                     ["pid" => $pool_id]
@@ -405,7 +400,7 @@ final class Pools extends Extension
     #[EventListener]
     public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         if (Ctx::$config->get(PoolsConfig::ADDER_ON_VIEW_IMAGE) && Ctx::$user->can(PoolsPermission::UPDATE)) {
             $pools = [];
             if (Ctx::$user->can(PoolsPermission::ADMIN)) {
@@ -494,8 +489,9 @@ final class Pools extends Extension
     #[EventListener]
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
+        /** @var array<string, string> $options */
         $options = $database->get_pairs("SELECT id,title FROM pools ORDER BY title");
 
         // TODO: Don't cast into strings, make BABBE accept HTMLElement instead.
@@ -569,20 +565,25 @@ final class Pools extends Extension
             $order_by = "ORDER BY p.posts DESC";
         }
 
-        $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
-
-        // @phpstan-ignore-next-line
-        $pools = array_map(fn ($row) => new Pool($row), Ctx::$database->get_all("
+        /** @var PoolRow[] */
+        $rows = Ctx::$database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
 			INNER JOIN users AS u
 			ON p.user_id = u.id
-			$where_clause
+			WHERE SCORE_ILIKE(title, :search)
 			$order_by
 			LIMIT :l OFFSET :o
-		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]));
-        // @phpstan-ignore-next-line
-        $totalPages = (int) ceil((int) Ctx::$database->get_one("SELECT COUNT(*) FROM pools " . $where_clause) / $poolsPerPage);
+		", [
+            "l" => $poolsPerPage,
+            "o" => $pageNumber * $poolsPerPage,
+            "search" => $search,
+        ]);
+        $pools = array_map(fn ($row) => new Pool($row), $rows);
+        $totalPages = (int) ceil((int) Ctx::$database->get_one(
+            "SELECT COUNT(*) FROM pools WHERE SCORE_ILIKE(title, :search)",
+            ["search" => $search]
+        ) / $poolsPerPage);
 
         $this->theme->list_pools($pools, $search, $pageNumber + 1, $totalPages);
     }
@@ -618,8 +619,8 @@ final class Pools extends Extension
      */
     private function get_single_pool(int $poolID): Pool
     {
+        /** @var PoolRow */
         $row = Ctx::$database->get_row("SELECT * FROM pools WHERE id=:id", ["id" => $poolID]);
-        // @phpstan-ignore-next-line
         return new Pool($row);
     }
 
@@ -628,8 +629,8 @@ final class Pools extends Extension
      */
     private function get_single_pool_from_title(string $poolTitle): ?Pool
     {
+        /** @var PoolRow|null */
         $row = Ctx::$database->get_row("SELECT * FROM pools WHERE title=:title", ["title" => $poolTitle]);
-        // @phpstan-ignore-next-line
         return $row ? new Pool($row) : null;
     }
 
@@ -649,8 +650,8 @@ final class Pools extends Extension
      */
     private function get_last_userpool(int $userID): Pool
     {
+        /** @var PoolRow */
         $row = Ctx::$database->get_row("SELECT * FROM pools WHERE user_id=:uid ORDER BY id DESC", ["uid" => $userID]);
-        // @phpstan-ignore-next-line
         return new Pool($row);
     }
 
@@ -660,7 +661,7 @@ final class Pools extends Extension
     #[EventListener]
     public function onPoolAddPosts(PoolAddPostsEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $pool = $this->get_single_pool($event->pool_id);
         self::assert_permission(Ctx::$user, $pool);
@@ -737,35 +738,34 @@ final class Pools extends Extension
             INNER JOIN images AS i ON i.id = p.image_id
             WHERE p.pool_id = :pid
         ";
-        $params = [];
+        $params = ["pid" => $poolID];
 
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
         if (RatingsInfo::is_enabled()) {
-            $query .= "AND i.rating IN (" . Ratings::privs_to_sql(Ratings::get_user_class_privs(Ctx::$user)) . ")";
+            $query .= "AND i.rating IN :ratings";
+            $params["ratings"] = Ratings::get_user_class_privs(Ctx::$user);
         }
         if (TrashInfo::is_enabled()) {
             $query .= " AND trash != TRUE";
         }
 
         $result = Ctx::$database->get_all(
-            // @phpstan-ignore-next-line
             "
-					SELECT p.image_id FROM pool_images p
-					$query
-					ORDER BY p.image_order ASC
-					LIMIT :l OFFSET :o",
-            [
-                "pid" => $poolID,
+				SELECT p.image_id FROM pool_images p
+				$query
+				ORDER BY p.image_order ASC
+				LIMIT :l OFFSET :o
+			",
+            $params + [
                 "l" => $imagesPerPage,
                 "o" => $pageNumber * $imagesPerPage,
-            ] + $params
+            ]
         );
 
         $totalPages = (int) ceil((int) Ctx::$database->get_one(
-            // @phpstan-ignore-next-line
             "SELECT COUNT(*) FROM pool_images p $query",
-            ["pid" => $poolID] + $params
+            $params
         ) / $imagesPerPage);
 
         $images = [];
@@ -782,7 +782,7 @@ final class Pools extends Extension
     #[EventListener]
     public function onPoolDeletion(PoolDeletionEvent $event): void
     {
-        global $database;
+        $database = Ctx::$database;
         $poolID = $event->pool_id;
 
         $owner_id = (int) $database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
@@ -812,7 +812,7 @@ final class Pools extends Extension
     {
         $historiesPerPage = Ctx::$config->get(PoolsConfig::UPDATED_PER_PAGE);
 
-        /** @var PoolHistory[] $history */
+        /** @var PoolHistoryRow[] $history */
         $history = Ctx::$database->get_all("
 				SELECT h.id, h.pool_id, h.user_id, h.action, h.images,
 				       h.count, h.date, u.name as user_name, p.title as title
@@ -835,7 +835,7 @@ final class Pools extends Extension
      */
     private function revert_history(int $historyID): void
     {
-        global $database;
+        $database = Ctx::$database;
         $status = $database->get_all("SELECT * FROM pool_history WHERE id=:hid", ["hid" => $historyID]);
 
         foreach ($status as $entry) {
@@ -881,7 +881,7 @@ final class Pools extends Extension
      */
     private function add_post(int $poolID, int $imageID, bool $history = false, int $imageOrder = 0): bool
     {
-        global $database;
+        $database = Ctx::$database;
 
         $result = (int) $database->get_one(
             "SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid AND image_id=:iid",
@@ -921,7 +921,7 @@ final class Pools extends Extension
 
     private function update_count(int $pool_id): void
     {
-        global $database;
+        $database = Ctx::$database;
         $database->execute(
             "UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid),lastupdated=CURRENT_TIMESTAMP WHERE id=:pid",
             ["pid" => $pool_id]

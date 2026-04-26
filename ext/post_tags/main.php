@@ -304,7 +304,7 @@ final class PostTags extends Extension
 
     private function mass_tag_edit(string $search, string $replace, bool $commit): void
     {
-        global $database;
+        $database = Ctx::$database;
 
         $search_set = Tag::explode(strtolower($search), false);
         $replace_set = Tag::explode(strtolower($replace), false);
