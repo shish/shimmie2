@@ -577,7 +577,7 @@ final class Pools extends Extension
 		", [
             "l" => $poolsPerPage,
             "o" => $pageNumber * $poolsPerPage,
-            "search" => $search,
+            "search" => "%$search%",
         ]);
         $pools = array_map(fn ($row) => new Pool($row), $rows);
         $totalPages = (int) ceil((int) Ctx::$database->get_one(
