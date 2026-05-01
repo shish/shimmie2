@@ -169,7 +169,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       # buildx is needed for multi-architecture builds
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       # Figure out some variables to get baked into the image
       - name: Set build vars
         id: get-vars
@@ -229,7 +229,7 @@ jobs:
           merge-multiple: true
       # buildx is needed to create manifest lists
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       # create a manifest based on /tmp/digests/*
       # the result of this command should look like
       #   docker buildx imagetools create \
