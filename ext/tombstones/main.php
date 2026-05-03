@@ -63,10 +63,7 @@ class Tombstones extends Extension
                     return;
                 }
                 if (ImageBanInfo::is_enabled()) {
-                    $ban = $database->get_row(
-                        "SELECT * FROM image_bans WHERE hash=:hash",
-                        ["hash" => $tombstone["hash"]]
-                    );
+                    $ban = ImageBan::get_for_hash($tombstone["hash"]);
                 } else {
                     $ban = null;
                 }
