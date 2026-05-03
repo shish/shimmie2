@@ -144,12 +144,7 @@ class WikiTheme extends Themelet
             $text = Ctx::$config->get(WikiConfig::TAG_PAGE_TEMPLATE);
 
             if (AliasEditorInfo::is_enabled()) {
-                $aliases = $database->get_col("
-                    SELECT oldtag
-                    FROM aliases
-                    WHERE newtag = :title
-                    ORDER BY oldtag ASC
-                ", ["title" => $tag]);
+                $aliases = AliasEditor::get_aliases_to($tag);
 
                 if (!empty($aliases)) {
                     $text = str_replace("{aliases}", implode(", ", $aliases), $text);
@@ -159,14 +154,10 @@ class WikiTheme extends Themelet
             }
 
             if (AutoTaggerInfo::is_enabled()) {
-                $auto_tags = $database->get_one("
-                    SELECT additional_tags
-                    FROM auto_tag
-                    WHERE tag = :title
-                ", ["title" => $tag]);
+                $auto_tags = AutoTagger::get_additional_tags_for($tag);
 
                 if (!empty($auto_tags)) {
-                    $text = str_replace("{autotags}", $auto_tags, $text);
+                    $text = str_replace("{autotags}", implode(", ", $auto_tags), $text);
                 } else {
                     $text = str_replace("{autotags}", Ctx::$config->get(WikiConfig::EMPTY_TAGINFO), $text);
                 }

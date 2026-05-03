@@ -203,6 +203,21 @@ final class AliasEditor extends Extension
         return array_values(array_filter(explode(" ", $newtags), fn ($s) => $s !== ''));
     }
 
+    /**
+     * Get all old tags that alias to a specific tag
+     * @param tag-string $tag The target tag to find aliases for
+     * @return array<tag-string> Array of old tags that point to this tag
+     */
+    public static function get_aliases_to(string $tag): array
+    {
+        /** @var array<tag-string> $result */
+        $result = Ctx::$database->get_col(
+            "SELECT oldtag FROM aliases WHERE newtag = :tag ORDER BY oldtag ASC",
+            ["tag" => $tag]
+        );
+        return $result;
+    }
+
     private function get_alias_csv(Database $database): string
     {
         $csv = "";
