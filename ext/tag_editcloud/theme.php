@@ -18,15 +18,13 @@ class TagEditCloudTheme extends Themelet
      */
     public function build_tag_map(array $tag_data, array $post_tags): HTMLElement
     {
-        $database = Ctx::$database;
-
         $used_first = Ctx::$config->get(TagEditCloudConfig::USED_FIRST);
         $def_count = Ctx::$config->get(TagEditCloudConfig::DEF_COUNT);
         $sort_method = Ctx::$config->get(TagEditCloudConfig::SORT);
 
         $cat_color = [];
         if (TagCategoriesInfo::is_enabled()) {
-            $categories = $database->get_all("SELECT category, color FROM image_tag_categories");
+            $categories = TagCategories::get_all_categories();
             foreach ($categories as $row) {
                 $cat_color[$row['category']] = $row['color'];
             }
