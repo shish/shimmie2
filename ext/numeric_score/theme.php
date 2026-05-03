@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, BR, DIV, H3, INPUT, P, emptyHTML, joinHTML};
+use function MicroHTML\{A, BR, DIV, H3, INPUT, P, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -83,8 +83,7 @@ class NumericScoreTheme extends Themelet
                 " $current ",
                 A(["href" => $f_dte], ">>")
             ),
-            BR(),
-            joinHTML("\n", $pop_images)
+            DIV(["class" => "shm-image-list"], ...$pop_images)
         );
 
         Ctx::$page->set_title("Popular Posts");

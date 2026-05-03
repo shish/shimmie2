@@ -117,17 +117,23 @@ abstract class DataHandlerExtension extends Extension
     public function onDisplayingPost(DisplayingPostEvent $event): void
     {
         if ($this->supported_mime($event->image->get_mime())) {
-            $attrs = [
-                "id" => "shm_post_media",
-                "data-handler" => static::KEY,
-                "data-mime" => $event->image->get_mime(),
-            ];
-            foreach (send_event(new PostInfoGetEvent($event->image))->params->toArray() as $key => $value) {
-                $attrs["data-$key"] = $value;
+            if (method_exists($this->theme, "build_media")) {
+                $attrs = [
+                    "id" => "shm_post_media",
+                    "data-handler" => static::KEY,
+                    "data-mime" => $event->image->get_mime(),
+                ];
+                foreach (send_event(new PostInfoGetEvent($event->image))->params->toArray() as $key => $value) {
+                    if (!preg_match('/^[a-zA-Z0-9\-]+$/', $key)) {
+                        continue;
+                    }
+                    $attrs["data-$key"] = $value;
+                }
+                // $attrs keys have some dynamic data- attributes, but we have checked them
+                // @phpstan-ignore-next-line - see above
+                $media = DIV($attrs, $this->theme->build_media($event->image));
+                Ctx::$page->add_block(new Block(null, $media, "main", 10, id: static::KEY . "_media"));
             }
-            // @phpstan-ignore-next-line
-            $media = DIV($attrs, $this->theme->build_media($event->image));
-            Ctx::$page->add_block(new Block(null, $media, "main", 10, id: static::KEY . "_media"));
             if (Ctx::$config->get(ImageConfig::SHOW_META) && method_exists($this->theme, "display_metadata")) {
                 $this->theme->display_metadata($event->image);
             }

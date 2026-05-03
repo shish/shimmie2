@@ -11,7 +11,7 @@ use MicroHTML\HTMLElement;
 class BoneQualityTheme extends Themelet
 {
     /**
-     * @var array<string, string> $boned_class
+     * @var array<literal-string, string> $boned_class
      */
     private array $boned_class = ["class" => "boned_color"];
 

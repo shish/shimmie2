@@ -310,7 +310,7 @@ trait Page_Page
     }
 
     /**
-     * @return array<string, string>
+     * @return array<literal-string, string>
      */
     public function body_attrs(): array
     {

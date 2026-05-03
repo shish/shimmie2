@@ -83,7 +83,7 @@ final class TaggerXML extends Extension
     }
 
     /**
-     * @param array<string, mixed> $misc
+     * @param array<literal-string, mixed> $misc
      */
     private function list_to_xml(\FFSPHP\PDOStatement $tags, string $type, string $query, ?array $misc = []): string
     {

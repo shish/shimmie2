@@ -84,7 +84,7 @@ function SHM_SIMPLE_FORM(Url $action, ...$children): HTMLElement
 }
 
 /**
- * @param array<string, mixed> $args
+ * @param array<literal-string, mixed> $args
  */
 function SHM_SUBMIT(string $text, array $args = []): HTMLElement
 {
@@ -130,7 +130,7 @@ function SHM_USER_FORM(User $duser, Url $target, string $title, HTMLElement $bod
  * @param bool $required Wether the <select> element is required.
  * @param bool $multiple Wether the <select> element is multiple-choice.
  * @param bool $empty_option Whether the first option should be an empty one.
- * @param array<string, mixed> $attrs Additional attributes dict for <select>. Example: ["id"=>"some_id", "class"=>"some_class"].
+ * @param array<literal-string, mixed> $attrs Additional attributes dict for <select>. Example: ["id"=>"some_id", "class"=>"some_class"].
  */
 function SHM_SELECT(string $name, array $options, array $selected_options = [], bool $required = false, bool $multiple = false, bool $empty_option = false, array $attrs = []): HTMLElement
 {
@@ -199,7 +199,7 @@ function SHM_POST_INFO(
 
 // RSS Channel elements
 /**
- * @param array<string, string> $attrs
+ * @param array<literal-string, string> $attrs
  */
 function RSS(array $attrs = [], string|HTMLElement|null ...$children): HTMLElement
 {
@@ -233,7 +233,7 @@ function RSS_LINK(Url $url): HTMLElement
 }
 
 /**
- * @param array<string, string> $attrs
+ * @param array<literal-string, string> $attrs
  */
 function RSS_GUID(array $attrs, string $guid): HTMLElement
 {
@@ -257,7 +257,7 @@ function RSS_COPYRIGHT(string $cop): HTMLElement
 
 // Atom namespace elements
 /**
- * @param array<string, string> $attrs
+ * @param array<literal-string, string> $attrs
  */
 function ATOM_LINK(array $attrs): HTMLElement
 {
@@ -266,7 +266,7 @@ function ATOM_LINK(array $attrs): HTMLElement
 
 // Media RSS namespace elements
 /**
- * @param array<string, string> $attrs
+ * @param array<literal-string, string> $attrs
  */
 function MEDIA_THUMBNAIL(array $attrs): HTMLElement
 {
@@ -274,7 +274,7 @@ function MEDIA_THUMBNAIL(array $attrs): HTMLElement
 }
 
 /**
- * @param array<string, string> $attrs
+ * @param array<literal-string, string> $attrs
  */
 function MEDIA_CONTENT(array $attrs): HTMLElement
 {

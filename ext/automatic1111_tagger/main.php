@@ -41,6 +41,22 @@ class Automatic1111Tagger extends Extension
                 if (count($all_tags) > count($current_tags)) {
                     $all_tags = array_filter($all_tags, fn ($t) => strtolower($t) !== 'tagme');
                     send_event(new TagSetEvent($image_obj, $all_tags));
+                    if (Ctx::$config->get(Automatic1111TaggerConfig::MODEL) !== "wd-v1-4-moat-tagger.v2") {
+                        $post_id = $event->get_iarg('post_id');
+                        $image_obj = Post::by_id_ex($post_id);
+                        $image_contents = $image_obj->get_thumb_filename()->get_contents();
+                        $image_data = base64_encode($image_contents);
+                        $payload = [
+                            "image" => $image_data,
+                            "model" => "wd-v1-4-moat-tagger.v2",
+                            "threshold" => (float)Ctx::$config->get(Automatic1111TaggerConfig::THRESHOLD)
+                        ];
+                        $endpoint = Ctx::$config->get(Automatic1111TaggerConfig::API_ENDPOINT);
+                        $result = $this->send_api_request($endpoint, $payload);
+                        if (isset($result['caption']['rating']) && is_array($result['caption']['rating'])) {
+                            $this->handle_rating($image_obj, $result['caption']['rating']);
+                        }
+                    }
                     Ctx::$page->flash("Tags added");
                     Ctx::$page->set_redirect(make_link("post/view/" . $post_id));
                 } else {
@@ -59,7 +75,7 @@ class Automatic1111Tagger extends Extension
             $image_data = base64_encode($image_contents);
             $payload = [
                 "image" => $image_data,
-                "model" => Ctx::$config->get(Automatic1111TaggerConfig::MODEL),
+                "model" => "wd-v1-4-moat-tagger.v2",
                 "threshold" => (float)Ctx::$config->get(Automatic1111TaggerConfig::THRESHOLD)
             ];
             $endpoint = Ctx::$config->get(Automatic1111TaggerConfig::API_ENDPOINT);
