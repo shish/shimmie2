@@ -144,12 +144,7 @@ class WikiTheme extends Themelet
             $text = Ctx::$config->get(WikiConfig::TAG_PAGE_TEMPLATE);
 
             if (AliasEditorInfo::is_enabled()) {
-                $aliases = $database->get_col("
-                    SELECT oldtag
-                    FROM aliases
-                    WHERE newtag = :title
-                    ORDER BY oldtag ASC
-                ", ["title" => $tag]);
+                $aliases = AliasEditor::get_aliases_to($tag);
 
                 if (!empty($aliases)) {
                     $text = str_replace("{aliases}", implode(", ", $aliases), $text);
