@@ -273,4 +273,23 @@ final class AutoTagger extends Extension
             array_unique(array_map(strtolower(...), $tags_mixed))
         ));
     }
+
+    /**
+     * Get additional tags for a specific tag
+     * @param tag-string $tag The tag to find additional tags for
+     * @return array<tag-string> Array of additional tags, or empty array if none found
+     */
+    public static function get_additional_tags_for(string $tag): array
+    {
+        $additional_tags = Ctx::$database->get_one(
+            "SELECT additional_tags FROM auto_tag WHERE tag = :tag",
+            ["tag" => $tag]
+        );
+
+        if (empty($additional_tags)) {
+            return [];
+        }
+
+        return Tag::explode($additional_tags);
+    }
 }
