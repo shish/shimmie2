@@ -183,4 +183,17 @@ final class ImageBan extends Extension
             ));
         }
     }
+
+    /**
+     * Get ban record for a given hash
+     * @param string $hash The image hash to look up
+     * @return array<string, mixed>|null Ban record array with keys [id, hash, date, reason], or null if not found
+     */
+    public static function get_for_hash(string $hash): ?array
+    {
+        return Ctx::$database->get_row(
+            "SELECT * FROM image_bans WHERE hash = :hash",
+            ["hash" => $hash]
+        );
+    }
 }
