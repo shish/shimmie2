@@ -154,14 +154,10 @@ class WikiTheme extends Themelet
             }
 
             if (AutoTaggerInfo::is_enabled()) {
-                $auto_tags = $database->get_one("
-                    SELECT additional_tags
-                    FROM auto_tag
-                    WHERE tag = :title
-                ", ["title" => $tag]);
+                $auto_tags = AutoTagger::get_additional_tags_for($tag);
 
                 if (!empty($auto_tags)) {
-                    $text = str_replace("{autotags}", $auto_tags, $text);
+                    $text = str_replace("{autotags}", implode(", ", $auto_tags), $text);
                 } else {
                     $text = str_replace("{autotags}", Ctx::$config->get(WikiConfig::EMPTY_TAGINFO), $text);
                 }
