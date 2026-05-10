@@ -10,7 +10,7 @@ function validate_selections(form, confirmationMessage) {
             return false;
         }
     } else {
-        var query = $(form).find('input[name="bulk_query"]').val();
+        var query = form.querySelector('input[name="bulk_query"]').value;
 
         if (query === null || query === "") {
             return false;
@@ -22,7 +22,7 @@ function validate_selections(form, confirmationMessage) {
     if (confirmationMessage != null && confirmationMessage !== "") {
         return confirm(confirmationMessage);
     } else if (queryOnly) {
-        var action = $(form).find('input[name="submit_button"]').val();
+        var action = form.querySelector('input[name="submit_button"]').value;
 
         return confirm(
             'Perform bulk action "' +
@@ -37,26 +37,33 @@ function validate_selections(form, confirmationMessage) {
 function activate_bulk_selector() {
     set_selected_items([]);
     if (!bulk_selector_initialized) {
-        $(".shm-thumb").each(function (index, block) {
-            add_selector_button($(block));
+        document.querySelectorAll(".shm-thumb").forEach(function (block) {
+            add_selector_button(block);
         });
     }
-    $("#bulk_selector_controls").show();
-    $("#bulk_selector_activate").hide();
+    document.getElementById("bulk_selector_controls").style.display = "";
+    document.getElementById("bulk_selector_activate").style.display = "none";
     bulk_selector_active = true;
     bulk_selector_initialized = true;
 }
 
 function deactivate_bulk_selector() {
     set_selected_items([]);
-    $("#bulk_selector_controls").hide();
-    $("#bulk_selector_activate").show();
-    $('input[name="bulk_selected_ids"]').val("");
+    document.getElementById("bulk_selector_controls").style.display = "none";
+    document.getElementById("bulk_selector_activate").style.display = "";
+    var bulkInput = document.querySelector('input[name="bulk_selected_ids"]');
+    if (bulkInput) {
+        bulkInput.value = "";
+    }
     bulk_selector_active = false;
 }
 
 function get_selected_items() {
-    var data = $("#bulk_selected_ids").val();
+    var input = document.getElementById("bulk_selected_ids");
+    if (!input) {
+        return [];
+    }
+    var data = input.value;
     if (data === "" || data == null) {
         data = [];
     } else {
@@ -66,13 +73,23 @@ function get_selected_items() {
 }
 
 function set_selected_items(items) {
-    $(".shm-thumb").removeClass("bulk_selected");
-
-    $(items).each(function (index, item) {
-        $('.shm-thumb[data-post-id="' + item + '"]').addClass("bulk_selected");
+    document.querySelectorAll(".shm-thumb").forEach(function (thumb) {
+        thumb.classList.remove("bulk_selected");
     });
 
-    $('input[name="bulk_selected_ids"]').val(JSON.stringify(items));
+    items.forEach(function (item) {
+        var thumb = document.querySelector(
+            '.shm-thumb[data-post-id="' + item + '"]',
+        );
+        if (thumb) {
+            thumb.classList.add("bulk_selected");
+        }
+    });
+
+    var inputs = document.querySelectorAll('input[name="bulk_selected_ids"]');
+    inputs.forEach(function (input) {
+        input.value = JSON.stringify(items);
+    });
 }
 
 function select_item(id) {
@@ -102,9 +119,8 @@ function toggle_selection(id) {
 
 function select_all() {
     var items = [];
-    $(".shm-thumb").each(function (index, block) {
-        block = $(block);
-        var id = block.data("post-id");
+    document.querySelectorAll(".shm-thumb").forEach(function (block) {
+        var id = parseInt(block.getAttribute("data-post-id"));
         items.push(id);
     });
     set_selected_items(items);
@@ -113,9 +129,8 @@ function select_all() {
 function select_invert() {
     var currentItems = get_selected_items();
     var items = [];
-    $(".shm-thumb").each(function (index, block) {
-        block = $(block);
-        var id = block.data("post-id");
+    document.querySelectorAll(".shm-thumb").forEach(function (block) {
+        var id = parseInt(block.getAttribute("data-post-id"));
         if (!currentItems.includes(id)) {
             items.push(id);
         }
@@ -130,9 +145,8 @@ function select_none() {
 function select_range(start, end) {
     var data = get_selected_items();
     var selecting = false;
-    $(".shm-thumb").each(function (index, block) {
-        block = $(block);
-        var id = block.data("post-id");
+    document.querySelectorAll(".shm-thumb").forEach(function (block) {
+        var id = parseInt(block.getAttribute("data-post-id"));
         if (id === start) selecting = true;
 
         if (selecting) {
@@ -148,14 +162,14 @@ function select_range(start, end) {
 
 var last_clicked_item;
 
-function add_selector_button($block) {
+function add_selector_button(block) {
     var c = function (e) {
         if (!bulk_selector_active) return true;
 
         e.preventDefault();
         e.stopPropagation();
 
-        var id = $block.data("post-id");
+        var id = parseInt(block.getAttribute("data-post-id"));
         if (e.shiftKey) {
             if (last_clicked_item < id) {
                 select_range(id, last_clicked_item);
@@ -169,11 +183,18 @@ function add_selector_button($block) {
         return false;
     };
 
-    $block.find("A").click(c);
-    $block.click(c); // sometimes the thumbs *is* the A
+    var links = block.querySelectorAll("A");
+    links.forEach(function (link) {
+        link.addEventListener("click", c);
+    });
+    // Sometimes the thumb *is* the A
+    block.addEventListener("click", c);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
     // Clear the selection, in case it was autocompleted by the browser.
-    $("#bulk_selected_ids").val("");
+    var bulkInput = document.getElementById("bulk_selected_ids");
+    if (bulkInput) {
+        bulkInput.value = "";
+    }
 });
