@@ -25,7 +25,7 @@ class TagCategoriesTheme extends Themelet
             $tag_multiple_name = $row['display_multiple'];
             $tag_color = $row['color'];
             $html[] = DIV(
-                ["class" => "tagcategoryblock"],
+                ["class" => "tagcategoryblock tc-viewing"],
                 SHM_SIMPLE_FORM(
                     make_link("tags/categories"),
                     TABLE(
@@ -39,48 +39,45 @@ class TagCategoriesTheme extends Themelet
                         TR(
                             TD("Name - Single"),
                             TD(
-                                SPAN($tag_single_name),
-                                INPUT(["type" => "text", "name" => "tc_display_singular", "style" => "display:none", "value" => $tag_single_name])
+                                SPAN(["class" => "tc-view"], $tag_single_name),
+                                INPUT(["type" => "text", "name" => "tc_display_singular", "class" => "tc-edit", "value" => $tag_single_name])
                             )
                         ),
                         TR(
                             TD("Name - Multiple"),
                             TD(
-                                SPAN($tag_multiple_name),
-                                INPUT(["type" => "text", "name" => "tc_display_multiple", "style" => "display:none", "value" => $tag_multiple_name])
+                                SPAN(["class" => "tc-view"], $tag_multiple_name),
+                                INPUT(["type" => "text", "name" => "tc_display_multiple", "class" => "tc-edit", "value" => $tag_multiple_name])
                             )
                         ),
                         TR(
                             TD("Color"),
                             TD(
-                                SPAN($tag_color),
-                                DIV(["class" => "tc_colorswatch", "style" => "background-color:$tag_color"]),
-                                INPUT(["type" => "color", "name" => "tc_color", "style" => "display:none", "value" => $tag_color])
+                                SPAN(["class" => "tc-view"], $tag_color),
+                                DIV(["class" => "tc_colorswatch tc-view", "style" => "background-color:$tag_color"]),
+                                INPUT(["type" => "color", "name" => "tc_color", "class" => "tc-edit", "value" => $tag_color])
                             )
                         )
                     ),
                     BUTTON([
-                        "class" => "tc_edit",
+                        "class" => "tc-view",
                         "type" => "button",
-                        "onclick" => "$('.tagcategoryblock:nth-of-type($tc_block_index) tr + tr td span').hide(); $('.tagcategoryblock:nth-of-type($tc_block_index) td input').show(); $('.tagcategoryblock:nth-of-type($tc_block_index) .tc_edit').hide(); $('.tagcategoryblock:nth-of-type($tc_block_index) .tc_colorswatch').hide(); $('.tagcategoryblock:nth-of-type($tc_block_index) .tc_submit').show();"
+                        "onclick" => "this.closest('.tagcategoryblock').className = 'tagcategoryblock tc-editing';"
                     ], "Edit"),
                     BUTTON([
-                        "class" => "tc_submit",
+                        "class" => "tc-edit",
                         "type" => "submit",
-                        "style" => "display:none;",
                         "name" => "tc_status",
                         "value" => "edit"
                     ], "Submit"),
                     BUTTON([
-                        "class" => "tc_submit",
+                        "class" => "tc-edit",
                         "type" => "button",
-                        "style" => "display:none;",
-                        "onclick" => "$('.tagcategoryblock:nth-of-type($tc_block_index) .tc_delete').show(); $(this).hide();",
+                        "onclick" => "this.closest('.tagcategoryblock').className = 'tagcategoryblock tc-deleting';",
                     ], "Delete"),
                     BUTTON([
-                        "class" => "tc_delete",
+                        "class" => "tc-delete",
                         "type" => "submit",
-                        "style" => "display:none;",
                         "name" => "tc_status",
                         "value" => "delete",
                     ], "Really, really delete"),
