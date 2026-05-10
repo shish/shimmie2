@@ -12,9 +12,9 @@ namespace Shimmie2;
 
 final class ResizeImageInfo extends ExtensionInfo
 {
-    public const KEY = "resize";
+    public const KEY = "resize_image";
 
-    public string $name = "Resize Post";
+    public string $name = "Resize Image";
     public array $authors = ["jgen" => "mailto:jgen.tech@gmail.com"];
     public ExtensionCategory $category = ExtensionCategory::FILE_HANDLING;
     public string $description = "Allows admins to resize images";
