@@ -12,11 +12,12 @@ class TagToolsTheme extends Themelet
 {
     protected function button(string $name, string $action, bool $protected = false): HTMLElement
     {
+        $action_json = json_encode($action);
         return SHM_FORM(
             action: make_link("admin/$action"),
             children: $protected ? [
                 INPUT(["type" => 'submit', "id" => $action, "value" => $name, "disabled" => "disabled"]),
-                INPUT(["type" => 'checkbox', "onclick" => "jQuery('#$action').attr('disabled', !jQuery(this).is(':checked'))"])
+                INPUT(["type" => 'checkbox', "onclick" => "document.getElementById($action_json).disabled = !this.checked"])
             ] : [
                 INPUT(["type" => 'submit', "id" => $action, "value" => $name])
             ]
