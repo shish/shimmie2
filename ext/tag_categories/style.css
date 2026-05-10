@@ -25,7 +25,6 @@
 .tagcategoryblock td:last-child span {
 	width:7ch;
 	padding:0.24rem 0.7rem 0.5rem 0;
-	display:inline-block;
 }
 .tagcategoryblock button {
 	width:100%;
@@ -43,4 +42,28 @@
 	height:1.25rem;
 	width:1.25rem;
 	border-radius:4px;
+}
+
+/* State-based visibility rules */
+/* Hide all state-dependent elements by default */
+.tagcategoryblock .tc-view,
+.tagcategoryblock .tc-edit,
+.tagcategoryblock .tc-delete {
+	display: none;
+}
+
+/* In viewing mode: show view elements only */
+.tagcategoryblock.tc-viewing .tc-view {
+	display: inline-block;
+}
+
+/* In editing mode: show edit elements only */
+.tagcategoryblock.tc-editing .tc-edit {
+	display: block;
+}
+
+/* In deleting mode: show edit and delete elements */
+.tagcategoryblock.tc-deleting .tc-edit,
+.tagcategoryblock.tc-deleting .tc-delete {
+	display: block;
 }
