@@ -7,15 +7,7 @@
 let Utility = {};
 
 Utility.is_subset = function (array, subarray) {
-    var all = true;
-
-    $.each(subarray, function (i, val) {
-        if ($.inArray(val, array) === -1) {
-            all = false;
-        }
-    });
-
-    return all;
+    return subarray.every((val) => array.includes(val));
 };
 
 Utility.intersect = function (a, b) {
