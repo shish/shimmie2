@@ -12,7 +12,7 @@ final class ImageResizeException extends ServerError
 
 final class ResizeImage extends Extension
 {
-    public const KEY = "resize";
+    public const KEY = "resize_image";
 
     #[EventListener]
     public function onPostAdminBlockBuilding(PostAdminBlockBuildingEvent $event): void

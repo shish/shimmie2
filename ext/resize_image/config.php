@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 final class ResizeConfig extends ConfigGroup
 {
-    public const KEY = "resize";
+    public const KEY = "resize_image";
     public ?string $title = "Image Resize";
 
     #[ConfigMeta("Resize engine", ConfigType::STRING, default: 'gd', options: [
