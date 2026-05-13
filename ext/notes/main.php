@@ -272,10 +272,10 @@ final class Notes extends Extension
             1,
             $noteID,
             $note['image_id'],
-            $note['x1'],
-            $note['y1'],
-            $note['height'],
-            $note['width'],
+            (int)$note['x1'],
+            (int)$note['y1'],
+            (int)$note['height'],
+            (int)$note['width'],
             $note['note']
         );
 
@@ -405,7 +405,7 @@ final class Notes extends Extension
 				VALUES (:note_enable, :note_id, :review_id, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)
 			",
             [
-                'enable' => $noteEnable,
+                'note_enable' => $noteEnable,
                 'note_id' => $noteID,
                 'review_id' => $reviewID,
                 'image_id' => $imageID,
