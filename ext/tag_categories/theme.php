@@ -8,10 +8,13 @@ use function MicroHTML\{BUTTON, DIV, INPUT, P, SPAN, TABLE, TD, TR, emptyHTML, j
 
 use MicroHTML\HTMLElement;
 
+/**
+ * @phpstan-import-type TagCategoryRow from TagCategories
+ */
 class TagCategoriesTheme extends Themelet
 {
     /**
-     * @param array<array{category: string, display_singular: string, display_multiple: string, color: string}> $tc_dict
+     * @param array<TagCategoryRow> $tc_dict
      */
     public function show_tag_categories(array $tc_dict): void
     {
