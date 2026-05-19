@@ -264,7 +264,6 @@ class Database
         $_start = ftime();
         $res = $this->_execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
-        // @phpstan-ignore-next-line -- this is a list, but fetchAll is typed as array
         return $res;
     }
 
