@@ -15,8 +15,60 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /** time-ago dates **/
-    $.timeago.settings.cutoff = 365 * 24 * 60 * 60 * 1000; // Display original dates older than 1 year
-    $("time").timeago();
+    function updateTimeAgo() {
+        const CUTOFF_MS = 365 * 24 * 60 * 60 * 1000; // 1 year in milliseconds
+        const now = new Date();
+
+        document.querySelectorAll("time[datetime]").forEach((timeElement) => {
+            const datetime = timeElement.getAttribute("datetime");
+            if (!datetime) return;
+
+            const date = new Date(datetime);
+            const diff = now - date;
+
+            // If older than 1 year, keep the original text
+            if (diff > CUTOFF_MS) {
+                return;
+            }
+
+            // Calculate relative time
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            const weeks = Math.floor(days / 7);
+            const months = Math.floor(days / 30);
+
+            let timeAgoText;
+            if (seconds < 45) {
+                timeAgoText = "a few seconds ago";
+            } else if (seconds < 90) {
+                timeAgoText = "a minute ago";
+            } else if (minutes < 45) {
+                timeAgoText = minutes + " minutes ago";
+            } else if (minutes < 90) {
+                timeAgoText = "an hour ago";
+            } else if (hours < 24) {
+                timeAgoText = hours + " hours ago";
+            } else if (hours < 48) {
+                timeAgoText = "a day ago";
+            } else if (days < 7) {
+                timeAgoText = days + " days ago";
+            } else if (days < 14) {
+                timeAgoText = "a week ago";
+            } else if (days < 30) {
+                timeAgoText = weeks + " weeks ago";
+            } else if (days < 60) {
+                timeAgoText = "a month ago";
+            } else {
+                timeAgoText = months + " months ago";
+            }
+
+            timeElement.textContent = timeAgoText;
+        });
+    }
+    updateTimeAgo();
+    setInterval(updateTimeAgo, 60000);
 
     /** sidebar toggle **/
     let sidebar_hidden = [];

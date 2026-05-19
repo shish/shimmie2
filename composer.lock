@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "652e155b715aacb717b95ba44ab7e1aa",
+    "content-hash": "54e4180db4dc59317ef7374e01026071",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -18,27 +18,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/5e89585e0121e72ff47de177c5ef604f3089a53d",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
-            },
-            "type": "bower-asset",
-            "license": [
-                "MIT"
-            ]
-        },
-        {
-            "name": "bower-asset/jquery-timeago",
-            "version": "v1.6.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rmm5t/jquery-timeago.git",
-                "reference": "48fdda3ca724dcd655e8e990f6d7fbd203718905"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rmm5t/jquery-timeago/zipball/48fdda3ca724dcd655e8e990f6d7fbd203718905",
-                "reference": "48fdda3ca724dcd655e8e990f6d7fbd203718905"
-            },
-            "require": {
-                "bower-asset/jquery": ">=1.4"
             },
             "type": "bower-asset",
             "license": [
