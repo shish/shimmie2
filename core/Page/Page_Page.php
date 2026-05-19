@@ -200,7 +200,6 @@ trait Page_Page
         $files = array_merge(
             [
                 new Path("vendor/bower-asset/jquery/dist/jquery.min.js"),
-                new Path("vendor/bower-asset/jquery-timeago/jquery.timeago.js"),
             ],
             Filesystem::zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/script.js"),
             Filesystem::zglob("themes/$theme_name/{" . implode(",", $this->get_theme_scripts()) . "}")
