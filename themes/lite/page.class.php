@@ -102,7 +102,7 @@ class LitePage extends Page
         }
         $html = SECTION(["id" => $i]);
         if (!is_null($block->header)) {
-            $html->appendChild(DIV(["class" => "navtop navside tab shm-toggler", "data-toggle-sel" => "#{$i}"], $block->header));
+            $html->appendChild(DIV(["class" => "navtop navside tab shm-toggler", "data-toggle-sel" => "#{$i} .blockbody"], $block->header));
         }
         $html->appendChild(DIV(["class" => "navside tab".($hidable ? " blockbody" : "")], $block->body));
         return $html;

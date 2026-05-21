@@ -71,34 +71,30 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(updateTimeAgo, 60000);
 
     /** sidebar toggle **/
-    let sidebar_hidden = [];
+    let toggled_elements = [];
     try {
-        sidebar_hidden = (ui_cookie_get("sidebar-hidden") || "").split("|");
-        for (let i = 0; i < sidebar_hidden.length; i++) {
-            if (sidebar_hidden[i].length > 0) {
-                document
-                    .querySelectorAll(sidebar_hidden[i] + " .blockbody")
-                    .forEach((e) => {
-                        e.style.display = "none";
-                    });
-            }
+        const cookieValue = ui_cookie_get("toggled-elements");
+        if (cookieValue) {
+            toggled_elements = JSON.parse(cookieValue);
         }
+        toggled_elements.forEach((selector) => {
+            document.querySelectorAll(selector).forEach((e) => {
+                e.style.display = "none";
+            });
+        });
     } catch (err) {}
     $(".shm-toggler").each(function (idx, elm) {
         let tid = $(elm).data("toggle-sel");
-        let tob = $(tid + " .blockbody");
+        let tob = $(tid);
         $(elm).click(function (e) {
             tob.slideToggle("slow");
-            if (sidebar_hidden.indexOf(tid) === -1) {
-                sidebar_hidden.push(tid);
+            const index = toggled_elements.indexOf(tid);
+            if (index === -1) {
+                toggled_elements.push(tid);
             } else {
-                for (let i = 0; i < sidebar_hidden.length; i++) {
-                    if (sidebar_hidden[i] === tid) {
-                        sidebar_hidden.splice(i, 1);
-                    }
-                }
+                toggled_elements.splice(index, 1);
             }
-            ui_cookie_set("sidebar-hidden", sidebar_hidden.join("|"));
+            ui_cookie_set("toggled-elements", JSON.stringify(toggled_elements));
         });
     });
 
