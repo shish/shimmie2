@@ -24,7 +24,7 @@ class RelationshipsTheme extends Themelet
                     ? SPAN("This post has a parent and " . count($visible_siblings) . (count($visible_siblings) > 1 ? " siblings" : " sibling"))
                     : SPAN("This post has a parent"),
                 " ",
-                A(["href" => "#", "id" => "relationships-parent-toggle", "class" => "shm-relationships-parent-toggle"], "« hide"),
+                A(["href" => "#", "class" => "shm-toggler", "data-toggle-sel" => ".shm-relationships-parent-thumbs"], "(Show/Hide)"),
                 DIV(
                     ["class" => "shm-relationships-parent-thumbs"],
                     DIV(["class" => "shm-parent-thumbs"], $this->build_thumb(Post::by_id_ex($image['parent_id']))),
@@ -42,7 +42,7 @@ class RelationshipsTheme extends Themelet
                         "This post has ",
                         A(["href" => search_link(['parent='.$image->id])], "child posts"),
                         " ",
-                        A(["href" => "#", "id" => "relationships-child-toggle", "class" => "shm-relationships-child-toggle"], "« hide")
+                        A(["href" => "#", "class" => "shm-toggler", "data-toggle-sel" => ".shm-relationships-child-thumbs"], "(Show/Hide)")
                     ),
                     DIV(
                         ["class" => "shm-relationships-child-thumbs"],
