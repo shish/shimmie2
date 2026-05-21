@@ -83,11 +83,43 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     } catch (err) {}
-    $(".shm-toggler").each(function (idx, elm) {
-        let tid = $(elm).data("toggle-sel");
-        let tob = $(tid);
-        $(elm).click(function (e) {
-            tob.slideToggle("slow");
+    document.querySelectorAll(".shm-toggler").forEach(function (elm) {
+        let tid = elm.dataset.toggleSel;
+        let tob = document.querySelector(tid);
+        elm.addEventListener("click", function (e) {
+            // Vanilla JS slideToggle equivalent
+            if (tob.style.display === "none") {
+                // Show the element
+                tob.style.display = "";
+                tob.style.overflow = "hidden";
+                tob.style.height = "0";
+                tob.style.transition = "height 0.4s ease";
+                const height = tob.scrollHeight;
+                requestAnimationFrame(() => {
+                    tob.style.height = height + "px";
+                });
+                setTimeout(() => {
+                    tob.style.height = "";
+                    tob.style.overflow = "";
+                    tob.style.transition = "";
+                }, 400);
+            } else {
+                // Hide the element
+                tob.style.overflow = "hidden";
+                tob.style.height = tob.scrollHeight + "px";
+                tob.style.transition = "height 0.4s ease";
+                // Force a reflow so the browser registers the current height before animating
+                tob.offsetHeight;
+                requestAnimationFrame(() => {
+                    tob.style.height = "0";
+                });
+                setTimeout(() => {
+                    tob.style.display = "none";
+                    tob.style.height = "";
+                    tob.style.overflow = "";
+                    tob.style.transition = "";
+                }, 400);
+            }
             const index = toggled_elements.indexOf(tid);
             if (index === -1) {
                 toggled_elements.push(tid);
