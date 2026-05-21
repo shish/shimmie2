@@ -126,7 +126,7 @@ class BlotterTheme extends Themelet
                 $pos_break,
                 SPAN(
                     ["style" => $pos_align],
-                    A(["href" => "#", "id" => "blotter2-toggle", "class" => "shm-blotter2-toggle"], "Show/Hide"),
+                    A(["href" => "#", "class" => "shm-toggler", "data-toggle-sel" => ".shm-blotter2"], "Show/Hide"),
                     " ",
                     A(["href" => make_link("blotter/list")], "Show All")
                 ),

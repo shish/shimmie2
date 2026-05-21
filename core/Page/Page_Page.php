@@ -369,7 +369,7 @@ trait Page_Page
     {
         $html = SECTION(['id' => $block->id]);
         if (!empty($block->header)) {
-            $html->appendChild(H3(["data-toggle-sel" => "#{$block->id}", "class" => $hidable ? "shm-toggler" : ""], $block->header));
+            $html->appendChild(H3(["data-toggle-sel" => "#{$block->id} .blockbody", "class" => $hidable ? "shm-toggler" : ""], $block->header));
         }
         $html->appendChild(DIV(['class' => "blockbody"], $block->body));
         return $html;
