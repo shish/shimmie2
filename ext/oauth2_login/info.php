@@ -21,5 +21,15 @@ Alternatively, administrators can enable trusted reverse proxy headers for
 setups where oauth2-proxy, nginx, or another fronting service has already
 authenticated the request. Only enable that mode when Shimmie is not reachable
 directly by clients, because Shimmie will trust the configured username and
-email headers.";
+email headers. A typical oauth2-proxy and nginx setup would protect Shimmie
+with <code>auth_request</code>, clear any inbound identity headers, then set the
+configured Shimmie headers from oauth2-proxy's authenticated response:
+
+<pre><code>proxy_set_header X-Forwarded-User \"\";
+proxy_set_header X-Forwarded-Email \"\";
+auth_request /oauth2/auth;
+auth_request_set \$user \$upstream_http_x_auth_request_user;
+auth_request_set \$email \$upstream_http_x_auth_request_email;
+proxy_set_header X-Forwarded-User \$user;
+proxy_set_header X-Forwarded-Email \$email;</code></pre>";
 }
