@@ -31,5 +31,8 @@ auth_request /oauth2/auth;
 auth_request_set \$user \$upstream_http_x_auth_request_user;
 auth_request_set \$email \$upstream_http_x_auth_request_email;
 proxy_set_header X-Forwarded-User \$user;
-proxy_set_header X-Forwarded-Email \$email;</code></pre>";
+proxy_set_header X-Forwarded-Email \$email;</code></pre>
+
+See <code>ext/oauth2_login/README.md</code> for a local Keycloak and
+oauth2-proxy testbed that can be adapted into shimmie2-examples.";
 }
