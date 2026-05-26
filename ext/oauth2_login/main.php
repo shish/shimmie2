@@ -13,6 +13,10 @@ final class OAuth2Login extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
+        if (Ctx::$user->is_anonymous() && !$event->page_starts_with("oauth2_login")) {
+            $this->login_from_proxy_headers();
+        }
+
         if ($event->page_matches("oauth2_login/start", method: "GET")) {
             $this->page_start();
             return;
@@ -25,7 +29,7 @@ final class OAuth2Login extends Extension
 
         if (
             Ctx::$user->is_anonymous()
-            && $this->is_configured()
+            && $this->is_oauth2_client_configured()
             && !$event->page_starts_with("oauth2_login")
         ) {
             $this->theme->display_login_block($this->provider_name());
@@ -38,7 +42,7 @@ final class OAuth2Login extends Extension
         return $name === "" ? "OAuth2" : $name;
     }
 
-    private function is_configured(): bool
+    private function is_oauth2_client_configured(): bool
     {
         return
             trim($this->config_string(OAuth2LoginConfig::CLIENT_ID)) !== "" &&
@@ -59,9 +63,59 @@ final class OAuth2Login extends Extension
         return Ctx::$config->get($key) === true;
     }
 
+    private function login_from_proxy_headers(): void
+    {
+        if (!$this->config_bool(OAuth2LoginConfig::TRUST_PROXY_HEADERS)) {
+            return;
+        }
+
+        $username = $this->configured_header_value(OAuth2LoginConfig::PROXY_USERNAME_HEADER);
+        if ($username === null) {
+            return;
+        }
+
+        $email = $this->configured_header_value(OAuth2LoginConfig::PROXY_EMAIL_HEADER) ?? "";
+        if ($email !== "" && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidInput("Trusted proxy returned an invalid email address");
+        }
+
+        $user = $this->find_or_create_proxy_user($username, $email);
+        send_event(new UserLoginEvent($user));
+        $user->set_login_cookie();
+        Log::debug("oauth2-login", "Logged in @$user->name from trusted reverse proxy headers");
+    }
+
+    private function configured_header_value(string $config_key): ?string
+    {
+        $server_key = $this->header_server_key($this->config_string($config_key));
+        if ($server_key === "") {
+            return null;
+        }
+
+        $value = $_SERVER[$server_key] ?? null;
+        if (!is_scalar($value)) {
+            return null;
+        }
+
+        $value = trim((string)$value);
+        return $value === "" ? null : $value;
+    }
+
+    private function header_server_key(string $header): string
+    {
+        $header = strtoupper(str_replace("-", "_", trim($header)));
+        if ($header === "") {
+            return "";
+        }
+        if (str_starts_with($header, "HTTP_") || $header === "REMOTE_USER") {
+            return $header;
+        }
+        return "HTTP_$header";
+    }
+
     private function page_start(): void
     {
-        if (!$this->is_configured()) {
+        if (!$this->is_oauth2_client_configured()) {
             $this->theme->display_not_configured();
             return;
         }
@@ -85,7 +139,7 @@ final class OAuth2Login extends Extension
      */
     private function page_callback(array $query): void
     {
-        if (!$this->is_configured()) {
+        if (!$this->is_oauth2_client_configured()) {
             $this->theme->display_not_configured();
             return;
         }
@@ -223,6 +277,30 @@ final class OAuth2Login extends Extension
         }
 
         return $this->create_user($this->unique_username($this->extract_username($profile)), $email);
+    }
+
+    private function find_or_create_proxy_user(string $username, string $email): User
+    {
+        $username = $this->normalise_username($username);
+
+        if ($email !== "") {
+            $user = $this->find_user_by_email($email);
+            if ($user !== null) {
+                return $user;
+            }
+        }
+
+        try {
+            return User::by_name($username);
+        } catch (UserNotFound) {
+            // The trusted proxy identity will be created below if allowed.
+        }
+
+        if (!$this->config_bool(OAuth2LoginConfig::AUTO_CREATE_USERS)) {
+            throw new InvalidInput("Trusted proxy user does not match an existing account");
+        }
+
+        return $this->create_user($this->unique_username($username), $email);
     }
 
     /**

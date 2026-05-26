@@ -60,6 +60,22 @@ final class OAuth2LoginTest extends ShimmiePHPUnitTestCase
         self::assertSame("oauth-person@example.com", $user->email);
     }
 
+    public function testTrustedProxyHeaderCreatesAndLogsInUser(): void
+    {
+        Ctx::$config->set(OAuth2LoginConfig::TRUST_PROXY_HEADERS, true);
+        $_SERVER["HTTP_X_FORWARDED_USER"] = "Proxy Person";
+        $_SERVER["HTTP_X_FORWARDED_EMAIL"] = "proxy-person@example.com";
+
+        try {
+            self::get_page("post/list");
+        } finally {
+            unset($_SERVER["HTTP_X_FORWARDED_USER"], $_SERVER["HTTP_X_FORWARDED_EMAIL"]);
+        }
+
+        self::assertSame("Proxy_Person", Ctx::$user->name);
+        self::assertSame("proxy-person@example.com", Ctx::$user->email);
+    }
+
     public function testRejectsUnverifiedEmail(): void
     {
         self::assertException(InvalidInput::class, function () {

@@ -43,4 +43,13 @@ final class OAuth2LoginConfig extends ConfigGroup
 
     #[ConfigMeta("Create users automatically", ConfigType::BOOL, default: true)]
     public const AUTO_CREATE_USERS = "oauth2_login_auto_create_users";
+
+    #[ConfigMeta("Trust reverse proxy headers", ConfigType::BOOL, default: false)]
+    public const TRUST_PROXY_HEADERS = "oauth2_login_trust_proxy_headers";
+
+    #[ConfigMeta("Proxy username header", ConfigType::STRING, default: "X-Forwarded-User", advanced: true)]
+    public const PROXY_USERNAME_HEADER = "oauth2_login_proxy_username_header";
+
+    #[ConfigMeta("Proxy email header", ConfigType::STRING, default: "X-Forwarded-Email", advanced: true)]
+    public const PROXY_EMAIL_HEADER = "oauth2_login_proxy_email_header";
 }

@@ -14,7 +14,7 @@ class OAuth2LoginTheme extends Themelet
             "$provider_name Login",
             emptyHTML(
                 P(A(["href" => make_link("oauth2_login/start")], "Log in with $provider_name")),
-                SMALL("Uses the OAuth2 provider configured by the board administrator.")
+                SMALL("Uses the OAuth2 or trusted proxy provider configured by the board administrator.")
             ),
             "left",
             91
