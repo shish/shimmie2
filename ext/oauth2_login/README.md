@@ -90,7 +90,7 @@ services:
       - --oidc-issuer-url=http://keycloak.localhost:8080/realms/shimmie
       - --client-id=shimmie-local
       - --client-secret=local-dev-secret
-      - --redirect-url=http://localhost:4180/oauth2/callback
+      - --redirect-url=http://localhost:4050/oauth2/callback
       - --cookie-secret=0123456789abcdef0123456789abcdef
       - --cookie-secure=false
       - --email-domain=*
@@ -99,8 +99,6 @@ services:
       - --set-xauthrequest=true
       - --pass-user-headers=true
       - --skip-provider-button=true
-    ports:
-      - "4180:4180"
     depends_on:
       - keycloak
 
@@ -138,6 +136,7 @@ http {
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Scheme $scheme;
+            proxy_set_header X-Auth-Request-Redirect $scheme://$http_host$request_uri;
         }
 
         location = /oauth2/auth {
@@ -181,13 +180,12 @@ http {
       "publicClient": false,
       "secret": "local-dev-secret",
       "redirectUris": [
-        "http://localhost:4180/oauth2/callback",
+        "http://localhost:4050/oauth2/callback",
         "http://localhost:4010/oauth2_login/callback"
       ],
       "webOrigins": [
         "http://localhost:4050",
-        "http://localhost:4010",
-        "http://localhost:4180"
+        "http://localhost:4010"
       ],
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true
