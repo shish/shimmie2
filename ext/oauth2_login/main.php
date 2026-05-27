@@ -82,7 +82,7 @@ final class OAuth2Login extends Extension
         $user = $this->find_or_create_proxy_user($username, $email);
         send_event(new UserLoginEvent($user));
         $user->set_login_cookie();
-        Log::debug("oauth2-login", "Logged in @$user->name from trusted reverse proxy headers");
+        Log::info("oauth2-login", "Logged in @$user->name from trusted reverse proxy headers");
     }
 
     private function configured_header_value(string $config_key): ?string

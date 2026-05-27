@@ -60,6 +60,11 @@ Set these Shimmie board config values:
 - Proxy email header: `X-Forwarded-Email`
 - Auto-create OAuth2 users: enabled
 
+Some proxies expose the authenticated username as `REMOTE_USER` instead of an
+HTTP header. For example, Authelia deployments can set Proxy username header to
+`REMOTE_USER`; Shimmie reads that exact server variable instead of converting it
+to `HTTP_REMOTE_USER`.
+
 The following files can be dropped into a checkout of
 `shish/shimmie2-examples` next to the existing `docker-compose.yaml`. The
 values are intentionally local-development only.
