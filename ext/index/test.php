@@ -9,7 +9,7 @@ final class IndexTest extends ShimmiePHPUnitTestCase
     public function testIndexPage(): void
     {
         self::get_page('post/list');
-        self::assert_title("Welcome to Shimmie");
+        self::assert_title("TOKIbooru");
         self::assert_no_text("Prev | Index | Next");
 
         self::log_in_as_user();
@@ -18,18 +18,18 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         self::log_out();
 
         self::get_page('post/list');
-        self::assert_title("Shimmie");
+        self::assert_title("UNPAbooru");
         // FIXME
         //self::assert_text("Prev | Index | Next");
 
         self::get_page('post/list/-1');
-        self::assert_title("Shimmie");
+        self::assert_title("UNPAbooru");
 
         self::get_page('post/list/0');
-        self::assert_title("Shimmie");
+        self::assert_title("UNPAbooru");
 
         self::get_page('post/list/1');
-        self::assert_title("Shimmie");
+        self::assert_title("UNPAbooru");
 
         self::assertException(PostNotFound::class, function () {
             self::get_page('post/view/99999');

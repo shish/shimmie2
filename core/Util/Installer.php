@@ -39,7 +39,7 @@ final class Installer
         print("<!DOCTYPE html>
     <html lang='en'>
 	<head>
-		<title>Shimmie</title>
+		<title>UNPAbooru</title>
 		<link rel='shortcut icon' href='$data_href/ext/static_files/static/favicon.ico'>
 		<link rel='stylesheet' href='$data_href/ext/static_files/installer.css' type='text/css'>
 	</head>
