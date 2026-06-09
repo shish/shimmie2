@@ -120,7 +120,7 @@ trait Page_Page
         $this->add_html_header(LINK([
             'rel' => 'icon',
             'type' => 'image/x-icon',
-            'href' => "$data_href/favicon.ico"
+            'href' => "$data_href/favicon_64.gif"
         ]), 41);
         $this->add_html_header(LINK([
             'rel' => 'apple-touch-icon',
