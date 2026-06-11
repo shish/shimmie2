@@ -10,7 +10,7 @@ final class SetupConfig extends ConfigGroup
     public ?string $title = "General";
     public ?int $position = 0;
 
-    #[ConfigMeta("Site title", ConfigType::STRING, default: "Shimmie")]
+    #[ConfigMeta("Site title", ConfigType::STRING, default: "UNPAbooru")]
     public const TITLE = "title";
 
     #[ConfigMeta("Front page", ConfigType::STRING, default: "post/list")]
