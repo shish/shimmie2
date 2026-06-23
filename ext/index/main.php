@@ -190,9 +190,6 @@ final class Index extends Extension
         } elseif ($matches = $event->matches("/^(hash|md5)[=:]([0-9a-fA-F]*)$/i")) {
             $hash = strtolower($matches[2]);
             $event->add_querylet(new Querylet('images.hash = :hash', ["hash" => $hash]));
-        } elseif ($matches = $event->matches("/^(phash)[=:]([0-9a-fA-F]*)$/i")) {
-            $phash = strtolower($matches[2]);
-            $event->add_querylet(new Querylet('images.phash = :phash', ["phash" => $phash]));
         } elseif ($matches = $event->matches("/^(filename|name)[=:](.+)$/i")) {
             $filename = strtolower($matches[2]);
             $event->add_querylet(new Querylet("SCORE_ILIKE(images.filename, :filename{$event->id})", ["filename{$event->id}" => "%$filename%"]));
