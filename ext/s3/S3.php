@@ -281,7 +281,6 @@ class S3Request
         if ($response_raw === false) {
             $error_msg = curl_error($this->curl);
             $error_code = curl_errno($this->curl);
-            curl_close($this->curl);
             throw new S3Exception("cURL error: $error_msg", $error_code);
         }
         if ($response_raw === true) {
@@ -291,7 +290,6 @@ class S3Request
 
         $header_size = curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
         $http_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-        curl_close($this->curl);
 
         $header_text = substr($response_raw, 0, $header_size);
         $body = substr($response_raw, $header_size);

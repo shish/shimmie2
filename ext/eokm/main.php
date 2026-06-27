@@ -24,7 +24,6 @@ final class Eokm extends Extension
             curl_setopt($ch, CURLOPT_POSTFIELDS, $event->image->hash);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $return = curl_exec($ch);
-            curl_close($ch);
 
             /** @noinspection PhpStatementHasEmptyBodyInspection */
             if ($return === "false") {
