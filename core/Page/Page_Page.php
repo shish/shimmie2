@@ -312,7 +312,7 @@ trait Page_Page
     {
         return [
             "class" => "layout-{$this->layout}",
-            "data-userclass" => Ctx::$user->class->name,
+            "data-userclass" => isset(Ctx::$user) ? Ctx::$user->class->name : "",
             "data-base-href" => (string)Url::base(),
             "data-base-link" => (string)make_link(""),
         ];
