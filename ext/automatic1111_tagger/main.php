@@ -139,7 +139,6 @@ class Automatic1111Tagger extends Extension
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, \Safe\json_encode($payload));
         $response = curl_exec($ch);
-        curl_close($ch);
         assert(is_string($response));
         return \Safe\json_decode($response, true);
     }

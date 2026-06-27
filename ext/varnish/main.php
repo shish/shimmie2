@@ -29,7 +29,6 @@ final class VarnishPurger extends Extension
         if ($httpCode !== 200) {
             throw new ServerError('PURGE ' . $url . ' unsuccessful (HTTP '. $httpCode . ')');
         }
-        curl_close($ch);
     }
 
     #[EventListener(priority: 99)]
