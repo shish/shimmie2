@@ -14,10 +14,13 @@ class SQLite extends DBEngine
     {
         ini_set('sqlite.assoc_case', '0');
         $db->exec("PRAGMA foreign_keys = ON;");
-        $db->sqliteCreateFunction('now', fn (): string => date("Y-m-d H:i:s"), 0);
-        $db->sqliteCreateFunction('md5', fn (string $a): string => md5($a), 1);
-        $db->sqliteCreateFunction('lower', fn (?string $a): ?string => is_null($a) ? null : mb_strtolower($a), 1);
-        $db->sqliteCreateFunction('rand', fn (): int => rand(), 0);
+        // @ to hide deprecation warnings because PHP 8.4+ wants us to
+        // use \Pdo\Sqlite->createFunction() instead of \Pdo\sqliteCreateFunction(),
+        // but we only have a PDO object, not a \Pdo\Sqlite
+        @$db->sqliteCreateFunction('now', fn (): string => date("Y-m-d H:i:s"), 0);
+        @$db->sqliteCreateFunction('md5', fn (string $a): string => md5($a), 1);
+        @$db->sqliteCreateFunction('lower', fn (?string $a): ?string => is_null($a) ? null : mb_strtolower($a), 1);
+        @$db->sqliteCreateFunction('rand', fn (): int => rand(), 0);
     }
 
     public function scoreql_to_sql(string $data): string
