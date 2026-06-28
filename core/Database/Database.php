@@ -262,8 +262,9 @@ class Database
     public function get_col(string $query, array $args = []): array
     {
         $_start = ftime();
-        $res = $this->_execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
+        $res = $this->_execute($query, $args)->fetchAll(\PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
+        // @phpstan-ignore-next-line - fetchAll(PDO::FETCH_COLUMN) returns list<mixed>
         return $res;
     }
 

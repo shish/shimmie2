@@ -330,11 +330,7 @@ function parse_to_milliseconds(string $input): int
 
     if (\Safe\preg_match('/^([0-9]+)$/i', $input, $match)) {
         // If just a number, then we treat it as milliseconds
-        $length = $match[0];
-        if (is_numeric($length)) {
-            $length = floatval($length);
-            $output += $length;
-        }
+        $output += floatval($match[0]);
     } else {
         foreach (TIME_UNITS::CONVERSION as $unit => $conversion) {
             if (\Safe\preg_match('/([0-9]+)'.$unit.'/i', $input, $match)) {
