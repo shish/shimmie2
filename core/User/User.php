@@ -144,6 +144,16 @@ final class User
         }
     }
 
+    public static function by_email(string $email): User
+    {
+        $row = Ctx::$database->get_row("SELECT * FROM users WHERE LOWER(email) = LOWER(:email)", ["email" => $email]);
+        if (is_null($row)) {
+            throw new UserNotFound("Can't find any user with email $email");
+        } else {
+            return new User($row);
+        }
+    }
+
     public static function name_to_id(string $name): int
     {
         return User::by_name($name)->id;
