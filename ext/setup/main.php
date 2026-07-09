@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\{InputArgument, InputInterface};
+use Symfony\Component\Console\Input\{InputArgument, InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
 
 /*
@@ -143,6 +143,20 @@ final class Setup extends Extension
             ->setCode(function (InputInterface $input, OutputInterface $output): int {
                 foreach (ConfigGroup::get_all_metas() as $key => $meta) {
                     $output->writeln("$key: " . \Safe\json_encode($meta->default, JSON_UNESCAPED_SLASHES));
+                }
+                return Command::SUCCESS;
+            });
+        $event->app->register('config:list')
+            ->setDescription('Show all config values')
+            ->addOption('changed', null, InputOption::VALUE_NONE, 'Show only values that differ from defaults')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $showChanged = $input->getOption('changed');
+                foreach (ConfigGroup::get_all_metas() as $key => $meta) {
+                    $value = Ctx::$config->get($key);
+                    if ($showChanged && $value === $meta->default) {
+                        continue;
+                    }
+                    $output->writeln("$key: " . \Safe\json_encode($value, JSON_UNESCAPED_SLASHES));
                 }
                 return Command::SUCCESS;
             });

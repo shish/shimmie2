@@ -21,7 +21,7 @@ final class ImageConfig extends ConfigGroup
     #[ConfigMeta("On delete", ConfigType::STRING, options: [
         "Go to next post" => 'next',
         "Return to post list" => 'list'
-    ])]
+    ], default: "list")]
     public const ON_DELETE = 'image_on_delete';
 
     #[ConfigMeta("Show metadata", ConfigType::BOOL, default: false)]
@@ -69,7 +69,7 @@ final class ThumbnailConfig extends ConfigGroup
     #[ConfigMeta("Allow upscaling", ConfigType::BOOL, advanced: true, default: true)]
     public const UPSCALE = 'thumb_upscale';
 
-    #[ConfigMeta("Background color", ConfigType::STRING, default: "#00000000", input: ConfigInput::COLOR)]
+    #[ConfigMeta("Background color", ConfigType::STRING, default: "#000000", input: ConfigInput::COLOR)]
     public const ALPHA_COLOR = 'thumb_alpha_color';
 
     /**
