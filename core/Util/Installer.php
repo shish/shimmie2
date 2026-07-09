@@ -108,18 +108,24 @@ final class Installer
             ";
         }
 
-        if (!file_exists("data") && !is_writable(".")) {
+        // If data exists, it should be writable
+        if (file_exists("data") && !is_writable("data")) {
             $errors[] = "
-                The <code>data</code> directory does not exist, and the web server
-                does not have permission to create it. Please create a
-                <code>data</code> directory inside the shimmie folder, and make
-                sure the web server has permission to write to it.
-            ";
-        } elseif (!is_writable("data")) {
-            $errors[] = "
-                The <code>data</code> directory exists, but is not writable by the web server.
-                Please make sure the web server has permission to write to the
+                The <code>data</code> directory exists, but is not
+                writable by the web server. Please make sure the web
+                server has permission to write to the
                 <code>data</code> directory.
+            ";
+        }
+        // If data doesn't exist, the current directory should
+        // be writable so we can create it
+        if (!file_exists("data") && !is_writable("data")) {
+            $errors[] = "
+                The <code>data</code> directory does not exist, and
+                the web server does not have permission to create it.
+                Please create a <code>data</code> directory inside
+                the shimmie folder, and make sure the web server has
+                permission to write to it.
             ";
         }
 
