@@ -107,11 +107,18 @@ final class ET extends Extension
                 "disk_use" => to_shorthand_int($disk_total - $disk_free),
                 "disk_total" => to_shorthand_int($disk_total),
             ],
-            "thumbnails" => [
-                "engine" => $config->get(ThumbnailConfig::ENGINE),
-                "mime" => $config->get(ThumbnailConfig::MIME),
-            ],
         ];
+
+        $changed_config = [];
+        foreach (ConfigGroup::get_all_metas() as $key => $meta) {
+            $value = $config->get($key);
+            if ($value !== $meta->default) {
+                $changed_config[$key] = $value;
+            }
+        }
+        if (!empty($changed_config)) {
+            $info['config'] = $changed_config;
+        }
 
         if (file_exists(".git")) {
             try {
