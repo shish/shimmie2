@@ -11,6 +11,8 @@ trait Page_File
 {
     abstract public function set_mode(PageMode $mode): void;
     abstract public function set_mime(MimeType|string $mime): void;
+    abstract public function set_code(int $code): void;
+    abstract public function add_http_header(string $line, int $position = 50): void;
     abstract public function send_headers(): void;
 
     public private(set) ?Path $file = null;
@@ -35,26 +37,41 @@ trait Page_File
 
     protected function display_file(): void
     {
-        $this->send_headers();
-        if (!is_null($this->file_filename)) {
-            header('Content-Disposition: ' . $this->file_disposition . '; filename=' . $this->file_filename);
-        }
-        assert(!is_null($this->file), "file should not be null with PageMode::FILE");
+        $file = $this->file;
+        assert(!is_null($file), "file should not be null with PageMode::FILE");
 
+        // Check If-Modified-Since and return early if appropriate
+        if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+            $if_modified_since = \Safe\preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+        } else {
+            $if_modified_since = "";
+        }
+        $gmdate_mod = gmdate('D, d M Y H:i:s', $file->filemtime()) . ' GMT';
+        if ($if_modified_since === $gmdate_mod) {
+            $this->set_code(304);
+            $this->send_headers();
+            return;
+        } else {
+            $this->add_http_header("Last-Modified: $gmdate_mod");
+        }
+
+        // Set filename
+        if (!is_null($this->file_filename)) {
+            $this->add_http_header('Content-Disposition: ' . $this->file_disposition . '; filename=' . $this->file_filename);
+        }
+
+        // Deal with Range header
         // https://gist.github.com/codler/3906826
-        $size = $this->file->filesize(); // File size
+        $size = $file->filesize(); // File size
         $length = $size;           // Content length
         $start = 0;               // Start byte
         $end = $size - 1;       // End byte
-
-        header("Content-Length: " . $size);
-        header('Accept-Ranges: bytes');
-
         if (isset($_SERVER['HTTP_RANGE']) && is_string($_SERVER['HTTP_RANGE'])) {
             list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
             if (str_contains($range, ',')) {
-                header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                header("Content-Range: bytes $start-$end/$size");
+                $this->set_code(416);  // Invalid range
+                $this->add_http_header("Content-Range: bytes $start-$end/$size");
+                $this->send_headers();
                 return;
             }
             if ($range === '-') {
@@ -67,23 +84,26 @@ trait Page_File
             }
             $c_end = ($c_end > $end) ? $end : $c_end;
             if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
-                header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                header("Content-Range: bytes $start-$end/$size");
+                $this->set_code(416);  // Invalid range
+                $this->add_http_header("Content-Range: bytes $start-$end/$size");
+                $this->send_headers();
                 return;
             }
             $start = $c_start;
             $end = $c_end;
             $length = $end - $start + 1;
-            header('HTTP/1.1 206 Partial Content');
+            $this->set_code(206);  // Partial content
         }
-        header("Content-Range: bytes $start-$end/$size");
-        header("Content-Length: " . $length);
+        $this->add_http_header('Accept-Ranges: bytes');
+        $this->add_http_header("Content-Range: bytes $start-$end/$size");
+        $this->add_http_header("Content-Length: " . $length);
+        $this->send_headers();
 
         try {
-            Filesystem::stream_file($this->file, $start, $end);
+            Filesystem::stream_file($file, $start, $end);
         } finally {
             if ($this->file_delete === true) {
-                $this->file->unlink();
+                $file->unlink();
             }
         }
     }

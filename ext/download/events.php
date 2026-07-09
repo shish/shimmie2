@@ -12,6 +12,8 @@ class MediaDownloadingEvent extends Event
         public Post $image,
         public Path $path,
         public MimeType $mime,
+        public string $filename,
+        public string $disposition,
         public QueryArray $params
     ) {
         parent::__construct();

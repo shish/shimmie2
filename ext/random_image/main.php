@@ -24,7 +24,14 @@ final class RandomImage extends Extension
             }
 
             if ($action === "download") {
-                send_event(new MediaDownloadingEvent($image, $image->get_media_filename(), $image->get_mime(), $event->GET));
+                send_event(new MediaDownloadingEvent(
+                    $image,
+                    $image->get_media_filename(),
+                    $image->get_mime(),
+                    $image->get_nice_media_name(),
+                    "inline",
+                    $event->GET,
+                ));
             } elseif ($action === "view") {
                 send_event(new DisplayingPostEvent($image));
             } elseif ($action === "widget") {

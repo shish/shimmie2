@@ -182,40 +182,23 @@ final class ImageIO extends Extension
         if ($type === "thumb") {
             $mime = new MimeType(Ctx::$config->get(ThumbnailConfig::MIME));
             $file = $image->get_thumb_filename();
+            $name = "thumb.jpg";
+            $disp = "inline";
         } else {
             $mime = $image->get_mime();
             $file = $image->get_media_filename();
+            $name = $image->get_nice_media_name();
+            $disp = "inline";
         }
         if (!$file->exists()) {
             throw new PostNotFound("Image not found");
         }
 
-        if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
-            $if_modified_since = \Safe\preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
-        } else {
-            $if_modified_since = "";
-        }
-        $gmdate_mod = gmdate('D, d M Y H:i:s', $file->filemtime()) . ' GMT';
-
-        if ($if_modified_since === $gmdate_mod) {
-            $page->set_code(304);
-            $page->set_data(MimeType::TEXT, "");
-        } else {
-            $page->add_http_header("Last-Modified: $gmdate_mod");
-            if ($type === "thumb") {
-                $page->set_file($mime, $file);
-            } else {
-                $page->set_file($mime, $file, filename: $image->get_nice_media_name(), disposition: "inline");
-            }
-
-            if (Ctx::$config->get(ImageConfig::EXPIRES)) {
-                $expires = date(DATE_RFC1123, time() + Ctx::$config->get(ImageConfig::EXPIRES));
-            } else {
-                $expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
-            }
+        if (Ctx::$config->get(ImageConfig::EXPIRES)) {
+            $expires = date(DATE_RFC1123, time() + Ctx::$config->get(ImageConfig::EXPIRES));
             $page->add_http_header('Expires: ' . $expires);
         }
 
-        send_event(new MediaDownloadingEvent($image, $file, $mime, $params));
+        send_event(new MediaDownloadingEvent($image, $file, $mime, $name, $disp, $params));
     }
 }

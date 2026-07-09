@@ -11,7 +11,13 @@ final class Download extends Extension
     #[EventListener(priority: 99)] // Set near the end to give everything else a chance to process
     public function onMediaDownloading(MediaDownloadingEvent $event): void
     {
-        Ctx::$page->set_file($event->mime, $event->path, $event->file_modified);
+        Ctx::$page->set_file(
+            $event->mime,
+            $event->path,
+            $event->file_modified,
+            $event->filename,
+            $event->disposition
+        );
         $event->stop_processing = true;
     }
 }
