@@ -63,9 +63,14 @@ function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string 
         $attrs["name"] = $name;
     }
 
+    // Browsers throw away the action's query string when submitting a GET
+    // form, so uglyurls need `q` repeating as a field. Niceurls keep the page
+    // in the action's path, where there is nothing to throw away.
+    $page = $method === "GET" ? $action->getPage() : null;
+
     return FORM(
         $attrs,
-        $method === "GET" ? INPUT(["type" => "hidden", "name" => "q", "value" => $action->getPath()]) : null,
+        (!is_null($page) && !Url::are_niceurls_enabled()) ? INPUT(["type" => "hidden", "name" => "q", "value" => $page]) : null,
         $method !== "GET" ? INPUT(["type" => "hidden", "name" => "auth_token", "value" => Ctx::$user->get_auth_token()]) : null,
         ...$children,
     );
