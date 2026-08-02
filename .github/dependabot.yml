@@ -1,10 +1,14 @@
 version: 2
 updates:
 - package-ecosystem: github-actions
+  assignees:
+    - shish
   directory: /
   schedule:
     interval: monthly
 - package-ecosystem: composer
+  assignees:
+    - shish
   directory: /
   schedule:
     interval: monthly
@@ -17,6 +21,8 @@ updates:
       - minor
       - patch
 - package-ecosystem: docker
+  assignees:
+    - shish
   directory: /
   schedule:
     interval: monthly
