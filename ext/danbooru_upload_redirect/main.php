@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use MicroHTML\HTMLElement;
-
 final class DanbooruUploadRedirect extends Extension
 {
     public const KEY = "danbooru_upload_redirect";
