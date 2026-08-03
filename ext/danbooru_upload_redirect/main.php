@@ -11,7 +11,6 @@ final class DanbooruUploadRedirect extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        $page = Ctx::$page;
         if ($event->page_matches("uploads/new")) {
             Ctx::$page->set_redirect((make_link("upload", ["url" => @$_GET['url'], "source" => @$_GET['ref']])));
         }
