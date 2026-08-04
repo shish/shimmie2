@@ -10,7 +10,7 @@ final class DanbooruApiInfo extends ExtensionInfo
 
     public string $name = "Danbooru Client API";
     public array $authors = ["JJS" => "mailto:jsutinen@gmail.com"];
-    public string $description = "Allow Danbooru apps like Danbooru Uploader for Firefox to communicate with Shimmie";
+    public string $description = "Allow Danbooru apps like Danbooru Uploader or Upload to Danbooru browser extensions to communicate with Shimmie";
     public ExtensionCategory $category = ExtensionCategory::INTEGRATION;
     public ?string $documentation =
         "<b>Notes</b>:
@@ -23,5 +23,7 @@ final class DanbooruApiInfo extends ExtensionInfo
  <li>find_posts - sort of works, filename is returned as the original filename and probably won't help when it comes to actually downloading it
  <li>find_tags - id, name, and after_id all work but the tags parameter is ignored just like danbooru 1.0 ignores it
  </ul>
+ <br>
+ <br><b>For Upload to Danbooru to work, you must have a transloader selected in the board config</b>
 ";
 }

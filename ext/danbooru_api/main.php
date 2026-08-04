@@ -14,7 +14,10 @@ final class DanbooruApi extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         $page = Ctx::$page;
-        if ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
+
+        if ($event->page_matches("uploads/new")) { // Handling the URL given by the "Upload to Danbooru" web extension
+            $page->set_redirect((make_link("upload", ["url" => @$_GET['url'], "source" => @$_GET['ref']])));
+        } else if ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
             // No XML data is returned from this function
             $page->set_data(MimeType::TEXT, "");
             $this->api_add_post($event);
