@@ -78,16 +78,21 @@ final class TagList extends Extension
             return;
         }
 
-        $query = "SELECT tags.* FROM tags INNER JOIN (
+        $query = "
+            SELECT tags.*
+            FROM tags
+            INNER JOIN (
                 SELECT it2.tag_id
                 FROM image_tags AS it1
-                    INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id
-                        AND it2.tag_id NOT IN :omitted_tags
+                INNER JOIN image_tags AS it2
+                    ON it1.image_id=it2.image_id
+                    AND it2.tag_id NOT IN :omitted_tags
                 WHERE
                     it1.tag_id IN :starting_tags
                 GROUP BY it2.tag_id
-            ) A ON A.tag_id = tags.id
-			ORDER BY count DESC
+            ) A
+                ON A.tag_id = tags.id
+            ORDER BY count DESC
 			LIMIT :tag_list_length
 		";
 
@@ -221,15 +226,21 @@ final class TagList extends Extension
             }
 
             if ($tags_ok) {
-                $query = "SELECT t.tag, A.calc_count AS count FROM tags t INNER JOIN (
-					SELECT it2.tag_id, COUNT(it2.image_id) AS calc_count
-					FROM image_tags AS it1 -- Got other images with the same tags
-					    INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id
-					    -- And filter out unwanted tags
+                $query = "
+                    SELECT t.tag, A.calc_count AS count
+                    FROM tags t
+                    INNER JOIN (
+					    SELECT it2.tag_id, COUNT(it2.image_id) AS calc_count
+					    FROM image_tags AS it1 -- Got other images with the same tags
+					    INNER JOIN image_tags AS it2
+						    ON it1.image_id=it2.image_id
+					        -- And filter out unwanted tags
                             AND it2.tag_id NOT IN :omitted_tags
-					WHERE
-                    it1.tag_id IN :starting_tags
-					GROUP BY it2.tag_id) A ON A.tag_id = t.id
+					    WHERE
+                            it1.tag_id IN :starting_tags
+					    GROUP BY it2.tag_id
+					) A
+					    ON A.tag_id = t.id
 					ORDER BY A.calc_count
 					DESC LIMIT :limit
 				";

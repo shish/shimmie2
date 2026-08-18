@@ -394,13 +394,15 @@ final class Forum extends Extension
     private function save_new_thread(User $user, string $title, bool $sticky): int
     {
         $title = substr($title, 0, Ctx::$config->get(ForumConfig::TITLE_SUBSTRING));
-        Ctx::$database->execute(
-            "INSERT INTO forum_threads
-			(title, sticky, user_id, user_ip, date, uptodate)
-			VALUES
-			(:title, :sticky, :user_id, :user_ip, now(), now())",
-            ['title' => $title, 'sticky' => $sticky, 'user_id' => $user->id, 'user_ip' => (string)Network::get_real_ip()]
-        );
+        Ctx::$database->execute("
+			INSERT INTO forum_threads (title, sticky, user_id, user_ip, date, uptodate)
+			VALUES (:title, :sticky, :user_id, :user_ip, now(), now())
+		", [
+            'title' => $title,
+            'sticky' => $sticky,
+            'user_id' => $user->id,
+            'user_ip' => (string)Network::get_real_ip(),
+        ]);
 
         $thread_id = Ctx::$database->get_last_insert_id('forum_threads_id_seq');
 

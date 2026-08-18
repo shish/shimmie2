@@ -428,15 +428,14 @@ final class Notes extends Extension
 
         //ORDER BY IMAGE & DATE
         /** @var array<NoteHistoryRow> $histories */
-        $histories = $database->get_all(
-            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
-            FROM note_histories AS h
+        $histories = $database->get_all("
+			SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
+			FROM note_histories AS h
             INNER JOIN users AS u
             ON u.id = h.user_id
             ORDER BY date DESC, note_id DESC
-            LIMIT :limit OFFSET :offset",
-            ['offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
-        );
+            LIMIT :limit OFFSET :offset
+        ", ['offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]);
 
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories") / $historiesPerPage);
 
@@ -450,16 +449,15 @@ final class Notes extends Extension
         $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
         /** @var array<NoteHistoryRow> $histories */
-        $histories = $database->get_all(
-            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
-            FROM note_histories AS h
-            INNER JOIN users AS u
-            ON u.id = h.user_id
-            WHERE note_id = :note_id
-            ORDER BY date DESC, note_id DESC
-            LIMIT :limit OFFSET :offset",
-            ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
-        );
+        $histories = $database->get_all("
+			SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
+			FROM note_histories AS h
+			INNER JOIN users AS u
+			ON u.id = h.user_id
+			WHERE note_id = :note_id
+			ORDER BY date DESC, note_id DESC
+			LIMIT :limit OFFSET :offset
+		", ['note_id' => $noteID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]);
 
         $totalPages = (int) ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = :note_id", ['note_id' => $noteID]) / $historiesPerPage);
 
@@ -471,16 +469,15 @@ final class Notes extends Extension
         $historiesPerPage = Ctx::$config->get(NotesConfig::HISTORIES_PER_PAGE);
 
         /** @var array<NoteHistoryRow> $histories */
-        $histories = Ctx::$database->get_all(
-            "SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
-            FROM note_histories AS h
-            INNER JOIN users AS u
-            ON u.id = h.user_id
-            WHERE image_id = :image_id
-            ORDER BY date DESC, note_id DESC
-            LIMIT :limit OFFSET :offset",
-            ['image_id' => $imageID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]
-        );
+        $histories = Ctx::$database->get_all("
+			SELECT h.note_id, h.review_id, h.image_id, h.date, h.note, u.name AS user_name
+			FROM note_histories AS h
+			INNER JOIN users AS u
+			ON u.id = h.user_id
+			WHERE image_id = :image_id
+			ORDER BY date DESC, note_id DESC
+			LIMIT :limit OFFSET :offset
+		", ['image_id' => $imageID, 'offset' => $pageNumber * $historiesPerPage, 'limit' => $historiesPerPage]);
 
         $count = Ctx::$database->get_one(
             "SELECT COUNT(*) FROM note_histories WHERE image_id = :image_id",
