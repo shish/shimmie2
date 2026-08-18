@@ -111,12 +111,11 @@ final class Comment
 
     public static function is_dupe(int $image_id, string $comment): bool
     {
-        return !\is_null(Ctx::$database->get_one(
-            "SELECT id
+        return !\is_null(Ctx::$database->get_one("
+            SELECT id
 			FROM comments
-			WHERE image_id=:image_id AND comment=:comment",
-            ["image_id" => $image_id, "comment" => $comment]
-        ));
+			WHERE image_id=:image_id AND comment=:comment
+		", ["image_id" => $image_id, "comment" => $comment]));
     }
 
     public static function count_comments_by_user(User $user): int
@@ -463,11 +462,15 @@ final class CommentList extends Extension
 
     private function save_new_comment(User $user, int $image_id, string $comment): int
     {
-        Ctx::$database->execute(
-            "INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment)
-            VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
-            ["image_id" => $image_id, "user_id" => $user->id, "remote_addr" => (string)Network::get_real_ip(), "comment" => $comment]
-        );
+        Ctx::$database->execute("
+			INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment)
+			VALUES(:image_id, :user_id, :remote_addr, now(), :comment)
+		", [
+            "image_id" => $image_id,
+            "user_id" => $user->id,
+            "remote_addr" => (string)Network::get_real_ip(),
+            "comment" => $comment,
+        ]);
         $comment_id = Ctx::$database->get_last_insert_id('comments_id_seq');
         $snippet = substr($comment, 0, 100);
         $snippet = str_replace("\n", " ", $snippet);

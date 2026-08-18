@@ -273,14 +273,16 @@ final class IPBan extends Extension
         // ===
 
         if ($this->get_version() < 1) {
-            $database->execute("CREATE TABLE bans (
-				id int(11) NOT NULL auto_increment,
-				ip char(15) default NULL,
-				date TIMESTAMP default NULL,
-				end TIMESTAMP default NULL,
-				reason varchar(255) default NULL,
-				PRIMARY KEY (id)
-			)");
+            $database->execute("
+                CREATE TABLE bans (
+                    id int(11) NOT NULL auto_increment,
+                    ip char(15) default NULL,
+                    date TIMESTAMP default NULL,
+                    end TIMESTAMP default NULL,
+                    reason varchar(255) default NULL,
+                    PRIMARY KEY (id)
+                )
+            ");
             $this->set_version(1);
         }
 

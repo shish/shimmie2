@@ -56,9 +56,12 @@ class WikiTheme extends Themelet
 
         $body_html = format_text($nav_page->body);
 
-        $query = "SELECT DISTINCT title FROM wiki_pages
-                ORDER BY title ASC";
-        $titles = $database->get_col($query);
+
+        $titles = $database->get_col("
+			SELECT DISTINCT title
+			FROM wiki_pages
+			ORDER BY title ASC
+		");
         $html = DIV(["class" => "wiki-all-grid"]);
         foreach ($titles as $title) {
             $html->appendChild(A(["href" => make_link("wiki/$title")], $title));

@@ -71,11 +71,14 @@ final class ReportImage extends Extension
     public function onAddReportedImage(AddReportedImageEvent $event): void
     {
         Log::info("report_image", "Adding report of >>{$event->report->image_id} with reason '{$event->report->reason}'");
-        Ctx::$database->execute(
-            "INSERT INTO image_reports(image_id, reporter_id, reason)
-				VALUES (:image_id, :reporter_id, :reason)",
-            ['image_id' => $event->report->image_id, 'reporter_id' => $event->report->user_id, 'reason' => $event->report->reason]
-        );
+        Ctx::$database->execute("
+			INSERT INTO image_reports(image_id, reporter_id, reason)
+			VALUES (:image_id, :reporter_id, :reason)
+		", [
+            'image_id' => $event->report->image_id,
+            'reporter_id' => $event->report->user_id,
+            'reason' => $event->report->reason,
+        ]);
         Ctx::$cache->delete("image-report-count");
     }
 

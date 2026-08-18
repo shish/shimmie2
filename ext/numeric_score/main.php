@@ -142,13 +142,12 @@ final class NumericScore extends Extension
 
         if ($event->page_matches("numeric_score/votes/{image_id}")) {
             $image_id = $event->get_iarg('image_id');
-            $x = $database->get_all(
-                "SELECT users.name as username, user_id, score
+            $x = $database->get_all("
+                SELECT users.name as username, user_id, score
 				FROM numeric_score_votes
 				JOIN users ON numeric_score_votes.user_id=users.id
-				WHERE image_id=:image_id",
-                ['image_id' => $image_id]
-            );
+				WHERE image_id=:image_id
+			", ['image_id' => $image_id]);
             $html = "<table style='width: 100%;'>";
             foreach ($x as $vote) {
                 $html .= "<tr><td>";
@@ -427,14 +426,16 @@ final class NumericScore extends Extension
                 ["imageid" => $image_id, "userid" => $user_id, "score" => $score]
             );
         }
-        $database->execute(
-            "UPDATE images SET numeric_score=(
+        $database->execute("
+			UPDATE images SET numeric_score=(
 				COALESCE(
 					(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=:imageid),
 					0
 				)
-			) WHERE id=:id",
-            ["imageid" => $image_id, "id" => $image_id]
-        );
+			) WHERE id=:id
+		", [
+            "imageid" => $image_id,
+            "id" => $image_id,
+        ]);
     }
 }

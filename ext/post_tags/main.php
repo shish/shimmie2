@@ -186,14 +186,16 @@ final class PostTags extends Extension
             $cmp = ltrim($matches[1], ":") ?: "=";
             $count = $matches[2];
             $event->add_querylet(
-                new Querylet("EXISTS (
-				              SELECT 1
-				              FROM image_tags it
-				              LEFT JOIN tags t ON it.tag_id = t.id
-				              WHERE images.id = it.image_id
-				              GROUP BY image_id
-				              HAVING COUNT(*) $cmp $count
-				)")
+                new Querylet("
+    				EXISTS (
+    					SELECT 1
+    					FROM image_tags it
+    					LEFT JOIN tags t ON it.tag_id = t.id
+    					WHERE images.id = it.image_id
+    					GROUP BY image_id
+    					HAVING COUNT(*) $cmp $count
+    				)
+                ")
             );
         }
     }

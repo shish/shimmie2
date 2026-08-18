@@ -238,14 +238,13 @@ final class Pools extends Extension
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
 
-            $image_rows = $database->get_all(
-                "SELECT images.*, pool_images.image_order
+            $image_rows = $database->get_all("
+                SELECT images.*, pool_images.image_order
                 FROM images
                 JOIN pool_images ON images.id = pool_images.image_id
                 WHERE pool_images.pool_id = :pid
-                ORDER BY pool_images.image_order ASC",
-                ["pid" => $pool_id]
-            );
+                ORDER BY pool_images.image_order ASC
+			", ["pid" => $pool_id]);
             $images = array_map(fn ($row) => new Post($row), $image_rows);
             $this->theme->edit_order($pool, $images);
         }
@@ -257,13 +256,11 @@ final class Pools extends Extension
             foreach ($event->POST->toArray() as $key => $value) {
                 if (str_starts_with($key, "order_")) {
                     $imageID = (int) substr($key, 6);
-                    $database->execute(
-                        "
-                            UPDATE pool_images
-                            SET image_order = :ord
-                            WHERE pool_id = :pid AND image_id = :iid",
-                        ["ord" => $value, "pid" => $pool_id, "iid" => $imageID]
-                    );
+                    $database->execute("
+                        UPDATE pool_images
+                        SET image_order = :ord
+                        WHERE pool_id = :pid AND image_id = :iid
+                    ", ["ord" => $value, "pid" => $pool_id, "iid" => $imageID]);
                 }
             }
             $page->set_redirect(make_link("pool/view/" . $pool_id));
@@ -281,13 +278,11 @@ final class Pools extends Extension
                 );
                 $image_order = 1;
                 while ($row = $result->fetch()) {
-                    $database->execute(
-                        "
-                                UPDATE pool_images
-                                SET image_order=:ord
-                                WHERE pool_id = :pid AND image_id = :iid",
-                        ["ord" => $image_order, "pid" => $pool_id, "iid" => (int) $row['image_id']]
-                    );
+                    $database->execute("
+                        UPDATE pool_images
+                        SET image_order=:ord
+                        WHERE pool_id = :pid AND image_id = :iid
+                    ", ["ord" => $image_order, "pid" => $pool_id, "iid" => (int) $row['image_id']]);
                     $image_order = $image_order + 1;
                 }
             });
@@ -600,12 +595,15 @@ final class Pools extends Extension
             throw new InvalidInput("A pool using this title already exists.");
         }
 
-        Ctx::$database->execute(
-            "
-				INSERT INTO pools (user_id, public, title, description, date)
-				VALUES (:uid, :public, :title, :desc, now())",
-            ["uid" => $event->user->id, "public" => $event->public, "title" => $event->title, "desc" => $event->description]
-        );
+        Ctx::$database->execute("
+			INSERT INTO pools (user_id, public, title, description, date)
+			VALUES (:uid, :public, :title, :desc, now())
+		", [
+            "uid" => $event->user->id,
+            "public" => $event->public,
+            "title" => $event->title,
+            "desc" => $event->description,
+        ]);
 
         $poolID = Ctx::$database->get_last_insert_id('pools_id_seq');
         Log::info("pools", "Pool {$poolID} created by " . Ctx::$user->name);
@@ -800,12 +798,16 @@ final class Pools extends Extension
      */
     private function add_history(int $poolID, int $action, string $images, int $count): void
     {
-        Ctx::$database->execute(
-            "
-				INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
-				VALUES (:pid, :uid, :act, :img, :count, now())",
-            ["pid" => $poolID, "uid" => Ctx::$user->id, "act" => $action, "img" => $images, "count" => $count]
-        );
+        Ctx::$database->execute("
+			INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
+			VALUES (:pid, :uid, :act, :img, :count, now())
+		", [
+            "pid" => $poolID,
+            "uid" => Ctx::$user->id,
+            "act" => $action,
+            "img" => $images,
+            "count" => $count,
+        ]);
     }
 
     private function get_history(int $pageNumber): void
@@ -814,16 +816,16 @@ final class Pools extends Extension
 
         /** @var PoolHistory[] $history */
         $history = Ctx::$database->get_all("
-				SELECT h.id, h.pool_id, h.user_id, h.action, h.images,
-				       h.count, h.date, u.name as user_name, p.title as title
-				FROM pool_history AS h
-				INNER JOIN pools AS p
-				ON p.id = h.pool_id
-				INNER JOIN users AS u
-				ON h.user_id = u.id
-				ORDER BY h.date DESC
-				LIMIT :l OFFSET :o
-				", ["l" => $historiesPerPage, "o" => $pageNumber * $historiesPerPage]);
+			SELECT h.id, h.pool_id, h.user_id, h.action, h.images,
+			       h.count, h.date, u.name as user_name, p.title as title
+			FROM pool_history AS h
+			INNER JOIN pools AS p
+			ON p.id = h.pool_id
+			INNER JOIN users AS u
+			ON h.user_id = u.id
+			ORDER BY h.date DESC
+			LIMIT :l OFFSET :o
+		", ["l" => $historiesPerPage, "o" => $pageNumber * $historiesPerPage]);
 
         $totalPages = (int) ceil((int) Ctx::$database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
 
@@ -890,21 +892,17 @@ final class Pools extends Extension
 
         if ($result === 0) {
             if (Ctx::$config->get(PoolsConfig::AUTO_INCREMENT_ORDER) && $imageOrder === 0) {
-                $imageOrder = (int) $database->get_one(
-                    "
-						SELECT COALESCE(MAX(image_order),0) + 1
-						FROM pool_images
-						WHERE pool_id = :pid AND image_order IS NOT NULL",
-                    ["pid" => $poolID]
-                );
+                $imageOrder = (int) $database->get_one("
+					SELECT COALESCE(MAX(image_order),0) + 1
+					FROM pool_images
+					WHERE pool_id = :pid AND image_order IS NOT NULL
+				", ["pid" => $poolID]);
             }
 
-            $database->execute(
-                "
-					INSERT INTO pool_images (pool_id, image_id, image_order)
-					VALUES (:pid, :iid, :ord)",
-                ["pid" => $poolID, "iid" => $imageID, "ord" => $imageOrder]
-            );
+            $database->execute("
+				INSERT INTO pool_images (pool_id, image_id, image_order)
+				VALUES (:pid, :iid, :ord)
+			", ["pid" => $poolID, "iid" => $imageID, "ord" => $imageOrder]);
         } else {
             // If the post is already added, there is nothing else to do
             return false;
