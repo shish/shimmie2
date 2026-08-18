@@ -160,9 +160,11 @@ final class PrivMsg extends Extension
             Log::info("pm", "Adding foreign keys to private messages");
             $database->execute("delete from private_message where to_id not in (select id from users);");
             $database->execute("delete from private_message where from_id not in (select id from users);");
-            $database->execute("ALTER TABLE private_message
-			ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
-			ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
+            $database->execute("
+                ALTER TABLE private_message
+                ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+                ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
+            ");
             $this->set_version(2);
         }
 
@@ -266,12 +268,16 @@ final class PrivMsg extends Extension
     #[EventListener]
     public function onSendPM(SendPMEvent $event): void
     {
-        Ctx::$database->execute(
-            "INSERT INTO private_message(from_id, from_ip, to_id, sent_date, subject, message)
-			VALUES(:fromid, :fromip, :toid, now(), :subject, :message)",
-            ["fromid" => $event->pm->from_id, "fromip" => (string)$event->pm->from_ip,
-            "toid" => $event->pm->to_id, "subject" => $event->pm->subject, "message" => $event->pm->message]
-        );
+        Ctx::$database->execute("
+			INSERT INTO private_message(from_id, from_ip, to_id, sent_date, subject, message)
+			VALUES(:fromid, :fromip, :toid, now(), :subject, :message)
+		", [
+            "fromid" => $event->pm->from_id,
+            "fromip" => (string)$event->pm->from_ip,
+            "toid" => $event->pm->to_id,
+            "subject" => $event->pm->subject,
+            "message" => $event->pm->message,
+        ]);
         Ctx::$cache->delete("pm-count-{$event->pm->to_id}");
         Log::info("pm", "Sent PM to User #{$event->pm->to_id}");
     }

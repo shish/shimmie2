@@ -120,8 +120,10 @@ final class Wiki extends Extension
             $this->set_version(3);
         }
         if ($this->get_version() < 2) {
-            $database->execute("ALTER TABLE wiki_pages ADD COLUMN
-				locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION");
+            $database->execute("
+                ALTER TABLE wiki_pages
+                ADD COLUMN locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION
+            ");
             $this->set_version(2);
         }
         if ($this->get_version() < 3) {

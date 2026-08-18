@@ -32,12 +32,11 @@ final class ETServer extends Extension
             $details = $event->GET->get("details") && Ctx::$user->can(ETServerPermission::VIEW_REGISTRATIONS);
 
             $page->set_title("Statistics");
-            $raw = $database->get_col(
-                "SELECT data
-                FROM registration
-                WHERE responded > :datetime",
-                ["datetime" => date('Y-m-d H:i:s', time() - (86400 * 365 * 1))]
-            );
+            $raw = $database->get_col("
+				SELECT data
+				FROM registration
+				WHERE responded > :datetime
+			", ["datetime" => date('Y-m-d H:i:s', time() - (86400 * 365 * 1))]);
             $reports = array_filter(array_map(fn ($item) => $this->try_parse($item), $raw), fn ($row) => $row !== null);
 
             $page->add_block(new Block(
