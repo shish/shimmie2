@@ -90,4 +90,41 @@ final class TagHistoryTest extends ShimmiePHPUnitTestCase
         self::assert_title("Global Tag History");
         self::assert_text("old_tag");
     }
+
+    #[Depends("testHistoryWhenReverting")]
+    public function testHistoryWhenRevertingToDisallowed(): void
+    {
+        global $config, $database;
+
+        // Set original
+        $this->log_in_as_admin();
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "old_tag");
+        $image = Image::by_id_ex($image_id);
+        $revert_id = $database->get_one(
+            "SELECT id FROM tag_histories WHERE image_id = :image_id ORDER BY id DESC LIMIT 1",
+            ["image_id" => $image_id],
+        );
+
+        // Modify tags
+        send_event(new TagSetEvent($image, ["new_tag"]));
+
+        $config->set_string("banned_words", "old_tag");
+
+        // Revert tags
+        $this->post_page("tag_history/revert", ["revert" => $revert_id]);
+
+        // Check post
+        $this->get_page("post/view/$image_id");
+        $this->assert_title("Post $image_id: old_tag");
+
+        // Check image history
+        $this->get_page("tag_history/$image_id");
+        $this->assert_title("Post $image_id Tag History");
+        $this->assert_text("old_tag");
+
+        // Check global history
+        $this->get_page("tag_history/all/1");
+        $this->assert_title("Global Tag History");
+        $this->assert_text("old_tag");
+    }
 }
