@@ -43,7 +43,7 @@
         "shish/microotlp": "^1.0",
         "shish/gqla": "^1.2",
         "thecodingmachine/safe": "^3.4",
-        "enshrined/svg-sanitize": "^0.22",
+        "enshrined/svg-sanitize": "^1.0",
         "bower-asset/js-cookie": "^2.1",
         "psr/simple-cache": "^1.0.1",
         "sabre/cache": "^2.0.1",
