@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0f33b28780b4cbb41f11e750c251e89",
+    "content-hash": "ca24852cf2cfaa711948368ace9b0463",
     "packages": [
         {
             "name": "bower-asset/js-cookie",
@@ -71,31 +71,37 @@
         },
         {
             "name": "google/recaptcha",
-            "version": "1.5",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/google/recaptcha.git",
-                "reference": "c57f0b96babc8c9fb64cb555cd7b2c5aadfbe58d"
+                "reference": "05a576b66e1a356c7a3ad8a3beff09ff91b50961"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/recaptcha/zipball/c57f0b96babc8c9fb64cb555cd7b2c5aadfbe58d",
-                "reference": "c57f0b96babc8c9fb64cb555cd7b2c5aadfbe58d",
+                "url": "https://api.github.com/repos/google/recaptcha/zipball/05a576b66e1a356c7a3ad8a3beff09ff91b50961",
+                "reference": "05a576b66e1a356c7a3ad8a3beff09ff91b50961",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.4"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.95",
+                "friendsofphp/php-cs-fixer": "^3.95.27",
                 "php-coveralls/php-coveralls": "^2.9.1",
-                "phpstan/phpstan": "^2.1.51",
-                "phpunit/phpunit": "^13.1"
+                "phpstan/phpstan": "^2.2.15",
+                "phpstan/phpstan-phpunit": "^2.0.18",
+                "phpstan/phpstan-strict-rules": "^2.0.12",
+                "phpunit/phpunit": "^13.3.4"
+            },
+            "suggest": {
+                "ext-curl": "Recommended for sending requests via CurlPost",
+                "ext-openssl": "Required for sending TLS requests via Post or SocketPost"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.4.x-dev"
+                    "dev-main": "2.1.x-dev"
                 }
             },
             "autoload": {
@@ -120,7 +126,7 @@
                 "issues": "https://github.com/google/recaptcha/issues",
                 "source": "https://github.com/google/recaptcha"
             },
-            "time": "2026-04-27T09:26:38+00:00"
+            "time": "2026-09-23T21:32:33+00:00"
         },
         {
             "name": "ifixit/php-akismet",

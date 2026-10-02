@@ -35,7 +35,7 @@
         "ext-json": "*",
         "ext-fileinfo": "*",
         "ifixit/php-akismet": "^1.0",
-        "google/recaptcha": "^1.1",
+        "google/recaptcha": "^2.1",
         "shish/ffsphp": "^1.6",
         "shish/microbundler": "^1.1.0",
         "shish/microcrud": "^2.5",
