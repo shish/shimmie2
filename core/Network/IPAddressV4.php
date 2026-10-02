@@ -18,27 +18,11 @@ final class IPAddressV4 extends IPAddress
 
     public function is_private(): bool
     {
-        // Private IPv4 ranges
-        $private_ranges = [
-            '127.0.0.0/8',      // Loopback
-            '10.0.0.0/8',       // Private network
-            '172.16.0.0/12',    // Private network
-            '192.168.0.0/16',   // Private network
-            '169.254.0.0/16',   // Link-local
-            '224.0.0.0/4',      // Multicast
-            '240.0.0.0/4',      // Reserved
-            '0.0.0.0/8',        // Current network
-            '255.255.255.255',  // Broadcast
-        ];
-
-        foreach ($private_ranges as $range) {
-            $range_obj = new IPRangeV4($range);
-            if ($range_obj->contains($this)) {
-                return true;
-            }
-        }
-
-        return false;
+        return !filter_var(
+            $this->addr,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+        );
     }
 
     public function __toString(): string
