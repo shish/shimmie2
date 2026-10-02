@@ -46,4 +46,12 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
             $this->create_post("tests/pbx_screenshot.jpg", str_repeat("a", 500));
         });
     }
+
+    public function testMassEdit_mixedCase(): void
+    {
+        self::log_in_as_admin();
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "Old_Tag");
+        self::post_page("tag_edit/replace", ["search" => "Old_Tag", "replace" => "new_tag"]);
+        self::assert_search_results(["new_tag"], [$image_id]);
+    }
 }

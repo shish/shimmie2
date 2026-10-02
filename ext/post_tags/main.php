@@ -316,11 +316,11 @@ final class PostTags extends Extension
             if (count($images) === 0) {
                 Log::info("tag_edit", "No images found with target tag, doing in-place rename");
                 $database->execute(
-                    "DELETE FROM tags WHERE tag=:replace",
+                    "DELETE FROM tags WHERE LOWER(tag) = LOWER(:replace)",
                     ["replace" => $replace_set[0]]
                 );
                 $database->execute(
-                    "UPDATE tags SET tag=:replace WHERE tag=:search",
+                    "UPDATE tags SET tag=:replace WHERE LOWER(tag) = LOWER(:search)",
                     ["replace" => $replace_set[0], "search" => $search_set[0]]
                 );
                 return;
