@@ -22,9 +22,6 @@ final class IPRangeV6 extends IPRange
         if ($this->mask < 0 || $this->mask > 128) {
             throw new \InvalidArgumentException("Invalid mask length: {$this->mask}");
         }
-        if ($this->mask % 4 !== 0) {
-            throw new \InvalidArgumentException("Mask length must be a multiple of 4: {$this->mask}");
-        }
     }
 
     public function contains(IPAddress $ip): bool
@@ -35,9 +32,15 @@ final class IPRangeV6 extends IPRange
 
         $ip_ip = \Safe\inet_pton((string)$ip);
         $ip_net = \Safe\inet_pton((string)$this->ip);
-        $ip_mask = str_repeat("f", $this->mask / 4) . str_repeat("0", (128 - $this->mask) / 4);
 
-        return ($ip_ip & $ip_mask) === ($ip_net & $ip_mask);
+        // Create a binary mask for any number of bits (0-128)
+        $mask_binary = "";
+        for ($byte = 0; $byte < 16; $byte++) {
+            $bits_in_this_byte = min(8, max(0, $this->mask - $byte * 8));
+            $mask_binary .= chr((0xFF << (8 - $bits_in_this_byte)) & 0xFF);
+        }
+
+        return ($ip_ip & $mask_binary) === ($ip_net & $mask_binary);
     }
 
     public function __toString(): string

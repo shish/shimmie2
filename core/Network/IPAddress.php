@@ -19,5 +19,7 @@ abstract class IPAddress
 
     abstract public function is_localhost(): bool;
 
+    abstract public function is_private(): bool;
+
     abstract public function __toString(): string;
 }
