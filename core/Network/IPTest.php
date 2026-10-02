@@ -43,4 +43,45 @@ final class IPTest extends TestCase
         self::assertTrue($range->contains($ip1234));
         self::assertFalse($range->contains($ip4321));
     }
+
+    public function test_ipv4_is_private(): void
+    {
+        $loopback = IPAddress::parse("127.0.0.1");
+        self::assertTrue($loopback->is_localhost());
+        self::assertTrue($loopback->is_private());
+
+        $private_10 = IPAddress::parse("10.0.0.1");
+        self::assertTrue($private_10->is_private());
+
+        $link_local = IPAddress::parse("169.254.1.1");
+        self::assertTrue($link_local->is_private());
+
+        $public_google = IPAddress::parse("8.8.8.8");
+        $public_cloudflare = IPAddress::parse("1.1.1.1");
+        self::assertFalse($public_google->is_private());
+        self::assertFalse($public_cloudflare->is_private());
+    }
+
+    public function test_ipv6_is_private_loopback(): void
+    {
+        $loopback_short = IPAddress::parse("::1");
+        $loopback_long = IPAddress::parse("0:0:0:0:0:0:0:1");
+        self::assertTrue($loopback_short->is_localhost());
+        self::assertTrue($loopback_long->is_localhost());
+        self::assertTrue($loopback_short->is_private());
+        self::assertTrue($loopback_long->is_private());
+
+        $link_local = IPAddress::parse("fe80::1");
+        self::assertTrue($link_local->is_private());
+
+        $unique_fc = IPAddress::parse("fc00::1");
+        $unique_fd = IPAddress::parse("fd00::1");
+        self::assertTrue($unique_fc->is_private());
+        self::assertTrue($unique_fd->is_private());
+
+        $public_cloudflare = IPAddress::parse("2606:4700:4700::1111");
+        $public_google = IPAddress::parse("2001:4860:4860::8888");
+        self::assertFalse($public_cloudflare->is_private());
+        self::assertFalse($public_google->is_private());
+    }
 }
