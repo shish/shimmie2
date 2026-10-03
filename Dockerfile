@@ -20,7 +20,7 @@ RUN apt update && \
     php${PHP_VERSION}-gd php${PHP_VERSION}-zip php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-curl \
     php${PHP_VERSION}-pgsql php${PHP_VERSION}-mysql php${PHP_VERSION}-sqlite3 \
     php${PHP_VERSION}-memcached \
-    curl imagemagick zip unzip librsvg2-bin git && \
+    curl imagemagick zip unzip librsvg2-bin git ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 # Install dev packages
