@@ -82,6 +82,23 @@ final class Network
     }
 
     /**
+     * @return array<IPAddress>
+     */
+    public static function resolve_hostname(string $host): array
+    {
+        $ips = [];
+        $records = \Safe\dns_get_record($host, DNS_A + DNS_AAAA);
+        foreach ($records as $record) {
+            if (isset($record['ip'])) {
+                $ips[] = IPAddressV4::parse($record['ip']);
+            } elseif (isset($record['ipv6'])) {
+                $ips[] = IPAddressV6::parse($record['ipv6']);
+            }
+        }
+        return array_unique($ips);
+    }
+
+    /**
      * @param non-empty-string $url
      * @return header-array
      */
