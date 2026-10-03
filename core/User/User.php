@@ -156,6 +156,14 @@ final class User
 
     public static function by_name_and_pass(string $name, string $pass): User
     {
+        if (trim($name) === "") {
+            throw new UserNotFound("Invalid username");
+        }
+
+        if (trim($pass) === "") {
+            throw new UserNotFound("Invalid password");
+        }
+
         try {
             $my_user = User::by_name($name);
         } catch (UserNotFound $e) {
