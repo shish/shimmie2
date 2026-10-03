@@ -186,7 +186,7 @@ class Database
             $uri = $_SERVER['REQUEST_URI'] ?? "unknown uri";
             return $this->get_db()->execute(
                 "-- $uri\n" .
-                $query,
+                dedent($query),
                 $args
             );
         } catch (\PDOException $pdoe) {

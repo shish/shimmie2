@@ -38,6 +38,26 @@ final class UtilTest extends TestCase
         self::assertSame(20, strlen(generate_key()));
     }
 
+    public function test_dedent(): void
+    {
+        self::assertSame(
+            "foo\nbar",
+            dedent("    foo\n    bar")
+        );
+        self::assertSame(
+            "foo\n    bar",
+            dedent("foo\n    bar")
+        );
+        self::assertSame(
+            "    foo\nbar",
+            dedent("    foo\nbar")
+        );
+        self::assertSame(
+            "foo",
+            dedent("    foo")
+        );
+    }
+
     public function test_contact_link(): void
     {
         self::assertSame(
