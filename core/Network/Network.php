@@ -87,7 +87,11 @@ final class Network
     public static function resolve_hostname(string $host): array
     {
         $ips = [];
-        $records = \Safe\dns_get_record($host, DNS_A + DNS_AAAA);
+        // \Safe\dns_get_record is broken due to implicit `nameservers=null`
+        $records = \dns_get_record($host, DNS_A + DNS_AAAA);
+        if ($records === false) {
+            return $ips;
+        }
         foreach ($records as $record) {
             if (isset($record['ip'])) {
                 $ips[] = IPAddressV4::parse($record['ip']);
@@ -115,13 +119,9 @@ final class Network
         }
 
         $host = $parsed['host'];
-        try {
-            $ips = self::resolve_hostname($host);
-        } catch (\Exception $e) {
-            throw new FetchException("Invalid URL: cannot resolve $host");
-        }
+        $ips = self::resolve_hostname($host);
         if (empty($ips)) {
-            throw new FetchException("Invalid URL: cannot resolve hostname");
+            throw new FetchException("Invalid URL: cannot resolve $host");
         }
         foreach ($ips as $ip) {
             if ($ip->is_private() || $ip->is_localhost()) {
