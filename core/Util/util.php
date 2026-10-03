@@ -172,6 +172,24 @@ function truncate_filename(?string $filename, int $max_len = 250): ?string
 }
 
 
+function dedent(string $str): string
+{
+    $str = str_replace("\t", "    ", $str);
+    $lines = explode("\n", $str);
+    $min_indent = 9999;
+    foreach ($lines as $line) {
+        if (trim($line) === '') {
+            continue;
+        }
+        $min_indent = min($min_indent, strspn($line, ' '));
+    }
+    foreach ($lines as &$line) {
+        $line = substr($line, $min_indent);
+    }
+    unset($line);
+    return implode("\n", $lines);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Debugging functions                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
