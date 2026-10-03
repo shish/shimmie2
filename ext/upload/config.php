@@ -40,8 +40,9 @@ final class UploadConfig extends ConfigGroup
         if (function_exists("curl_init")) {
             $tes["cURL"] = "curl";
         }
-        $tes["fopen"] = "fopen";
-        $tes["WGet"] = "wget";
+        // Disabled pending security review
+        // $tes["fopen"] = "fopen";
+        // $tes["WGet"] = "wget";
         return $tes;
     }
 

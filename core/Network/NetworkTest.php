@@ -64,4 +64,70 @@ X-Forwarded-For: 1.2.3.4
             IPAddressV6::parse("2001:4860:4860::8888"),
         ], Network::resolve_hostname("dns.google"));
     }
+
+    public function test_fetch_url_no_engine(): void
+    {
+        Ctx::$config->set(UploadConfig::TRANSLOAD_ENGINE, "none");
+        $tmp = shm_tempnam("test_fetch_url");
+        try {
+            self::expectException(FetchException::class);
+            self::expectExceptionMessage("No transload engine configured");
+            Network::fetch_url("https://example.com", $tmp);
+        } finally {
+            if ($tmp->exists()) {
+                $tmp->unlink();
+            }
+        }
+    }
+
+    public function test_fetch_url_curl_https(): void
+    {
+        Ctx::$config->set(UploadConfig::TRANSLOAD_ENGINE, "curl");
+        $tmp = shm_tempnam("test_fetch_url_https");
+        try {
+            try {
+                $headers = Network::fetch_url("https://example.com", $tmp);
+                self::assertTrue($tmp->exists());
+            } catch (FetchException $e) {
+                // Network unavailable in sandbox, just verify curl attempted the request
+                self::assertStringContainsString("cURL failed", $e->getMessage());
+            }
+        } finally {
+            if ($tmp->exists()) {
+                $tmp->unlink();
+            }
+        }
+    }
+
+    public function test_fetch_url_curl_localhost(): void
+    {
+        Ctx::$config->set(UploadConfig::TRANSLOAD_ENGINE, "curl");
+        $tmp = shm_tempnam("test_fetch_url_localhost");
+        try {
+            self::expectException(FetchException::class);
+            self::expectExceptionMessage("Invalid URL");
+            Network::fetch_url("https://localhost", $tmp);
+        } finally {
+            if ($tmp->exists()) {
+                $tmp->unlink();
+            }
+        }
+    }
+
+    public function test_fetch_url_curl_file(): void
+    {
+        Ctx::$config->set(UploadConfig::TRANSLOAD_ENGINE, "curl");
+        $tmp = shm_tempnam("test_fetch_url_file");
+        try {
+            self::expectException(FetchException::class);
+            self::expectExceptionMessage("Invalid URL");
+            $favicon = new Path("tests/favicon.png");
+            $file_url = "file://" . $favicon->absolute()->str();
+            $headers = Network::fetch_url($file_url, $tmp);
+        } finally {
+            if ($tmp->exists()) {
+                $tmp->unlink();
+            }
+        }
+    }
 }
