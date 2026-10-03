@@ -87,7 +87,11 @@ final class Network
     public static function resolve_hostname(string $host): array
     {
         $ips = [];
-        $records = \Safe\dns_get_record($host, DNS_A + DNS_AAAA);
+        // \Safe\dns_get_record is broken due to implicit `nameservers=null`
+        $records = \dns_get_record($host, DNS_A + DNS_AAAA);
+        if ($records === false) {
+            return $ips;
+        }
         foreach ($records as $record) {
             if (isset($record['ip'])) {
                 $ips[] = IPAddressV4::parse($record['ip']);
