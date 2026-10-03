@@ -55,4 +55,13 @@ X-Forwarded-For: 1.2.3.4
         self::assertSame("1.2.3.4", Network::find_header($headers, "X-Forwarded-For"));
     }
 
+    public function test_resolve_hostname(): void
+    {
+        self::assertEqualsCanonicalizing([
+            IPAddressV4::parse("8.8.4.4"),
+            IPAddressV4::parse("8.8.8.8"),
+            IPAddressV6::parse("2001:4860:4860::8844"),
+            IPAddressV6::parse("2001:4860:4860::8888"),
+        ], Network::resolve_hostname("dns.google"));
+    }
 }
