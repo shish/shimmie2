@@ -10,7 +10,7 @@ ARG PHP_VERSION=8.4
 # Install base packages
 # Things which all stages (build, test, run) need
 FROM debian:trixie AS base
-COPY --from=docker.io/mwader/static-ffmpeg:7.1 /ffmpeg /ffprobe /usr/local/bin/
+COPY --from=docker.io/mwader/static-ffmpeg:9.0 /ffmpeg /ffprobe /usr/local/bin/
 RUN apt update && \
     apt upgrade -y && \
     apt install -y --no-install-recommends \
