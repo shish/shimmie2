@@ -115,7 +115,11 @@ final class Network
         }
 
         $host = $parsed['host'];
-        $ips = self::resolve_hostname($host);
+        try {
+            $ips = self::resolve_hostname($host);
+        } catch (\Exception $e) {
+            throw new FetchException("Invalid URL: cannot resolve $host");
+        }
         if (empty($ips)) {
             throw new FetchException("Invalid URL: cannot resolve hostname");
         }
