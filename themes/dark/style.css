@@ -1,0 +1,332 @@
+:root {
+	color-scheme: dark;
+
+	--page: #252525;
+	--text: #FFF;
+	--link-default: #FFF;
+	--link-visited: #AAA;
+
+	--title: #454545;
+	--title-border: #555;
+
+	--header: #454545;
+	--header-border: #555;
+
+	--block: #353535;
+	--block-border: #555;
+
+	--danger-color: #FF0;
+	--danger-background: #550000;
+
+	--zebra-border: #555;
+	--zebra-header: #454545;
+	--zebra-odd: #303030;
+	--zebra-even: #3F3F3F;
+
+	--border-radius: 0.75rem;
+	--block-padding: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--page: #252525;
+		--text: #FFF;
+		--link-default: #FFF;
+		--link-visited: #AAA;
+
+		--title: #454545;
+		--title-border: #555;
+
+		--header: #454545;
+		--header-border: #555;
+
+		--block: #353535;
+		--block-border: #555;
+
+		--danger-color: #FF0;
+		--danger-background: #550000;
+
+		--zebra-border: #333;
+		--zebra-header: #222;
+		--zebra-odd: #303030;
+		--zebra-even: #3F3F3F;
+	}
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                  things common to all pages                    *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+:root {
+	font-size: 14px;
+	font-family: sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+H1, H2, H3 {
+	margin: 0;
+	text-align: center;
+	/* not sure why top-padding appears visually larger than other padding in headers...
+	reducing top-padding to compensate */
+	padding: calc(var(--block-padding) * 0.5) var(--block-padding) var(--block-padding) var(--block-padding);
+}
+
+BODY {
+	background: var(--page);
+	color: var(--text);
+	margin: 1rem;
+}
+BODY.layout-grid {
+	display: grid;
+	grid-template-columns: 15rem auto;
+	grid-gap: 1rem;
+}
+
+HEADER {
+	grid-column: 1 / 3;
+	grid-row: 1;
+}
+HEADER H1 {
+	max-height: 3rem;
+	overflow: hidden;
+	background: var(--title);
+	border: 1px solid var(--title-border);
+	border-radius: var(--border-radius);
+}
+HEADER H1 A {
+	color: var(--text);
+}
+
+SECTION {
+	margin-bottom: 1rem;
+	border-radius: var(--border-radius);
+}
+SECTION:last-child {
+	margin-bottom: 0;
+}
+SECTION>H3 {
+	background: var(--header);
+	border: 1px solid var(--header-border);
+}
+SECTION>:first-child {
+	border-top-left-radius: var(--border-radius);
+	border-top-right-radius: var(--border-radius);
+}
+SECTION>:last-child {
+	border-bottom-left-radius: var(--border-radius);
+	border-bottom-right-radius: var(--border-radius);
+}
+SECTION>.blockbody {
+	background: var(--block);
+	border: 1px solid var(--block-border);
+	border-top: none;
+	padding: var(--block-padding);
+}
+H1, SECTION, FOOTER {
+	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+FOOTER {
+	grid-column: 1 / 3;
+	grid-row: 3;
+	clear: both;
+	font-size: 0.7rem;
+	text-align: center;
+	background: var(--title);
+	border: 1px solid var(--title-border);
+	border-radius: var(--border-radius);
+	padding: var(--block-padding);
+	margin-top: 0;
+}
+
+THEAD {
+	font-weight: bold;
+}
+TD {
+	vertical-align: top;
+	text-align: center;
+}
+
+TABLE.zebra {border-spacing: 0; border: 2px solid var(--zebra-border);}
+TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
+TABLE.zebra THEAD {position: sticky;top: 0;}
+TABLE.zebra THEAD TR:last-of-type TD, TABLE.zebra THEAD TR:last-of-type TH {border-bottom: 2px solid var(--zebra-border);}
+TABLE.zebra TFOOT TR:first-of-type TD, TABLE.zebra TFOOT TR:first-of-type TH {border-top: 2px solid var(--zebra-border);}
+TABLE.zebra TBODY TR TD, TABLE.zebra TBODY TR TH {border-bottom: 1px solid var(--zebra-header);}
+TABLE.zebra TR:nth-child(odd) {background: var(--zebra-odd);}
+TABLE.zebra TR:nth-child(even) {background: var(--zebra-even);}
+TABLE.zebra INPUT:not([type="checkbox"]):not([type="radio"]),
+TABLE.zebra SELECT,
+TABLE.zebra TEXTAREA,
+TABLE.zebra BUTTON {width: 100%;}
+
+A {
+	text-decoration: none;
+	color: var(--link-default);
+}
+A:hover {
+	text-decoration: underline;
+}
+A:visited {
+	color: var(--link-visited);
+}
+
+UL {
+	text-align: left;
+}
+
+CODE {
+	background: var(--header);
+	font-size: 0.9rem;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*             the navigation bar, and all its blocks             *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+NAV {
+	grid-column: 1;
+	grid-row: 2;
+	text-align: center;
+}
+NAV .blockbody {
+	font-size: 0.85rem;
+	text-align: center;
+	overflow: hidden;
+}
+NAV TABLE {
+	width: 100%;
+}
+NAV INPUT:not([type="checkbox"]):not([type="radio"]),
+NAV TEXTAREA,
+NAV BUTTON,
+NAV SELECT {
+	width: 100%;
+}
+
+TABLE.tag_list {
+	border-collapse: collapse;
+}
+TABLE.tag_list>THEAD {
+	display: none;
+}
+TABLE.tag_list>TBODY>TR>TD {
+	display: inline;
+	padding: 0;
+}
+TABLE.tag_list>TBODY>TR>TD:after {
+	content: " ";
+}
+
+.more:after {
+	content: " >>>";
+}
+
+.tag_count:before {
+	content: "(";
+}
+.tag_count:after {
+	content: ")";
+}
+
+#paginator {
+	box-shadow: none;
+}
+#paginator .blockbody {
+	background: none;
+	border: none;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                 the main part of each page                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ARTICLE {
+	grid-column: 2;
+	grid-row: 2;
+	text-align: center;
+}
+ARTICLE TABLE {
+	width: 90%;
+	margin: auto;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                       mobile screens                           *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+@media screen and (width <= 800px) {
+	BODY.layout-grid {
+		grid-template-columns: auto;
+	}
+	HEADER {
+		grid-column: 1;
+		grid-row: 1;
+	}
+	ARTICLE {
+		grid-column: 1;
+		grid-row: 2;
+		margin-right: 0;
+	}
+	NAV {
+		grid-column: 1;
+		grid-row: 3;
+		margin: auto;
+	}
+	FOOTER {
+		grid-column: 1;
+		grid-row: 4;
+	}
+	#image-list .blockbody {
+		margin: 0;
+	}
+	.shm-image-list {
+		justify-content: center;
+	}
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                     specific page types                        *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#short-wiki-description > .blockbody {
+	padding-bottom: 15px;
+}
+#short-wiki-description h2 {
+	margin: 0 0 0.4em;
+}
+
+#pagelist {
+	margin-top: 32px;
+}
+
+.comment {
+	padding: var(--block-padding);
+	border-bottom: 1px solid var(--block-border);
+}
+.comment:first-child {
+	padding-top: 0;
+}
+.comment:last-child {
+	border-bottom: none;
+}
+.thumb IMG {
+	border: 1px solid var(--block-border);
+	background: var(--block);
+	padding: var(--block-padding);
+	border-radius: var(--border-radius);
+	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+
+/* example of how to apply specific styles to specific thumbs for specific userclasses */
+/*
+BODY[data-userclass="anonymous"] .thumb[data-rating="e"] IMG {
+	filter: blur(5px);
+}
+*/
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                  bulk upload text color fix                    *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#large_upload_form input[type="file"] {color: var(--text); -webkit-text-fill-color: var(--text);}
