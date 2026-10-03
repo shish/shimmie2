@@ -161,7 +161,6 @@ final class Network
             $headers = Network::http_parse_headers(implode("\n", \Safe\preg_split('/\R/', $header_text)));
             $body = substr($response, $header_size);
 
-            curl_close($ch);
             fwrite($fp, $body);
             fclose($fp);
         }
