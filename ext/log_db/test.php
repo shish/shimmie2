@@ -26,5 +26,20 @@ final class LogDatabaseTest extends ShimmiePHPUnitTestCase
             "<span class='level-debug'>Commented on <a href='/test/post/view/123'>&gt;&gt;123</a> and then ate &lt;script&gt;cheese&lt;/script&gt;</span>",
             (string)$html
         );
+
+        // `message` should be unescaped, and rendered as escaped
+        $html = $col->display(["priority" => 10, "message" => ">>123??"]);
+        self::assertSame(
+            "<span class='level-debug'><a href='/test/post/view/123'>&gt;&gt;123</a>??</span>",
+            (string)$html
+        );
+
+        // If somebody else has already escaped `>>` etc, that's weird
+        // but let's deal with it for now
+        $html = $col->display(["priority" => 10, "message" => "&gt;&gt;123??"]);
+        self::assertSame(
+            "<span class='level-debug'><a href='/test/post/view/123'>&gt;&gt;123</a>??</span>",
+            (string)$html
+        );
     }
 }
