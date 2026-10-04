@@ -294,6 +294,14 @@ function _fatal_error(\Throwable $e): void
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
     //'.$h_hash.'
 
+    // Logging to OTLP is just appending a struct
+    // to an in-memory buffer so should be safe
+    Ctx::$tracer->logMessage(
+        $e->getMessage(),
+        \MicroOTLP\LogSeverity::FATAL,
+        ["stack_trace" => $e->getTraceAsString()]
+    );
+
     if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
         print("Trace: ");
         $t = array_reverse($e->getTrace());
