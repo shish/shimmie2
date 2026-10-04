@@ -88,12 +88,17 @@ class Tombstones extends Extension
         $date = date("Y-m-d H:i");
         $name = Ctx::$user->name;
 
+        $msg = Ctx::$config->get(TombstonesConfig::MESSAGE);
+        $msg = str_replace('$HASH', $hash, $msg);
+        $msg = str_replace('$DATE', $date, $msg);
+        $msg = str_replace('$USER', $name, $msg);
+
         $database->execute(
             "INSERT INTO tombstones (post_id, hash, message) VALUES (:post_id, :hash, :message)",
             [
                 "post_id" => $event->image->id,
                 "hash" => $event->image->hash,
-                "message" => "$hash was deleted on $date by $name",
+                "message" => $msg,
             ]
         );
     }
