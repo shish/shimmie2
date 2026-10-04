@@ -126,13 +126,20 @@ function main(): int
             Ctx::$page->set_error($e);
             Ctx::$page->display();
             // "User Error" is considered success from a system perspective
-            $sMain->end(success: true, message: (string)$e, attributes: ["http.status_code" => Ctx::$page->code]);
+            $sMain->end(success: true, message: $e->getMessage(), attributes: ["http.status_code" => Ctx::$page->code]);
             $exit_code = 2;
         }
     } catch (\Throwable $e) {
         _fatal_error($e);
         $code = is_a($e, SCoreException::class) ? $e->http_code : 500;
-        $sMain->end(success: false, message: (string)$e, attributes: ["http.status_code" => $code]);
+        $sMain->end(
+            success: false,
+            message: $e->getMessage(),
+            attributes: [
+                "http.status_code" => $code,
+                "stack_trace" => $e->getTraceAsString(),
+            ]
+        );
         $exit_code = 1;
     } finally {
         Ctx::$root_span->end();
