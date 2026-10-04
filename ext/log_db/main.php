@@ -155,7 +155,7 @@ final class MessageColumn extends Column
 
         // Split message into parts, capturing the delimiters
         $parts = preg_split(
-            "/(Image #|Post #|&gt;&gt;)(\d+)/",
+            "/(Image #|Post #|&gt;&gt;|>>)(\d+)/",
             $message,
             -1,
             PREG_SPLIT_DELIM_CAPTURE
