@@ -93,12 +93,14 @@ final class BulkActions extends Extension
 
         send_event($babbe);
 
-        $actions = $babbe->actions;
+        $actions = array_filter(
+            $babbe->actions,
+            fn ($a) => $a->permission === null || Ctx::$user->can($a->permission)
+        );
         if (count($actions) === 0) {
             return;
         }
 
-        $actions = array_filter($actions, fn ($a) => $a->permission === null || Ctx::$user->can($a->permission));
         usort($actions, $this->sort_blocks(...));
         $this->theme->display_selector($actions, SearchTerm::implode($event->search_terms));
     }
