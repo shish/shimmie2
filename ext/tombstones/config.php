@@ -13,8 +13,8 @@ final class TombstonesConfig extends ConfigGroup
         "Message for deleted posts",
         ConfigType::STRING,
         input: ConfigInput::TEXTAREA,
-        default: '$HASH was deleted on $DATE by $USER',
-        help: 'with $HASH, $DATE, and $USER'
+        default: '$HASH was deleted on $DATE by $ADMIN',
+        help: 'with $HASH, $DATE, and $ADMIN'
     )]
     public const MESSAGE = "tombstones_message";
 }
