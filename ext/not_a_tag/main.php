@@ -24,8 +24,6 @@ final class NotATagTable extends Table
             new ActionColumn("tag"),
         ]);
         $this->order_by = ["tag", "redirect"];
-        $this->create_url = make_link("untag/add");
-        $this->delete_url = make_link("untag/remove");
         $this->table_attrs = ["class" => "zebra form"];
     }
 }
@@ -151,6 +149,10 @@ final class NotATag extends Extension
             $t = new NotATagTable($database->raw_db());
             $t->token = Ctx::$user->get_auth_token();
             $t->inputs = $event->GET->toArray();
+            if (Ctx::$user->can(NotATagPermission::MANAGE_UNTAG_LIST)) {
+                $t->create_url = make_link("untag/add");
+                $t->delete_url = make_link("untag/remove");
+            }
             $page->set_title("UnTags");
             $this->theme->display_navigation();
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
