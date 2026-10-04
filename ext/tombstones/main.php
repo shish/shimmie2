@@ -101,7 +101,7 @@ class Tombstones extends Extension
         $msg = Ctx::$config->get(TombstonesConfig::MESSAGE);
         $msg = str_replace('$HASH', $hash, $msg);
         $msg = str_replace('$DATE', $date, $msg);
-        $msg = str_replace('$USER', $name, $msg);
+        $msg = str_replace('$ADMIN', $name, $msg);
 
         $database->execute(
             "INSERT INTO tombstones (post_id, hash, message) VALUES (:post_id, :hash, :message)",
