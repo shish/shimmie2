@@ -39,12 +39,19 @@ class Tombstones extends Extension
         $database = Ctx::$database;
         if ($this->get_version() < 1) {
             $database->create_table("tombstones", "
+				id SCORE_AIPK,
 				post_id INTEGER NOT NULL,
 				hash CHAR(32) NOT NULL,
 				date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				message TEXT NOT NULL,
 			");
-            $this->set_version(1);
+            $database->execute("CREATE INDEX tombstones__hash ON tombstones(hash)");
+            $this->set_version(2);
+        }
+        if ($this->get_version() < 2) {
+            $database->execute("ALTER TABLE tombstones ADD COLUMN id SCORE_AIPK");
+            $database->execute("CREATE INDEX tombstones__hash ON tombstones(hash)");
+            $this->set_version(2);
         }
     }
 
