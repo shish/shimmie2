@@ -296,10 +296,21 @@ function _fatal_error(\Throwable $e): void
 
     // Logging to OTLP is just appending a struct
     // to an in-memory buffer so should be safe
+    $attrs = [
+        "err.stack_trace" => $e->getTraceAsString(),
+        "enduser.id" => $_COOKIE["shm_user"] ?? "No User",
+        "net.peer.ip" => (string)Network::get_real_ip(),
+        "http.uri" => $_SERVER["REQUEST_URI"] ?? "No URI",
+        "http.user_agent" => $_SERVER['HTTP_USER_AGENT'] ?? "No UA",
+    ];
+    if (is_a($e, DatabaseException::class)) {
+        $attrs["err.query"] = $e->query;
+        $attrs["err.args"] = var_export($e->args, true);
+    }
     Ctx::$tracer->logMessage(
         $e->getMessage(),
         \MicroOTLP\LogSeverity::FATAL,
-        ["stack_trace" => $e->getTraceAsString()]
+        $attrs
     );
 
     if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
