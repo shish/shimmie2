@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, B, BR, P, TABLE, TBODY, TD, THEAD, TR, emptyHTML, joinHTML};
+use function MicroHTML\{A, B, BR, TABLE, TBODY, TD, THEAD, TR, emptyHTML, joinHTML};
 use function MicroHTML\{INPUT};
 
 /**
@@ -67,7 +67,7 @@ class ReportImageTheme extends Themelet
         $html = emptyHTML();
         $public = Ctx::$config->get(ReportImageConfig::SHOW_INFO);
         if ($public !== "none" && count($reports) > 0) {
-            $html->appendChild(P(B("Current reports:")));
+            $html->appendChild(B("Current reports:"));
             foreach ($reports as $report) {
                 $html->appendChild(BR());
                 if ($public === "both") {
@@ -80,6 +80,8 @@ class ReportImageTheme extends Themelet
                     $html->appendChild(format_text($report->reason));
                 }
             }
+            $html->appendChild(BR());
+            $html->appendChild(\MicroHTML\rawHTML("&nbsp;"));
         }
         $html->appendChild(SHM_SIMPLE_FORM(
             make_link("image_report/add"),
