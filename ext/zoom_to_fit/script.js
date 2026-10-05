@@ -17,5 +17,15 @@ document.addEventListener("DOMContentLoaded", () => {
         resize(this.options[this.selectedIndex].value);
     });
 
+    if (zoomer.dataset.clickToToggle === "true") {
+        img.addEventListener("click", function(e) {
+            if (zoomer.value === "full") {
+                resize("both");
+            } else {
+                resize("full");
+            }
+        });
+    }
+
     resize(ui_cookie_get("image-zoom") ?? "both");
 });
