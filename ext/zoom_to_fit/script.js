@@ -20,12 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (zoomer.dataset.clickToToggle === "true") {
         img.addEventListener("click", function(e) {
             if (zoomer.value === "full") {
-                resize("both");
+                resize("width");
             } else {
                 resize("full");
             }
         });
     }
 
-    resize(ui_cookie_get("image-zoom") ?? "both");
+    resize(ui_cookie_get("image-zoom") ?? "width");
 });
