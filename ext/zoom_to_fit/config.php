@@ -13,7 +13,7 @@ final class ZoomToFitConfig extends ConfigGroup
         ConfigType::BOOL,
         default: false,
         advanced: true,
-        help: "Allow clicking on the image to toggle between Full and Fit Both zoom levels (Will conflict with any other click handlers)",
+        help: "Allow clicking on the image to toggle between Full and Fit Width zoom levels (Will conflict with any other click handlers)",
     )]
     public const CLICK_TO_TOGGLE = "zoom_to_fit_click_to_toggle";
 }
