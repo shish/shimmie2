@@ -59,18 +59,18 @@ class HomeTheme extends Themelet
         if (empty((string)$links)) {
             return null;
         }
-        return DIV(["class" => "space", "id" => "links"], $links);
+        return DIV(["id" => "links"], $links);
     }
 
     protected function build_search(): HTMLElement
     {
         return DIV(
-            ["class" => "space", "id" => "search"],
+            ["id" => "search"],
             SHM_FORM(
                 action: search_link(),
                 method: "GET",
                 children: [
-                    INPUT(["name" => "search", "size" => "30", "type" => "search", "class" => "autocomplete_tags", "autofocus" => true]),
+                    INPUT(["name" => "search", "type" => "search", "class" => "autocomplete_tags", "autofocus" => true]),
                     " ",
                     SHM_SUBMIT("Search")
                 ]
@@ -83,7 +83,7 @@ class HomeTheme extends Themelet
         if (empty($main_text)) {
             return null;
         }
-        return DIV(["class" => "space", "id" => "message"], $main_text);
+        return DIV(["id" => "message"], $main_text);
     }
 
     protected function build_counter(int $post_count): ?HTMLElement
@@ -102,14 +102,14 @@ class HomeTheme extends Themelet
                 'src' => "$base_href/ext/home/counters/$counter_dir/$cur.gif"
             ]);
         }
-        return DIV(["class" => "space", "id" => "counter"], joinHTML('', $counter_digits));
+        return DIV(["id" => "counter"], joinHTML('', $counter_digits));
     }
 
     protected function build_footer(?string $contact_link, int $post_count): HTMLElement
     {
         $num_comma = number_format($post_count);
         return DIV(
-            ["class" => "space", "id" => "foot"],
+            ["id" => "foot"],
             SMALL(SMALL(
                 empty($contact_link)
                     ? null
