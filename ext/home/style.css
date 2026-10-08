@@ -7,7 +7,7 @@ div#front-page {
     gap: 1em;
     width: 640px;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: auto;
 }
 @media (max-width: 800px) {
