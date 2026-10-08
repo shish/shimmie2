@@ -1,13 +1,40 @@
-div#front-page h1 {font-size: 4rem; margin-top: 2em; margin-bottom: 0; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
-div#front-page h1 A {text-decoration: none;}
-div#front-page {text-align:center;}
-div#front-page .space {margin-bottom: 1em;}
-div#front-page div#links a {display: inline-block; margin: 0 0.5em;}
-div#front-page li {list-style-type: none; margin: 0;}
-@media (max-width: 800px) {
-	div#front-page h1 {font-size: 3rem; margin-top: 0.5em; margin-bottom: 0.5em;}
+/* overall page */
+div#front-page {
+    margin-top: 4em;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: 640px;
+    justify-content: center;
+    height: 100vh;
+    margin: auto;
 }
-div#front-page > #search > form {margin: 0 auto;}
-div#front-page > #search > form > input[type=submit]{padding: 4px 6px;}
-#counter {display: grid; justify-content: center; margin: auto; max-width: 66%;}
+@media (max-width: 800px) {
+    div#front-page {margin-top: 1em; width: 480px;}
+}
+
+/* title */
+div#front-page h1 {
+    font-size: 4rem;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    border: none; background: none; box-shadow: none;
+}
+div#front-page h1 A {text-decoration: none;}
+@media (max-width: 800px) {
+    div#front-page h1 {font-size: 3rem;}
+}
+
+/* links */
+div#front-page div#links a {display: inline-block; margin: 0 0.5em;}
+
+/* search */
+div#front-page > #search > form {margin: 0 auto; display: flex; width: 100%;}
+div#front-page > #search > form > input[type=search]{flex: 1;}
+div#front-page > #search > form > input[type=submit]{flex: 0; padding: 0 1em;}
+
+/* counter */
+#counter {display: grid; justify-content: center;}
 .counter-img {grid-row: 1; max-width: 100%; height: auto;}
