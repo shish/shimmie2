@@ -1,17 +1,17 @@
 /* overall page */
+BODY.layout-front-page {
+    margin: 0;
+}
 div#front-page {
-    margin-top: 4em;
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 1em;
     width: 640px;
+    max-width: 95%;
     justify-content: center;
-    min-height: 100vh;
+    min-height: 100dvh;
     margin: auto;
-}
-@media (max-width: 800px) {
-    div#front-page {margin-top: 1em; width: 480px;}
 }
 
 /* title */
@@ -32,8 +32,8 @@ div#front-page div#links a {display: inline-block; margin: 0 0.5em;}
 
 /* search */
 div#front-page > #search > form {margin: 0 auto; display: flex; width: 100%;}
-div#front-page > #search > form > input[type=search]{flex: 1;}
-div#front-page > #search > form > input[type=submit]{flex: 0; padding: 0 1em;}
+div#front-page > #search > form > input[type=search] {flex: 1;}
+div#front-page > #search > form > input[type=submit] {flex: 0; padding: 0 1em;}
 
 /* counter */
 #counter {display: grid; justify-content: center;}
