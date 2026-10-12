@@ -87,6 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let tid = elm.dataset.toggleSel;
         let tob = document.querySelector(tid);
         elm.addEventListener("click", function (e) {
+            // Prevent hiding the toggle button if it's a child of the target element
+            if (tob.contains(elm)) {
+                console.log("refusing to hide the toggle button");
+                return;
+            }
             // Vanilla JS slideToggle equivalent
             if (tob.style.display === "none") {
                 // Show the element
