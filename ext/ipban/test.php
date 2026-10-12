@@ -27,7 +27,7 @@ final class IPBanTest extends ShimmiePHPUnitTestCase
 
         // Add ban
         send_event(new AddIPBanEvent(
-            IPAddress::parse('42.42.42.42'),
+            IPRange::parse('42.42.42.42'),
             'block',
             'unit testing',
             '2030-01-01'
@@ -48,6 +48,39 @@ final class IPBanTest extends ShimmiePHPUnitTestCase
         $page = self::get_page('ip_ban/list');
         self::assertStringNotContainsString(
             "42.42.42.42",
+            (string)$page->find_block(null)->body
+        );
+    }
+
+    public function testRangeBan(): void
+    {
+        $database = Ctx::$database;
+
+        self::log_in_as_admin();
+
+        // Add ban
+        send_event(new AddIPBanEvent(
+            IPRange::parse('42.42.42.0/24'),
+            'block',
+            'unit testing',
+            '2030-01-01'
+        ));
+
+        // Check added
+        $page = self::get_page('ip_ban/list');
+        self::assertStringContainsString(
+            "42.42.42.0/24",
+            (string)$page->find_block(null)->body
+        );
+
+        // Delete ban
+        $ban_id = (int)$database->get_one("SELECT id FROM bans");
+        send_event(new RemoveIPBanEvent($ban_id));
+
+        // Check delete
+        $page = self::get_page('ip_ban/list');
+        self::assertStringNotContainsString(
+            "42.42.42.0/24",
             (string)$page->find_block(null)->body
         );
     }
