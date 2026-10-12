@@ -58,7 +58,7 @@ final class RemoveIPBanEvent extends Event
 final class AddIPBanEvent extends Event
 {
     public function __construct(
-        public IPAddress $ip,
+        public IPRange $range,
         public string $mode,
         public string $reason,
         public ?string $expires
@@ -172,7 +172,7 @@ final class IPBan extends Extension
                 $c_expires = date("Y-m-d H:i:s", \Safe\strtotime(trim($c_expires)));
             }
             send_event(new AddIPBanEvent(
-                IPAddress::parse($c_ip),
+                IPRange::parse($c_ip),
                 $c_mode,
                 $c_reason,
                 $c_expires
@@ -227,13 +227,18 @@ final class IPBan extends Extension
     #[EventListener]
     public function onAddIPBan(AddIPBanEvent $event): void
     {
+        if ($event->range->is_single()) {
+            $ip = (string)$event->range->ip;
+        } else {
+            $ip = (string)$event->range;
+        }
         Ctx::$database->execute(
             "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)",
-            ["ip" => (string)$event->ip, "mode" => $event->mode, "reason" => $event->reason, "expires" => $event->expires, "admin_id" => Ctx::$user->id]
+            ["ip" => $ip, "mode" => $event->mode, "reason" => $event->reason, "expires" => $event->expires, "admin_id" => Ctx::$user->id]
         );
         Ctx::$cache->delete("ip_bans");
         Ctx::$cache->delete("network_bans");
-        Log::info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
+        Log::info("ipban", "Banned ({$event->mode}) {$ip} because '{$event->reason}' until {$event->expires}");
     }
 
     #[EventListener]
