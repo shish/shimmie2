@@ -20,6 +20,7 @@ abstract class IPRange
         }
     }
 
+    abstract public function is_single(): bool;
     abstract public function contains(IPAddress $ip): bool;
     abstract public function __toString(): string;
 }
