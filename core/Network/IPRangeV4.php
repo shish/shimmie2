@@ -21,6 +21,11 @@ final class IPRangeV4 extends IPRange
         }
     }
 
+    public function is_single(): bool
+    {
+        return $this->mask === 32;
+    }
+
     public function contains(IPAddress $ip): bool
     {
         if (!is_a($ip, IPAddressV4::class)) {

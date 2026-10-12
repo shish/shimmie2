@@ -24,6 +24,11 @@ final class IPRangeV6 extends IPRange
         }
     }
 
+    public function is_single(): bool
+    {
+        return $this->mask === 128;
+    }
+
     public function contains(IPAddress $ip): bool
     {
         if (!is_a($ip, IPAddressV6::class)) {
