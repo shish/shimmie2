@@ -77,57 +77,64 @@ document.addEventListener("DOMContentLoaded", () => {
         if (cookieValue) {
             toggled_elements = JSON.parse(cookieValue);
         }
-        toggled_elements.forEach((selector) => {
-            document.querySelectorAll(selector).forEach((e) => {
-                e.style.display = "none";
-            });
-        });
-    } catch (err) {}
-    document.querySelectorAll(".shm-toggler").forEach(function (elm) {
-        let tid = elm.dataset.toggleSel;
-        let tob = document.querySelector(tid);
-        elm.addEventListener("click", function (e) {
+    } catch (err) { }
+
+    document.querySelectorAll(".shm-toggler").forEach(function (toggler_elm) {
+        let content_id = toggler_elm.dataset.toggleSel;
+        let content_elm = document.querySelector(content_id);
+
+        // If the target to hide exists, and is in the list of things
+        // to hide, and is not a parent of the toggle button, hide it
+        if (
+            content_elm &&
+            toggled_elements.indexOf(content_id) >= 0 &&
+            !content_elm.contains(toggler_elm)
+        ) {
+            content_elm.style.display = "none";
+        }
+
+        toggler_elm.addEventListener("click", function (e) {
             // Prevent hiding the toggle button if it's a child of the target element
-            if (tob.contains(elm)) {
+            if (content_elm.contains(toggler_elm)) {
                 console.log("refusing to hide the toggle button");
                 return;
             }
             // Vanilla JS slideToggle equivalent
-            if (tob.style.display === "none") {
+            if (content_elm.style.display === "none") {
                 // Show the element
-                tob.style.display = "";
-                tob.style.overflow = "hidden";
-                tob.style.height = "0";
-                tob.style.transition = "height 0.4s ease";
-                const height = tob.scrollHeight;
+                content_elm.style.display = "";
+                content_elm.style.overflow = "hidden";
+                content_elm.style.height = "0";
+                content_elm.style.transition = "height 0.4s ease";
+                const height = content_elm.scrollHeight;
                 requestAnimationFrame(() => {
-                    tob.style.height = height + "px";
+                    content_elm.style.height = height + "px";
                 });
                 setTimeout(() => {
-                    tob.style.height = "";
-                    tob.style.overflow = "";
-                    tob.style.transition = "";
+                    content_elm.style.height = "";
+                    content_elm.style.overflow = "";
+                    content_elm.style.transition = "";
                 }, 400);
             } else {
                 // Hide the element
-                tob.style.overflow = "hidden";
-                tob.style.height = tob.scrollHeight + "px";
-                tob.style.transition = "height 0.4s ease";
+                content_elm.style.overflow = "hidden";
+                content_elm.style.height = content_elm.scrollHeight + "px";
+                content_elm.style.transition = "height 0.4s ease";
                 // Force a reflow so the browser registers the current height before animating
-                tob.offsetHeight;
+                content_elm.offsetHeight;
                 requestAnimationFrame(() => {
-                    tob.style.height = "0";
+                    content_elm.style.height = "0";
                 });
                 setTimeout(() => {
-                    tob.style.display = "none";
-                    tob.style.height = "";
-                    tob.style.overflow = "";
-                    tob.style.transition = "";
+                    content_elm.style.display = "none";
+                    content_elm.style.height = "";
+                    content_elm.style.overflow = "";
+                    content_elm.style.transition = "";
                 }, 400);
             }
-            const index = toggled_elements.indexOf(tid);
+            const index = toggled_elements.indexOf(content_id);
             if (index === -1) {
-                toggled_elements.push(tid);
+                toggled_elements.push(content_id);
             } else {
                 toggled_elements.splice(index, 1);
             }
