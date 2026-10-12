@@ -8,20 +8,13 @@ use PHPUnit\Framework\TestCase;
 
 final class IPTest extends TestCase
 {
+    // IPRangeV4
     public function test_rangev4_parse(): void
     {
         $r = IPRange::parse("1.2.3.4");
         self::assertInstanceOf(IPRangeV4::class, $r);
         self::assertSame("1.2.3.4", (string)$r->ip);
         self::assertSame(32, $r->mask);
-    }
-
-    public function test_rangev6_parse(): void
-    {
-        $r = IPRange::parse("1234:5678:9abc:def0:1234:5678:9abc:def0/64");
-        self::assertInstanceOf(IPRangeV6::class, $r);
-        self::assertSame("1234:5678:9abc:def0:1234:5678:9abc:def0", (string)$r->ip);
-        self::assertSame(64, $r->mask);
     }
 
     public function test_rangev4_contains(): void
@@ -34,6 +27,22 @@ final class IPTest extends TestCase
         self::assertFalse($range->contains($ip4321));
     }
 
+    public function test_rangev4_string(): void
+    {
+        $range = IPRange::parse("1.2.3.4/32");
+        self::assertSame("1.2.3.4/32", (string)$range);
+        self::assertSame("1.2.3.4", (string)$range->ip);
+    }
+
+    // IPRangeV6
+    public function test_rangev6_parse(): void
+    {
+        $r = IPRange::parse("1234:5678:9abc:def0:1234:5678:9abc:def0/64");
+        self::assertInstanceOf(IPRangeV6::class, $r);
+        self::assertSame("1234:5678:9abc:def0:1234:5678:9abc:def0", (string)$r->ip);
+        self::assertSame(64, $r->mask);
+    }
+
     public function test_rangev6_contains(): void
     {
         $range = IPRange::parse("12:3:4::/32");
@@ -44,6 +53,14 @@ final class IPTest extends TestCase
         self::assertFalse($range->contains($ip4321));
     }
 
+    public function test_rangev6_string(): void
+    {
+        $range = IPRange::parse("1234:5678:9abc:def0:1234:5678:9abc:def0/64");
+        self::assertSame("1234:5678:9abc:def0:1234:5678:9abc:def0/64", (string)$range);
+        self::assertSame("1234:5678:9abc:def0:1234:5678:9abc:def0", (string)$range->ip);
+    }
+
+    // IPAddressV4
     public function test_ipv4_is_private(): void
     {
         $loopback = IPAddress::parse("127.0.0.1");
@@ -62,6 +79,7 @@ final class IPTest extends TestCase
         self::assertFalse($public_cloudflare->is_private());
     }
 
+    // IPAddressV6
     public function test_ipv6_is_private_loopback(): void
     {
         $loopback_short = IPAddress::parse("::1");
