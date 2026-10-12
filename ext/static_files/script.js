@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     } catch (err) {}
+
     $(".shm-toggler").each(function (idx, elm) {
         let tid = $(elm).data("toggle-sel");
         let tob = $(tid + " .blockbody");
