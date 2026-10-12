@@ -178,7 +178,7 @@ final class ImageBan extends Extension
                 make_link("image_hash_ban/add"),
                 INPUT(["type" => 'hidden', "name" => 'c_hash', "value" => $event->image->hash]),
                 INPUT(["type" => 'hidden', "name" => 'c_image_id', "value" => $event->image->id]),
-                INPUT(["type" => 'text', "name" => 'c_reason']),
+                INPUT(["type" => 'text', "name" => 'c_reason', "required" => true]),
                 INPUT(["type" => 'submit', "value" => 'Ban Hash and Delete Post']),
             ));
         }
