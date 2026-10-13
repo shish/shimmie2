@@ -55,11 +55,11 @@ class TagEditCloudTheme extends Themelet
             }
 
             $size = sprintf("%.2f", max($row['scaled'], 0.5));
-            $js = 'tageditcloud_toggle_tag(this,'.\Safe\json_encode($full_tag).')';
 
             if (in_array($row['tag'], $post_tags)) {
                 $entry = SPAN([
-                    'onclick' => $js,
+                    'onclick' => 'tageditcloud_toggle_tag(this, this.dataset.tag)',
+                    'data-tag' => $full_tag,
                     'class' => 'tag-selected',
                     'style' => "font-size: {$size}em$color",
                     'title' => $row['count'],
@@ -70,7 +70,8 @@ class TagEditCloudTheme extends Themelet
                 }
             } else {
                 $entry = SPAN([
-                    'onclick' => $js,
+                    'onclick' => 'tageditcloud_toggle_tag(this, this.dataset.tag)',
+                    'data-tag' => $full_tag,
                     'style' => "font-size: {$size}em$color",
                     'title' => $row['count'],
                 ], $h_tag);

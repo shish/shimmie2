@@ -35,7 +35,7 @@ class NumericScoreTheme extends Themelet
                     A(
                         [
                             "href" => make_link("numeric_score/votes/$image->id"),
-                            "onclick" => '$("#votes-content").load("'.make_link("numeric_score/votes/$image->id").'"); return false;',
+                            "onclick" => 'fetch(this.href).then(r => r.text()).then(html => document.getElementById("votes-content").innerHTML = html); return false;',
                         ],
                         "See All Votes"
                     )
