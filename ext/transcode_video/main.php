@@ -111,6 +111,9 @@ final class TranscodeVideo extends Extension
             // FIXME: VideoContainer happens to be a mime type when in string form,
             // but that's an implementation detail and might not be the case in the future.
             $description = MimeMap::get_name_for_mime(new MimeType($container->value));
+            if ($description === null) {
+                continue;
+            }
             $output[$description] = $container;
         }
         return $output;
