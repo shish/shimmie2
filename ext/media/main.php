@@ -420,9 +420,6 @@ final class Media extends Extension
 
                     // Allocate the same color in the new image resource
                     $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
-                    if ($transparency === false) {
-                        throw new MediaException("Unable to allocate transparent color");
-                    }
 
                     // Completely fill the background of the new image with allocated color.
                     imagefill($image_resized, 0, 0, $transparency);
@@ -466,11 +463,7 @@ final class Media extends Extension
                 // In case of alpha channels
                 $width = imagesx($image_resized);
                 $height = imagesy($image_resized);
-                $new_image = imagecreatetruecolor($width, $height);
-                if ($new_image === false) {
-                    throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
-                }
-
+                $new_image = \Safe\imagecreatetruecolor($width, $height);
                 $background_color = Media::hex_color_allocate($new_image, $alpha_color);
                 imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color);
                 imagecopy($new_image, $image_resized, 0, 0, 0, 0, $width, $height);
@@ -479,17 +472,14 @@ final class Media extends Extension
                 break;
         }
 
-        $result = match ($output_mime->base) {
-            MimeType::BMP => imagebmp($image_resized, $output_filename->str(), true),
-            MimeType::WEBP => imagewebp($image_resized, $output_filename->str(), $output_quality),
-            MimeType::JPEG => imagejpeg($image_resized, $output_filename->str(), $output_quality),
-            MimeType::PNG => imagepng($image_resized, $output_filename->str(), 9),
-            MimeType::GIF => imagegif($image_resized, $output_filename->str()),
+        match ($output_mime->base) {
+            MimeType::BMP => \Safe\imagebmp($image_resized, $output_filename->str(), true),
+            MimeType::WEBP => \Safe\imagewebp($image_resized, $output_filename->str(), $output_quality),
+            MimeType::JPEG => \Safe\imagejpeg($image_resized, $output_filename->str(), $output_quality),
+            MimeType::PNG => \Safe\imagepng($image_resized, $output_filename->str(), 9),
+            MimeType::GIF => \Safe\imagegif($image_resized, $output_filename->str()),
             default => throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime"),
         };
-        if ($result === false) {
-            throw new MediaException("Failed to save the new image, function returned false when saving type: $output_mime");
-        }
     }
 
     public static function supports_alpha(MimeType $mime): bool
@@ -547,8 +537,6 @@ final class Media extends Extension
         $c = (int)hexdec(substr($hex, 4, 2));
         // hexdec(2-digits) will only be int<0, 255>, but phpstan doesn't know that
         // @phpstan-ignore-next-line
-        $col = imagecolorallocate($im, $a, $b, $c);
-        assert($col !== false);
-        return $col;
+        return \Safe\imagecolorallocate($im, $a, $b, $c);
     }
 }
