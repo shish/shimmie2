@@ -11,6 +11,7 @@ on:
   pull_request:
   schedule:
     - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
+  workflow_dispatch:
 
 jobs:
   format:
