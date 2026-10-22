@@ -204,7 +204,7 @@ final class Forum extends Extension
 
             if ($this->get_version() < 4) {
                 Ctx::$database->execute("ALTER TABLE forum_threads ADD response_count INTEGER NOT NULL DEFAULT 0");
-                Ctx::$database->execute("UPDATE forum_threads ft SET response_count = (SELECT COUNT(1) FROM forum_posts fp WHERE fp.thread_id = ft.id)");
+                Ctx::$database->execute("UPDATE forum_threads SET response_count = (SELECT COUNT(1) FROM forum_posts WHERE forum_posts.thread_id = forum_threads.id)");
                 $this->set_version(4);
             }
 
