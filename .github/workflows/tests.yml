@@ -104,7 +104,7 @@ jobs:
       - name: Check old version works
         run: |
           php index.php get-page / > old.out
-          grep -q 'Welcome to Shimmie 2.9' old.out || cat old.out
+          grep -q 'Welcome to Shimmie 2.9' old.out || (cat old.out && false)
           rm -f old.out
       - name: Upgrade
         run: |
@@ -112,9 +112,17 @@ jobs:
           composer install --no-progress
           php index.php db-upgrade
       - name: Check new version works
+        env:
+          TARGET_REF: ${{ inputs.ref || github.ref_name }}
         run: |
+          expected_version=2.13
+          if [[ "$TARGET_REF" =~ ^branch-([0-9]+\.[0-9]+)$ ]]; then
+            expected_version="${BASH_REMATCH[1]}"
+          elif [[ "$TARGET_REF" =~ ^v([0-9]+\.[0-9]+)\.[0-9]+$ ]]; then
+            expected_version="${BASH_REMATCH[1]}"
+          fi
           php index.php page:get / > new.out
-          grep -q 'Welcome to Shimmie 2.13' new.out || (cat new.out && false)
+          grep -Fq "Welcome to Shimmie $expected_version" new.out || (cat new.out && false)
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
