@@ -232,12 +232,8 @@ final class TranscodeImage extends Extension
                     throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
                 }
                 $background_color = Media::hex_color_allocate($new_image, Ctx::$config->get(TranscodeImageConfig::ALPHA_COLOR));
-                if (imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color) === false) {
-                    throw new ImageTranscodeException("Could not fill background color");
-                }
-                if (imagecopy($new_image, $image, 0, 0, 0, 0, $width, $height) === false) {
-                    throw new ImageTranscodeException("Could not copy source image to new image");
-                }
+                imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color);
+                imagecopy($new_image, $image, 0, 0, 0, 0, $width, $height);
                 $result = imagejpeg($new_image, $tmp_name->str(), $q);
                 break;
         }
