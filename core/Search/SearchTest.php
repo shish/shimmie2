@@ -105,7 +105,7 @@ final class SearchTest extends ShimmiePHPUnitTestCase
 
         $obj = new Search();
         $params = new SearchParameters($tcs, $ics, $order);
-        $querylet = $build_search_querylet->invokeArgs($obj, [$params, $limit, $start]);
+        $querylet = $build_search_querylet->invokeArgs(null, [$params, $limit, $start]);
 
         // @phpstan-ignore-next-line
         $results = Ctx::$database->get_all($querylet->sql, $querylet->variables);
