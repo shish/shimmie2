@@ -67,7 +67,7 @@ class PoolsTheme extends Themelet
 
         $table = TABLE(
             ["id" => "poolsList", "class" => "zebra"],
-            THEAD(TR(TH("Name"), TH("Creator"), TH("Posts"), TH("Public"))),
+            THEAD(TR(TH("Name"), TH("Creator"), TH("Posts"), TH("Publicly Editable"))),
             TBODY(...$pool_rows)
         );
 
@@ -92,7 +92,7 @@ class PoolsTheme extends Themelet
     {
         $form = SHM_SIMPLE_FORM(make_link("pool/create"), TABLE(
             TR(TD("Title:"), TD(INPUT(["type" => "text", "name" => "title"]))),
-            TR(TD("Public?:"), TD("Yes", INPUT(["type" => "radio", "name" => "public", "value" => "Y", "checked" => "checked"]), "No", INPUT(["type" => "radio", "name" => "public", "value" => "N"]))),
+            TR(TD("Publicly Editable?:"), TD("Yes", INPUT(["type" => "radio", "name" => "public", "value" => "Y", "checked" => "checked"]), "No", INPUT(["type" => "radio", "name" => "public", "value" => "N"]))),
             TR(TD("Description:"), TD(TEXTAREA(["name" => "description"]))),
             TR(TD(["colspan" => "2"], SHM_SUBMIT("Create")))
         ));
@@ -132,7 +132,7 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Search", $search, "left", 10));
 
         if (!is_null($pool)) {
-            if ($pool->public || Ctx::$user->can(PoolsPermission::ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
+            if ($pool->public || Ctx::$user->can(PoolsPermission::ADMIN)) {// If the pool is publicly editable or the user is an admin, show the edit panel.
                 if (Ctx::$user->can(PoolsPermission::UPDATE)) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
                     $this->sidebar_options($pool, $check_all);
                 }

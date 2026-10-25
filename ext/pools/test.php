@@ -42,6 +42,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
         $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "pbx");
 
         self::get_page("pool/new");
+        self::assert_text("Publicly Editable?");
 
         $page = self::post_page("pool/create", [
             "title" => "foo",
@@ -87,6 +88,7 @@ final class PoolsTest extends ShimmiePHPUnitTestCase
         $this->testCreate();
         self::get_page("pool/list");
         self::assert_text("Pool");
+        self::assert_text("Publicly Editable");
     }
 
     #[Depends('testCreate')]
