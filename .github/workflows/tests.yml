@@ -23,48 +23,36 @@ jobs:
     name: Format
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: Set Up Cache
-        uses: actions/cache@v6
+          ref: ${{ inputs.ref_name || github.ref }}
+      - uses: actions/cache@v6
         with:
-          path: |
-            vendor
+          path: vendor
           key: php-cs-fixer-${{ hashFiles('composer.lock') }}
       - uses: shivammathur/setup-php@v2
         with:
           php-version: 8.5
-      - name: Validate composer.json and composer.lock
-        run: composer validate
-      - name: Install PHP dependencies
-        run: composer install --prefer-dist --no-progress
-      - name: Format
-        run: composer format-ci
+      - run: composer validate
+      - run: composer install --prefer-dist --no-progress
+      - run: composer format-ci
 
   static:
     name: Static Analysis
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.ref || github.sha }}
-          fetch-depth: 2
-      - name: Set Up Cache
-        uses: actions/cache@v6
+          ref: ${{ inputs.ref_name || github.ref }}
+      - uses: actions/cache@v6
         with:
-          path: |
-            vendor
+          path: vendor
           key: phpstan-${{ hashFiles('composer.lock') }}
       - uses: shivammathur/setup-php@v2
         with:
           php-version: 8.5
-      - name: Install PHP dependencies
-        run: composer install --prefer-dist --no-progress
-      - name: PHPStan
-        run: composer analyse-ci
+      - run: composer install --prefer-dist --no-progress
+      - run: composer analyse-ci
 
   upgrade:
     name: Upgrade from 2.9 ${{ matrix.database }}
@@ -74,46 +62,46 @@ jobs:
         database: ["pgsql", "mysql", "sqlite"]
     runs-on: ubuntu-24.04
     steps:
+      # Environment setup
       - name: Checkout current
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.ref || github.sha }}
+          ref: ${{ inputs.ref_name || github.ref }}
           fetch-depth: 0
-      - name: Set up database
-        run: ./.github/setup-db.sh "${{ matrix.database }}"
-      - name: Travel to past
-        # is there a way to programatically get "the most recent
-        # tagged minor version of the previous major version"?
-        run: git checkout branch-2.9
       - name: Set Up Cache
         uses: actions/cache@v6
         with:
-          path: |
-            vendor
+          path: vendor
           key: vendor-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-      - name: Install PHP dependencies
-        run: composer install --no-progress
-      - name: Install old version
+      - name: Set up database
+        run: ./.github/setup-db.sh "${{ matrix.database }}"
+      # Old version
+      - name: Checkout old
+        run: git checkout branch-2.9
+      - name: Install old
         run: |
+          composer install --no-progress
           php index.php
           cat data/config/shimmie.conf.php
-      - name: Check old version works
+      - name: Check old
         run: |
           php index.php get-page / > old.out
           grep -q 'Welcome to Shimmie 2.9' old.out || (cat old.out && false)
           rm -f old.out
-      - name: Upgrade
+      # Current version
+      - name: Checkout current
+        run: git checkout ${{ inputs.ref_name || github.head_ref || github.ref }}
+      - name: Install current
         run: |
-          git checkout ${{ inputs.ref || github.sha }}
           composer install --no-progress
           php index.php db-upgrade
-      - name: Check new version works
+      - name: Check current
         env:
-          TARGET_REF: ${{ inputs.ref || github.ref_name }}
+          TARGET_REF: ${{ inputs.ref_name || github.ref_name }}
         run: |
           expected_version=2.13
           if [[ "$TARGET_REF" =~ ^branch-([0-9]+\.[0-9]+)$ ]]; then
@@ -132,35 +120,25 @@ jobs:
         database: ["pgsql", "mysql", "sqlite"]
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.ref || github.sha }}
-          fetch-depth: 2
-      - name: Set Up Cache
-        uses: actions/cache@v6
+          ref: ${{ inputs.ref_name || github.ref }}
+      - uses: actions/cache@v6
         with:
-          path: |
-            vendor
+          path: vendor
           key: vendor-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: pcov
           extensions: mbstring
           ini-file: development
-      - name: Set up database
-        run: ./.github/setup-db.sh "${{ matrix.database }}"
-      - name: Check versions
-        run: php -v && composer -V
-      - name: Validate composer.json and composer.lock
-        run: composer validate
+      - run: ./.github/setup-db.sh "${{ matrix.database }}"
+      - run: php -v && composer -V
+      - run: composer validate
       - uses: mfinelli/setup-imagemagick@v8
-      - name: Install PHP dependencies
-        run: composer install --no-progress
-      - name: Run test suite
-        run: composer test
+      - run: composer install --no-progress
+      - run: composer test
 
   build:
     name: Build ${{ matrix.arch }}
@@ -179,18 +157,15 @@ jobs:
           - os: ubuntu-24.04-arm
             arch: arm64
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v4
+          ref: ${{ inputs.ref_name || github.ref }}
+      - uses: docker/login-action@v4
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       # buildx is needed for multi-architecture builds
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+      - uses: docker/setup-buildx-action@v4
       # Figure out some variables to get baked into the image
       - name: Set build vars
         id: get-vars
@@ -198,9 +173,8 @@ jobs:
           echo "BUILD_TIME=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
           echo "BUILD_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
       # build and push an anonymous image
-      - name: Build and push by digest
+      - uses: docker/build-push-action@v7
         id: build
-        uses: docker/build-push-action@v7
         with:
           platforms: ${{ matrix.platform }}
           tags: ${{ vars.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE }}
@@ -215,8 +189,7 @@ jobs:
           digest="${{ steps.build.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
       # upload the contents of /tmp/digests
-      - name: Upload digest
-        uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7
         with:
           name: digests-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
@@ -231,27 +204,23 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/branch-2') || startsWith(github.ref, 'refs/tags/v2')
     steps:
       # full checkout with tags so that get-tags.py can get the version number
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.ref || github.sha }}
+          ref: ${{ inputs.ref_name || github.ref }}
           fetch-tags: true
           fetch-depth: 0
-      - name: Login to Docker Hub
-        uses: docker/login-action@v4
+      - uses: docker/login-action@v4
         with:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       # get all files in /tmp/digests
-      - name: Download digests
-        uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@v8
         with:
           path: ${{ runner.temp }}/digests
           pattern: digests-*
           merge-multiple: true
       # buildx is needed to create manifest lists
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+      - uses: docker/setup-buildx-action@v4
       # create a manifest based on /tmp/digests/*
       # the result of this command should look like
       #   docker buildx imagetools create \
