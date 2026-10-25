@@ -35,7 +35,7 @@ final class RatingsConfig extends ConfigGroup
 
 final class RatingsUserConfig extends UserConfigGroup
 {
-    public const KEY = "ratings";
+    public const KEY = "rating";
 
     #[ConfigMeta(
         "Default Ratings",
