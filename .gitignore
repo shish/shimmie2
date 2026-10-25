@@ -6,6 +6,7 @@ data
 .phpactor.json
 .zed
 tmp/
+__pycache__
 
 #Composer
 /vendor/
