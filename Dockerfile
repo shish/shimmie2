@@ -19,6 +19,10 @@ RUN apt update && \
 # Done in its own stage so that we don't meed to include all the
 # composer fluff in the final image
 FROM base AS build
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY composer.json composer.lock /app/
 WORKDIR /app
