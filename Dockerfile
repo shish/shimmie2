@@ -40,8 +40,10 @@ ENV SERVER_NAME=:8000
 ENTRYPOINT ["/app/.docker/entrypoint.sh"]
 CMD ["php", "/app/.docker/run.php"]
 
-# Actually run shimmie
-FROM base AS run
+# Actually run shimmie, using "scratch" and then copying all the files
+# to avoid inheriting EXPOSE from frankenphp
+FROM scratch AS run
+COPY --from=base / /
 EXPOSE 8000
 ENV SERVER_NAME=:8000
 # HEALTHCHECK --interval=1m --timeout=3s CMD curl --fail http://127.0.0.1:8000/ || exit 1
