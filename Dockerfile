@@ -8,7 +8,7 @@
 # Things which all stages (build, test, run) need
 FROM dunglas/frankenphp:1.13.3-php8.5-trixie AS base
 COPY --from=docker.io/mwader/static-ffmpeg:9.0 /ffmpeg /ffprobe /usr/local/bin/
-RUN install-php-extensions gd zip xml mbstring curl pdo_pgsql pdo_mysql pdo_sqlite memcached pcntl
+RUN install-php-extensions gd zip xml mbstring curl pdo_pgsql pdo_mysql pdo_sqlite memcached igbinary pcntl
 RUN apt update && \
     apt upgrade -y && \
     apt install -y --no-install-recommends \
