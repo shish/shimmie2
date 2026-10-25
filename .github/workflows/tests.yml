@@ -68,6 +68,9 @@ jobs:
         with:
           ref: ${{ inputs.ref_name || github.ref }}
           fetch-depth: 0
+      - name: Save current commit
+        id: current
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       - name: Set Up Cache
         uses: actions/cache@v6
         with:
@@ -94,7 +97,7 @@ jobs:
           rm -f old.out
       # Current version
       - name: Checkout current
-        run: git checkout ${{ inputs.ref_name || github.head_ref || github.ref }}
+        run: git checkout ${{ steps.current.outputs.sha }}
       - name: Install current
         run: |
           composer install --no-progress
