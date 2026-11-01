@@ -20,6 +20,7 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
         array $expected_img_conditions,
         string $expected_order,
     ): void {
+        Querylet::resetCounter();
         $params = SearchParameters::from_terms(SearchTerm::explode($tags));
 
         static::assertThat(
@@ -83,8 +84,8 @@ final class SearchParametersTest extends ShimmiePHPUnitTestCase
                 new MetadataCondition(new Querylet("private != TRUE OR owner_id = :private_owner_id", [
                     "private_owner_id" => 1])),
                 new MetadataCondition(new Querylet("rating IN :ratings", ["ratings" => ['?', 's', 'q', 'e']])),
-                new MetadataCondition(new Querylet("width / :width1 = height / :height1", ['width1' => 42,
-                'height1' => 12345])),
+                new MetadataCondition(new Querylet("width / :width = height / :height", ['width' => 42,
+                'height' => 12345])),
             ],
             "images.id DESC"
         );

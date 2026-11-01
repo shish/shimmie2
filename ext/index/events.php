@@ -24,6 +24,7 @@ class SearchTermParseEvent extends Event
     public array $img_conditions = [];
     /** @var TagCondition[] */
     public array $tag_conditions = [];
+    /** @var literal-string|null */
     public ?string $order = null;
 
     /**

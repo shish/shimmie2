@@ -425,16 +425,21 @@ class Database
 
     /**
      * Generates a deterministic pseudorandom order based on a seed and a column ID
+     *
+     * @param literal-string $id_column
+     * @return literal-string
      */
     public function seeded_random(int $seed, string $id_column): string
     {
         $d = $this->get_driver_id();
         if ($d === DatabaseDriverID::MYSQL) {
             // MySQL supports RAND(n), where n is a random seed. Use that.
+            // @phpstan-ignore-next-line - be very careful
             return "RAND($seed)";
         }
 
         // As fallback, use MD5 as a DRBG.
+        // @phpstan-ignore-next-line - be very careful
         return "MD5($seed || '+' || $id_column)";
     }
 }

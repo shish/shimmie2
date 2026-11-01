@@ -69,7 +69,7 @@ final class SearchTest extends ShimmiePHPUnitTestCase
      *
      * @param search-term-array $tcs
      * @param string[] $ics
-     * @param string $order
+     * @param literal-string $order
      * @param int $limit
      * @param int $start
      * @param int[] $res

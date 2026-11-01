@@ -323,36 +323,36 @@ final class NumericScore extends Extension
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^score(:|<=|<|=|>|>=)(-?\d+)$/i")) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $score = $matches[2];
-            $event->add_querylet(new Querylet("numeric_score $cmp $score"));
+            $cmp = cmp_escape($matches[1]);
+            $event->add_querylet(new Querylet(
+                "numeric_score $cmp :score",
+                ["score" => int_escape($matches[2])]
+            ));
         } elseif ($matches = $event->matches("/^upvoted_by[=:](.*)$/i")) {
-            $duser = User::by_name($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
-                ["ns_user_id" => $duser->id]
+                ["ns_user_id" => User::name_to_id($matches[1])]
             ));
         } elseif ($matches = $event->matches("/^downvoted_by[=:](.*)$/i")) {
-            $duser = User::by_name($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
-                ["ns_user_id" => $duser->id]
+                ["ns_user_id" => User::name_to_id($matches[1])]
             ));
         } elseif ($matches = $event->matches("/^upvoted_by_id[=:](\d+)$/i")) {
-            $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
-                ["ns_user_id" => $iid]
+                ["ns_user_id" => int_escape($matches[1])]
             ));
         } elseif ($matches = $event->matches("/^downvoted_by_id[=:](\d+)$/i")) {
-            $iid = int_escape($matches[1]);
             $event->add_querylet(new Querylet(
                 "images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
-                ["ns_user_id" => $iid]
+                ["ns_user_id" => int_escape($matches[1])]
             ));
         } elseif ($matches = $event->matches("/^order[=:](?:numeric_)?(score)(?:_(desc|asc))?$/i")) {
-            $default_order_for_column = "DESC";
-            $sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
+            $sort = literal_escape(
+                isset($matches[2]) ? strtoupper($matches[2]) : "DESC",
+                ["ASC", "DESC"]
+            );
             $event->order = "images.numeric_score $sort";
         }
     }
