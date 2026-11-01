@@ -157,4 +157,23 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
         self::get_page("post/view/$image_id");
         self::assert_text("After Unlock");
     }
+
+    public function test_comment_list(): void
+    {
+        self::log_in_as_user();
+        $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
+        send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment"));
+        self::get_page("post/view/$image_id");
+        self::assert_text("Test Comment");
+
+        self::get_page("comment/list/1");
+        self::assert_text("Test Comment");
+
+        self::get_page("comment/list/2");
+        self::assert_no_text("Test Comment");
+
+        self::assertException(UserError::class, function () {
+            self::get_page("comment/list/0");
+        });
+    }
 }
