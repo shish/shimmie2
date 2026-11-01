@@ -15,6 +15,7 @@
         --level-critical: #F55;
     }
 }
+SPAN.log-message { white-space: pre-wrap; }
 SPAN.level-debug { color: var(--level-debug); }
 SPAN.level-info { color: var(--level-info); }
 SPAN.level-warning { color: var(--level-warning); }

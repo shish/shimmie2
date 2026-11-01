@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
+use Jfcherng\Diff\DiffHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface, InputOption};
 use Symfony\Component\Console\Output\OutputInterface;
@@ -148,13 +149,30 @@ final class Setup extends Extension
     public function onConfigSave(ConfigSaveEvent $event): void
     {
         $config = $event->config;
+        $n = 0;
         foreach ($event->values as $key => $value) {
+            $old_value = $config->get($key);
             match(true) {
                 is_null($value) => $config->delete($key),
                 default => $config->set($key, $value),
             };
+            if ($old_value !== $value) {
+                $old_str = var_export($old_value, true);
+                $new_str = var_export($value, true);
+
+                // If either value contains newlines, log a diff instead
+                if (str_contains($old_str, "\n") || str_contains($new_str, "\n")) {
+                    $diff = DiffHelper::calculate($old_str, $new_str, "Unified");
+                    Log::info("setup", "Config '$key' changed (diff):\n" . $diff);
+                } else {
+                    Log::info("setup", "Config '$key' changed: " . $old_str . " / " . $new_str);
+                }
+                $n++;
+            }
         }
-        Log::warning("setup", "Configuration updated");
+        if ($n > 0) {
+            Log::warning("setup", "Config saved ($n changes)");
+        }
     }
 
     #[EventListener]
