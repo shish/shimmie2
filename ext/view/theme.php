@@ -187,7 +187,11 @@ class ViewPostTheme extends Themelet
             $parts[] = "Length: " . format_milliseconds($image->length);
         }
         if ($image->source !== null) {
-            $parts[] = emptyHTML("Source: ", A(["href" => $image->source], "link"));
+            if (str_starts_with($image->source, "http://") || str_starts_with($image->source, "https://")) {
+                $parts[] = emptyHTML("Source: ", A(["href" => $image->source], "link"));
+            } else {
+                $parts[] = emptyHTML("Source: ", $image->source);
+            }
         }
         if (RatingsInfo::is_enabled()) {
             $rating = $image['rating'] ?? "?";
