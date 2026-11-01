@@ -138,7 +138,11 @@ final class PageRequestEvent extends Event
             if (is_numberish($this->named_args[$n]) === false) {
                 throw new UserError("Page argument {$n} exists but is not numeric");
             }
-            return int_escape($this->named_args[$n]);
+            $val = int_escape($this->named_args[$n]);
+            if ($val <= 0) {
+                throw new ObjectNotFound("Invalid page number");
+            }
+            return $val;
         } elseif ($default !== null) {
             return $default;
         } else {

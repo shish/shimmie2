@@ -22,11 +22,13 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         // FIXME
         //self::assert_text("Prev | Index | Next");
 
-        self::get_page('post/list/-1');
-        self::assert_title("Shimmie");
+        self::assertException(ObjectNotFound::class, function () {
+            self::get_page('post/list/-1');
+        });
 
-        self::get_page('post/list/0');
-        self::assert_title("Shimmie");
+        self::assertException(ObjectNotFound::class, function () {
+            self::get_page('post/list/0');
+        });
 
         self::get_page('post/list/1');
         self::assert_title("Shimmie");
