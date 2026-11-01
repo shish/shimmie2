@@ -629,21 +629,19 @@ class Pools extends Extension
             $order_by = "ORDER BY p.posts DESC";
         }
 
-        $where_clause = "WHERE LOWER(title) like '%%'";
-        if ($search != null) {
-            $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
-        }
-
         $pools = array_map([Pool::class, "makePool"], $database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
 			INNER JOIN users AS u
 			ON p.user_id = u.id
-			$where_clause
+			WHERE LOWER(title) LIKE LOWER(:search)
 			$order_by
 			LIMIT :l OFFSET :o
-		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]));
-        $totalPages = (int) ceil((int) $database->get_one("SELECT COUNT(*) FROM pools " . $where_clause) / $poolsPerPage);
+		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage, "search" => "%$search%"]));
+        $totalPages = (int) ceil((int) $database->get_one(
+            "SELECT COUNT(*) FROM pools WHERE LOWER(title) LIKE LOWER(:search)",
+            ["search" => "%$search%"]
+        ) / $poolsPerPage);
 
         $this->theme->list_pools($page, $pools, $search, $pageNumber + 1, $totalPages);
     }
