@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{B, BODY, CODE, H1, HEAD, HTML, P, PRE, TITLE, emptyHTML};
+use function MicroHTML\{B, BODY, H1, HEAD, HTML, P, TITLE};
 
 use MicroHTML\HTMLElement;
 
@@ -334,35 +334,26 @@ function _fatal_error(\Throwable $e): void
 
         print("Version: $version (on $phpver)\n");
     } else {
-        $query = is_a($e, DatabaseException::class) ? $e->query : null;
         $code = is_a($e, SCoreException::class) ? $e->http_code : 500;
 
-        $db_info = null;
-        if (is_a($e, DatabaseException::class)) {
-            $db_info = emptyHTML(
-                P(B("Query: "), $query),
-                P(B("Args: "), var_export($e->args, true))
-            );
-        }
-
         if ($code >= 500) {
-            error_log("Shimmie Error: $message (Query: $query)\n{$e->getTraceAsString()}");
+            $msg = "Shimmie Error: $message\n";
+            if (is_a($e, DatabaseException::class)) {
+                $msg .= "Query: {$e->query}\n";
+                $msg .= "Args:  ".var_export($e->args, true)."\n";
+            }
+            $msg .= $e->getTraceAsString();
+            error_log($msg);
         }
 
         header("HTTP/1.0 $code Error");
 
         $html = HTML(
             ["lang" => "en"],
-            HEAD(
-                TITLE("Internal Error")
-            ),
+            HEAD(TITLE("Internal Error")),
             BODY(
                 H1("Internal Error"),
-                P(B("Message: "), $e::class . ": " . $message),
-                $db_info,
-                P(B("Version: "), "$version (on $phpver)"),
-                P(B("Stack Trace:")),
-                PRE(CODE($e->getTraceAsString()))
+                P("Check server logs for details.")
             )
         );
 
