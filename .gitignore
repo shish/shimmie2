@@ -2,6 +2,7 @@ backup
 data
 .docker/entrypoint.d/config.json
 .sl
+.phpactor.json
 
 #Composer
 composer.phar
