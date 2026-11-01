@@ -81,7 +81,19 @@ final class LogConsole extends Extension
             $str = "$str\n";
         }
 
-        $fp = @fopen(Ctx::$config->get(LogConsoleConfig::DEVICE), "w");
+        $dev = Ctx::$config->get(LogConsoleConfig::DEVICE);
+        $allowed_devices = [
+            "/dev/console",
+            "/dev/tty",
+            "/dev/stdout",
+            "/dev/stderr",
+            "php://stdout",
+            "php://stderr",
+        ];
+        if (!in_array($dev, $allowed_devices)) {
+            $dev = "php://stderr";
+        }
+        $fp = @fopen($dev, "w");
         if ($fp) {
             fwrite($fp, $str);
             fclose($fp);
