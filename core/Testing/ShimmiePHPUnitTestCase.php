@@ -53,6 +53,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         Ctx::setPage(new Page());
         Ctx::setCache(load_cache(null));
         Ctx::setConfig(new DatabaseConfig(Ctx::$database));
+        Querylet::resetCounter();
 
         $sSetUp->end();
         self::$innerSpan = Ctx::$tracer->startSpan("test");

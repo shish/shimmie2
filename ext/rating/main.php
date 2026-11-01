@@ -197,6 +197,7 @@ final class Ratings extends Extension
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {
             $set = Ratings::privs_to_sql(Ratings::get_user_default_ratings());
+            // @phpstan-ignore-next-line
             $event->add_querylet(new Querylet("rating IN ($set)"));
         }
 
@@ -213,7 +214,8 @@ final class Ratings extends Extension
                 $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs(Ctx::$user));
             }
 
-            $set = "'" . join("', '", $ratings) . "'";
+            $set = Ratings::privs_to_sql($ratings);
+            // @phpstan-ignore-next-line
             $event->add_querylet(new Querylet("rating IN ($set)"));
         }
     }

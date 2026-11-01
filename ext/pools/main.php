@@ -438,7 +438,10 @@ final class Pools extends Extension
                 $not = ($poolID === "none" ? "NOT" : "");
                 $event->add_querylet(new Querylet("images.id $not IN (SELECT DISTINCT image_id FROM pool_images)"));
             } else {
-                $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
+                $event->add_querylet(new Querylet(
+                    "images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = :pool_id)",
+                    ["pool_id" => $poolID]
+                ));
             }
         } elseif ($matches = $event->matches("/^pool_by_name[=:](.*)$/i")) {
             $poolTitle = str_replace("_", " ", $matches[1]);
@@ -448,10 +451,15 @@ final class Pools extends Extension
             if ($pool) {
                 $poolID = $pool->id;
             }
-            $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
-        } elseif ($matches = $event->matches("/^pool_id[=:](.*)$/i")) {
-            $poolID = str_replace("_", " ", $matches[1]);
-            $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
+            $event->add_querylet(new Querylet(
+                "images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = :pool_id)",
+                ["pool_id" => $poolID]
+            ));
+        } elseif ($matches = $event->matches("/^pool_id[=:]([0-9]+)$/i")) {
+            $event->add_querylet(new Querylet(
+                "images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = :pool_id)",
+                ["pool_id" => $matches[1]]
+            ));
         }
 
     }

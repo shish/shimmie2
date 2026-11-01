@@ -150,30 +150,32 @@ final class Media extends Extension
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^content[=:](video|audio|image|unknown)$/i")) {
-            $field = $matches[1];
-            if ($field === "unknown") {
-                $event->add_querylet(new Querylet("video IS NULL OR audio IS NULL OR image IS NULL"));
-            } else {
-                $event->add_querylet(new Querylet("$field = TRUE"));
-            }
+            $sql = match ($matches[1]) {
+                "unknown" => "video IS NULL OR audio IS NULL OR image IS NULL",
+                "video" => "video IS TRUE",
+                "audio" => "audio IS TRUE",
+                "image" => "image IS TRUE",
+                default => "",
+            };
+            $event->add_querylet(new Querylet($sql));
         } elseif ($matches = $event->matches("/^ratio(:|<=|<|=|>|>=)(\d+):(\d+)$/i")) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
-            $event->add_querylet(new Querylet("width / :width{$event->id} $cmp height / :height{$event->id}", $args));
+            $cmp = cmp_escape($matches[1]);
+            $args = ["width" => int_escape($matches[2]), "height" => int_escape($matches[3])];
+            $event->add_querylet(new Querylet("width / :width $cmp height / :height", $args));
         } elseif ($matches = $event->matches("/^size(:|<=|<|=|>|>=)(\d+)x(\d+)$/i")) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $args = ["width{$event->id}" => int_escape($matches[2]), "height{$event->id}" => int_escape($matches[3])];
-            $event->add_querylet(new Querylet("width $cmp :width{$event->id} AND height $cmp :height{$event->id}", $args));
+            $cmp = cmp_escape($matches[1]);
+            $args = ["width" => int_escape($matches[2]), "height" => int_escape($matches[3])];
+            $event->add_querylet(new Querylet("width $cmp :width AND height $cmp :height", $args));
         } elseif ($matches = $event->matches("/^width(:|<=|<|=|>|>=)(\d+)$/i")) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("width $cmp :width{$event->id}", ["width{$event->id}" => int_escape($matches[2])]));
+            $cmp = cmp_escape($matches[1]);
+            $event->add_querylet(new Querylet("width $cmp :width", ["width" => int_escape($matches[2])]));
         } elseif ($matches = $event->matches("/^height(:|<=|<|=|>|>=)(\d+)$/i")) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("height $cmp :height{$event->id}", ["height{$event->id}" => int_escape($matches[2])]));
+            $cmp = cmp_escape($matches[1]);
+            $event->add_querylet(new Querylet("height $cmp :height", ["height" => int_escape($matches[2])]));
         } elseif ($matches = $event->matches("/^length(:|<=|<|=|>|>=)(.+)$/i")) {
+            $cmp = cmp_escape($matches[1]);
             $value = parse_to_milliseconds($matches[2]);
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $event->add_querylet(new Querylet("length $cmp :length{$event->id}", ["length{$event->id}" => $value]));
+            $event->add_querylet(new Querylet("length $cmp :length", ["length" => $value]));
         }
     }
 

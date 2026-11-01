@@ -183,8 +183,7 @@ final class PostTags extends Extension
     public function onSearchTermParse(SearchTermParseEvent $event): void
     {
         if ($matches = $event->matches("/^tags(:|<=|<|=|>|>=)(\d+)$/i")) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
-            $count = $matches[2];
+            $cmp = cmp_escape($matches[1]);
             $event->add_querylet(
                 new Querylet("
     				EXISTS (
@@ -193,9 +192,9 @@ final class PostTags extends Extension
     					LEFT JOIN tags t ON it.tag_id = t.id
     					WHERE images.id = it.image_id
     					GROUP BY image_id
-    					HAVING COUNT(*) $cmp $count
+    					HAVING COUNT(*) $cmp :count
     				)
-                ")
+                ", ["count" => int_escape($matches[2])])
             );
         }
     }

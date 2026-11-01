@@ -204,17 +204,29 @@ final class Notes extends Extension
     {
         if ($matches = $event->matches("/^note[=:](.*)$/i")) {
             $notes = int_escape($matches[1]);
-            $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE note = $notes)"));
+            $event->add_querylet(new Querylet(
+                "images.id IN (SELECT image_id FROM notes WHERE note = :notes)",
+                ["notes" => $notes]
+            ));
         } elseif ($matches = $event->matches("/^notes(:|<=|<|=|>|>=)(\d+)/i")) {
-            $cmp = ltrim($matches[1], ":") ?: "=";
+            $cmp = cmp_escape($matches[1]);
             $notes = $matches[2];
-            $event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE notes $cmp $notes)"));
+            $event->add_querylet(new Querylet(
+                "images.id IN (SELECT id FROM images WHERE notes $cmp :notes)",
+                ["notes" => $notes]
+            ));
         } elseif ($matches = $event->matches("/^notes_by[=:](.*)$/i")) {
             $user_id = User::name_to_id($matches[1]);
-            $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
+            $event->add_querylet(new Querylet(
+                "images.id IN (SELECT image_id FROM notes WHERE user_id = :user_id)",
+                ["user_id" => $user_id]
+            ));
         } elseif ($matches = $event->matches("/^(notes_by_userno|notes_by_user_id)[=:](\d+)$/i")) {
             $user_id = int_escape($matches[2]);
-            $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
+            $event->add_querylet(new Querylet(
+                "images.id IN (SELECT image_id FROM notes WHERE user_id = :user_id)",
+                ["user_id" => $user_id]
+            ));
         }
     }
 

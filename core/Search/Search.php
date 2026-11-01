@@ -45,7 +45,6 @@ final class Search
 
         $params = SearchParameters::from_terms($terms);
         $querylet = self::build_search_querylet($params, $limit, $start);
-        // @phpstan-ignore-next-line
         return Ctx::$database->get_all_iterable($querylet->sql, $querylet->variables);
     }
 
@@ -154,7 +153,6 @@ final class Search
             if (is_null($total)) {
                 $params = SearchParameters::from_terms($terms);
                 $querylet = self::build_search_querylet($params, count: true);
-                // @phpstan-ignore-next-line
                 $total = (int)Ctx::$database->get_one($querylet->sql, $querylet->variables);
                 if ($limit_complex && $total > 5000) {
                     // when we have a ton of images, the count
@@ -228,6 +226,7 @@ final class Search
                 $query = new Querylet("SELECT $columns FROM images WHERE 1=0");
             } else {
                 $set = implode(', ', $tag_array);
+                // @phpstan-ignore-next-line
                 $query = new Querylet("
                     SELECT $columns
                     FROM images INNER JOIN (
@@ -293,45 +292,52 @@ final class Search
                 $inner_joins = [];
                 if (!empty($positive_tag_id_array)) {
                     foreach ($positive_tag_id_array as $tag) {
-                        $inner_joins[] = "= $tag";
+                        $inner_joins[] = new Querylet("= :tag ", ["tag" => $tag]);
                     }
                 }
                 if (!empty($positive_wildcard_id_array)) {
                     foreach ($positive_wildcard_id_array as $tags) {
-                        $positive_tag_id_list = join(', ', $tags);
-                        $inner_joins[] = "IN ($positive_tag_id_list)";
+                        $tags = implode(", ", $tags);
+                        // @phpstan-ignore-next-line
+                        $inner_joins[] = new Querylet("IN ($tags)");
                     }
                 }
 
                 $first = array_shift($inner_joins);
-                $sub_query = "SELECT DISTINCT it.image_id FROM image_tags it ";
+                $sub_query = new Querylet("SELECT DISTINCT it.image_id FROM image_tags it ");
                 $i = 0;
                 foreach ($inner_joins as $inner_join) {
                     $i++;
-                    $sub_query .= " INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id $inner_join ";
+                    // @phpstan-ignore-next-line
+                    $sub_query->append(new Querylet("INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id "));
+                    $sub_query->append($inner_join);
                 }
                 if (!empty($negative_tag_id_array)) {
-                    $negative_tag_id_list = join(', ', $negative_tag_id_array);
-                    $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
+                    $negative_tag_id_list = implode(", ", $negative_tag_id_array);
+                    $sub_query->append(new Querylet(
+                        // @phpstan-ignore-next-line
+                        "LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ",
+                    ));
                 }
-                $sub_query .= "WHERE it.tag_id $first ";
+                $sub_query->append(new Querylet("WHERE it.tag_id "));
+                $sub_query->append($first);
                 if (!empty($negative_tag_id_array)) {
-                    $sub_query .= " AND negative.image_id IS NULL";
+                    $sub_query->append(new Querylet("AND negative.image_id IS NULL "));
                 }
-                $sub_query .= " GROUP BY it.image_id ";
+                $sub_query->append(new Querylet("GROUP BY it.image_id "));
 
-                $query = new Querylet("
-                    SELECT $columns
-                    FROM images
-                    INNER JOIN ($sub_query) a on a.image_id = images.id
-                ");
+                $query = new Querylet("SELECT $columns FROM images INNER JOIN (");
+                $query->append($sub_query);
+                $query->append(new Querylet(") a ON a.image_id = images.id"));
+
             } elseif (!empty($negative_tag_id_array)) {
                 static::$_search_path[] = "only_negative_tags";
-                $negative_tag_id_list = join(', ', $negative_tag_id_array);
+                $negative_tag_id_list = implode(", ", $negative_tag_id_array);
+                // @phpstan-ignore-next-line
                 $query = new Querylet("
                     SELECT $columns
                     FROM images
-                    LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)
+                    LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id IN ($negative_tag_id_list)
                     WHERE negative.image_id IS NULL
                 ");
             } else {
