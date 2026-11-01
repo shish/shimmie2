@@ -180,7 +180,7 @@ final class MessageColumn extends Column
             }
         }
 
-        return SPAN(["class" => "level-$c"], joinHTML("", $elements));
+        return SPAN(["class" => "log-message level-$c"], joinHTML("", $elements));
     }
 }
 
