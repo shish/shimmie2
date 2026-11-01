@@ -53,7 +53,7 @@
         "jfcherng/php-diff": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^12.5",
+        "phpunit/phpunit": "^13.4",
         "friendsofphp/php-cs-fixer": "^3.89",
         "phpstan/phpstan": "^2.1",
         "thecodingmachine/phpstan-safe-rule": "^1.4",
