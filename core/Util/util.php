@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{B, BODY, H1, HEAD, HTML, P, TITLE};
+use function MicroHTML\{BODY, CODE, H1, HEAD, HTML, P, TITLE};
 
 use MicroHTML\HTMLElement;
 
@@ -290,10 +290,6 @@ function _fatal_error(\Throwable $e): void
     $message = $e->getMessage();
     $phpver = phpversion();
 
-    //$hash = exec("git rev-parse HEAD");
-    //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
-    //'.$h_hash.'
-
     // Logging to OTLP is just appending a struct
     // to an in-memory buffer so should be safe
     $attrs = [
@@ -342,6 +338,7 @@ function _fatal_error(\Throwable $e): void
                 $msg .= "Query: {$e->query}\n";
                 $msg .= "Args:  ".var_export($e->args, true)."\n";
             }
+            $msg .= "Trace ID: " . Ctx::$tracer->traceId . "\n";
             $msg .= $e->getTraceAsString();
             error_log($msg);
         }
@@ -353,7 +350,8 @@ function _fatal_error(\Throwable $e): void
             HEAD(TITLE("Internal Error")),
             BODY(
                 H1("Internal Error"),
-                P("Check server logs for details.")
+                P("Check server logs for details."),
+                P("Trace ID: ", CODE(Ctx::$tracer->traceId)),
             )
         );
 
