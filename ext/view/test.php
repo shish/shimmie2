@@ -93,7 +93,7 @@ final class ViewPostTest extends ShimmiePHPUnitTestCase
         self::assertException(PostNotFound::class, function () use ($idp1) {
             self::get_page("post/view/$idp1");
         });
-        self::assertException(PostNotFound::class, function () {
+        self::assertException(ObjectNotFound::class, function () {
             self::get_page('post/view/-1');
         });
     }
