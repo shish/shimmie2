@@ -261,16 +261,30 @@ final class User
      * - the session IP, to reduce the blast radius of guessed passwords
      * - a salt known only to the server, so that clients or attackers
      *   can't generate their own tokens even if they know the first two
+     * - an extra bit to make CSRF tokens and session IDs separate, so
+     *   that leaking the CSRF token (eg via XSS) doesn't give an attacker
+     *   access to the session ID
      */
     public function get_auth_token(): string
     {
-        return hash("sha3-256", $this->passhash . Network::get_session_ip() . SysConfig::getSecret());
+        return hash(
+            "sha3-256",
+            $this->passhash .
+            Network::get_session_ip() .
+            SysConfig::getSecret() .
+            "csrf",
+        );
     }
 
 
     public function get_session_id(): string
     {
-        return hash("sha3-256", $this->passhash . Network::get_session_ip() . SysConfig::getSecret());
+        return hash(
+            "sha3-256",
+            $this->passhash .
+            Network::get_session_ip() .
+            SysConfig::getSecret(),
+        );
     }
 
     public function set_login_cookie(): void
