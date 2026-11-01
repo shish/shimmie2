@@ -142,6 +142,43 @@ function bool_escape(string|bool|int $input): bool
 }
 
 /**
+ * given a comparison operator as typed by an untrusted user, return something
+ * which we know is safe to insert into an SQL query
+ *
+ * @return literal-string
+ */
+function cmp_escape(string $input): string
+{
+    return match ($input) {
+        ":" => "=",
+        "=" => "=",
+        "!=" => "!=",
+        "<" => "<",
+        ">" => ">",
+        "<=" => "<=",
+        ">=" => ">=",
+        default => throw new \InvalidArgumentException("Invalid value: $input"),
+    };
+}
+
+/**
+ * Check that a given user input matches a known literal string
+ *
+ * @param string $input The string to escape
+ * @param array<literal-string> $valid_values A list of valid values
+ * @return literal-string
+ */
+function literal_escape(string $input, array $valid_values): string
+{
+    foreach ($valid_values as $valid_value) {
+        if ($input === $valid_value) {
+            return $valid_value;
+        }
+    }
+    throw new \InvalidArgumentException("Invalid value: $input");
+}
+
+/**
  * If X is empty, return null, else return X
  * @template T
  * @param T $x

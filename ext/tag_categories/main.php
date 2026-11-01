@@ -82,7 +82,7 @@ final class TagCategories extends Extension
 
         if ($matches = $event->matches("/^(.+)_?tags(:|<=|<|=|>|>=)([0-9]+)$/i")) {
             $type = strtolower($matches[1]);
-            $cmp = ltrim($matches[2], ":") ?: "=";
+            $cmp = cmp_escape($matches[2]);
             $count = $matches[3];
 
             $types = $database->get_col(
@@ -94,8 +94,8 @@ final class TagCategories extends Extension
 					    SELECT count(distinct t.id)
 					    FROM tags t
 					    INNER JOIN image_tags it ON it.tag_id = t.id AND images.id = it.image_id
-					    WHERE SCORE_ILIKE(t.tag, :cat{$event->id}) $cmp :count{$event->id}
-					", ["cat{$event->id}" => '$type:%', "count{$event->id}" => $count])
+					    WHERE SCORE_ILIKE(t.tag, :cat) $cmp :count
+					", ["cat" => '$type:%', "count" => $count])
                 );
             }
         }
