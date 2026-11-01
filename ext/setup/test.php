@@ -59,6 +59,7 @@ final class SetupTest extends ShimmiePHPUnitTestCase
             ]));
         });
     }
+
     public function testNiceUrlsTest(): void
     {
         # XXX: this only checks that the text is "ok", to check
@@ -116,5 +117,27 @@ final class SetupTest extends ShimmiePHPUnitTestCase
         self::get_page('setup', ['advanced' => 'on']);
         self::assert_title("Shimmie Setup");
         self::assert_text("Minimum free space");
+    }
+
+    public function testConfigOptionsValidation(): void
+    {
+        // Test that valid option values are accepted
+        $validTheme = SetupConfig::get_theme_options();
+        if (!empty($validTheme)) {
+            $validThemeKey = array_key_last($validTheme);
+            $validResult = ConfigSaveEvent::postToSettings(new QueryArray([
+                "_type_theme" => "string",
+                "_config_theme" => $validThemeKey,
+            ]));
+            self::assertSame(["theme" => $validThemeKey], $validResult);
+        }
+
+        // Test that invalid option values are rejected
+        self::assertException(InvalidInput::class, function () {
+            ConfigSaveEvent::postToSettings(new QueryArray([
+                "_type_theme" => "string",
+                "_config_theme" => "invalid_theme_that_does_not_exist",
+            ]));
+        });
     }
 }

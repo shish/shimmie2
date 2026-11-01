@@ -48,13 +48,33 @@ final class ConfigSaveEvent extends Event
     {
         $settings = [];
         $post = $post->toArray();
+        $all_metas = ConfigGroup::get_all_metas();
+
         foreach ($post as $key => $type) {
             if (str_starts_with($key, "_type_")) {
                 $key = str_replace("_type_", "", $key);
+                if (is_array($type)) {
+                    throw new InvalidInput("Invalid value for '_type_$key'");
+                }
                 $value = $post["_config_$key"] ?? null;
                 if ($value === "") {
                     $value = null;
                 }
+
+                // Validate against known configuration metadata options
+                if (isset($all_metas[$key]) && $all_metas[$key]->options !== null && $value !== null) {
+                    if (is_array($value)) {
+                        throw new InvalidInput("Value for '$key' must be a single value, got array");
+                    }
+                    $options = $all_metas[$key]->options;
+                    if (is_callable($options)) {
+                        $options = $options();
+                    }
+                    if (is_array($options) && !isset($options[$value])) {
+                        throw new InvalidInput("Invalid value '$value' for '$key'");
+                    }
+                }
+
                 if ($type === "string") {
                     $settings[$key] = $value;
                 } elseif ($type === "int") {
@@ -68,7 +88,7 @@ final class ConfigSaveEvent extends Event
                     if (is_array($value)) {
                         $value = implode(", ", $value);
                     }
-                    throw new InvalidInput("Invalid type '$value' for key '$key'");
+                    throw new InvalidInput("Can't cast '$value' to $type for '$key'");
                 }
             }
         }
