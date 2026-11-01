@@ -89,9 +89,9 @@ final class BBCode extends FormatterExtension
         $text = \Safe\preg_replace('!\[url\]site://(.*?)(#c\d+)?\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$1$2</a>', $text);
         $text = \Safe\preg_replace('!\[url=((?:https?|ftp|irc|mailto)://.*?)\](.*?)\[/url\]!s', '<a href="$1">$2</a>', $text);
         $text = \Safe\preg_replace('!\[url\]((?:https?|ftp|irc|mailto)://.*?)\[/url\]!s', '<a href="$1">$1</a>', $text);
-        $text = \Safe\preg_replace('!\[email\](.*?)\[/email\]!s', '<a href="mailto:$1">$1</a>', $text);
-        $text = \Safe\preg_replace('!\[img\](https?:\/\/.*?)\[/img\]!s', '<img alt="user image" src="$1">', $text);
-        $text = \Safe\preg_replace('!\[img\]site://(.*?)(#c\d+)?\[/img\]!s', '<img alt="user image" src="'.make_link('$1$2').'">', $text);
+        $text = \Safe\preg_replace('!\[email\]([^\[]*?)\[/email\]!s', '<a href="mailto:$1">$1</a>', $text);
+        $text = \Safe\preg_replace('!\[img\](https?:\/\/[^\[]*?)\[/img\]!s', '<img alt="user image" src="$1">', $text);
+        $text = \Safe\preg_replace('!\[img\]site://([^\[]*?)(#c\d+)?\[/img\]!s', '<img alt="user image" src="'.make_link('$1$2').'">', $text);
         $text = \Safe\preg_replace('!\[\[([^\|\]]+)\|([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$2</a>', $text);
         $text = \Safe\preg_replace('!\[\[([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$1</a>', $text);
         $text = \Safe\preg_replace("!\n\s*\n!", "\n\n", $text);
