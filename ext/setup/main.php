@@ -61,8 +61,24 @@ final class ConfigSaveEvent extends Event
                     $value = null;
                 }
 
+                if ($type === "string") {
+                    $typed_value = $value;
+                } elseif ($type === "int") {
+                    assert(!is_array($value));
+                    $typed_value = $value !== null ? parse_shorthand_int($value) : null;
+                } elseif ($type === "bool") {
+                    $typed_value = $value === "on";
+                } elseif ($type === "array") {
+                    $typed_value = $value;
+                } else {
+                    if (is_array($value)) {
+                        $value = implode(", ", $value);
+                    }
+                    throw new InvalidInput("Can't cast '$value' to $type for '$key'");
+                }
+
                 // Validate against known configuration metadata options
-                if (isset($all_metas[$key]) && $all_metas[$key]->options !== null && $value !== null) {
+                if (isset($all_metas[$key]) && $all_metas[$key]->options !== null && $typed_value !== null) {
                     if (is_array($value)) {
                         throw new InvalidInput("Value for '$key' must be a single value, got array");
                     }
@@ -70,26 +86,12 @@ final class ConfigSaveEvent extends Event
                     if (is_callable($options)) {
                         $options = $options();
                     }
-                    if (is_array($options) && !isset($options[$value])) {
-                        throw new InvalidInput("Invalid value '$value' for '$key'");
+                    if (is_array($options) && !in_array($typed_value, $options)) {
+                        throw new InvalidInput("Invalid value '$value' for '$key' - select from " . implode(", ", $options));
                     }
                 }
 
-                if ($type === "string") {
-                    $settings[$key] = $value;
-                } elseif ($type === "int") {
-                    assert(!is_array($value));
-                    $settings[$key] = $value !== null ? parse_shorthand_int($value) : null;
-                } elseif ($type === "bool") {
-                    $settings[$key] = $value === "on";
-                } elseif ($type === "array") {
-                    $settings[$key] = $value;
-                } else {
-                    if (is_array($value)) {
-                        $value = implode(", ", $value);
-                    }
-                    throw new InvalidInput("Can't cast '$value' to $type for '$key'");
-                }
+                $settings[$key] = $typed_value;
             }
         }
         return $settings;

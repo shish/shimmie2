@@ -122,9 +122,9 @@ final class SetupTest extends ShimmiePHPUnitTestCase
     public function testConfigOptionsValidation(): void
     {
         // Test that valid option values are accepted
-        $validTheme = SetupConfig::get_theme_options();
-        if (!empty($validTheme)) {
-            $validThemeKey = array_key_last($validTheme);
+        $validThemes = SetupConfig::get_theme_options();
+        if (!empty($validThemes)) {
+            $validThemeKey = $validThemes[array_key_last($validThemes)];
             $validResult = ConfigSaveEvent::postToSettings(new QueryArray([
                 "_type_theme" => "string",
                 "_config_theme" => $validThemeKey,
