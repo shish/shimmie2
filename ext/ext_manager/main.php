@@ -108,9 +108,12 @@ final class ExtManager extends Extension
      */
     private function write_extensions_conf(array $extras): void
     {
+        // Use single quotes to prevent variable interpolation in the generated PHP code
+        // JSON_UNESCAPED_SLASHES makes the output more readable
+        $json = \Safe\json_encode($extras, JSON_UNESCAPED_SLASHES);
         \Safe\file_put_contents(
             "data/config/extensions.conf.php",
-            "<?php\ndefine(\"EXTRA_EXTS\", " . \Safe\json_encode($extras) . ");\n"
+            "<?php\ndefine('EXTRA_EXTS', " . $json . ");\n"
         );
         // force PHP to re-read extensions.conf.php on the next request,
         // otherwise it will use an old version for a few seconds
