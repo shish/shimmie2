@@ -572,20 +572,21 @@ final class Pools extends Extension
             $order_by = "ORDER BY p.posts DESC";
         }
 
-        $where_clause = "WHERE LOWER(title) like '%" . strtolower($search) . "%'";
-
-        // @phpstan-ignore-next-line
-        $pools = array_map(fn ($row) => new Pool($row), Ctx::$database->get_all("
+        $pool_rows = Ctx::$database->get_all("
 			SELECT p.*, u.name as user_name
 			FROM pools AS p
 			INNER JOIN users AS u
 			ON p.user_id = u.id
-			$where_clause
+			WHERE SCORE_ILIKE(title, :search)
 			$order_by
 			LIMIT :l OFFSET :o
-		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]));
+		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage, "search" => "%$search%"]);
         // @phpstan-ignore-next-line
-        $totalPages = (int) ceil((int) Ctx::$database->get_one("SELECT COUNT(*) FROM pools " . $where_clause) / $poolsPerPage);
+        $pools = array_map(fn ($row) => new Pool($row), $pool_rows);
+        $totalPages = (int) ceil((int) Ctx::$database->get_one(
+            "SELECT COUNT(*) FROM pools WHERE SCORE_ILIKE(title, :search)",
+            ["search" => "%$search%"]
+        ) / $poolsPerPage);
 
         $this->theme->list_pools($pools, $search, $pageNumber + 1, $totalPages);
     }
