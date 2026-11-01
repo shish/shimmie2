@@ -436,4 +436,29 @@ final class SearchTest extends ShimmiePHPUnitTestCase
         $res = Search::get_posts(array_reverse($image_ids));
         self::assertLessThan($res[0]->id, $res[1]->id);
     }
+
+    public function test_with_backslash(): void
+    {
+        self::log_in_as_user();
+        $image_id_1 = $this->create_post("tests/pbx_screenshot.jpg", "thing\\ computer screenshot pbx phone");
+        $image_id_2 = $this->create_post("tests/bedroom_workshop.jpg", "thing\\ computer computing bedroom workshop");
+        self::log_out();
+
+        # make sure both uploads were ok
+        self::assertTrue($image_id_1 > 0);
+        self::assertTrue($image_id_2 > 0);
+
+        $image_ids = [$image_id_1, $image_id_2];
+
+        $res = Search::get_posts($image_ids);
+        self::assertGreaterThan($res[0]->id, $res[1]->id);
+
+        self::assert_BSQ(
+            tcs: ["thing\\"],
+            ics: [],
+            res: [$image_ids[1], $image_ids[0]],
+            path: ["fast"],
+        );
+    }
+
 }

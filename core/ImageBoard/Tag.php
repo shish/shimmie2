@@ -202,9 +202,7 @@ final class Tag
      */
     public static function sqlify(string $term): string
     {
-        if (Ctx::$database->get_driver_id() === DatabaseDriverID::SQLITE) {
-            $term = str_replace('\\', '\\\\', $term);
-        }
+        $term = str_replace('\\', '\\\\', $term);
         $term = str_replace('_', '\_', $term);
         $term = str_replace('%', '\%', $term);
         $term = str_replace('*', '%', $term);
