@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+    function escapeForGLB(text) {
+        if (!text) return null;
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
     const lightbox = GLightbox({
         //selector: "[data-glightbox]",
         touchNavigation: false,
@@ -18,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 lightbox.setElements([
                     {
                         href: event.target.src,
-                        title: media.dataset.title || null,
-                        description: media.dataset.description || null,
+                        title: escapeForGLB(media.dataset.title),
+                        description: escapeForGLB(media.dataset.description),
                         type: type,
                     },
                 ]);
