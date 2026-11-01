@@ -344,8 +344,8 @@ class Pools extends Extension
                 while ($row = $result->fetch()) {
                     $database->execute(
                         "
-                                UPDATE pool_images 
-                                SET image_order=:ord 
+                                UPDATE pool_images
+                                SET image_order=:ord
                                 WHERE pool_id = :pid AND image_id = :iid",
                         ["ord" => $image_order, "pid" => $pool_id, "iid" => (int) $row['image_id']]
                     );
@@ -512,8 +512,8 @@ class Pools extends Extension
                 $poolID = $pool->id;
             }
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
-        } elseif (preg_match("/^pool_id[=|:](.*)$/i", $event->term, $matches)) {
-            $poolID = str_replace("_", " ", $matches[1]);
+        } elseif (preg_match("/^pool_id[=|:]([0-9]+)$/i", $event->term, $matches)) {
+            $poolID = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
         }
 
