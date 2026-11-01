@@ -82,12 +82,9 @@ class FutabaCommentListTheme extends CommentListTheme
         if ($trim) {
             $h_comment = truncate($tfe->stripped, 50);
         } else {
-            $h_comment = $tfe->formatted;
+            $h_comment = (string)$tfe->getFormattedHTML();
+            $h_comment = rawHTML(\Safe\preg_replace("/(^|>)(&gt;[^<\n]*)(<|\n|$)/", '${1}<span class=\'greentext\'>${2}</span>${3}', $h_comment));
         }
-        $h_comment = \Safe\preg_replace("/(^|>)(&gt;[^<\n]*)(<|\n|$)/", '${1}<span class=\'greentext\'>${2}</span>${3}', $h_comment);
-        // handles discrepency in comment page and homepage
-        $h_comment = str_replace("<br>", "", $h_comment);
-        $h_comment = str_replace("\n", "<br>", $h_comment);
         $i_comment_id = $comment->id;
         $i_image_id = $comment->image_id;
 
@@ -116,12 +113,12 @@ class FutabaCommentListTheme extends CommentListTheme
                 $h_date,
                 "No.$i_comment_id",
                 $reply,
-                P(rawHTML($h_comment))
+                P($h_comment)
             );
         } else {
             return TABLE(TR(
                 TD(["nowrap" => true, "class" => "doubledash"], ">>"),
-                TD(DIV(["class" => "reply"], $userlink, $del, $h_date, "No.$i_comment_id", P(rawHTML($h_comment))))
+                TD(DIV(["class" => "reply"], $userlink, $del, $h_date, "No.$i_comment_id", P($h_comment)))
             ));
         }
     }
