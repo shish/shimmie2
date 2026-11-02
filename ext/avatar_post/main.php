@@ -77,6 +77,9 @@ final class AvatarPost extends AvatarExtension
         $x = $user_config->get(AvatarPostUserConfig::AVATAR_X);
         $y = $user_config->get(AvatarPostUserConfig::AVATAR_Y);
 
+        if ($image->width === 0 || $image->height === 0) {
+            return null;
+        }
         $ar = $image->width / $image->height;
 
         $scale = $scale / 100;
