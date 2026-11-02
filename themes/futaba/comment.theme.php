@@ -93,13 +93,14 @@ class FutabaCommentListTheme extends CommentListTheme
         $del = null;
         if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
             $comment_preview = substr($tfe->stripped, 0, 50);
-            $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner->name}:\n$comment_preview");
-            $h_delete_script = "return confirm($j_delete_confirm_message);";
-            $h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
-            $del = emptyHTML(" - [", A(["onclick" => $h_delete_script, "href" => $h_delete_link], "Delete"), "]");
+            $del = emptyHTML(" - [", A([
+                "data-message" => "Delete comment by {$comment->owner->name}:\n$comment_preview",
+                "onclick" => "return confirm(self.dataset.message);",
+                "href" => make_link("comment/delete/$i_comment_id/$i_image_id"),
+            ], "Delete"), "]");
         }
         if ($this->post_page) {
-            $j_name = json_encode($comment->owner->name);
+            $j_name = json_encode($comment->owner->name, JSON_HEX_TAG | JSON_HEX_AMP);
             $reply = emptyHTML("[", A(["href" => "javascript: ShmComment.replyTo($i_image_id, $i_comment_id, $j_name)"], "Reply"), "]");
         } else {
             $reply = emptyHTML("[", A(["href" => make_link("post/view/$i_image_id")], "Reply"), "]");
