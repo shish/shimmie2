@@ -12,7 +12,7 @@ trait Page_Data
     abstract public function set_mode(PageMode $mode): void;
     abstract public function set_mime(MimeType|string $mime): void;
     abstract public function add_http_header(string $line, int $position = 50): void;
-    abstract public function gen_disposition_header(string $disposition = 'inline', ?string $filename = null): string;
+    abstract public function gen_disposition_header(?string $disposition = null, ?string $filename = null): string;
     abstract public function send_headers(): void;
 
     public private(set) string $data = "";
