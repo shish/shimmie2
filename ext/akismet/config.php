@@ -11,7 +11,7 @@ final class AkismetConfig extends ConfigGroup
     #[ConfigMeta(
         "Akismet API key",
         ConfigType::STRING,
-        help: "Get your API key from https://akismet.com/"
+        help: "Get your API key from https://akismet.com/",
     )]
     public const API_KEY = "comment_wordpress_key";
 }
