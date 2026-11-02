@@ -9,6 +9,36 @@ final class PermManager extends Extension
 {
     public const KEY = "perm_manager";
 
+    /**
+     * Validate that a parent class name is valid (exists and would not create a cycle).
+     * @throws UserError if the parent is invalid
+     */
+    private function validate_parent(string $class_name, string $parent): void
+    {
+        if ($parent === "") {
+            return; // Empty parent is allowed (root class)
+        }
+
+        if (!array_key_exists($parent, UserClass::$known_classes)) {
+            throw new UserError("Parent class '$parent' does not exist");
+        }
+
+        if ($parent === $class_name) {
+            throw new UserError("A class cannot be its own parent");
+        }
+
+        // Check for cycles by walking up the parent chain
+        $visited = [];
+        $current = UserClass::$known_classes[$parent];
+        while ($current !== null) {
+            if (array_key_exists($current->name, $visited)) {
+                throw new UserError("Setting '$parent' as parent would create a cycle");
+            }
+            $visited[$current->name] = true;
+            $current = $current->get_parent();
+        }
+    }
+
     #[EventListener(priority: 70)] // After `user` loads default and `user_class_file` loads from file
     public function onInitExt(InitExtEvent $event): void
     {
@@ -81,6 +111,9 @@ final class PermManager extends Extension
             $class_name = $event->POST->req("name");
             $parent = $event->POST->req("parent");
             $description = $event->POST->req("description");
+
+            $this->validate_parent($class_name, $parent);
+
             Ctx::$database->execute(
                 "INSERT INTO user_classes (name, parent, description) VALUES (:name, :parent, :description)",
                 ["name" => $class_name, "parent" => $parent, "description" => $description]
@@ -134,6 +167,9 @@ final class PermManager extends Extension
             $class_name = $event->get_arg("class");
             $parent = $event->POST->req("parent");
             $description = $event->POST->req("description");
+
+            $this->validate_parent($class_name, $parent);
+
             Ctx::$database->execute(
                 "UPDATE user_classes SET parent = :parent, description = :description WHERE name = :name",
                 ["name" => $class_name, "parent" => $parent, "description" => $description]
