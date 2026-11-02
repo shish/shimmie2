@@ -12,7 +12,7 @@ final class MediaReplaceEvent extends Event
     /** @var non-empty-string */
     public readonly string $old_hash;
     /** @var non-empty-string */
-    public readonly string $new_hash;
+    public string $new_hash;
 
     /**
      * Replaces an image file.
