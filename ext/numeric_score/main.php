@@ -77,7 +77,6 @@ final class NumericScoreVote
     public static function create_vote(int $post_id, int $score): bool
     {
         if (Ctx::$user->can(NumericScorePermission::CREATE_VOTE)) {
-            assert($score === 0 || $score === -1 || $score === 1);
             send_event(new NumericScoreSetEvent($post_id, Ctx::$user, $score));
             return true;
         }
@@ -92,6 +91,9 @@ final class NumericScoreSetEvent extends Event
         public User $user,
         public int $score
     ) {
+        if (!in_array($score, [-1, 0, 1])) {
+            throw new InvalidInput("Invalid score: must be -1, 0, or 1");
+        }
         parent::__construct();
     }
 }
@@ -160,7 +162,7 @@ final class NumericScore extends Extension
         } elseif ($event->page_matches("numeric_score/vote", method: "POST", permission: NumericScorePermission::CREATE_VOTE)) {
             $image_id = int_escape($event->POST->req("image_id"));
             $score = int_escape($event->POST->req("vote"));
-            if (($score === -1 || $score === 0 || $score === 1) && $image_id > 0) {
+            if ($image_id > 0) {
                 send_event(new NumericScoreSetEvent($image_id, $user, $score));
             }
             $page->set_redirect(make_link("post/view/$image_id"));
