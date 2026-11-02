@@ -105,8 +105,10 @@ final class Network
     /**
      * Make sure a user isn't attempting to fetch file://...,
      * http://localhost, http://192.168.0.1, etc.
+     *
+     * @return IPAddress The first resolved IP address
      */
-    private static function validate_url_for_fetch(string $url): void
+    private static function validate_url_for_fetch(string $url): IPAddress
     {
         $parsed = parse_url($url);
         if (!$parsed || !isset($parsed['scheme']) || !isset($parsed['host'])) {
@@ -128,6 +130,7 @@ final class Network
                 throw new FetchException("Invalid URL: connects to a private IP address");
             }
         }
+        return $ips[0];
     }
 
     /**
@@ -136,9 +139,14 @@ final class Network
      */
     public static function fetch_url(string $url, Path $mfile): array
     {
-        self::validate_url_for_fetch($url);
+        $resolved_ip = (string)self::validate_url_for_fetch($url);
 
         if (Ctx::$config->get(UploadConfig::TRANSLOAD_ENGINE) === "curl" && function_exists("curl_init")) {
+            $parsed = parse_url($url);
+            assert($parsed && isset($parsed['host']) && isset($parsed['scheme']));
+            $host = $parsed['host'];
+            $port = $parsed['port'] ?? ($parsed['scheme'] === 'https' ? 443 : 80);
+
             $ch = curl_init($url);
             assert($ch !== false);
             $fp = \Safe\fopen($mfile->str(), "w");
@@ -148,9 +156,10 @@ final class Network
             curl_setopt($ch, CURLOPT_HEADER, true);
             curl_setopt($ch, CURLOPT_REFERER, $url);
             curl_setopt($ch, CURLOPT_USERAGENT, "Shimmie-".SysConfig::getVersion());
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+            curl_setopt($ch, CURLOPT_RESOLVE, ["$host:$port:$resolved_ip"]);
 
             $response = curl_exec($ch);
             if ($response === false) {
