@@ -314,15 +314,28 @@ final class UserPage extends Extension
             if ($this->user_can_edit_user($user, $duser)) {
                 if ($pass1 !== $pass2) {
                     throw new InvalidInput("Passwords don't match");
-                } else {
-                    // FIXME: send_event()
-                    $duser->set_password($pass1);
-                    if ($duser->id === $user->id) {
-                        $duser->set_login_cookie();
-                    }
-                    $page->flash("Password changed");
-                    $this->redirect_to_user($duser);
                 }
+
+                // Verify current password unless user has permission to edit other users' passwords
+                $can_edit_other_passwords = $user->can(UserAccountsPermission::EDIT_USER_PASSWORD);
+                $is_self = ($duser->id === $user->id);
+
+                if (!$can_edit_other_passwords || $is_self) {
+                    // User is changing their own password, or admin doesn't have EDIT_USER_PASSWORD permission
+                    // Either way, require current password
+                    $current_pass = $event->POST->req('current_password');
+                    if (is_null($duser->passhash) || !password_verify($current_pass, $duser->passhash)) {
+                        throw new InvalidInput("Current password is incorrect");
+                    }
+                }
+
+                // FIXME: send_event()
+                $duser->set_password($pass1);
+                if ($is_self) {
+                    $duser->set_login_cookie();
+                }
+                $page->flash("Password changed");
+                $this->redirect_to_user($duser);
             }
         }
         if ($event->page_matches("user_admin/change_email", method: "POST")) {
