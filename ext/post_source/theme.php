@@ -36,15 +36,20 @@ class PostSourceTheme extends Themelet
     protected function format_source(?string $source = null): HTMLElement
     {
         if (!empty($source)) {
+            $link_url = $source;
             if (!str_contains($source, "://")) {
-                $source = "https://" . $source;
+                $link_url = "https://" . $source;
             }
-            $proto_domain = explode("://", $source);
-            $h_source = $proto_domain[1];
-            if (str_ends_with($h_source, "/")) {
-                $h_source = substr($h_source, 0, -1);
+            if (str_starts_with($link_url, "http://") || str_starts_with($link_url, "https://")) {
+                $proto_domain = explode("://", $link_url);
+                $h_source = $proto_domain[1];
+                if (str_ends_with($h_source, "/")) {
+                    $h_source = substr($h_source, 0, -1);
+                }
+                return A(["href" => $link_url], $h_source);
+            } else {
+                return emptyHTML($source);
             }
-            return A(["href" => $source], $h_source);
         }
         return emptyHTML("Unknown");
     }
