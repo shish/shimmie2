@@ -274,7 +274,7 @@ final class Forum extends Extension
             $this->theme->display_new_thread_composer();
         } elseif ($event->page_matches("forum/create", method: "POST", permission: ForumPermission::FORUM_CREATE)) {
             $title = $event->POST->req('title');
-            $sticky = $event->POST->offsetExists('sticky');
+            $sticky = $event->POST->offsetExists('sticky') && Ctx::$user->can(ForumPermission::FORUM_ADMIN);
             $message = $event->POST->req('message');
             send_event(new CheckStringContentEvent($title));
             $ftpe = send_event(new ForumThreadPostingEvent(Ctx::$user, $title, $sticky));
