@@ -34,6 +34,11 @@ final class UserApiKeys extends Extension
     #[EventListener]
     public function onUserOperationsBuilding(UserOperationsBuildingEvent $event): void
     {
+        // Only show the API key to the user themselves
+        if (Ctx::$user->id !== $event->user->id) {
+            return;
+        }
+
         $key = $event->user_config->get(UserApiKeysUserConfig::API_KEY);
         if (!$key) {
             $key = generate_key();
