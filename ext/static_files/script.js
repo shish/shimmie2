@@ -201,4 +201,19 @@ document.addEventListener("DOMContentLoaded", () => {
             lastChecked = this;
         });
     });
-});
+
+    /** password visibility toggle **/
+    document.querySelectorAll(".shm-password-toggle").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const targetId = this.dataset.target;
+            const input = document.getElementById(targetId);
+            if (input.type === "password") {
+                input.type = "text";
+                this.style.opacity = "1";
+            } else {
+                input.type = "password";
+                this.style.opacity = "0.5";
+            }
+        });
+    });
+})

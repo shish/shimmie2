@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Shimmie2;
 
 use function MicroHTML\{A, B, BR, IMG, LINK, emptyHTML, joinHTML};
+use function MicroHTML\{BUTTON, DIV, INPUT, LABEL, OPTION, SELECT, TABLE, TD, TEXTAREA, TH, TR};
 
 use MicroHTML\HTMLElement;
-
-use function MicroHTML\{INPUT, LABEL, OPTION, SELECT, TABLE, TD, TEXTAREA, TH, TR};
 
 class CommonElementsTheme extends Themelet
 {
@@ -252,6 +251,18 @@ class CommonElementsTheme extends Themelet
                     } else {
                         $input = INPUT(["type" => "text", "id" => $key, "name" => "_config_$key", "value" => $val]);
                     }
+                    break;
+                case ConfigInput::PASSWORD:
+                    $val = $config->get($key, ConfigType::STRING);
+                    $container = DIV(
+                        ["class" => "shm-password-container"],
+                        INPUT(["type" => "password", "id" => $key, "name" => "_config_$key", "value" => $val]),
+                        BUTTON(
+                            ["type" => "button", "class" => "shm-password-toggle", "data-target" => $key, "title" => "Toggle visibility"],
+                            "👁️"
+                        ),
+                    );
+                    $input = $container;
                     break;
                 case ConfigInput::TEXTAREA:
                     $val = $config->get($key, ConfigType::STRING) ?? "";

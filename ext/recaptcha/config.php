@@ -9,9 +9,9 @@ final class ReCaptchaConfig extends ConfigGroup
     public const KEY = "recaptcha";
     public ?string $title = "reCAPTCHA";
 
-    #[ConfigMeta("Secret key", ConfigType::STRING)]
+    #[ConfigMeta("Secret key", ConfigType::STRING, sensitive: true)]
     public const RECAPTCHA_PRIVKEY = "api_recaptcha_privkey";
 
-    #[ConfigMeta("Site key", ConfigType::STRING)]
+    #[ConfigMeta("Site key", ConfigType::STRING, sensitive: true)]
     public const RECAPTCHA_PUBKEY = "api_recaptcha_pubkey";
 }
