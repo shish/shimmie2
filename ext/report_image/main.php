@@ -43,7 +43,7 @@ final class ReportImage extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if ($event->page_matches("image_report/add", method: "POST")) {
+        if ($event->page_matches("image_report/add", method: "POST", permission: ReportImagePermission::CREATE_IMAGE_REPORT)) {
             $reason = $event->POST->req('reason');
             if (trim($reason) === "") {
                 throw new ReportPostingException("Reports need text...");
