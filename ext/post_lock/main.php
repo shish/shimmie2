@@ -19,7 +19,7 @@ final class PostLock extends Extension
 {
     public const KEY = "post_lock";
 
-    #[EventListener]
+    #[EventListener(priority: 0)]
     public function onPostInfoSet(PostInfoSetEvent $event): void
     {
         if ($event->image->is_locked() && !Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK)) {
