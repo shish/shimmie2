@@ -36,7 +36,7 @@ class BulkActionsTheme extends Themelet
                 ["class" => "bulk_action"],
                 SHM_FORM(
                     action: make_link("bulk_action"),
-                    onsubmit: "return validate_selections(this, " . json_encode($action->confirmation_message) . ");",
+                    onsubmit: "return validate_selections(this, " . json_encode($action->confirmation_message, JSON_HEX_TAG | JSON_HEX_AMP) . ");",
                     children: [
                         INPUT(["type" => "hidden", "name" => "bulk_query", "value" => $query]),
                         INPUT(["type" => "hidden", "name" => "bulk_selected_ids"]),
