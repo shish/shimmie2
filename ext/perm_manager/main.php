@@ -31,7 +31,7 @@ final class PermManager extends Extension
         $visited = [];
         $current = UserClass::$known_classes[$parent];
         while ($current !== null) {
-            if (array_key_exists($current->name, $visited)) {
+            if ($current->name === $class_name || array_key_exists($current->name, $visited)) {
                 throw new UserError("Setting '$parent' as parent would create a cycle");
             }
             $visited[$current->name] = true;
