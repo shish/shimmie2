@@ -78,6 +78,20 @@ class Page
     }
 
     /**
+     * A separate function from add_http_header to make it easier to test
+     */
+    public function gen_disposition_header(?string $disposition = null, ?string $filename = null): string
+    {
+        $disposition = $disposition ?? 'inline';
+        if (!is_null($filename)) {
+            $quoted_filename = 'filename="' . str_replace(['\\', '"'], ['\\\\', '\\"'], $filename) . '"';
+            $rfc5987_filename = 'filename*=UTF-8\'\'' . rawurlencode($filename);
+            $disposition .= '; ' . $quoted_filename . '; ' . $rfc5987_filename;
+        }
+        return $disposition;
+    }
+
+    /**
      * The counterpart for get_cookie, this works like php's
      * setcookie method, but prepends the site-wide cookie prefix to
      * the $name argument before doing anything.

@@ -13,6 +13,7 @@ trait Page_File
     abstract public function set_mime(MimeType|string $mime): void;
     abstract public function set_code(int $code): void;
     abstract public function add_http_header(string $line, int $position = 50): void;
+    abstract public function gen_disposition_header(string $disposition = 'inline', ?string $filename = null): string;
     abstract public function send_headers(): void;
 
     public private(set) ?Path $file = null;
@@ -57,11 +58,8 @@ trait Page_File
             }
 
             // Set filename
-            if (!is_null($this->file_filename)) {
-                $quoted_filename = 'filename="' . str_replace(['\\', '"'], ['\\\\', '\\"'], $this->file_filename) . '"';
-                $rfc5987_filename = 'filename*=UTF-8\'\'\'' . rawurlencode($this->file_filename);
-                $this->add_http_header('Content-Disposition: ' . $this->file_disposition . '; ' . $quoted_filename . '; ' . $rfc5987_filename);
-            }
+            $disposition = $this->gen_disposition_header($this->file_disposition, $this->file_filename);
+            $this->add_http_header("Content-Disposition: $disposition");
 
             // Deal with Range header
             // https://gist.github.com/codler/3906826
