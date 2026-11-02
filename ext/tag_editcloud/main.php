@@ -41,7 +41,7 @@ final class TagEditCloud extends Extension
                 if (count($relevant_tags) === 0) {
                     return null;
                 }
-                $relevant_tag_ids = implode(',', array_map(fn ($t) => Tag::get_or_create_id($t), $relevant_tags));
+                $relevant_tag_ids = array_map(fn ($t) => Tag::get_or_create_id($t), $relevant_tags);
 
                 /** @var array<array{tag: string, scaled: float, count: int}> $tag_data */
                 $tag_data = Ctx::$database->get_all(
