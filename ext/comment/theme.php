@@ -244,9 +244,9 @@ class CommentListTheme extends Themelet
     protected function delete_link(int $comment_id, int $image_id, string $owner, string $text): HTMLElement
     {
         $comment_preview = truncate($text, 50);
-        $j_delete_confirm_message = json_encode("Delete comment by {$owner}:\n$comment_preview") ?: json_encode("Delete <corrupt comment>");
         return A([
-            "onclick" => "return confirm($j_delete_confirm_message);",
+            "data-message" => "Delete comment by {$owner}:\n$comment_preview",
+            "onclick" => "return confirm(self.dataset.message);",
             "href" => make_link("comment/delete/$comment_id/$image_id"),
         ], "Del");
     }
