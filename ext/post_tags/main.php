@@ -204,9 +204,10 @@ final class PostTags extends Extension
     {
         if (Ctx::$user->can(PostTagsPermission::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || Ctx::$user->can(PostLockPermission::EDIT_IMAGE_LOCK))) {
             $event->image->set_tags($event->new_tags);
-        }
-        foreach ($event->metatags as $tag) {
-            send_event(new TagTermParseEvent($tag, $event->image->id));
+            // Only process metatags if the permission and lock checks passed
+            foreach ($event->metatags as $tag) {
+                send_event(new TagTermParseEvent($tag, $event->image->id));
+            }
         }
     }
 

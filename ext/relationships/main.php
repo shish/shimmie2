@@ -108,6 +108,11 @@ final class Relationships extends Extension
     #[EventListener]
     public function onTagTermParse(TagTermParseEvent $event): void
     {
+        // Check permission to edit relationships
+        if (!Ctx::$user->can(RelationshipsPermission::EDIT_IMAGE_RELATIONSHIPS)) {
+            return;
+        }
+
         if ($matches = $event->matches("/^parent[=:]([0-9]+|none)$/")) {
             $parentID = $matches[1];
             if ($parentID === "none" || $parentID === "0") {

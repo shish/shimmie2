@@ -232,6 +232,11 @@ final class Ratings extends Extension
     public function onTagTermParse(TagTermParseEvent $event): void
     {
         if ($matches = $event->matches($this->search_regexp)) {
+            // Check permission to edit rating
+            if (!Ctx::$user->can(RatingsPermission::EDIT_IMAGE_RATING)) {
+                return;
+            }
+
             $ratings = strtolower($matches[1] ? $matches[1] : $matches[2][0]);
 
             if (count($matches) > 2 && in_array(strtolower($matches[2]), self::UNRATED_KEYWORDS)) {
