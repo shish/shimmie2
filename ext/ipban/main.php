@@ -131,17 +131,18 @@ final class IPBan extends Extension
 
             $msg = Ctx::$config->get("ipban_message_{$row['mode']}") ?? Ctx::$config->get(IPBanConfig::MESSAGE);
             assert(is_string($msg));
-            $msg = str_replace('$IP', $row["ip"], $msg);
-            $msg = str_replace('$DATE', $row['expires'] ?? 'the end of time', $msg);
-            $msg = str_replace('$ADMIN', User::by_id($row_banner_id_int)->name, $msg);
-            $msg = str_replace('$REASON', $row['reason'], $msg);
+            $msg = str_replace('$IP', htmlspecialchars($row["ip"]), $msg);
+            $msg = str_replace('$DATE', htmlspecialchars($row['expires'] ?? 'the end of time'), $msg);
+            $msg = str_replace('$ADMIN', htmlspecialchars(User::by_id($row_banner_id_int)->name), $msg);
+            $msg = str_replace('$REASON', htmlspecialchars($row['reason']), $msg);
             $contact_link = contact_link();
             if (!empty($contact_link)) {
                 $msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
             } else {
                 $msg = str_replace('$CONTACT', "", $msg);
             }
-            $msg .= "<!-- $active_ban_id / {$row["mode"]} -->";
+            $h_mode = htmlspecialchars($row["mode"]);
+            $msg .= "<!-- $active_ban_id / $h_mode -->";
 
             if ($row["mode"] === "ghost") {
                 Ctx::$page->add_block(new Block(null, \MicroHTML\rawHTML($msg), "main", 0, is_content: false));
