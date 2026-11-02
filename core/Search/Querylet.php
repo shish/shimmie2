@@ -49,12 +49,24 @@ final class Querylet
         $id = self::$counter;  // Local variable, not instance variable
 
         // Namespace variables by appending the ID to each parameter name
-        $newVariables = [];
-        foreach ($variables as $key => $value) {
+        // Sort by key length (descending) to process longer keys first and avoid partial matches
+        // (e.g., :val1 in :val12 would incorrectly match without this ordering)
+        $keys = array_keys($variables);
+        $sortedKeys = $keys;
+        usort($sortedKeys, fn ($a, $b) => strlen($b) - strlen($a));
+
+        // Process replacements in length-descending order
+        foreach ($sortedKeys as $key) {
+            $pattern = '/:' . preg_quote($key, '/') . '\b/';
             $newKey = $key . $id;
-            $newVariables[$newKey] = $value;
-            // Replace :key with :keyN in the SQL string
-            $sql = str_replace(':' . $key, ':' . $newKey, $sql);
+            $sql = \Safe\preg_replace($pattern, ':' . $newKey, $sql);
+        }
+
+        // Build newVariables in original key order to preserve insertion order
+        $newVariables = [];
+        foreach ($keys as $key) {
+            $newKey = $key . $id;
+            $newVariables[$newKey] = $variables[$key];
         }
 
         // be very careful here - we take a literal string as input,
