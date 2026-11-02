@@ -221,7 +221,7 @@ final class Pools extends Extension
         }
         if ($event->page_matches("pool/revert/{history_id}", method: "POST", permission: PoolsPermission::UPDATE)) {
             $history_id = $event->get_iarg('history_id');
-            $this->revert_history($history_id);
+            $this->revert_history($history_id, $user);
             $page->set_redirect(make_link("pool/updated"));
         }
         if ($event->page_matches("pool/edit/{pool_id}")) {
@@ -844,15 +844,18 @@ final class Pools extends Extension
     /**
      * HERE GO BACK IN HISTORY AND ADD OR REMOVE POSTS TO POOL.
      */
-    private function revert_history(int $historyID): void
+    private function revert_history(int $historyID, User $user): void
     {
         global $database;
         $status = $database->get_all("SELECT * FROM pool_history WHERE id=:hid", ["hid" => $historyID]);
 
         foreach ($status as $entry) {
+            $poolID = (int) $entry['pool_id'];
+            $pool = $this->get_single_pool($poolID);
+            $this->assert_permission($user, $pool);
+
             $images = trim($entry['images']);
             $images = explode(" ", $images);
-            $poolID = (int) $entry['pool_id'];
             $imageArray = "";
             $newAction = -1;
 
