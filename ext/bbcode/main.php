@@ -84,11 +84,11 @@ final class BBCode extends FormatterExtension
         }
         $text = \Safe\preg_replace('!^&gt;&gt;([^\d].+)!', '<blockquote><small>$1</small></blockquote>', $text);
         $text = \Safe\preg_replace('!&gt;&gt;(\d+)(#c?\d+)?!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('post/view/$1$2').'">&gt;&gt;$1$2</a>', $text);
-        $text = \Safe\preg_replace('!\[anchor=(.*?)\](.*?)\[/anchor\]!s', '<span class="anchor">$2 <a class="alink" href="#bb-$1" name="bb-$1" title="link to this anchor"> ¶ </a></span>', $text);  // add "bb-" to avoid clashing with eg #top
-        $text = \Safe\preg_replace('!\[url=site://(.*?)(#c\d+)?\](.*?)\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$3</a>', $text);
-        $text = \Safe\preg_replace('!\[url\]site://(.*?)(#c\d+)?\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$1$2</a>', $text);
-        $text = \Safe\preg_replace('!\[url=((?:https?|ftp|irc|mailto)://.*?)\](.*?)\[/url\]!s', '<a href="$1">$2</a>', $text);
-        $text = \Safe\preg_replace('!\[url\]((?:https?|ftp|irc|mailto)://.*?)\[/url\]!s', '<a href="$1">$1</a>', $text);
+        $text = \Safe\preg_replace('!\[anchor=([^\[]*?)\](.*?)\[/anchor\]!s', '<span class="anchor">$2 <a class="alink" href="#bb-$1" name="bb-$1" title="link to this anchor"> ¶ </a></span>', $text);  // add "bb-" to avoid clashing with eg #top
+        $text = \Safe\preg_replace('!\[url=site://([^\[]*?)(#c\d+)?\](.*?)\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$3</a>', $text);
+        $text = \Safe\preg_replace('!\[url\]site://([^\[]*?)(#c\d+)?\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$1$2</a>', $text);
+        $text = \Safe\preg_replace('!\[url=((?:https?|ftp|irc|mailto)://[^\[]*?)\](.*?)\[/url\]!s', '<a href="$1">$2</a>', $text);
+        $text = \Safe\preg_replace('!\[url\]((?:https?|ftp|irc|mailto)://[^\[]*?)\[/url\]!s', '<a href="$1">$1</a>', $text);
         $text = \Safe\preg_replace('!\[email\]([^\[]*?)\[/email\]!s', '<a href="mailto:$1">$1</a>', $text);
         $text = \Safe\preg_replace('!\[img\](https?:\/\/[^\[]*?)\[/img\]!s', '<img alt="user image" src="$1">', $text);
         $text = \Safe\preg_replace('!\[img\]site://([^\[]*?)(#c\d+)?\[/img\]!s', '<img alt="user image" src="'.make_link('$1$2').'">', $text);
