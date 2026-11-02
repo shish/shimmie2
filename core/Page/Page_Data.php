@@ -37,7 +37,9 @@ trait Page_Data
     {
         $this->send_headers();
         if (!is_null($this->data_filename)) {
-            header('Content-Disposition: ' . $this->data_disposition . '; filename=' . $this->data_filename);
+            $quoted_filename = 'filename="' . str_replace(['\\', '"'], ['\\\\', '\\"'], $this->data_filename) . '"';
+            $rfc5987_filename = 'filename*=UTF-8\'\'\'' . rawurlencode($this->data_filename);
+            header('Content-Disposition: ' . $this->data_disposition . '; ' . $quoted_filename . '; ' . $rfc5987_filename);
         }
         header("Content-Length: " . strlen($this->data));
         print $this->data;
