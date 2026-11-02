@@ -9,10 +9,8 @@ namespace Shimmie2;
  */
 trait Page_Error
 {
+    use Page_Common;
     use Page_Page;
-
-    abstract public function set_mode(PageMode $mode): void;
-    abstract public function set_code(int $code): void;
 
     public private(set) ?UserError $error = null;
 

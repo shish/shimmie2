@@ -13,7 +13,8 @@ use MicroHTML\HTMLElement;
  */
 trait Page_Page
 {
-    abstract public function set_mode(PageMode $mode): void;
+    use Page_Common;
+    use WithFlash;
 
     public private(set) string $title = "";
     public private(set) string $heading = "";

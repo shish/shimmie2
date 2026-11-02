@@ -9,9 +9,8 @@ namespace Shimmie2;
  */
 trait Page_Redirect
 {
+    use Page_Common;
     use WithFlash;
-
-    abstract public function set_mode(PageMode $mode): void;
 
     public private(set) ?Url $redirect = null;
 
