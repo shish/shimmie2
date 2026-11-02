@@ -187,9 +187,6 @@ final class Approval extends Extension
     #[EventListener]
     public function onMediaDownloading(MediaDownloadingEvent $event): void
     {
-        /**
-         * Deny images upon insufficient permissions.
-         **/
         if (!$this->check_permissions($event->image)) {
             throw new PermissionDenied("Access denied");
         }
