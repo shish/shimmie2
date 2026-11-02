@@ -74,4 +74,64 @@ final class UserPageTest extends ShimmiePHPUnitTestCase
         self::assertSame(302, $page->code);
         User::by_name('testnew');
     }
+
+    public function testChangeOwnPasswordWithoutCurrent(): void
+    {
+        // User tries to change their own password without providing current password
+        self::log_in_as_user();
+        self::assertException(InvalidInput::class, function () {
+            self::post_page('user_admin/change_pass', [
+                'id' => (string)Ctx::$user->id,
+                'pass1' => 'newpass',
+                'pass2' => 'newpass',
+                'current_password' => '',
+            ]);
+        });
+    }
+
+    public function testChangeOwnPasswordWithWrongCurrent(): void
+    {
+        // User tries to change their own password with wrong current password
+        self::log_in_as_user();
+        self::assertException(InvalidInput::class, function () {
+            self::post_page('user_admin/change_pass', [
+                'id' => (string)Ctx::$user->id,
+                'pass1' => 'newpass',
+                'pass2' => 'newpass',
+                'current_password' => 'wrongpass',
+            ]);
+        });
+    }
+
+    public function testChangeOwnPasswordWithCorrectCurrent(): void
+    {
+        // User changes their own password with correct current password
+        self::log_in_as_user();
+        $page = self::post_page('user_admin/change_pass', [
+            'id' => (string)Ctx::$user->id,
+            'pass1' => 'newpass',
+            'pass2' => 'newpass',
+            'current_password' => 'test',  // original password
+        ]);
+        self::assertSame(302, $page->code);
+
+        // Verify the password was changed by trying to log in with new password
+        self::log_out();
+        // Can't directly test login without more setup, but at least verify no exception
+    }
+
+    public function testAdminCanChangeOtherPasswordWithoutCurrent(): void
+    {
+        // Admin (with EDIT_USER_PASSWORD permission) can change another user's password
+        // without providing current password
+        self::log_in_as_admin();
+        $test_user_id = (string)Ctx::$database->get_one("SELECT id FROM users WHERE name = 'test'");
+        $page = self::post_page('user_admin/change_pass', [
+            'id' => $test_user_id,
+            'pass1' => 'newpass',
+            'pass2' => 'newpass',
+            // Note: no current_password provided
+        ]);
+        self::assertSame(302, $page->code);
+    }
 }

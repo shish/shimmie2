@@ -256,20 +256,35 @@ class UserPageTheme extends Themelet
                 ));
             }
 
+            // Build password change form
+            $password_rows = [];
+
+            // Check if current user is changing their own password or doesn't have edit other users password permission
+            $can_edit_other_passwords = Ctx::$user->can(UserAccountsPermission::EDIT_USER_PASSWORD);
+            $is_self = (Ctx::$user->id === $duser->id);
+            $needs_current_password = (!$can_edit_other_passwords || $is_self);
+
+            if ($needs_current_password) {
+                $password_rows[] = TR(
+                    TH("Current password"),
+                    TD(INPUT(["type" => 'password', "name" => 'current_password', "required" => true, "autocomplete" => 'current-password']))
+                );
+            }
+
+            $password_rows[] = TR(
+                TH("Password"),
+                TD(INPUT(["type" => 'password', "name" => 'pass1', "autocomplete" => 'new-password']))
+            );
+            $password_rows[] = TR(
+                TH("Repeat password"),
+                TD(INPUT(["type" => 'password', "name" => 'pass2', "autocomplete" => 'new-password']))
+            );
+
             $html->appendChild(SHM_USER_FORM(
                 $duser,
                 make_link("user_admin/change_pass"),
                 "Change Password",
-                TBODY(
-                    TR(
-                        TH("Password"),
-                        TD(INPUT(["type" => 'password', "name" => 'pass1', "autocomplete" => 'new-password']))
-                    ),
-                    TR(
-                        TH("Repeat password"),
-                        TD(INPUT(["type" => 'password', "name" => 'pass2', "autocomplete" => 'new-password']))
-                    ),
-                ),
+                TBODY(...$password_rows),
                 "Set"
             ));
 
