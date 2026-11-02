@@ -80,3 +80,13 @@ H3[class~="shm-toggler"] {
 .prose P:last-child {
     margin-bottom: 0;
 }
+
+.shm-password-container {
+    display: flex;
+    gap: 0.25em;
+    align-items: center;
+}
+.shm-password-toggle {
+    flex: 0;
+    width: 2em;
+}

@@ -12,6 +12,6 @@ final class EokmConfig extends ConfigGroup
     #[ConfigMeta("Username", ConfigType::STRING)]
     public const USERNAME = "eokm_username";
 
-    #[ConfigMeta("Password", ConfigType::STRING)]
+    #[ConfigMeta("Password", ConfigType::STRING, sensitive: true)]
     public const PASSWORD = "eokm_password";
 }

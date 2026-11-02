@@ -8,7 +8,7 @@ class Automatic1111TaggerConfig extends ConfigGroup
 {
     public const KEY = "automatic1111_tagger";
 
-    #[ConfigMeta("API Endpoint", ConfigType::STRING, default: "http://localhost:7860/tagger/v1/interrogate")]
+    #[ConfigMeta("API Endpoint", ConfigType::STRING, default: "http://localhost:7860/tagger/v1/interrogate", sensitive: true)]
     public const API_ENDPOINT = 'automatic1111_tagger_api_endpoint';
 
     #[ConfigMeta("Model", ConfigType::STRING, default: "wd-v1-4-moat-tagger.v2")]

@@ -150,6 +150,7 @@ final class Setup extends Extension
     {
         $config = $event->config;
         $n = 0;
+        $all_metas = ConfigGroup::get_all_metas();
         foreach ($event->values as $key => $value) {
             $old_value = $config->get($key);
             match(true) {
@@ -157,11 +158,13 @@ final class Setup extends Extension
                 default => $config->set($key, $value),
             };
             if ($old_value !== $value) {
+                $is_sensitive = isset($all_metas[$key]) && $all_metas[$key]->sensitive;
                 $old_str = var_export($old_value, true);
                 $new_str = var_export($value, true);
 
-                // If either value contains newlines, log a diff instead
-                if (str_contains($old_str, "\n") || str_contains($new_str, "\n")) {
+                if ($is_sensitive) {
+                    Log::info("setup", "Sensitive config '$key' changed");
+                } elseif (str_contains($old_str, "\n") || str_contains($new_str, "\n")) {
                     $diff = DiffHelper::calculate($old_str, $new_str, "Unified");
                     Log::info("setup", "Config '$key' changed (diff):\n" . $diff);
                 } else {

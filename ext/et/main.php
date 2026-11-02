@@ -112,7 +112,7 @@ final class ET extends Extension
         $changed_config = [];
         foreach (ConfigGroup::get_all_metas() as $key => $meta) {
             $value = $config->get($key);
-            if ($value !== $meta->default) {
+            if ($value !== $meta->default && !$meta->sensitive) {
                 $changed_config[$key] = $value;
             }
         }

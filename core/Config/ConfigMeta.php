@@ -12,6 +12,7 @@ final readonly class ConfigMeta
     /**
      * @param ConfigInput $input Override the default UI renderer
      * @param array<string, string>|callable-string|null $options A list of key-value pairs, or the name of a function to call to generate pairs
+     * @param bool $sensitive Mark sensitive strings (API keys, passwords) to be hidden in forms. Only applicable to ConfigType::STRING
      * @param (
      *     $type is ConfigType::BOOL ? bool|null :
      *     $type is ConfigType::INT ? int|null :
@@ -28,11 +29,12 @@ final readonly class ConfigMeta
         public ?string $permission = null,
         public ?string $help = null,
         public bool $advanced = false,
+        public bool $sensitive = false,
     ) {
         $this->input = $input ?? match($type) {
             ConfigType::BOOL => ConfigInput::CHECKBOX,
             ConfigType::INT => ConfigInput::NUMBER,
-            ConfigType::STRING => ConfigInput::TEXT,
+            ConfigType::STRING => $this->sensitive ? ConfigInput::PASSWORD : ConfigInput::TEXT,
             ConfigType::ARRAY => ConfigInput::MULTICHOICE,
         };
     }

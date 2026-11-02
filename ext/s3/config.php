@@ -9,10 +9,10 @@ final class S3Config extends ConfigGroup
     public const KEY = "s3";
     public ?string $title = "S3 CDN";
 
-    #[ConfigMeta("Access key ID", ConfigType::STRING)]
+    #[ConfigMeta("Access key ID", ConfigType::STRING, sensitive: true)]
     public const ACCESS_KEY_ID = 's3_access_key_id';
 
-    #[ConfigMeta("Access key secret", ConfigType::STRING)]
+    #[ConfigMeta("Access key secret", ConfigType::STRING, sensitive: true)]
     public const ACCESS_KEY_SECRET = 's3_access_key_secret';
 
     #[ConfigMeta("Endpoint", ConfigType::STRING, default: "s3.amazonaws.com")]

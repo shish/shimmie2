@@ -10,6 +10,7 @@ enum ConfigInput
     case NUMBER;
     case BYTES;
     case TEXT;
+    case PASSWORD;
     case TEXTAREA;
     case COLOR;
     case MULTICHOICE;
