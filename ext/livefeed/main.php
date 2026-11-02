@@ -37,7 +37,7 @@ final class LiveFeed extends Extension
     {
         $this->msg(
             make_link("post/view/".$event->image_id)->asAbsolute(). " - ".
-            Ctx::$user->name . ": " . str_replace("\n", " ", $event->comment)
+            Ctx::$user->name . ": " . $event->comment
         );
     }
 
@@ -56,6 +56,9 @@ final class LiveFeed extends Extension
             if (!$fp) {
                 return;
             }
+            // Strip all control characters (ASCII 0-31 and 127)
+            // to keep the output clean and on a single line
+            $data = preg_replace('/[\x00-\x1f\x7f]/u', '', $data);
             fwrite($fp, "$data\n");
             fclose($fp);
         } catch (\Exception $e) {
