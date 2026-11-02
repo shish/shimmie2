@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, DIV, IMG, INPUT, OPTION, SELECT, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR};
+use function MicroHTML\{DIV, IMG, INPUT, OPTION, SELECT, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR};
 
 /**
  * @phpstan-type Tip array{id: int, image: string, text: string, enable: bool}
@@ -75,15 +75,27 @@ class TipsTheme extends Themelet
         $url = Url::base()."/ext/tips/images/";
         $tbody = TBODY();
         foreach ($tips as $tip) {
+            $statusForm = SHM_SIMPLE_FORM(
+                make_link("tips/status/".$tip['id']),
+                SHM_SUBMIT($tip['enable'] ? "Yes" : "No"),
+                null,
+                "tip-status-form"
+            );
+            $deleteForm = Ctx::$user->can(TipsPermission::ADMIN) ? SHM_SIMPLE_FORM(
+                make_link("tips/delete/".$tip['id']),
+                SHM_SUBMIT("Delete"),
+                null,
+                "tip-delete-form"
+            ) : null;
             $tbody->appendChild(TR(
-                TD(A(["href" => make_link("tips/status/".$tip['id'])], $tip['enable'] ? "Yes" : "No")),
+                TD($statusForm),
                 TD(
                     empty($tip['image']) ?
                         null :
                         IMG(["src" => $url.$tip['image']])
                 ),
                 TD($tip['text']),
-                Ctx::$user->can(TipsPermission::ADMIN) ? TD(A(["href" => make_link("tips/delete/".$tip['id'])], "Delete")) : null
+                Ctx::$user->can(TipsPermission::ADMIN) ? TD($deleteForm) : null
             ));
         }
 

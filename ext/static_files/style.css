@@ -80,3 +80,12 @@ H3[class~="shm-toggler"] {
 .prose P:last-child {
     margin-bottom: 0;
 }
+
+.shm-button-as-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+}
