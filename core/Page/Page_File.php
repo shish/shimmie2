@@ -58,7 +58,9 @@ trait Page_File
 
             // Set filename
             if (!is_null($this->file_filename)) {
-                $this->add_http_header('Content-Disposition: ' . $this->file_disposition . '; filename=' . $this->file_filename);
+                $quoted_filename = 'filename="' . str_replace(['\\', '"'], ['\\\\', '\\"'], $this->file_filename) . '"';
+                $rfc5987_filename = 'filename*=UTF-8\'\'\'' . rawurlencode($this->file_filename);
+                $this->add_http_header('Content-Disposition: ' . $this->file_disposition . '; ' . $quoted_filename . '; ' . $rfc5987_filename);
             }
 
             // Deal with Range header
