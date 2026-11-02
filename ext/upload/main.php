@@ -357,7 +357,7 @@ final class Upload extends Extension
             try {
                 $headers = Network::fetch_url($url, $tmp_filename);
             } catch (FetchException $e) {
-                throw new UploadException("Error reading from $url: $e");
+                throw new UploadException("Error reading from $url: " . $e->getMessage());
             }
 
             // Parse metadata
