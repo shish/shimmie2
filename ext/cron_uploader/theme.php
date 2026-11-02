@@ -21,7 +21,6 @@ class CronUploaderTheme extends Themelet
         array $queue_dirinfo,
         array $uploaded_dirinfo,
         array $failed_dirinfo,
-        string $cron_cmd,
         string $cron_url,
         ?array $log_entries
     ): void {
@@ -70,13 +69,17 @@ class CronUploaderTheme extends Themelet
                 LI("If both are found, they will all be used."),
                 LI("The character \";\" will be changed into \":\" in any tags.")
             ),
-            "The cron uploader works by importing files from the queue folder whenever this url is visited:",
+            "The cron uploader works by importing files from the queue folder whenever this URL gets a POST request:",
             BR(),
             CODE($cron_url),
             UL(
                 LI("If an import is already running, another cannot start until it is done."),
                 LI("Each time it runs it will import for up to ".number_format(intval(ini_get('max_execution_time')) * .8)." seconds. This is controlled by the PHP max execution time."),
-                LI("Uploaded images will be moved to the 'uploaded' directory into a subfolder named after the time the import started. It's recommended that you remove everything out of this directory from time to time. If you have admin controls enabled, this can be done from <a href='".make_link("admin")."'>Board Admin</a>."),
+                LI(
+                    "Uploaded images will be moved to the 'uploaded' directory into a subfolder named after the time the import started. It's recommended that you remove everything out of this directory from time to time. If you have admin controls enabled, this can be done from ",
+                    A(["href" => make_link("admin")], "Board Admin"),
+                    "."
+                ),
                 LI("If you enable the db logging extension, you can view the log output on this screen. Otherwise the log will be written to a file at ".Ctx::$user->get_config()->get(CronUploaderUserConfig::DIR).DIRECTORY_SEPARATOR."uploads.log")
             )
         );

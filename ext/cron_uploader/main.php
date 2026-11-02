@@ -8,10 +8,7 @@ namespace Shimmie2;
 final class CronUploader extends Extension
 {
     public const KEY = "cron_uploader";
-
     public const NAME = "cron_uploader";
-
-    // TODO: Checkbox option to only allow localhost + a list of additional IP addresses that can be set in /cron_upload
 
     public const QUEUE_DIR = "queue";
     public const UPLOADED_DIR = "uploaded";
@@ -34,7 +31,9 @@ final class CronUploader extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if ($event->page_matches("cron_upload/run")) {
+        if ($event->page_matches("cron_upload/run", method: "GET")) {
+            throw new UserError("POST is required for this endpoint");
+        } elseif ($event->page_matches("cron_upload/run", method: "POST", authed: false, permission: CronUploaderPermission::CRON_RUN)) {
             $this->process_upload();
         } elseif ($event->page_matches("cron_upload", permission: CronUploaderPermission::CRON_RUN)) {
             $this->display_documentation();
@@ -162,11 +161,6 @@ final class CronUploader extends Extension
         return (string)make_link("cron_upload/run", ["api_key" => $user_api_key])->asAbsolute();
     }
 
-    private function get_cron_cmd(): string
-    {
-        return "curl --silent " . $this->get_cron_url();
-    }
-
     private function display_documentation(): void
     {
         $this->prep_root_dir();
@@ -205,7 +199,6 @@ final class CronUploader extends Extension
             $queue_dirinfo,
             $uploaded_dirinfo,
             $failed_dirinfo,
-            $this->get_cron_cmd(),
             $this->get_cron_url(),
             $logs
         );
@@ -268,15 +261,11 @@ final class CronUploader extends Extension
         Ctx::$page->add_http_header("Content-Type: text/plain");
         Ctx::$page->send_headers();
 
-        if (!Ctx::$user->can(CronUploaderPermission::CRON_RUN)) {
-            throw new PermissionDenied("User does not have permission to run cron upload");
-        }
-
         Log::info(self::NAME, "Logged in as user " . Ctx::$user->name);
 
         $lockfile = \Safe\fopen($this->get_lock_file()->str(), "w");
         if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
-            throw new ServerError("Cron upload process is already running");
+            throw new UserError("Cron upload process is already running");
         }
 
         self::$IMPORT_RUNNING = true;
@@ -335,7 +324,6 @@ final class CronUploader extends Extension
             Log::info(self::NAME, "Items added: $added");
             Log::info(self::NAME, "Items merged: $merged");
             Log::info(self::NAME, "Items failed: $failed");
-
 
             return true;
         } finally {
