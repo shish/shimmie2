@@ -94,23 +94,22 @@ final class GraphQL extends Extension
                 header('Access-Control-Max-Age: 86400');
             }
         }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
-                header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-            }
-            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
-                header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
-            }
-            exit(0);
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
+            header("Access-Control-Allow-Methods: POST");
         }
+        if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+            header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+        }
+        exit(0);
     }
 
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if ($event->page_matches("graphql")) {
+        if ($event->page_matches("graphql", method: "OPTIONS")) {
             $this->cors();
+        }
+        if ($event->page_matches("graphql", method: "POST", authed: false)) {
             $t1 = ftime();
             $server = new StandardServer([
                 'schema' => self::get_schema(),
@@ -133,8 +132,11 @@ final class GraphQL extends Extension
             // sleep(1);
             Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode($body, JSON_UNESCAPED_UNICODE));
         }
-        if ($event->page_matches("graphql_upload")) {
+
+        if ($event->page_matches("graphql_upload", method: "OPTIONS")) {
             $this->cors();
+        }
+        if ($event->page_matches("graphql_upload", method: "POST", authed: false)) {
             Ctx::$page->set_data(MimeType::JSON, \Safe\json_encode(self::handle_uploads($event->POST)));
         }
     }
