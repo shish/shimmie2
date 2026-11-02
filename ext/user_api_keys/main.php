@@ -14,7 +14,7 @@ final class UserApiKeys extends Extension
     {
         global $database;
 
-        if ($event->GET->get("api_key")) {
+        if ($event->GET->get("api_key") && $this->is_api_key_ip_allowed()) {
             $user_id = $database->get_one(
                 "SELECT user_id FROM user_config WHERE value=:value AND name=:name",
                 ["value" => $event->GET->get("api_key"), "name" => UserApiKeysUserConfig::API_KEY]
@@ -26,7 +26,13 @@ final class UserApiKeys extends Extension
         }
 
         if ($event->page_matches("user_admin/reset_api_key", method: "POST")) {
-            Ctx::$user->get_config()->set(UserApiKeysUserConfig::API_KEY, "");
+            $key = generate_key();
+            Ctx::$user->get_config()->set(UserApiKeysUserConfig::API_KEY, $key);
+            Ctx::$page->set_redirect(make_link("user"));
+        }
+
+        if ($event->page_matches("user_admin/delete_api_key", method: "POST")) {
+            Ctx::$user->get_config()->delete(UserApiKeysUserConfig::API_KEY);
             Ctx::$page->set_redirect(make_link("user"));
         }
     }
@@ -34,16 +40,30 @@ final class UserApiKeys extends Extension
     #[EventListener]
     public function onUserOperationsBuilding(UserOperationsBuildingEvent $event): void
     {
-        // Only show the API key to the user themselves
         if (Ctx::$user->id !== $event->user->id) {
             return;
         }
 
         $key = $event->user_config->get(UserApiKeysUserConfig::API_KEY);
-        if (!$key) {
-            $key = generate_key();
-            $event->user_config->set(UserApiKeysUserConfig::API_KEY, $key);
+        $event->add_part($this->theme->get_user_operations($key ?? ""));
+    }
+
+    private function is_api_key_ip_allowed(): bool
+    {
+        $allowed_ips = Ctx::$config->get(UserApiKeysConfig::ALLOWED_IPS);
+        $client_ip = Network::get_real_ip();
+        $ip_list = array_map('trim', explode(',', $allowed_ips));
+
+        foreach ($ip_list as $ip_range) {
+            try {
+                if (IPRange::parse($ip_range)->contains($client_ip)) {
+                    return true;
+                }
+            } catch (\InvalidArgumentException $e) {
+                continue;
+            }
         }
-        $event->add_part($this->theme->get_user_operations($key));
+
+        return false;
     }
 }
