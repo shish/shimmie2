@@ -360,11 +360,16 @@ final class UserPage extends Extension
             }
         }
         if ($event->page_matches("user_admin/delete_user", method: "POST", permission: UserAccountsPermission::DELETE_USER)) {
-            $this->delete_user(
-                int_escape($event->POST->req('id')),
-                $event->POST->get("with_images") === "on",
-                $event->POST->get("with_comments") === "on"
-            );
+            $duser = User::by_id(int_escape($event->POST->req('id')));
+            if ($this->user_can_edit_user($user, $duser)) {
+                $this->delete_user(
+                    $duser->id,
+                    $event->POST->get("with_images") === "on",
+                    $event->POST->get("with_comments") === "on"
+                );
+            } else {
+                throw new PermissionDenied("You do not have permission to delete this user");
+            }
         }
 
         if ($event->page_matches("user/{name}")) {
