@@ -182,8 +182,8 @@ final class Pools extends Extension
         $user = Ctx::$user;
         $page = Ctx::$page;
         if (
-            $event->page_matches("pool/list", paged: true)
-            || $event->page_matches("pool/list/{search}", paged: true)
+            $event->page_matches("pool/list", method: "GET", paged: true)
+            || $event->page_matches("pool/list/{search}", method: "GET", paged: true)
         ) { //index
             if ($event->GET->get('search')) {
                 $page->set_redirect(make_link('pool/list/'. url_escape($event->GET->get('search') . "/1")));
@@ -207,11 +207,11 @@ final class Pools extends Extension
             );
             $page->set_redirect(make_link("pool/view/" . $pce->new_id));
         }
-        if ($event->page_matches("pool/view/{pool_id}", method: "GET", paged: true)) {
+        if ($event->page_matches("pool/view/{pool_id}", method: "GET", paged: true)) { // GET
             $pool_id = $event->get_iarg('pool_id');
             $this->get_posts($event->get_iarg('page_num', 1) - 1, $pool_id);
         }
-        if ($event->page_matches("pool/updated", paged: true)) {
+        if ($event->page_matches("pool/updated", method: "GET", paged: true)) {
             $this->get_history($event->get_iarg('page_num', 1) - 1);
         }
         if ($event->page_matches("pool/revert/{history_id}", method: "POST", permission: PoolsPermission::UPDATE)) {
@@ -219,7 +219,7 @@ final class Pools extends Extension
             $this->revert_history($history_id, $user);
             $page->set_redirect(make_link("pool/updated"));
         }
-        if ($event->page_matches("pool/edit/{pool_id}")) {
+        if ($event->page_matches("pool/edit/{pool_id}", method: "GET")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
@@ -228,7 +228,7 @@ final class Pools extends Extension
             $images = array_filter(array_map(Post::by_id(...), $image_ids));
             $this->theme->edit_pool($pool, $images);
         }
-        if ($event->page_matches("pool/order/{pool_id}")) {
+        if ($event->page_matches("pool/order/{pool_id}", method: "GET")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
@@ -283,7 +283,7 @@ final class Pools extends Extension
             });
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
-        if ($event->page_matches("pool/import/{pool_id}")) {
+        if ($event->page_matches("pool/import/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
@@ -304,7 +304,7 @@ final class Pools extends Extension
             $page->flash("Post added to {$pool->title}");
             $page->set_redirect(make_link("post/view/$image_id"));
         }
-        if ($event->page_matches("pool/add_posts/{pool_id}")) {
+        if ($event->page_matches("pool/add_posts/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
@@ -313,7 +313,7 @@ final class Pools extends Extension
             send_event(new PoolAddPostsEvent($pool_id, $image_ids));
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
-        if ($event->page_matches("pool/remove_posts/{pool_id}")) {
+        if ($event->page_matches("pool/remove_posts/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
@@ -333,7 +333,7 @@ final class Pools extends Extension
             $this->add_history($pool_id, 0, $images, $count);
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
-        if ($event->page_matches("pool/edit_description/{pool_id}")) {
+        if ($event->page_matches("pool/edit_description/{pool_id}", method: "POST")) {
             $pool_id = $event->get_iarg('pool_id');
             $pool = $this->get_single_pool($pool_id);
             self::assert_permission($user, $pool);
@@ -344,7 +344,7 @@ final class Pools extends Extension
             );
             $page->set_redirect(make_link("pool/view/" . $pool_id));
         }
-        if ($event->page_matches("pool/nuke/{pool_id}")) {
+        if ($event->page_matches("pool/nuke/{pool_id}", method: "POST")) {
             // Completely remove the given pool.
             //  -> Only admins and owners may do this
             $pool_id = $event->get_iarg('pool_id');
