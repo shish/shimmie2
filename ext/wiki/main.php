@@ -294,6 +294,11 @@ final class Wiki extends Extension
             return true;
         }
 
+        // only admins can edit system pages (wiki:*)
+        if (str_starts_with($page->title, "wiki:")) {
+            return false;
+        }
+
         // anon / user can't ever edit locked pages
         if ($page->is_locked()) {
             return false;
