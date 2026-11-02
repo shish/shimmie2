@@ -34,7 +34,7 @@ final class SVGFileHandler extends DataHandlerExtension
     #[EventListener]
     public function onMediaReplace(MediaReplaceEvent $event): void
     {
-        if ($this->supported_mime($event->image->get_mime())) {
+        if ($this->check_contents($event->tmp_filename)) {
             // Sanitise SVG on replace to prevent users with REPLACE_IMAGE
             // permission from storing SVGs with malicious content
             $sanitizer = new Sanitizer();
