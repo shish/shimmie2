@@ -64,10 +64,10 @@ class NotesTheme extends Themelet
         Ctx::$page->add_html_header(SCRIPT(
             ["type" => "text/javascript"],
             \MicroHTML\rawHTML("
-            window.notes = ".\Safe\json_encode($notes).";
+            window.notes = ".\Safe\json_encode($notes, JSON_HEX_TAG | JSON_HEX_AMP).";
             window.notes_image_id = $image_id;
-            window.notes_admin = ".\Safe\json_encode($adminOptions).";
-            window.notes_edit = ".\Safe\json_encode($editOptions).";
+            window.notes_admin = ".\Safe\json_encode($adminOptions, JSON_HEX_TAG | JSON_HEX_AMP).";
+            window.notes_edit = ".\Safe\json_encode($editOptions, JSON_HEX_TAG | JSON_HEX_AMP).";
             ")
         ));
     }
