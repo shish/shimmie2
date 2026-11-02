@@ -123,13 +123,16 @@ final class OuroborosPost extends _SafeOuroborosImage
             // implode(explode()) to resolve aliases and sanitise
             $this->tags = Tag::implode(Tag::explode(urldecode($post['tags'])));
         }
-        if (!is_null($files) && array_key_exists('file', $files)) {
-            $file = $files['file'];
-            if (!is_null($file) && is_array($file) && array_key_exists('tmp_name', $file) && array_key_exists('name', $file)) {
-                if (is_uploaded_file($file['tmp_name'])) {
-                    $this->file = $file;
-                }
-            }
+        if (
+            !is_null($files) &&
+            isset($files["tmp_name"]["file"], $files["name"]["file"], $files["error"]["file"])
+            && $files["error"]["file"] === UPLOAD_ERR_OK
+            && is_uploaded_file($files["tmp_name"]["file"])
+        ) {
+            $this->file = [
+                'tmp_name' => $files['tmp_name']['file'],
+                'name' => $files['name']['file'],
+            ];
         }
         if (array_key_exists('rating', $post)) {
             assert(
