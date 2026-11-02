@@ -323,6 +323,31 @@ class UserPageTheme extends Themelet
         return $html;
     }
 
+    public function display_logout_confirmation(): void
+    {
+        $form = SHM_SIMPLE_FORM(
+            make_link("user_admin/logout"),
+            TABLE(
+                ["class" => "form"],
+                TBODY(
+                    TR(
+                        TD(["colspan" => 2], "Are you sure you want to log out?")
+                    )
+                ),
+                TFOOT(
+                    TR(
+                        TD(INPUT(["type" => "submit", "value" => "Log Out"])),
+                        TD(A(["href" => make_link()], "Cancel"))
+                    )
+                )
+            )
+        );
+
+        Ctx::$page->set_title("Log Out");
+        $this->display_navigation();
+        Ctx::$page->add_block(new Block("Log Out", $form));
+    }
+
     public function get_help_html(): HTMLElement
     {
         return emptyHTML(

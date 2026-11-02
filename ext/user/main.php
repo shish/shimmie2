@@ -305,7 +305,9 @@ final class UserPage extends Extension
             $page->add_block(new Block(null, emptyHTML($t->table($t->query()), $t->paginator())));
         }
         if ($event->page_matches("user_admin/logout", method: "GET")) {
-            // FIXME: security
+            $this->theme->display_logout_confirmation();
+        }
+        if ($event->page_matches("user_admin/logout", method: "POST")) {
             $this->page_logout();
         }
 

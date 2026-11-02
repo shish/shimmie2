@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, DIV, HR, P, TABLE, TD, TR, emptyHTML, rawHTML};
+use function MicroHTML\{A, BUTTON, DIV, HR, INPUT, P, TABLE, TD, TR, emptyHTML, rawHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -93,11 +93,21 @@ class FutabaCommentListTheme extends CommentListTheme
         $del = null;
         if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
             $comment_preview = substr($tfe->stripped, 0, 50);
-            $del = emptyHTML(" - [", A([
-                "data-message" => "Delete comment by {$comment->owner->name}:\n$comment_preview",
-                "onclick" => "return confirm(self.dataset.message);",
-                "href" => make_link("comment/delete/$i_comment_id/$i_image_id"),
-            ], "Delete"), "]");
+            $deleteForm = SHM_SIMPLE_FORM(
+                make_link("comment/delete"),
+                INPUT(["type" => "hidden", "name" => "comment_id", "value" => $i_comment_id]),
+                INPUT(["type" => "hidden", "name" => "image_id", "value" => $i_image_id]),
+                BUTTON(
+                    [
+                        "type" => "submit",
+                        "class" => "shm-button-as-link",
+                        "data-message" => "Delete comment by {$comment->owner->name}:\n$comment_preview",
+                        "onclick" => "return confirm(self.dataset.message);"
+                    ],
+                    "Delete"
+                )
+            );
+            $del = emptyHTML(" - [", $deleteForm, "]");
         }
         if ($this->post_page) {
             $j_name = json_encode($comment->owner->name, JSON_HEX_TAG | JSON_HEX_AMP);

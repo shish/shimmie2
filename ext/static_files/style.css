@@ -90,3 +90,12 @@ H3[class~="shm-toggler"] {
     flex: 0;
     width: 2em;
 }
+
+.shm-button-as-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+}
