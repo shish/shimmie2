@@ -15,7 +15,14 @@ final class Terms extends Extension
         $page = Ctx::$page;
         if ($event->page_starts_with("accept_terms")) {
             $page->add_cookie("accepted_terms", "true", time() + 60 * 60 * 24 * Ctx::$config->get(UserAccountsConfig::LOGIN_MEMORY));
-            $page->set_redirect(make_link(explode('/', $event->path, 2)[1]));
+            $parts = explode('/', $event->path, 2);
+            $redirect_path = $parts[1] ?? "";
+            if (preg_match('/^[a-zA-Z0-9\/_.-]*$/', $redirect_path)) {
+                $page->set_redirect(make_link($redirect_path));
+            } else {
+                // If path is invalid, redirect to home
+                $page->set_redirect(make_link());
+            }
         } else {
             // run on all pages unless any of:
             // - user is logged in
