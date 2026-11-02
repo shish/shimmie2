@@ -67,6 +67,18 @@ final class PrivateImage extends Extension
         }
     }
 
+    #[EventListener]
+    public function onMediaDownloading(MediaDownloadingEvent $event): void
+    {
+        if (
+            $event->image['private'] === true
+            && $event->image->owner_id !== Ctx::$user->id
+            && !Ctx::$user->can(PrivateImagePermission::SET_OTHERS_PRIVATE_IMAGES)
+        ) {
+            throw new PermissionDenied("Access denied");
+        }
+    }
+
     public const SEARCH_REGEXP = "/^private[=:](yes|no|any)/i";
 
     #[EventListener]
