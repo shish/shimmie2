@@ -12,7 +12,7 @@ class Automatic1111Tagger extends Extension
     public function onPageRequest(PageRequestEvent $event): void
     {
         // Handle interrogation request
-        if ($event->page_matches("automatic1111_tagger/interrogate/{post_id}")) {
+        if ($event->page_matches("automatic1111_tagger/interrogate/{post_id}", method: "POST", permission: Automatic1111TaggerPermission::INTERROGATE_IMAGE)) {
             $post_id = $event->get_iarg('post_id');
             $image_obj = Post::by_id_ex($post_id);
             $image_contents = $image_obj->get_thumb_filename()->get_contents();
@@ -68,7 +68,7 @@ class Automatic1111Tagger extends Extension
             Ctx::$page->set_redirect(make_link("post/view/" . $post_id));
         }
 
-        if ($event->page_matches("automatic1111_tagger/get_rating/{post_id}")) {
+        if ($event->page_matches("automatic1111_tagger/get_rating/{post_id}", method: "POST", permission: Automatic1111TaggerPermission::GET_IMAGE_RATING)) {
             $post_id = $event->get_iarg('post_id');
             $image_obj = Post::by_id_ex($post_id);
             $image_contents = $image_obj->get_thumb_filename()->get_contents();
