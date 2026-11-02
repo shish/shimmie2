@@ -133,7 +133,11 @@ final readonly class Url
                 return $dest;
             }
         }
-        return Url::parse($referer);
+        $parsed_referer = Url::parse($referer);
+        if ($parsed_referer->isSameOrigin()) {
+            return $parsed_referer;
+        }
+        return $dest;
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -275,5 +279,23 @@ final readonly class Url
     public static function are_niceurls_enabled(): bool
     {
         return getenv("SHM_NICE_URLS") === "true" || Ctx::$config->get(SetupConfig::NICE_URLS);
+    }
+
+    /**
+     * Check if this URL is safe for redirect (same-origin only).
+     * Returns true if:
+     * - The URL is a relative path (no scheme/host)
+     * - The URL matches the current origin (scheme, host, port)
+     */
+    public function isSameOrigin(): bool
+    {
+        if ($this->scheme === null && $this->host === null) {
+            return true;
+        }
+
+        $current = self::current()->asAbsolute();
+        return $this->scheme === $current->scheme
+            && $this->host === $current->host
+            && $this->port === $current->port;
     }
 }
