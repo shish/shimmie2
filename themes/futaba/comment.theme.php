@@ -102,7 +102,7 @@ class FutabaCommentListTheme extends CommentListTheme
                         "type" => "submit",
                         "class" => "shm-button-as-link",
                         "data-message" => "Delete comment by {$comment->owner->name}:\n$comment_preview",
-                        "onclick" => "return confirm(self.dataset.message);"
+                        "onclick" => "return confirm(this.dataset.message);"
                     ],
                     "Delete"
                 )

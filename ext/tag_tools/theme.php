@@ -16,7 +16,7 @@ class TagToolsTheme extends Themelet
             action: make_link("admin/$action"),
             children: $protected ? [
                 INPUT(["type" => 'submit', "id" => $action, "value" => $name, "disabled" => "disabled"]),
-                INPUT(["type" => 'checkbox', "data-action" => $action, "onclick" => "document.getElementById(self.dataset.action).disabled = !this.checked"])
+                INPUT(["type" => 'checkbox', "data-action" => $action, "onclick" => "document.getElementById(this.dataset.action).disabled = !this.checked"])
             ] : [
                 INPUT(["type" => 'submit', "id" => $action, "value" => $name])
             ]
