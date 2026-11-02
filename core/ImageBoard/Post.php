@@ -389,8 +389,8 @@ final class Post implements \ArrayAccess
     public function get_nice_media_name(): string
     {
         $text = send_event(new ParseLinkTemplateEvent('$id - $tags.$ext', $this))->text;
-        $text = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $text);
         $text = rawurldecode($text);
+        $text = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $text);
         $text = truncate_filename($text);
         return $text;
     }
