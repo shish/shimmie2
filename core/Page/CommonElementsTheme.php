@@ -277,11 +277,11 @@ class CommonElementsTheme extends Themelet
                     $val = $config->get($key, ConfigType::ARRAY) ?? [];
                     $input = SELECT(["id" => $key, "name" => "_config_{$key}[]", "multiple" => true, "size" => 5]);
                     $options = $meta->options;
-                    if (is_callable($options)) {
-                        $options = call_user_func($options);
+                    if (is_null($options)) {
+                        $options = [];
                     }
-                    if (is_string($options)) {
-                        throw new \Exception("options are invalid: $options");
+                    if (!is_array($options)) {
+                        $options = call_user_func($options);
                     }
                     foreach ($options as $optname => $optval) {
                         $input->appendChild(OPTION(["value" => $optval, "selected" => in_array($optval, $val)], $optname));
