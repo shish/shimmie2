@@ -27,7 +27,7 @@ final class Akismet extends Extension
             return;
         }
 
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore argument.type (the Akismet docstring is wrong?)
         $akismet = new \Akismet($_SERVER['SERVER_NAME'], $key, [
             'author'       => Ctx::$user->name,
             'email'        => Ctx::$user->email,

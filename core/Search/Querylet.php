@@ -72,7 +72,7 @@ final class Querylet
         // be very careful here - we take a literal string as input,
         // and add namespaces to the parameter names but otherwise
         // leave it as-is
-        // @phpstan-ignore-next-line
+        // @phpstan-ignore assign.propertyType
         $this->sql = $sql;
         $this->variables = $newVariables;
     }

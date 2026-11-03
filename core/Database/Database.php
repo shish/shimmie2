@@ -264,7 +264,7 @@ class Database
         $_start = ftime();
         $res = $this->_execute($query, $args)->fetchAll(\PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
-        // @phpstan-ignore-next-line - fetchAll(PDO::FETCH_COLUMN) returns list<mixed>
+        // @phpstan-ignore return.type (fetchAll(PDO::FETCH_COLUMN) returns list<mixed>)
         return $res;
     }
 
@@ -372,7 +372,7 @@ class Database
             $this->connect_engine();
         }
         $data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
-        // @phpstan-ignore-next-line - non-literal string is handled very carefully
+        // @phpstan-ignore argument.type (non-literal string is handled very carefully)
         $this->execute($this->get_engine()->create_table_sql($name, $data));
     }
 
@@ -434,12 +434,12 @@ class Database
         $d = $this->get_driver_id();
         if ($d === DatabaseDriverID::MYSQL) {
             // MySQL supports RAND(n), where n is a random seed. Use that.
-            // @phpstan-ignore-next-line - be very careful
+            // @phpstan-ignore return.type (be very careful)
             return "RAND($seed)";
         }
 
         // As fallback, use MD5 as a DRBG.
-        // @phpstan-ignore-next-line - be very careful
+        // @phpstan-ignore return.type (be very careful)
         return "MD5($seed || '+' || $id_column)";
     }
 }

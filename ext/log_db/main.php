@@ -72,7 +72,7 @@ final class ActorColumn extends Column
     /**
      * @param array{username: string, address: string} $row
      */
-    // @phpstan-ignore-next-line - parent class is array<string,mixed> but we are a subset
+    // @phpstan-ignore method.childParameterType (parent class is array<string,mixed> but we are a subset)
     public function display(array $row): HTMLElement
     {
         $ret = emptyHTML();

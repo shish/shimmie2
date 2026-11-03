@@ -27,10 +27,7 @@ abstract class Extension extends Enablable
 
     public function __construct()
     {
-        // When we say "$theme should be any Themelet", phpstan interprets
-        // that as "subclass of Themelet, but not the parent class"...
-        // @phpstan-ignore-next-line
-        $this->theme = Themelet::get_for_extension_class(get_called_class());
+        $this->theme = Themelet::get_for_extension_class(static::class);
     }
 
     protected function get_version(): int

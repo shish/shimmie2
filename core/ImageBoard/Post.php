@@ -125,14 +125,10 @@ final class Post implements \ArrayAccess
 
     public function offsetExists(mixed $offset): bool
     {
-        // @phpstan-ignore-next-line
-        assert(is_string($offset));
         return array_key_exists($offset, static::$prop_types);
     }
     public function offsetGet(mixed $offset): mixed
     {
-        // @phpstan-ignore-next-line
-        assert(is_string($offset));
         if (!$this->offsetExists($offset)) {
             $known = implode(", ", array_keys(static::$prop_types));
             throw new \OutOfBoundsException("Undefined dynamic property: $offset (Known: $known)");
@@ -146,8 +142,6 @@ final class Post implements \ArrayAccess
     }
     public function offsetUnset(mixed $offset): void
     {
-        // @phpstan-ignore-next-line
-        assert(is_string($offset));
         unset($this->dynamic_props[$offset]);
     }
 
@@ -621,7 +615,7 @@ final class Post implements \ArrayAccess
             // insert each new tags
             $ids = array_map(fn ($tag) => Tag::get_or_create_id($tag), $tags);
             $values = implode(", ", array_map(fn ($id) => "({$this->id}, $id)", $ids));
-            // @phpstan-ignore-next-line
+            // @phpstan-ignore argument.type (be very careful, the variable data should only be integers)
             Ctx::$database->execute("INSERT INTO image_tags(image_id, tag_id) VALUES $values");
             Ctx::$database->execute("
                 UPDATE tags

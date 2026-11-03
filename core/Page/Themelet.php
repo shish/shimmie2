@@ -20,29 +20,35 @@ class Themelet
      */
     public static function get_theme_class(string $class): ?object
     {
-        $class = str_replace("Shimmie2\\", "", $class);
+        $short = str_replace("Shimmie2\\", "", $class);
         $theme = ucfirst(get_theme());
         $options = [
-            "\\Shimmie2\\$theme$class",
-            "\\Shimmie2\\Custom$class",
-            "\\Shimmie2\\$class",
+            "\\Shimmie2\\$theme$short",
+            "\\Shimmie2\\Custom$short",
+            "\\Shimmie2\\$short",
         ];
         foreach ($options as $option) {
             if (class_exists($option)) {
-                // @phpstan-ignore-next-line
-                return new $option();
+                $obj = new $option();
+                assert($obj instanceof $class);
+                return $obj;
             }
         }
         return null;
     }
 
     /**
-     * @param class-string<Extension> $class
+     * @template T of Themelet
+     * @param class-string<Extension<T>> $class
+     * @return T
      */
     public static function get_for_extension_class(string $class): Themelet
     {
         /** @var class-string<Themelet> $theme_class */
         $theme_class = $class . "Theme";
+        // Theme lookup is by naming convention, which phpstan can't verify,
+        // so trust that FooTheme matches the T in `@extends Extension<T>`
+        /** @var T */
         return static::get_theme_class($theme_class) ?? new Themelet();
     }
 

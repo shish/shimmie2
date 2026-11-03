@@ -76,13 +76,9 @@ final class QueryArray implements \ArrayAccess, \JsonSerializable
         return $val;
     }
 
-    /**
-     * @param string $offset
-     * @param string|string[] $value
-     */
-    // @phpstan-ignore-next-line
     public function offsetSet(mixed $offset, mixed $value): void
     {
+        assert(is_string($offset));
         $this->params[$offset] = $value;
     }
 
