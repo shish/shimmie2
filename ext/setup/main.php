@@ -56,39 +56,42 @@ final class ConfigSaveEvent extends Event
                 if (is_array($type)) {
                     throw new InvalidInput("Invalid value for '_type_$key'");
                 }
-                $value = $post["_config_$key"] ?? null;
-                if ($value === "") {
-                    $value = null;
-                }
-
-                if ($type === "string") {
-                    $typed_value = $value;
-                } elseif ($type === "int") {
-                    assert(!is_array($value));
-                    $typed_value = $value !== null ? parse_shorthand_int($value) : null;
-                } elseif ($type === "bool") {
-                    $typed_value = $value === "on";
-                } elseif ($type === "array") {
-                    $typed_value = $value;
-                } else {
-                    if (is_array($value)) {
-                        $value = implode(", ", $value);
-                    }
-                    throw new InvalidInput("Can't cast '$value' to $type for '$key'");
+                $string_value = $post["_config_$key"] ?? null;
+                if ($string_value === "") {
+                    $string_value = null;
                 }
 
                 // Validate against known configuration metadata options
-                if (isset($all_metas[$key]) && $all_metas[$key]->options !== null && $typed_value !== null) {
-                    if (is_array($value)) {
-                        throw new InvalidInput("Value for '$key' must be a single value, got array");
-                    }
+                if (isset($all_metas[$key]) && $all_metas[$key]->options !== null && $string_value !== null) {
                     $options = $all_metas[$key]->options;
-                    if (is_callable($options)) {
+                    // Options can either be an array, or a callable that returns an array -
+                    // we check for "!is_array()" instead of "is_callable()" because the latter
+                    // can return true for both cases, eg the array `["ClassName", "method_name"]`
+                    if (!is_array($options)) {
                         $options = $options();
                     }
-                    if (is_array($options) && !in_array($typed_value, $options)) {
-                        throw new InvalidInput("Invalid value '$value' for '$key' - select from " . implode(", ", $options));
+                    $string_values = is_array($string_value) ? $string_value : [$string_value];
+                    foreach ($string_values as $tv) {
+                        if (!in_array($tv, $options)) {
+                            throw new InvalidInput("Invalid value '$tv' for '$key' - select from " . implode(", ", $options));
+                        }
                     }
+                }
+
+                if ($type === "string") {
+                    $typed_value = $string_value;
+                } elseif ($type === "int") {
+                    assert(!is_array($string_value));
+                    $typed_value = $string_value !== null ? parse_shorthand_int($string_value) : null;
+                } elseif ($type === "bool") {
+                    $typed_value = $string_value === "on";
+                } elseif ($type === "array") {
+                    $typed_value = $string_value;
+                } else {
+                    if (is_array($string_value)) {
+                        $string_value = implode(", ", $string_value);
+                    }
+                    throw new InvalidInput("Can't cast '$string_value' to $type for '$key'");
                 }
 
                 $settings[$key] = $typed_value;

@@ -14,13 +14,16 @@ enum LogLevel: int
     case CRITICAL = 50;
 
     /**
-     * @return array<string, int>
+     * Returns string:string instead of string:int because it is
+     * used for HTML <select> options
+     *
+     * @return array<string, string>
      */
     public static function names_to_levels(): array
     {
         $ret = [];
         foreach (LogLevel::cases() as $case) {
-            $ret[$case->name] = $case->value;
+            $ret[$case->name] = (string)$case->value;
         }
         return $ret;
     }

@@ -11,7 +11,7 @@ final readonly class ConfigMeta
 
     /**
      * @param ConfigInput $input Override the default UI renderer
-     * @param array<string, string>|callable-string|null $options A list of key-value pairs, or the name of a function to call to generate pairs
+     * @param array<string, string>|(string&callable():array<string,string>)|null $options A list of key-value pairs, or the name of a function to call to generate pairs
      * @param (
      *     $type is ConfigType::BOOL ? bool|null :
      *     $type is ConfigType::INT ? int|null :

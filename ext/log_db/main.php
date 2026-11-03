@@ -119,7 +119,7 @@ final class MessageColumn extends Column
         $s->appendChild(OPTION(["value" => ""], '-'));
         foreach (LogLevel::names_to_levels() as $k => $v) {
             $attrs = ["value" => $v];
-            if ((string)$v === @$inputs["r_{$this->name}"][1]) {
+            if ($v === @$inputs["r_{$this->name}"][1]) {
                 $attrs["selected"] = true;
             }
             $s->appendChild(OPTION($attrs, $k));
