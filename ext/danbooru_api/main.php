@@ -15,15 +15,21 @@ final class DanbooruApi extends Extension
     {
         $page = Ctx::$page;
 
-        if ($event->page_matches("uploads/new")) { // Handling the URL given by the "Upload to Danbooru" web extension
+        if ($event->page_matches("uploads/new", method: "GET")) { // Handling the URL given by the "Upload to Danbooru" web extension
             $page->set_redirect((make_link("upload", ["url" => @$_GET['url'], "source" => @$_GET['ref']])));
-        } elseif ($event->page_matches("api/danbooru/add_post") || $event->page_matches("api/danbooru/post/create.xml")) {
+        } elseif (
+            $event->page_matches("api/danbooru/add_post", method: "POST") ||
+            $event->page_matches("api/danbooru/post/create.xml", method: "POST")
+        ) {
             // No XML data is returned from this function
             $page->set_data(MimeType::TEXT, "");
             $this->api_add_post($event);
-        } elseif ($event->page_matches("api/danbooru/find_posts") || $event->page_matches("api/danbooru/post/index.xml")) {
+        } elseif (
+            $event->page_matches("api/danbooru/find_posts", method: "GET") ||
+            $event->page_matches("api/danbooru/post/index.xml", method: "GET")
+        ) {
             $page->set_data(MimeType::XML_APPLICATION, (string)$this->api_find_posts($event));
-        } elseif ($event->page_matches("api/danbooru/find_tags")) {
+        } elseif ($event->page_matches("api/danbooru/find_tags", method: "GET")) {
             $page->set_data(MimeType::XML_APPLICATION, (string)$this->api_find_tags($event));
         }
 
@@ -31,7 +37,7 @@ final class DanbooruApi extends Extension
         // Shimmie view page
         // Example: danbooruup says the url is https://shimmie/api/danbooru/post/show/123
         // This redirects that to https://shimmie/post/view/123
-        elseif ($event->page_matches("api/danbooru/post/show/{id}")) {
+        elseif ($event->page_matches("api/danbooru/post/show/{id}", method: "GET")) {
             $fixedlocation = make_link("post/view/" . $event->get_iarg('id'));
             $page->set_redirect($fixedlocation);
         }
