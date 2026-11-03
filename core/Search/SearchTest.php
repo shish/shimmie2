@@ -86,7 +86,7 @@ final class SearchTest extends ShimmiePHPUnitTestCase
     ): void {
         $tcs = array_map(
             fn ($tag) => ($tag[0] === "-") ?
-                // @phpstan-ignore-next-line
+                // @phpstan-ignore argument.type (our test data won't send "-" by itself)
                 new TagCondition(substr($tag, 1), false) :
                 new TagCondition($tag),
             $tcs
@@ -106,8 +106,8 @@ final class SearchTest extends ShimmiePHPUnitTestCase
         $obj = new Search();
         $params = new SearchParameters($tcs, $ics, $order);
         $querylet = $build_search_querylet->invokeArgs($obj, [$params, $limit, $start]);
+        assert($querylet instanceof Querylet);
 
-        // @phpstan-ignore-next-line
         $results = Ctx::$database->get_all($querylet->sql, $querylet->variables);
 
         static::assertThat(

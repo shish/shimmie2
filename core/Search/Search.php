@@ -304,7 +304,7 @@ final class Search
                 $i = 0;
                 foreach ($inner_joins as $inner_join) {
                     $i++;
-                    // @phpstan-ignore-next-line
+                    // @phpstan-ignore argument.type (we know $i is an int)
                     $sub_query->append(new Querylet("INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id "));
                     $sub_query->append($inner_join);
                 }

@@ -121,7 +121,7 @@ abstract class DataHandlerExtension extends Extension
                 $attrs = [
                     "id" => "shm_post_media",
                     "data-handler" => static::KEY,
-                    "data-mime" => $event->image->get_mime(),
+                    "data-mime" => (string)$event->image->get_mime(),
                 ];
                 foreach (send_event(new PostInfoGetEvent($event->image))->params->toArray() as $key => $value) {
                     if (!preg_match('/^[a-zA-Z0-9\-]+$/', $key)) {
@@ -129,8 +129,9 @@ abstract class DataHandlerExtension extends Extension
                     }
                     $attrs["data-$key"] = $value;
                 }
-                // $attrs keys have some dynamic data- attributes, but we have checked them
-                // @phpstan-ignore-next-line - see above
+                // $attrs keys are expected to be literal strings for security - here
+                // we have some dynamic keys, but checked against a regex above
+                // @phpstan-ignore argument.type (see above)
                 $media = DIV($attrs, $this->theme->build_media($event->image));
                 Ctx::$page->add_block(new Block(null, $media, "main", 10, id: static::KEY . "_media"));
             }

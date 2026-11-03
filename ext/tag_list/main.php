@@ -51,16 +51,11 @@ final class TagList extends Extension
                     return [];
                 }
 
-                $where = [];
-                $args = [];
+                $q = new Querylet("SELECT id FROM tags WHERE 1=1");
                 foreach ($tags as $i => $tag) {
-                    $arg = "tag$i";
-                    $args[$arg] = Tag::sqlify($tag);
-                    $where[] = "SCORE_ILIKE(tag, :$arg)";
+                    $q->append(new Querylet(" OR SCORE_ILIKE(tag, :tag)", ["tag" => Tag::sqlify($tag)]));
                 }
-
-                // @phpstan-ignore-next-line
-                return Ctx::$database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
+                return Ctx::$database->get_col($q->sql, $q->variables);
             },
             600
         );
