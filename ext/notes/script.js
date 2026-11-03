@@ -304,10 +304,10 @@ Notes.addNewNote = function () {
         return;
     }
     window.notes.push({
-        x1: Notes.noteImage.dataset.width * 0.1,
-        y1: Notes.noteImage.dataset.height * 0.1,
-        width: Notes.noteImage.dataset.width * 0.2,
-        height: Notes.noteImage.dataset.height * 0.1,
+        x1: Math.round(Notes.noteImage.dataset.width * 0.1),
+        y1: Math.round(Notes.noteImage.dataset.height * 0.1),
+        width: Math.round(Notes.noteImage.dataset.width * 0.2),
+        height: Math.round(Notes.noteImage.dataset.height * 0.1),
         note: "new note",
         note_id: null,
         image_id: window.notes_image_id,
