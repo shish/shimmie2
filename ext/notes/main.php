@@ -124,7 +124,9 @@ final class Notes extends Extension
         if ($event->page_matches("note/history/{note_id}", method: "GET", paged: true)) {
             $this->get_history($event->get_iarg('note_id'), $event->get_iarg('page_num', 1) - 1);
         }
-        if ($event->page_matches("note_history/{image_id}", method: "GET", paged: true)) {
+        // This is really a GET, but it sits among a bunch of buttons which all use POST, so we
+        // accept either method to keep the "generate a list of buttons" code simple
+        if ($event->page_matches("note_history/{image_id}", paged: true)) {
             $this->get_image_history($event->get_iarg('image_id'), $event->get_iarg('page_num', 1) - 1);
         }
         if ($event->page_matches("note/revert/{noteID}/{reviewID}", method: "POST", permission: NotesPermission::EDIT)) {

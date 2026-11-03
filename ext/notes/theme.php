@@ -19,6 +19,7 @@ class NotesTheme extends Themelet
     {
         return FORM(INPUT(["type" => "button", "value" => "Add Note", "onclick" => "Notes.addNewNote()"]));
     }
+
     public function request_button(int $image_id): HTMLElement
     {
         return SHM_SIMPLE_FORM(
@@ -27,6 +28,7 @@ class NotesTheme extends Themelet
             INPUT(["type" => "submit", "value" => "Add Note Request"]),
         );
     }
+
     public function nuke_notes_button(int $image_id): HTMLElement
     {
         return SHM_SIMPLE_FORM(
@@ -35,6 +37,7 @@ class NotesTheme extends Themelet
             INPUT(["type" => "submit", "value" => "Nuke Notes", "onclick" => "return confirm('Are you sure?')"]),
         );
     }
+
     public function nuke_requests_button(int $image_id): HTMLElement
     {
         return SHM_SIMPLE_FORM(
