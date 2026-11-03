@@ -233,56 +233,64 @@ final class OuroborosAPI extends Extension
     #[EventListener]
     public function onPageRequest(PageRequestEvent $event): void
     {
-        if (\Safe\preg_match("%(.*)\.(xml|json)$%", $event->path, $matches)) {
-            $event_args = $matches[1];
-            $this->type = $matches[2];
-
-            if ($event_args === 'post/create') {
-                // Create
-                $this->tryAuth();
-                if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
-                    $md5 = isset($_REQUEST['md5']) && \Safe\preg_match("%^[0-9A-Fa-f]{32}$%", $_REQUEST['md5']) ? strtolower($_REQUEST['md5']) : null;
-                    $this->postCreate(new OuroborosPost($_REQUEST['post'], $_FILES['post'] ?? null), $md5);
-                } else {
-                    $this->sendResponse(403, 'You cannot create new posts');
-                }
-            } elseif ($event_args === 'post/show') {
-                // Show
-                $this->tryAuth();
-                $id = int_escape(@$_REQUEST['id']);
-                $this->postShow($id);
-            } elseif ($event_args === 'post/index' || $event_args === 'post/list') {
-                // List
-                $this->tryAuth();
-                $limit = int_escape(@$_REQUEST['limit']);
-                if ($limit <= 0) {
-                    $limit = 45;
-                }
-                $p = int_escape(@$_REQUEST['page']);
-                if ($p <= 0) {
-                    $p = 1;
-                }
-                $tags = SearchTerm::explode(@$_REQUEST['tags'] ?: '');
-                $this->postIndex($limit, $p, $tags);
-            } elseif ($event_args === 'tag/index' || $event_args === 'tag/list') {
-                $this->tryAuth();
-                $limit = int_escape(@$_REQUEST['limit']);
-                if ($limit <= 0) {
-                    $limit = 50;
-                }
-                $p = int_escape(@$_REQUEST['page']);
-                if ($p <= 0) {
-                    $p = 1;
-                }
-                $order = @$_REQUEST['order'];
-                if (!in_array($order, ['date', 'count', 'name'])) {
-                    $order = 'date';
-                }
-                $name = @$_REQUEST['name'] ?: '';
-                $name_pattern = @$_REQUEST['name_pattern'] ?: '';
-                $this->tagIndex($limit, $p, $order, $name, $name_pattern);
+        if (
+            $event->page_matches('post/create.json', method: 'POST', authed: false)
+            || $event->page_matches('post/create.xml', method: 'POST', authed: false)
+        ) {
+            // Create
+            $this->type = pathinfo($event->path, PATHINFO_EXTENSION);
+            $this->tryAuth();
+            if (Ctx::$user->can(ImagePermission::CREATE_IMAGE)) {
+                $md5 = isset($_REQUEST['md5']) && \Safe\preg_match("%^[0-9A-Fa-f]{32}$%", $_REQUEST['md5']) ? strtolower($_REQUEST['md5']) : null;
+                $this->postCreate(new OuroborosPost($_REQUEST['post'], $_FILES['post'] ?? null), $md5);
+            } else {
+                $this->sendResponse(403, 'You cannot create new posts');
             }
-        } elseif ($event->page_matches('post/show')) {
+        } elseif ($event->page_matches('post/show.json', method: 'GET') || $event->page_matches('post/show.xml', method: 'GET')) {
+            // Show
+            $this->type = pathinfo($event->path, PATHINFO_EXTENSION);
+            $this->tryAuth();
+            $id = int_escape(@$_REQUEST['id']);
+            $this->postShow($id);
+        } elseif (
+            $event->page_matches('post/index.json', method: 'GET') || $event->page_matches('post/index.xml', method: 'GET')
+            || $event->page_matches('post/list.json', method: 'GET') || $event->page_matches('post/list.xml', method: 'GET')
+        ) {
+            // List
+            $this->type = pathinfo($event->path, PATHINFO_EXTENSION);
+            $this->tryAuth();
+            $limit = int_escape(@$_REQUEST['limit']);
+            if ($limit <= 0) {
+                $limit = 45;
+            }
+            $p = int_escape(@$_REQUEST['page']);
+            if ($p <= 0) {
+                $p = 1;
+            }
+            $tags = SearchTerm::explode(@$_REQUEST['tags'] ?: '');
+            $this->postIndex($limit, $p, $tags);
+        } elseif (
+            $event->page_matches('tag/index.json', method: 'GET') || $event->page_matches('tag/index.xml', method: 'GET')
+            || $event->page_matches('tag/list.json', method: 'GET') || $event->page_matches('tag/list.xml', method: 'GET')
+        ) {
+            $this->type = pathinfo($event->path, PATHINFO_EXTENSION);
+            $this->tryAuth();
+            $limit = int_escape(@$_REQUEST['limit']);
+            if ($limit <= 0) {
+                $limit = 50;
+            }
+            $p = int_escape(@$_REQUEST['page']);
+            if ($p <= 0) {
+                $p = 1;
+            }
+            $order = @$_REQUEST['order'];
+            if (!in_array($order, ['date', 'count', 'name'])) {
+                $order = 'date';
+            }
+            $name = @$_REQUEST['name'] ?: '';
+            $name_pattern = @$_REQUEST['name_pattern'] ?: '';
+            $this->tagIndex($limit, $p, $order, $name, $name_pattern);
+        } elseif ($event->page_matches('post/show', method: 'GET')) {
             Ctx::$page->set_redirect(make_link(str_replace('post/show', 'post/view', $event->path)));
         }
     }
