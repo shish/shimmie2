@@ -18,8 +18,8 @@ final class DanbooruApi extends Extension
         if ($event->page_matches("uploads/new", method: "GET")) { // Handling the URL given by the "Upload to Danbooru" web extension
             $page->set_redirect((make_link("upload", ["url" => @$_GET['url'], "source" => @$_GET['ref']])));
         } elseif (
-            $event->page_matches("api/danbooru/add_post", method: "POST") ||
-            $event->page_matches("api/danbooru/post/create.xml", method: "POST")
+            $event->page_matches("api/danbooru/add_post", method: "POST", authed: false) ||
+            $event->page_matches("api/danbooru/post/create.xml", method: "POST", authed: false)
         ) {
             // No XML data is returned from this function
             $page->set_data(MimeType::TEXT, "");
