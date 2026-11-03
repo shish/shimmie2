@@ -143,18 +143,18 @@ final class Notes extends Extension
             $this->nuke_requests($image_id);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
-        if ($event->page_matches("note/create_note", method: "POST", permission: NotesPermission::CREATE)) {
+        if ($event->page_matches("note/create_note", method: "POST", authed: false, permission: NotesPermission::CREATE)) {
             $note_id = $this->add_new_note();
             $page->set_data(MimeType::JSON, \Safe\json_encode([
                 'status' => 'success',
                 'note_id' => $note_id,
             ]));
         }
-        if ($event->page_matches("note/update_note", method: "POST", permission: NotesPermission::EDIT)) {
+        if ($event->page_matches("note/update_note", method: "POST", authed: false, permission: NotesPermission::EDIT)) {
             $this->update_note();
             $page->set_data(MimeType::JSON, \Safe\json_encode(['status' => 'success']));
         }
-        if ($event->page_matches("note/delete_note", method: "POST", permission: NotesPermission::ADMIN)) {
+        if ($event->page_matches("note/delete_note", method: "POST", authed: false, permission: NotesPermission::ADMIN)) {
             $this->delete_note();
             $page->set_data(MimeType::JSON, \Safe\json_encode(['status' => 'success']));
         }
