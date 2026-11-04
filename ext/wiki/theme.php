@@ -6,7 +6,7 @@ namespace Shimmie2;
 
 use Jfcherng\Diff\{DiffHelper};
 
-use function MicroHTML\{A, BR, DIV, HR, INPUT, P, STYLE, TABLE, TD, TEXTAREA, TR, emptyHTML, rawHTML};
+use function MicroHTML\{A, BR, DIV, HR, INPUT, P, TABLE, TD, TEXTAREA, TR, emptyHTML, rawHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -110,7 +110,7 @@ class WikiTheme extends Themelet
         Ctx::$page->set_title("Diff for $title");
         $this->display_navigation();
         $diff_html = DiffHelper::calculate($page1->body, $page2->body, "SideBySide");
-        Ctx::$page->add_html_header(STYLE(DiffHelper::getStyleSheet()));
+
         Ctx::$page->add_block(new Block("Diff for $title", rawHTML($diff_html)));
     }
 
