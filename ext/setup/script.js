@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
             checkbox.disabled = true;
             out_span.innerHTML = "(testing...)";
             const test_url =
-                document.body.getAttribute("data-base-href") + "/nicetest";
+                document.documentElement.dataset.baseHref + "/nicetest";
             console.log("NiceURL testing with", test_url);
 
             fetch(test_url)
