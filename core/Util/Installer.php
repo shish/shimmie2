@@ -355,7 +355,9 @@ final class Installer
     private static function write_config(string $dsn): void
     {
         $secret = bin2hex(random_bytes(16));
-        $file_content = "<" . "?php\ndefine('DATABASE_DSN', '$dsn');\ndefine('SECRET', '$secret');\n";
+        $p_dsn = var_export($dsn, true);
+        $p_secret = var_export($secret, true);
+        $file_content = "<" . "?php\ndefine('DATABASE_DSN', $p_dsn);\ndefine('SECRET', $p_secret);\n";
 
         if (!file_exists("data/config")) {
             mkdir("data/config", 0755, true);
