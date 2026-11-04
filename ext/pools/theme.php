@@ -187,7 +187,7 @@ class PoolsTheme extends Themelet
             $editor->appendChild(
                 SHM_SIMPLE_FORM(
                     make_link("pool/nuke/{$pool->id}"),
-                    SHM_SUBMIT("Delete Pool", ["name" => "delete", "id" => "delete_pool_btn", "onclick" => "return confirm('Are you sure that you want to delete this pool?')"])
+                    SHM_SUBMIT("Delete Pool", ["name" => "delete", "id" => "delete_pool_btn", "data-shm-confirm" => "Are you sure that you want to delete this pool?"])
                 )
             );
         }
@@ -219,7 +219,7 @@ class PoolsTheme extends Themelet
         $form->appendChild($image_list);
         $form->appendChild(
             BR(),
-            SHM_SUBMIT("Add Selected", ["name" => "edit", "id" => "edit_pool_add_btn", "onclick" => "return confirm('Are you sure you want to add selected posts to this pool?')"]),
+            SHM_SUBMIT("Add Selected", ["name" => "edit", "id" => "edit_pool_add_btn", "data-shm-confirm" => "Are you sure you want to add selected posts to this pool?"]),
         );
 
         Ctx::$page->add_block(new Block("Import", $form, "main", 30));

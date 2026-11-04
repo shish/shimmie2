@@ -252,8 +252,7 @@ class CommentListTheme extends Themelet
                 [
                     "type" => "submit",
                     "class" => "shm-button-as-link",
-                    "data-message" => "Delete comment by {$owner}:\n$comment_preview",
-                    "onclick" => "return confirm(this.dataset.message);"
+                    "data-shm-confirm" => "Delete comment by {$owner}:\n$comment_preview",
                 ],
                 "Del"
             )

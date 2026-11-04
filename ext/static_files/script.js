@@ -216,4 +216,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+
+    /* require confirmation on buttons; abort the action if rejected */
+    document.querySelectorAll("[data-shm-confirm]").forEach(function (elm) {
+        elm.addEventListener("click", function (e) {
+            if (!confirm(elm.dataset.shmConfirm)) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        });
+    });
 })

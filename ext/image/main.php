@@ -80,7 +80,7 @@ final class ImageIO extends Extension
                 id: "image_delete_form",
                 children: [
                     INPUT(["type" => 'hidden', "name" => 'image_id', "value" => $event->image->id]),
-                    INPUT(["type" => 'submit', "value" => 'Delete', "onclick" => 'return confirm("Delete the image?");', "id" => "image_delete_button"]),
+                    INPUT(["type" => 'submit', "value" => 'Delete', "data-shm-confirm" => "Delete the image?", "id" => "image_delete_button"]),
                 ]
             ), position: 9999);
         }
