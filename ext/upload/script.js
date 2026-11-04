@@ -10,6 +10,9 @@ function updateTracker() {
     var upbtn = document.getElementById("uploadbutton");
     var tracker = document.getElementById("upload_size_tracker");
     var lockbtn = false;
+    var form = document.getElementById("file_upload");
+    var maxSize = parseInt(form.dataset.maxSize, 10) || 0;
+    var maxTotalSize = parseInt(form.dataset.maxTotalSize, 10) || 0;
 
     // check that each individual file is less than the max file size
     document
@@ -21,10 +24,7 @@ function updateTracker() {
                 if (cancelbtn) cancelbtn.style.visibility = "visible";
                 for (var i = 0; i < input.files.length; i++) {
                     size += input.files[i].size + 1024; // extra buffer for metadata
-                    if (
-                        window.shm_max_size > 0 &&
-                        input.files[i].size > window.shm_max_size
-                    ) {
+                    if (maxSize > 0 && input.files[i].size > maxSize) {
                         toobig = true;
                     }
                 }
@@ -43,7 +43,7 @@ function updateTracker() {
     // check that the total is less than the max total size
     if (size) {
         tracker.innerText = fileSize(size);
-        if (window.shm_max_total_size > 0 && size > window.shm_max_total_size) {
+        if (maxTotalSize > 0 && size > maxTotalSize) {
             lockbtn = true;
             tracker.style = "color:red";
         } else {

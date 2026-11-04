@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, BR, DIV, INPUT, NOSCRIPT, P, SCRIPT, SMALL, SPAN, emptyHTML};
+use function MicroHTML\{A, BR, DIV, INPUT, NOSCRIPT, P, SMALL, SPAN, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -40,7 +40,15 @@ class UploadTheme extends Themelet
         }
         $captcha = Captcha::get_html(UploadPermission::SKIP_UPLOAD_CAPTCHA);
 
-        $form = SHM_FORM(make_link("upload"), multipart: true, id: "file_upload");
+        $form = SHM_FORM(
+            make_link("upload"),
+            multipart: true,
+            id: "file_upload",
+            extra_attrs: [
+                "data-max-size" => $max_size,
+                "data-max-total-size" => $max_total_size,
+            ],
+        );
         $form->appendChild(
             TABLE(
                 ["id" => "large_upload_form", "class" => "form"],
@@ -65,10 +73,6 @@ class UploadTheme extends Themelet
                 SPAN(["id" => "upload_size_tracker"], "0KB"),
                 ")"
             ),
-            SCRIPT("
-            window.shm_max_size = $max_size;
-            window.shm_max_total_size = $max_total_size;
-            ")
         );
 
         $page = Ctx::$page;
