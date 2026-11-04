@@ -112,6 +112,9 @@ trait Page_Common
         if (!headers_sent()) {
             header("HTTP/1.1 {$this->code} Shimmie");
             header("Content-type: " . $this->mime);
+            header("X-Content-Type-Options: nosniff");
+            header("X-Frame-Options: SAMEORIGIN");
+            header("Content-Security-Policy: frame-ancestors 'self'; base-uri 'none'; object-src 'none';"); // default-src 'self';
             header("X-Powered-By: Shimmie-" . SysConfig::getVersion());
             $dbtime = round(Ctx::$database->dbtime * 1000, 2);
             $totaltime = round((ftime() - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000, 2);

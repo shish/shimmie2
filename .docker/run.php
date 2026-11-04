@@ -71,6 +71,8 @@ file_put_contents(
         rewrite * $wh_split_path
         root * /app/data
         header Cache-Control "public, max-age=2592000"
+        header X-Content-Type-Options "nosniff"
+        header Content-Security-Policy "sandbox; default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';"
         file_server
 	}
 

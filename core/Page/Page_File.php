@@ -37,6 +37,7 @@ trait Page_File
         assert(!is_null($file), "file should not be null with PageMode::FILE");
 
         try {
+            $this->add_http_header("Content-Security-Policy: sandbox; default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';");
             // Check If-Modified-Since and return early if appropriate
             if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
                 $if_modified_since = \Safe\preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
