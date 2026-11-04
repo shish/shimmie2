@@ -16,7 +16,7 @@ class PostSourceTheme extends Themelet
             make_link("tag_edit/mass_source_set"),
             INPUT(["type" => "hidden", "name" => "tags", "value" => $terms]),
             INPUT(["type" => "text", "name" => "source", "value" => '']),
-            INPUT(["type" => "submit", "value" => "Set Source For All", "onclick" => "return confirm(\"This will mass-edit all sources on the page.\\nAre you sure you want to do this?\")"])
+            INPUT(["type" => "submit", "value" => "Set Source For All", "data-shm-confirm" => "This will mass-edit all sources on the page.\nAre you sure you want to do this?"])
         );
     }
 
