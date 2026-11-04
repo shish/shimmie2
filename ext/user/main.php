@@ -128,6 +128,7 @@ final class UserPage extends Extension
     public function onUserLogin(UserLoginEvent $event): void
     {
         Ctx::$user = $event->user;
+        Ctx::$page->add_html_data("userclass", Ctx::$user->class->name);
 
         // Update last_active if it's out of date (not today)
         $current_date = date('Y-m-d');

@@ -20,6 +20,8 @@ trait Page_Page
     public private(set) string $heading = "";
     public private(set) string $subheading = "";
     public private(set) string $layout = "grid";
+    /** @var array<literal-string,string> */
+    public private(set) array $html_data = [];
 
     /** @var HTMLElement[] */
     public private(set) array $html_headers = [];
@@ -69,6 +71,16 @@ trait Page_Page
     {
         ksort($this->html_headers);
         return $this->html_headers;
+    }
+
+    /**
+     * Set a data attribute on the html element.
+     *
+     * @param literal-string $key
+     */
+    public function add_html_data(string $key, string $value): void
+    {
+        $this->html_data[$key] = $value;
     }
 
     /**
@@ -291,7 +303,7 @@ trait Page_Page
         return emptyHTML(
             \MicroHTML\rawHTML("<!doctype html>"),
             HTML(
-                ["lang" => "en"],
+                $this->html_attrs(),
                 $head,
                 $body,
             )
@@ -309,13 +321,26 @@ trait Page_Page
     /**
      * @return array<literal-string, string>
      */
+    public function html_attrs(): array
+    {
+        $attrs = [];
+        foreach ($this->html_data as $key => $value) {
+            $attrs["data-$key"] = $value;
+        }
+        return array_merge($attrs, [
+            "lang" => "en",
+            "data-base-href" => (string)Url::base(),
+            "data-base-link" => (string)make_link(""),
+        ]);
+    }
+
+    /**
+     * @return array<literal-string, string>
+     */
     public function body_attrs(): array
     {
         return [
             "class" => "layout-{$this->layout}",
-            "data-userclass" => isset(Ctx::$user) ? Ctx::$user->class->name : "",
-            "data-base-href" => (string)Url::base(),
-            "data-base-link" => (string)make_link(""),
         ];
     }
 

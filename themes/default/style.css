@@ -321,7 +321,7 @@ ARTICLE TABLE {
 
 /* example of how to apply specific styles to specific thumbs for specific userclasses */
 /*
-BODY[data-userclass="anonymous"] .thumb[data-rating="e"] IMG {
+:root[data-userclass="anonymous"] .thumb[data-rating="e"] IMG {
 	filter: blur(5px);
 }
 */
