@@ -41,8 +41,11 @@ final class ExtManager extends Extension
 
         if ($event->page_matches("ext_doc/{ext}")) {
             $ext = $event->get_arg('ext');
-            $info = ExtensionInfo::get_all()[$ext];
-            $this->theme->display_doc($info);
+            $infos = ExtensionInfo::get_all();
+            if (!array_key_exists($ext, $infos)) {
+                throw new ObjectNotFound("Extension not found: $ext");
+            }
+            $this->theme->display_doc($infos[$ext]);
         }
 
         // For https://github.com/shish/shimmie2/issues/2010
