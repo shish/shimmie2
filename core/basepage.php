@@ -264,6 +264,9 @@ class BasePage
         if (!headers_sent()) {
             header("HTTP/1.1 {$this->code} Shimmie");
             header("Content-type: " . $this->mime);
+            header("X-Content-Type-Options: nosniff");
+            header("X-Frame-Options: SAMEORIGIN");
+            header("Content-Security-Policy: frame-ancestors 'self'; base-uri 'none'; object-src 'none';"); // default-src 'self';
             header("X-Powered-By: Shimmie-" . VERSION);
 
             foreach ($this->http_headers as $head) {
@@ -302,6 +305,7 @@ class BasePage
                 print $this->data;
                 break;
             case PageMode::FILE:
+                header("Content-Security-Policy: sandbox; default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';");
                 if (!is_null($this->filename)) {
                     header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
                 }

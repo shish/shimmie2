@@ -14,42 +14,144 @@ class BBCode extends FormatterExtension
 
     public function _format(string $text): string
     {
-        $text = $this->extract_code($text);
+        // Fragments of finished HTML are moved out of the text and replaced
+        // with "\x00N\x00" placeholders, so that later rules can't mangle
+        // them - see extract_code() and extract_links()
+        $text = str_replace("\x00", "", $text);
+        $stash = [];
+        $put = function (string $html) use (&$stash): string {
+            $stash[] = $html;
+            return "\x00" . (count($stash) - 1) . "\x00";
+        };
+        $text = $this->extract_code($text, $put);
+        $text = $this->extract_links($text, $put);
         foreach ([
             "b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
         ] as $el) {
-            $text = preg_replace("!\[$el\](.*?)\[/$el\]!s", "<$el>$1</$el>", $text);
+            $text = $this->preg_replace("!\[$el\](.*?)\[/$el\]!s", "<$el>$1</$el>", $text);
         }
-        $text = preg_replace('!^&gt;&gt;([^\d].+)!', '<blockquote><small>$1</small></blockquote>', $text);
-        $text = preg_replace('!&gt;&gt;(\d+)(#c?\d+)?!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('post/view/$1$2').'">&gt;&gt;$1$2</a>', $text);
-        $text = preg_replace('!\[anchor=(.*?)\](.*?)\[/anchor\]!s', '<span class="anchor">$2 <a class="alink" href="#bb-$1" name="bb-$1" title="link to this anchor"> ¶ </a></span>', $text);  // add "bb-" to avoid clashing with eg #top
-        $text = preg_replace('!\[url=site://(.*?)(#c\d+)?\](.*?)\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$3</a>', $text);
-        $text = preg_replace('!\[url\]site://(.*?)(#c\d+)?\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$1$2</a>', $text);
-        $text = preg_replace('!\[url=((?:https?|ftp|irc|mailto)://.*?)\](.*?)\[/url\]!s', '<a href="$1">$2</a>', $text);
-        $text = preg_replace('!\[url\]((?:https?|ftp|irc|mailto)://.*?)\[/url\]!s', '<a href="$1">$1</a>', $text);
-        $text = preg_replace('!\[email\](.*?)\[/email\]!s', '<a href="mailto:$1">$1</a>', $text);
-        $text = preg_replace('!\[img\](https?:\/\/.*?)\[/img\]!s', '<img alt="user image" src="$1">', $text);
-        $text = preg_replace('!\[\[([^\|\]]+)\|([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$2</a>', $text);
-        $text = preg_replace('!\[\[([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$1</a>', $text);
-        $text = preg_replace("!\n\s*\n!", "\n\n", $text);
+
+        $text = $this->preg_replace("!\n\s*\n!", "\n\n", $text);
         $text = str_replace("\n", "\n<br>", $text);
-        $text = preg_replace("/\[quote\](.*?)\[\/quote\]/s", "<blockquote><small>\\1</small></blockquote>", $text);
-        $text = preg_replace("/\[quote=(.*?)\](.*?)\[\/quote\]/s", "<blockquote><em>\\1 said:</em><br><small>\\2</small></blockquote>", $text);
-        while (preg_match("/\[list\](.*?)\[\/list\]/s", $text)) {
-            $text = preg_replace("/\[list\](.*?)\[\/list\]/s", "<ul>\\1</ul>", $text);
+        $text = $this->preg_replace("/\[quote\](.*?)\[\/quote\]/s", "<blockquote><small>\\1</small></blockquote>", $text);
+        $text = $this->preg_replace("/\[quote=(.*?)\](.*?)\[\/quote\]/s", "<blockquote><em>\\1 said:</em><br><small>\\2</small></blockquote>", $text);
+        while (\Safe\preg_match("/\[list\](.*?)\[\/list\]/s", $text)) {
+            $text = $this->preg_replace("/\[list\](.*?)\[\/list\]/s", "<ul>\\1</ul>", $text);
         }
-        while (preg_match("/\[ul\](.*?)\[\/ul\]/s", $text)) {
-            $text = preg_replace("/\[ul\](.*?)\[\/ul\]/s", "<ul>\\1</ul>", $text);
+        while (\Safe\preg_match("/\[ul\](.*?)\[\/ul\]/s", $text)) {
+            $text = $this->preg_replace("/\[ul\](.*?)\[\/ul\]/s", "<ul>\\1</ul>", $text);
         }
-        while (preg_match("/\[ol\](.*?)\[\/ol\]/s", $text)) {
-            $text = preg_replace("/\[ol\](.*?)\[\/ol\]/s", "<ol>\\1</ol>", $text);
+        while (\Safe\preg_match("/\[ol\](.*?)\[\/ol\]/s", $text)) {
+            $text = $this->preg_replace("/\[ol\](.*?)\[\/ol\]/s", "<ol>\\1</ol>", $text);
         }
-        $text = preg_replace("/\[li\](.*?)\[\/li\]/s", "<li>\\1</li>", $text);
-        $text = preg_replace("#\[\*\]#s", "<li>", $text);
-        $text = preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
-        $text = preg_replace("#\[align=(left|center|right)\](.*?)\[\/align\]#s", "<div style='text-align:\\1;'>\\2</div>", $text);
-        $text = $this->filter_spoiler($text);
-        $text = $this->insert_code($text);
+        $text = $this->preg_replace("/\[li\](.*?)\[\/li\]/s", "<li>\\1</li>", $text);
+        $text = $this->preg_replace("#\[\*\]#s", "<li>", $text);
+        $text = $this->preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
+        $text = $this->preg_replace("#\[align=(left|center|right)\](.*?)\[\/align\]#s", "<div style='text-align:\\1;'>\\2</div>", $text);
+        $text = $this->preg_replace('!^&gt;&gt;([^\d].+)!', '<blockquote><small>$1</small></blockquote>', $text);
+        while (\Safe\preg_match("/\[spoiler\](.*?)\[\/spoiler\]/s", $text)) {
+            $text = $this->preg_replace("/\[spoiler\](.*?)\[\/spoiler\]/s", "<span style=\"background-color:#000; color:#000;\">\\1</span>", $text);
+        }
+        $text = $this->preg_replace_callback(
+            '!\x00(\d+)\x00!',
+            fn ($m) => $stash[(int)$m[1]],
+            $text
+        );
+        return $text;
+    }
+
+    /**
+     * Render every tag which puts user input into an HTML attribute, and
+     * swap the rendered HTML out for an opaque placeholder.
+     *
+     * Without this, later rules can capture HTML generated by earlier rules
+     * into an attribute, where the generated quotes break out of the
+     * attribute and let user text become new attributes (eg onerror=...).
+     * Attribute captures exclude both "[" (unprocessed tags) and "\x00"
+     * (placeholders), so an attribute can only ever contain user text,
+     * which was HTML-escaped before formatting.
+     *
+     * Link text (eg the "bar" in [url=foo]bar[/url]) is left in the stream
+     * so that it still gets the rest of the formatting applied.
+     *
+     * @param callable(string): string $put
+     */
+    private function extract_links(string $text, callable $put): string
+    {
+        $site = function (string $page, string $frag): string {
+            $page = ltrim(html_entity_decode($page, ENT_QUOTES, "UTF-8"), "/");
+            /** @var ?string $fragment */
+            $fragment = $frag === "" ? null : substr($frag, 1);
+            $url = make_link($page, fragment: $fragment);
+            return htmlspecialchars((string)$url, ENT_QUOTES, "UTF-8");
+        };
+
+        // add "bb-" to avoid clashing with eg #top
+        $text = $this->preg_replace_callback(
+            '!\[anchor=([^\[\x00]*?)\](.*?)\[/anchor\]!s',
+            fn ($m) => $put('<span class="anchor">')
+                . $m[2]
+                . $put(' <a class="alink" href="#bb-'.$m[1].'" name="bb-'.$m[1].'" title="link to this anchor"> ¶ </a></span>'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[url=site://([^\[\x00]*?)(#c\d+)?\](.*?)\[/url\]!s',
+            fn ($m) => $put('<a class="shm-clink" data-clink-sel="'.$m[2].'" href="'.$site($m[1], $m[2]).'">')
+                . $m[3]
+                . $put('</a>'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[url\]site://([^\[\x00]*?)(#c\d+)?\[/url\]!s',
+            fn ($m) => $put('<a class="shm-clink" data-clink-sel="'.($m[2] ?? "").'" href="'.$site($m[1], $m[2] ?? "").'">'.$m[1].($m[2] ?? "").'</a>'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[url=((?:https?|ftp|irc|mailto)://[^\[\x00]*?)\](.*?)\[/url\]!s',
+            fn ($m) => $put('<a href="'.$m[1].'">') . $m[2] . $put('</a>'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[url\]((?:https?|ftp|irc|mailto)://[^\[\x00]*?)\[/url\]!s',
+            fn ($m) => $put('<a href="'.$m[1].'">'.$m[1].'</a>'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[email\]([^\[\x00]*?)\[/email\]!s',
+            fn ($m) => $put('<a href="mailto:'.$m[1].'">'.$m[1].'</a>'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[img\](https?://[^\[\x00]*?)\[/img\]!s',
+            fn ($m) => $put('<img alt="user image" src="'.$m[1].'">'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[img\]site://([^\[\x00]*?)(#c\d+)?\[/img\]!s',
+            fn ($m) => $put('<img alt="user image" src="'.$site($m[1], $m[2] ?? "").'">'),
+            $text
+        );
+        $text = $this->preg_replace_callback(
+            '!\[\[([^\|\]\x00]+)(?:\|([^\]]+))?\]\]!s',
+            function ($m) use ($put) {
+                $page = url_escape(html_entity_decode($m[1], ENT_QUOTES, "UTF-8"));
+                $href = htmlspecialchars((string)make_link('wiki/' . $page), ENT_QUOTES, "UTF-8");
+                return $put('<a href="' . $href . '">') . ($m[2] ?? $m[1]) . $put('</a>');
+            },
+            $text
+        );
+        // last, so that eg [url=https://a/&gt;&gt;1] is left as part of the url
+        $text = $this->preg_replace_callback(
+            '!&gt;&gt;(\d+)(#c?\d+)?!s',
+            function ($m) use ($put) {
+                $frag = $m[2] ?? "";
+                /** @var ?string $fragment */
+                $fragment = $frag === "" ? null : substr($frag, 1);
+                $href = htmlspecialchars((string)make_link('post/view/' . $m[1], fragment: $fragment), ENT_QUOTES, "UTF-8");
+                return $put('<a class="shm-clink" data-clink-sel="'.$frag.'" href="'.$href.'">&gt;&gt;'.$m[1].$frag.'</a>');
+            },
+            $text
+        );
         return $text;
     }
 
@@ -59,29 +161,21 @@ class BBCode extends FormatterExtension
             "b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
             "code", "url", "email", "li",
         ] as $el) {
-            $text = preg_replace("!\[$el\](.*?)\[/$el\]!s", '$1', $text);
+            $text = $this->preg_replace("!\[$el\](.*?)\[/$el\]!s", '$1', $text);
         }
-        $text = preg_replace("!\[anchor=(.*?)\](.*?)\[/anchor\]!s", '$2', $text);
-        $text = preg_replace("!\[url=(.*?)\](.*?)\[/url\]!s", '$2', $text);
-        $text = preg_replace("!\[img\](.*?)\[/img\]!s", "", $text);
-        $text = preg_replace("!\[\[([^\|\]]+)\|([^\]]+)\]\]!s", '$2', $text);
-        $text = preg_replace("!\[\[([^\]]+)\]\]!s", '$1', $text);
-        $text = preg_replace("!\[quote\](.*?)\[/quote\]!s", "", $text);
-        $text = preg_replace("!\[quote=(.*?)\](.*?)\[/quote\]!s", "", $text);
-        $text = preg_replace("!\[/?(list|ul|ol)\]!", "", $text);
-        $text = preg_replace("!\[\*\](.*?)!s", '$1', $text);
+        $text = $this->preg_replace("!\[anchor=(.*?)\](.*?)\[/anchor\]!s", '$2', $text);
+        $text = $this->preg_replace("!\[url=(.*?)\](.*?)\[/url\]!s", '$2', $text);
+        $text = $this->preg_replace("!\[img\](.*?)\[/img\]!s", "", $text);
+        $text = $this->preg_replace("!\[\[([^\|\]]+)\|([^\]]+)\]\]!s", '$2', $text);
+        $text = $this->preg_replace("!\[\[([^\]]+)\]\]!s", '$1', $text);
+        $text = $this->preg_replace("!\[quote\](.*?)\[/quote\]!s", "", $text);
+        $text = $this->preg_replace("!\[quote=(.*?)\](.*?)\[/quote\]!s", "", $text);
+        $text = $this->preg_replace("!\[/?(list|ul|ol)\]!", "", $text);
+        $text = $this->preg_replace("!\[\*\](.*?)!s", '$1', $text);
         $text = $this->strip_spoiler($text);
         return $text;
     }
 
-    private function filter_spoiler(string $text): string
-    {
-        return str_replace(
-            ["[spoiler]","[/spoiler]"],
-            ["<span style=\"background-color:#000; color:#000;\">","</span>"],
-            $text
-        );
-    }
 
     private function strip_spoiler(string $text): string
     {
@@ -111,61 +205,47 @@ class BBCode extends FormatterExtension
         return $text;
     }
 
-    private function extract_code(string $text): string
+    /**
+     * Code blocks are rendered first and stashed, so that no other rules
+     * (bbcode tags, newline-to-br, etc) get applied to their contents.
+     *
+     * @param callable(string): string $put
+     */
+    private function extract_code(string $text, callable $put): string
     {
-        # at the end of this function, the only code! blocks should be
-        # the ones we've added -- others may contain malicious content,
-        # which would only appear after decoding
-        $text = str_replace("[code!]", "[code]", $text);
-        $text = str_replace("[/code!]", "[/code]", $text);
-
-        $l1 = strlen("[code]");
-        $l2 = strlen("[/code]");
-        while (true) {
-            $start = strpos($text, "[code]");
-            if ($start === false) {
-                break;
-            }
-
-            $end = strpos($text, "[/code]", $start);
-            if ($end === false) {
-                break;
-            }
-
-            if ($end < $start) {
-                break;
-            }
-
-            $beginning = substr($text, 0, $start);
-            $middle = base64_encode(substr($text, $start + $l1, ($end - $start - $l1)));
-            $ending = substr($text, $end + $l2, (strlen($text) - $end + $l2));
-
-            $text = $beginning . "[code!]" . $middle . "[/code!]" . $ending;
-        }
-        return $text;
+        return $this->preg_replace_callback(
+            '!\[code\](.*?)\[/code\]!s',
+            fn ($m) => $put('<pre><code>' . $m[1] . '</code></pre>'),
+            $text
+        );
     }
 
-    private function insert_code(string $text): string
+    /**
+     * The version of thecodingmachine/safe pinned on this branch types
+     * \Safe\preg_replace() as returning string|array, because it also accepts
+     * an array subject. We only ever pass a string subject, so narrow the
+     * result back to string for our callers.
+     */
+    private function preg_replace(string $pattern, string $replacement, string $subject): string
     {
-        $l1 = strlen("[code!]");
-        $l2 = strlen("[/code!]");
-        while (true) {
-            $start = strpos($text, "[code!]");
-            if ($start === false) {
-                break;
-            }
+        $result = \Safe\preg_replace($pattern, $replacement, $subject);
+        assert(is_string($result));
+        return $result;
+    }
 
-            $end = strpos($text, "[/code!]");
-            if ($end === false) {
-                break;
-            }
-
-            $beginning = substr($text, 0, $start);
-            $middle = base64_decode(substr($text, $start + $l1, ($end - $start - $l1)));
-            $ending = substr($text, $end + $l2, (strlen($text) - $end + $l2));
-
-            $text = $beginning . "<pre class='code'>" . $middle . "</pre>" . $ending;
+    /**
+     * thecodingmachine/safe on this branch has no \Safe\preg_replace_callback,
+     * so wrap the native function and throw on error to keep the same
+     * fail-loudly semantics as the rest of the Safe\* calls.
+     *
+     * @param callable(array<int|string, string>): string $callback
+     */
+    private function preg_replace_callback(string $pattern, callable $callback, string $subject): string
+    {
+        $result = \preg_replace_callback($pattern, $callback, $subject);
+        if ($result === null) {
+            throw new \Exception("preg_replace_callback failed: " . preg_last_error_msg());
         }
-        return $text;
+        return $result;
     }
 }

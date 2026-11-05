@@ -47,11 +47,11 @@ COPY . /app/
 # Re-run composer install to get dev dependencies
 FROM build AS tests
 RUN composer install --no-progress
-COPY . /app/
 ARG RUN_TESTS=true
 RUN [ $RUN_TESTS = false ] || (\
     echo '=== Installing ===' && mkdir -p data/config && INSTALL_DSN="sqlite:data/shimmie.sqlite" php index.php && \
-    echo '=== Smoke Test ===' && php index.php get-page /post/list && \
+    echo '=== Smoke Test ===' && php index.php page:get /post/list && \
+    echo '=== Type Checking ===' && ./vendor/bin/phpstan analyse --memory-limit 1G -c tests/phpstan.neon && \
     echo '=== Unit Tests ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml && \
     echo '=== Coverage ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
     echo '=== Cleaning ===' && rm -rf data)
