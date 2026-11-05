@@ -1,0 +1,3 @@
+:root[data-force-lowercase-tags="true"] .autocomplete_tags {
+    text-transform: lowercase;
+}
