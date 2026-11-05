@@ -46,7 +46,7 @@ final class QueryArray implements \ArrayAccess, \JsonSerializable
 
     public function req(string $key): string
     {
-        return $this->get($key) ?? throw new \InvalidArgumentException("Required parameter '$key' not found");
+        return $this->get($key) ?? throw new InvalidInput("Required parameter '$key' not found");
     }
 
     /**
