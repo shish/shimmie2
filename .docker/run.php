@@ -100,11 +100,15 @@ http {
         location ~ "^/_images/([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{28}).*$" {
             alias /app/data/images/$wh_split_path;
             expires 30d;
+            add_header X-Content-Type-Options "nosniff";
+            add_header Content-Security-Policy "sandbox; default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';";
         }
 
         location ~ "^/_thumbs/([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{28}).*$" {
             alias /app/data/thumbs/$wh_split_path;
             expires 30d;
+            add_header X-Content-Type-Options "nosniff";
+            add_header Content-Security-Policy "sandbox; default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';";
         }
 
         # Serve static files straight from disk, if they exist

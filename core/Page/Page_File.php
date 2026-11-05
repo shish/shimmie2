@@ -36,6 +36,7 @@ trait Page_File
     protected function display_file(): void
     {
         $this->send_headers();
+        header("Content-Security-Policy: sandbox; default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';");
         if (!is_null($this->file_filename)) {
             header('Content-Disposition: ' . $this->file_disposition . '; filename=' . $this->file_filename);
         }
