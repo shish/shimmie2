@@ -51,7 +51,7 @@ final class TagList extends Extension
                     return [];
                 }
 
-                $q = new Querylet("SELECT id FROM tags WHERE 1=1");
+                $q = new Querylet("SELECT id FROM tags WHERE 1=0");
                 foreach ($tags as $i => $tag) {
                     $q->append(new Querylet(" OR SCORE_ILIKE(tag, :tag)", ["tag" => Tag::sqlify($tag)]));
                 }
