@@ -89,6 +89,11 @@ final class UrlTest extends TestCase
             "SCRIPT_FILENAME" => "/var/www/html/mydir/index.php",
             "DOCUMENT_ROOT" => "/var/www/html/",
         ]), "trailing slash in DOCUMENT_ROOT subdir should be ignored");
+
+        // when run from the CLI (eg `php index.php ...`) PHP_SELF is just
+        // "index.php" with no directory, so dirname() returns "." - this
+        // should be treated as the root, not a literal path of "."
+        self::assertUrlEquals("", Url::base(["PHP_SELF" => "index.php"]), "CLI invocation");
     }
 
     /**
