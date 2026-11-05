@@ -43,7 +43,7 @@ final class Akismet extends Extension
         }
 
         if ($akismet->isSpam()) {
-            throw new ContentException("Akismet thinks that your {$event->type->value} is spam. Try rewriting the {$event->type->value}, or logging in.");
+            throw new ContentDenied("Akismet thinks that your {$event->type->value} is spam. Try rewriting the {$event->type->value}, or logging in.");
         }
     }
 }

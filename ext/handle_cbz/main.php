@@ -17,7 +17,7 @@ final class CBZFileHandler extends DataHandlerExtension
             $width = $info[0];
             $height = $info[1];
         } else {
-            throw new MediaException(
+            throw new InvalidInput(
                 "The representative image in the CBZ file is not a valid image."
             );
         }
@@ -35,7 +35,7 @@ final class CBZFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function create_thumb(Post $image): bool
+    protected function create_thumb(Post $image): void
     {
         $cover = $this->get_representative_image($image->get_media_filename());
         ThumbnailUtil::create_scaled_image(
@@ -45,7 +45,6 @@ final class CBZFileHandler extends DataHandlerExtension
             MimeType::get_for_file($cover),
             null
         );
-        return true;
     }
 
     protected function check_contents(Path $tmpname): bool

@@ -42,10 +42,6 @@ final class CommentDeletionEvent extends Event
     }
 }
 
-final class CommentPostingException extends InvalidInput
-{
-}
-
 /**
  * Comment lock status is being changed on an image
  */

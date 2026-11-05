@@ -371,7 +371,7 @@ final class CronUploader extends Extension
 
         // Generate info message
         if (count($event->posts) === 0) {
-            throw new UploadException("File type not recognised (".$event->mime."). Filename: {$filename}");
+            throw new InvalidInput("File type not recognised (".$event->mime."). Filename: {$filename}");
         } elseif ($event->merged === true) {
             $infomsg = "Post merged. ID: {$event->posts[0]->id} - Filename: {$filename}";
         } else {

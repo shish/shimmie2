@@ -63,10 +63,6 @@ final class UserTable extends Table
     }
 }
 
-final class UserCreationException extends SCoreException
-{
-}
-
 #[Type]
 final class LoginResult
 {
@@ -109,7 +105,7 @@ final class LoginResult
                 $uce->get_user()->get_session_id(),
                 null
             );
-        } catch (UserCreationException $ex) {
+        } catch (UserError $ex) {
             return new LoginResult(
                 User::get_anonymous(),
                 null,
@@ -263,21 +259,17 @@ final class UserPage extends Extension
                 $this->theme->display_signups_disabled();
                 return;
             }
-            try {
-                $uce = send_event(
-                    new UserCreationEvent(
-                        $event->POST->req('name'),
-                        $event->POST->req('pass1'),
-                        $event->POST->req('pass2'),
-                        $event->POST->req('email'),
-                        true
-                    )
-                );
-                $uce->get_user()->set_login_cookie();
-                Ctx::$page->set_redirect(make_link("user"));
-            } catch (UserCreationException $ex) {
-                throw new InvalidInput($ex->getMessage());
-            }
+            $uce = send_event(
+                new UserCreationEvent(
+                    $event->POST->req('name'),
+                    $event->POST->req('pass1'),
+                    $event->POST->req('pass2'),
+                    $event->POST->req('email'),
+                    true
+                )
+            );
+            $uce->get_user()->set_login_cookie();
+            Ctx::$page->set_redirect(make_link("user"));
         }
         if ($event->page_matches("user_admin/create_other", method: "POST", permission: UserAccountsPermission::CREATE_OTHER_USER)) {
             send_event(
@@ -538,21 +530,21 @@ final class UserPage extends Extension
         //$email = $event->email;
 
         if (!Ctx::$user->can(UserAccountsPermission::CREATE_USER)) {
-            throw new UserCreationException("Account creation is currently disabled");
+            throw new InvalidInput("Account creation is currently disabled");
         }
         if (!Ctx::$config->get(UserAccountsConfig::SIGNUP_ENABLED) && !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER)) {
-            throw new UserCreationException("Account creation is currently disabled");
+            throw new InvalidInput("Account creation is currently disabled");
         }
         try {
             $name = $this->validate_user_name($name);
         } catch (InvalidInput $ex) {
-            throw new UserCreationException("Invalid username: " . $ex->getMessage());
+            throw new InvalidInput("Invalid username: " . $ex->getMessage());
         }
         if (!Captcha::check(UserAccountsPermission::SKIP_SIGNUP_CAPTCHA)) {
-            throw new UserCreationException("Error in captcha");
+            throw new InvalidInput("Error in captcha");
         }
         if ($event->password !== $event->password2) {
-            throw new UserCreationException("Passwords don't match");
+            throw new InvalidInput("Passwords don't match");
         }
         if (
             // Users who can create other users (ie, admins) are exempt
@@ -560,7 +552,7 @@ final class UserPage extends Extension
             !Ctx::$user->can(UserAccountsPermission::CREATE_OTHER_USER) &&
             (Ctx::$config->get(UserAccountsConfig::USER_EMAIL_REQUIRED) && empty($event->email))
         ) {
-            throw new UserCreationException("Email address is required");
+            throw new InvalidInput("Email address is required");
         }
 
         $email = $event->email ?: null;

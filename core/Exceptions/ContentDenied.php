@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-class MediaReplaceException extends SCoreException
+class ContentDenied extends PermissionDenied
 {
 }

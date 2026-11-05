@@ -345,11 +345,15 @@ function _fatal_error(\Throwable $e): void
 
         header("HTTP/1.0 $code Error");
 
+        $title = "Internal Error";
+        if (is_a($e, TimeoutException::class)) {
+            $title = "Server Timeout";
+        }
         $html = HTML(
             ["lang" => "en"],
-            HEAD(TITLE("Internal Error")),
+            HEAD(TITLE($title)),
             BODY(
-                H1("Internal Error"),
+                H1($title),
                 P("Check server logs for details."),
                 P("Trace ID: ", CODE(Ctx::$tracer->traceId)),
             )
@@ -590,6 +594,6 @@ function compare_file_bytes(Path $file_name, array $comparison): bool
             @fclose($fh);
         }
     } else {
-        throw new MediaException("Unable to open file for byte check: {$file_name->str()}");
+        throw new ServerError("Unable to open file for byte check: {$file_name->str()}");
     }
 }

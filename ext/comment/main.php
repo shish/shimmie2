@@ -556,12 +556,12 @@ final class CommentList extends Extension
     {
         // basic sanity checks
         if (!Ctx::$user->can(CommentPermission::CREATE_COMMENT)) {
-            throw new CommentPostingException("You do not have permission to add comments");
+            throw new PermissionDenied("You do not have permission to add comments");
         }
 
         $image = Post::by_id($image_id);
         if (is_null($image)) {
-            throw new CommentPostingException("The image does not exist");
+            throw new PostNotFound("The post does not exist");
         }
 
         // editing an existing comment
@@ -575,17 +575,17 @@ final class CommentList extends Extension
         // Check if comments are locked
         $comments_locked = $image["comments_locked"];
         if ($comments_locked && !Ctx::$user->can(CommentPermission::BYPASS_COMMENT_LOCK)) {
-            throw new CommentPostingException("Comments are locked on this post");
+            throw new PermissionDenied("Comments are locked on this post");
         }
 
         if (trim($comment) === "") {
-            throw new CommentPostingException("Comments need text...");
+            throw new InvalidInput("Comments need text...");
         } elseif (strlen($comment) > 9000) {
-            throw new CommentPostingException("Comment too long~");
+            throw new InvalidInput("Comment too long~");
         } elseif (strlen($comment) / strlen(\Safe\gzcompress($comment)) > 10) {
-            throw new CommentPostingException("Comment too repetitive~");
+            throw new InvalidInput("Comment too repetitive~");
         } elseif (!defined("UNITTEST") && !self::check_hash($_POST['hash'])) {
-            throw new CommentPostingException(
+            throw new InvalidInput(
                 "Comment submission form is out of date; refresh the ".
                     "comment form to show you aren't a spammer~"
             );
@@ -594,15 +594,15 @@ final class CommentList extends Extension
         // database-querying checks
         if (!$user->can(UserAccountsPermission::BYPASS_CONTENT_CHECKS)) {
             if ($this->is_comment_limit_hit()) {
-                throw new CommentPostingException("You've posted several comments recently; wait a minute and try again...");
+                throw new PermissionDenied("You've posted several comments recently; wait a minute and try again...");
             } elseif (Comment::is_dupe($image_id, $comment)) {
-                throw new CommentPostingException("Someone already made that comment on that image -- try and be more original?");
+                throw new InvalidInput("Someone already made that comment on that image -- try and be more original?");
             }
         }
 
         // rate-limited external service checks last
         if (!Captcha::check(CommentPermission::SKIP_CAPTCHA)) {
-            throw new CommentPostingException("Error in captcha");
+            throw new PermissionDenied("Error in captcha");
         }
     }
 }

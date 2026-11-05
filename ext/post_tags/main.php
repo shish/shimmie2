@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class TagSetException extends UserError
+final class InvalidTag extends InvalidInput
 {
     public ?string $redirect;
 
@@ -168,7 +168,7 @@ final class PostTags extends Extension
             try {
                 send_event(new CheckStringContentEvent(Tag::implode($tags), type: StringType::TAG));
                 send_event(new TagSetEvent($event->image, $tags));
-            } catch (TagSetException $e) {
+            } catch (InvalidTag $e) {
                 if ($e->redirect) {
                     Ctx::$page->flash("{$e->getMessage()}, please see {$e->redirect}");
                 } else {

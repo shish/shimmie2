@@ -118,9 +118,8 @@ final class ZipFileHandler extends DataHandlerExtension
         return false;
     }
 
-    protected function create_thumb(Post $image): bool
+    protected function create_thumb(Post $image): void
     {
-        return false;
     }
 
     /**

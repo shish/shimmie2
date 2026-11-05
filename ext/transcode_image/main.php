@@ -4,14 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-/*
-* This is used by the image transcoding code when there is an error while transcoding
-*/
-final class ImageTranscodeException extends SCoreException
-{
-}
-
-
 /** @extends Extension<TranscodeImageTheme> */
 final class TranscodeImage extends Extension
 {
@@ -78,7 +70,7 @@ final class TranscodeImage extends Extension
             }
 
             if (is_null($target_mime)) {
-                throw new ImageTranscodeException("Unable to determine output MIME for ".$event->params['transcode']);
+                throw new InvalidInput("Unable to determine output MIME for ".$event->params['transcode']);
             }
 
             MediaEngine::is_output_supported(MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE)), $target_mime);
@@ -190,16 +182,16 @@ final class TranscodeImage extends Extension
     private function transcode_image(Path $source_name, MimeType $source_mime, MimeType $target_mime): Path
     {
         if ($source_mime === $target_mime) {
-            throw new ImageTranscodeException("Source and target MIMEs are the same: ".$source_mime);
+            throw new InvalidInput("Source and target MIMEs are the same: ".$source_mime);
         }
 
         $engine = MediaEngine::from(Ctx::$config->get(TranscodeImageConfig::ENGINE));
 
         if (!$this->can_convert_mime($engine, $source_mime)) {
-            throw new ImageTranscodeException("Engine {$engine->value} does not support input MIME $source_mime");
+            throw new InvalidInput("Engine {$engine->value} does not support input MIME $source_mime");
         }
         if (!MediaEngine::is_output_supported($engine, $target_mime)) {
-            throw new ImageTranscodeException("Engine {$engine->value} does not support output MIME $target_mime");
+            throw new InvalidInput("Engine {$engine->value} does not support output MIME $target_mime");
         }
 
         return match ($engine) {
@@ -229,7 +221,7 @@ final class TranscodeImage extends Extension
                 $height = imagesy($image);
                 $new_image = imagecreatetruecolor($width, $height);
                 if ($new_image === false) {
-                    throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
+                    throw new InvalidInput("Could not create image with dimensions $width x $height");
                 }
                 $background_color = Media::hex_color_allocate($new_image, Ctx::$config->get(TranscodeImageConfig::ALPHA_COLOR));
                 imagefilledrectangle($new_image, 0, 0, $width, $height, $background_color);
@@ -238,7 +230,7 @@ final class TranscodeImage extends Extension
                 break;
         }
         if ($result === false) {
-            throw new ImageTranscodeException("Error while transcoding ".$source_name->str()." to ".$target_mime);
+            throw new ServerError("Error while transcoding ".$source_name->str()." to ".$target_mime);
         }
         return $tmp_name;
     }

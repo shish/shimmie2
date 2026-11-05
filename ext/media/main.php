@@ -60,7 +60,8 @@ final class Media extends Extension
                             send_event(new MediaCheckPropertiesEvent($image));
                             $image->save_to_db();
                             $total++;
-                        } catch (MediaException $e) {
+                        } catch (\Exception $e) {
+                            Log::error("media", "Failed to rescan media for {$image->hash} ({$image->id}): " . $e->getMessage());
                             $failed++;
                         }
                     }
@@ -99,14 +100,14 @@ final class Media extends Extension
             $event->resize_type,
             MediaEngine::RESIZE_TYPE_SUPPORT[$event->engine->value]
         )) {
-            throw new MediaException("Resize type {$event->resize_type->name} not supported by selected media engine {$event->engine->value}");
+            throw new InvalidInput("Resize type {$event->resize_type->name} not supported by selected media engine {$event->engine->value}");
         }
 
         switch ($event->engine) {
             case MediaEngine::GD:
                 $info = \Safe\getimagesize($event->input_path->str());
                 if ($info === null) {
-                    throw new MediaException("Couldn't get dimensions of {$event->input_path->str()}");
+                    throw new ServerError("Couldn't get dimensions of {$event->input_path->str()}");
                 }
 
                 self::image_resize_gd(
@@ -142,7 +143,7 @@ final class Media extends Extension
                 $event->input_path->copy($event->output_path);
                 break;
             default:
-                throw new MediaException("Engine not supported for resize: " . $event->engine->value);
+                throw new InvalidInput("Engine not supported for resize: " . $event->engine->value);
         }
     }
 
@@ -377,7 +378,7 @@ final class Media extends Extension
                 IMAGETYPE_PNG => MimeType::PNG,
                 IMAGETYPE_WEBP => MimeType::WEBP,
                 IMAGETYPE_BMP => MimeType::BMP,
-                default => throw new MediaException("Failed to save the new image - Unsupported MIME type."),
+                default => throw new InvalidInput("Failed to save the new image - Unsupported MIME type."),
             });
         }
         if (is_null($alpha_color)) {
@@ -387,7 +388,7 @@ final class Media extends Extension
         $memory_use = self::calc_memory_use($info);
         $memory_limit = get_memory_limit();
         if ($memory_use > $memory_limit) {
-            throw new InsufficientMemoryException("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
+            throw new UserError("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
         }
 
         if ($resize_type === ResizeType::FIT) {
@@ -401,12 +402,12 @@ final class Media extends Extension
 
         $image = imagecreatefromstring($image_filename->get_contents());
         if ($image === false) {
-            throw new MediaException("Could not load image: " . $image_filename->str());
+            throw new ServerError("Could not load image: " . $image_filename->str());
         }
 
         $image_resized = imagecreatetruecolor($new_width, $new_height);
         if ($image_resized === false) {
-            throw new MediaException("Could not create output image with dimensions $new_width x $new_height ");
+            throw new ServerError("Could not create output image with dimensions $new_width x $new_height ");
         }
 
         // Handle transparent images
@@ -423,7 +424,7 @@ final class Media extends Extension
                     // Allocate the same color in the new image resource
                     $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
                     if ($transparency === false) {
-                        throw new MediaException("Unable to allocate transparent color");
+                        throw new ServerError("Unable to allocate transparent color");
                     }
 
                     // Completely fill the background of the new image with allocated color.
@@ -442,7 +443,7 @@ final class Media extends Extension
                 imagesavealpha($image_resized, true);
                 $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
                 if ($transparent_color === false) {
-                    throw new MediaException("Unable to allocate transparent color");
+                    throw new ServerError("Unable to allocate transparent color");
                 }
                 imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color);
                 break;
@@ -470,7 +471,7 @@ final class Media extends Extension
                 $height = imagesy($image_resized);
                 $new_image = imagecreatetruecolor($width, $height);
                 if ($new_image === false) {
-                    throw new ImageTranscodeException("Could not create image with dimensions $width x $height");
+                    throw new InvalidInput("Could not create image with dimensions $width x $height");
                 }
 
                 $background_color = Media::hex_color_allocate($new_image, $alpha_color);
@@ -487,10 +488,10 @@ final class Media extends Extension
             MimeType::JPEG => imagejpeg($image_resized, $output_filename->str(), $output_quality),
             MimeType::PNG => imagepng($image_resized, $output_filename->str(), 9),
             MimeType::GIF => imagegif($image_resized, $output_filename->str()),
-            default => throw new MediaException("Failed to save the new image - Unsupported image type: $output_mime"),
+            default => throw new InvalidInput("Failed to save the new image - Unsupported image type: $output_mime"),
         };
         if ($result === false) {
-            throw new MediaException("Failed to save the new image, function returned false when saving type: $output_mime");
+            throw new ServerError("Failed to save the new image, function returned false when saving type: $output_mime");
         }
     }
 

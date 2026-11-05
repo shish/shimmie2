@@ -56,7 +56,7 @@ final class AudioFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function create_thumb(Post $image): bool
+    protected function create_thumb(Post $image): void
     {
         $inname = $image->get_media_filename();
         $outname = $image->get_thumb_filename();
@@ -77,7 +77,7 @@ final class AudioFileHandler extends DataHandlerExtension
                 $scaled_size = ThumbnailUtil::get_thumbnail_size(1, 1, true);
                 ThumbnailUtil::create_scaled_image($tmpname, $outname, $scaled_size, $mime);
                 $tmpname->unlink();
-                return true;
+                return;
             }
         } catch (\Exception $e) {
             // ffmpeg failed or no embedded artwork found, fall back to default
@@ -89,7 +89,6 @@ final class AudioFileHandler extends DataHandlerExtension
 
         // Fall back to default thumb.jpg
         (new Path("ext/handle_audio/thumb.jpg"))->copy($outname);
-        return true;
     }
 
     protected function check_contents(Path $tmpname): bool

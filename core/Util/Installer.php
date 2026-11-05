@@ -33,7 +33,7 @@ final class Installer
         }
     }
 
-    private static function screen(string $title, string $body, int $code = 0): void
+    private static function screen(string $title, string $body, int $code = 0): never
     {
         $data_href = Url::base();
         print("<!DOCTYPE html>
@@ -74,13 +74,9 @@ final class Installer
 
     private static function do_install(string $dsn): void
     {
-        try {
-            self::create_dirs();
-            self::create_tables(new Database($dsn));
-            self::write_config($dsn);
-        } catch (InstallerException $e) {
-            Installer::screen($e->title, $e->body, $e->exit_code);
-        }
+        self::create_dirs();
+        self::create_tables(new Database($dsn));
+        self::write_config($dsn);
     }
 
     private static function ask_questions(): void
@@ -234,7 +230,7 @@ final class Installer
         $data_writable = $data_exists && (is_writable("data") || chmod("data", 0755));
 
         if (!$data_exists || !$data_writable) {
-            throw new InstallerException(
+            Installer::screen(
                 "Directory Permissions Error:",
                 "<p>Shimmie needs to have a 'data' folder in its directory, writable by the PHP user.</p>
             <p>If you see this error, if probably means the folder is owned by you, and it needs to be writable by the web server.</p>
@@ -250,7 +246,7 @@ final class Installer
     {
         try {
             if ($db->count_tables() > 0) {
-                throw new InstallerException(
+                Installer::screen(
                     "Warning: The Database schema is not empty!",
                     "<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
                     <p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>",
@@ -334,7 +330,7 @@ final class Installer
             // Ensure that we end this code in a transaction (for testing)
             $db->begin_transaction();
         } catch (\PDOException $e) {
-            throw new InstallerException(
+            Installer::screen(
                 "PDO Error:",
                 "<p>An error occurred while trying to create the database tables necessary for Shimmie.</p>
                 <p>Please check and ensure that the database configuration options are all correct.</p>
@@ -345,7 +341,7 @@ final class Installer
         }
     }
 
-    private static function write_config(string $dsn): void
+    private static function write_config(string $dsn): never
     {
         $secret = bin2hex(random_bytes(16));
         $p_dsn = var_export($dsn, true);
@@ -369,7 +365,7 @@ final class Installer
             }
         } else {
             $h_file_content = htmlentities($file_content);
-            throw new InstallerException(
+            Installer::screen(
                 "File Permissions Error:",
                 "The web server isn't allowed to write to the config file; please copy
                 the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie

@@ -11,7 +11,7 @@ final class BanWordsTest extends ShimmiePHPUnitTestCase
         try {
             send_event(new CheckStringContentEvent($words));
             self::fail("Exception not thrown");
-        } catch (ContentException $e) {
+        } catch (ContentDenied $e) {
             self::assertSame("text contains banned terms", $e->getMessage());
         }
     }

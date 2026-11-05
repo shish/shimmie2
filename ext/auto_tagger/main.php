@@ -48,14 +48,6 @@ final class DeleteAutoTagEvent extends Event
     }
 }
 
-final class AutoTaggerException extends SCoreException
-{
-}
-
-final class AddAutoTagException extends SCoreException
-{
-}
-
 /** @extends Extension<AutoTaggerTheme> */
 final class AutoTagger extends Extension
 {

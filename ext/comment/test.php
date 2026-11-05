@@ -26,28 +26,28 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
         # dupe
         try {
             send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment ASDFASDF"));
-        } catch (CommentPostingException $e) {
+        } catch (InvalidInput $e) {
             self::assertStringContainsString("try and be more original", $e->getMessage());
         }
 
         # empty comment
         try {
             send_event(new CommentPostingEvent($image_id, Ctx::$user, ""));
-        } catch (CommentPostingException $e) {
+        } catch (InvalidInput $e) {
             self::assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # whitespace is still empty...
         try {
             send_event(new CommentPostingEvent($image_id, Ctx::$user, " \t\r\n"));
-        } catch (CommentPostingException $e) {
+        } catch (InvalidInput $e) {
             self::assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # repetitive (aka. gzip gives >= 10x improvement)
         try {
             send_event(new CommentPostingEvent($image_id, Ctx::$user, str_repeat("U", 5000)));
-        } catch (CommentPostingException $e) {
+        } catch (InvalidInput $e) {
             self::assertStringContainsString("Comment too repetitive", $e->getMessage());
         }
 
@@ -136,8 +136,8 @@ final class CommentListTest extends ShimmiePHPUnitTestCase
         self::log_in_as_user();
         try {
             send_event(new CommentPostingEvent($image_id, Ctx::$user, "Test Comment After Lock"));
-            self::fail("Expected CommentPostingException for locked comments");
-        } catch (CommentPostingException $e) {
+            self::fail("Expected PermissionDenied for locked comments");
+        } catch (PermissionDenied $e) {
             self::assertStringContainsString("Comments are locked", $e->getMessage());
         }
 

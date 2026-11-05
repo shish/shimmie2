@@ -37,7 +37,7 @@ abstract class DataHandlerExtension extends Extension
         if ($this->supported_mime($event->mime)) {
             if (!$this->check_contents($event->tmpname)) {
                 // We DO support this extension - but the file looks corrupt
-                throw new UploadException("Invalid or corrupted file");
+                throw new InvalidInput("Invalid or corrupted file");
             }
 
             $existing = Post::by_hash($event->tmpname->md5());
@@ -53,7 +53,7 @@ abstract class DataHandlerExtension extends Extension
                     $event->posts[] = $existing;
                     return;
                 } else {
-                    throw new UploadException(">>{$existing->id} already has hash {$existing->hash}");
+                    throw new InvalidInput(">>{$existing->id} already has hash {$existing->hash}");
                 }
             }
 
@@ -64,18 +64,14 @@ abstract class DataHandlerExtension extends Extension
             $image->tmp_file = $filename;
             $filesize = $filename->filesize();
             if ($filesize === 0) {
-                throw new UploadException("File size is zero");
+                throw new InvalidInput("File size is zero");
             }
             $image->filesize = $filesize;
             $image->hash = $filename->md5();
             // DB limits to 255 char filenames
             $image->filename = truncate_filename($event->filename);
             $image->set_mime($event->mime);
-            try {
-                send_event(new MediaCheckPropertiesEvent($image));
-            } catch (MediaException $e) {
-                throw new UploadException("Unable to scan media properties {$filename->str()} / {$image->filename} / $image->hash: ".$e->getMessage());
-            }
+            send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db(); // Ensure the image has a DB-assigned ID
 
             $iae = send_event(new PostAdditionEvent($image));
@@ -86,7 +82,7 @@ abstract class DataHandlerExtension extends Extension
             try {
                 $event->tmpname->copy($filename);
             } catch (\Exception $e) {
-                throw new UploadException("Failed to copy file from uploads ({$event->tmpname->str()}) to archive ({$filename->str()}): ".$e->getMessage());
+                throw new ServerError("Failed to copy file from uploads ({$event->tmpname->str()}) to archive ({$filename->str()}): ".$e->getMessage());
             }
 
             $event->posts[] = $iae->image;
@@ -96,20 +92,18 @@ abstract class DataHandlerExtension extends Extension
     #[EventListener]
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event): void
     {
-        $result = false;
         if ($this->supported_mime($event->image->get_mime())) {
             if ($event->force) {
-                $result = $this->create_thumb($event->image);
+                $this->create_thumb($event->image);
+                $event->generated = true;
             } else {
                 $outname = $event->image->get_thumb_filename();
                 if ($outname->exists()) {
                     return;
                 }
-                $result = $this->create_thumb($event->image);
+                $this->create_thumb($event->image);
+                $event->generated = true;
             }
-        }
-        if ($result) {
-            $event->generated = true;
         }
     }
 
@@ -165,7 +159,7 @@ abstract class DataHandlerExtension extends Extension
 
     abstract protected function media_check_properties(Post $image): ?MediaProperties;
     abstract protected function check_contents(Path $tmpname): bool;
-    abstract protected function create_thumb(Post $image): bool;
+    abstract protected function create_thumb(Post $image): void;
 
     protected function supported_mime(MimeType $mime): bool
     {

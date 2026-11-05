@@ -26,7 +26,7 @@ final class NotATagTest extends ShimmiePHPUnitTestCase
         self::assert_title("Post $image_id: two");
 
         // Modified Bad as user - redirect
-        self::assertException(TagSetException::class, function () use ($image) {
+        self::assertException(InvalidTag::class, function () use ($image) {
             send_event(new TagSetEvent($image, ["three", "face"]));
         });
         self::get_page("post/view/$image_id");

@@ -21,12 +21,12 @@ final class BanWords extends Extension
             if ($word[0] === '/') {
                 // lines that start with slash are regex
                 if (\Safe\preg_match($word, $comment)) {
-                    throw new ContentException("{$event->type->value} contains banned terms");
+                    throw new ContentDenied("{$event->type->value} contains banned terms");
                 }
             } else {
                 // other words are literal
                 if (str_contains($comment, $word)) {
-                    throw new ContentException("{$event->type->value} contains banned terms");
+                    throw new ContentDenied("{$event->type->value} contains banned terms");
                 }
             }
         }

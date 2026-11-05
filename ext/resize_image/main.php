@@ -6,10 +6,6 @@ namespace Shimmie2;
 
 use function MicroHTML\{BR, INPUT, LABEL, emptyHTML};
 
-final class ImageResizeException extends ServerError
-{
-}
-
 final class ResizeImage extends Extension
 {
     public const KEY = "resize_image";
@@ -159,13 +155,13 @@ final class ResizeImage extends Extension
     private function resize_image(Post $image_obj, int $width, int $height): void
     {
         if (($height <= 0) && ($width <= 0)) {
-            throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
+            throw new InvalidInput("Invalid options for height and width. ($width x $height)");
         }
 
         $engine = MediaEngine::from(Ctx::$config->get(ResizeConfig::ENGINE));
 
         if (!$this->can_resize_mime($image_obj->get_mime())) {
-            throw new ImageResizeException("Engine {$engine->value} cannot resize selected image");
+            throw new InvalidInput("Engine {$engine->value} cannot resize selected image");
         }
 
         $hash = $image_obj->hash;
@@ -174,7 +170,7 @@ final class ResizeImage extends Extension
         $info = \Safe\getimagesize($image_filename->str());
         assert(!is_null($info));
         if (($image_obj->width !== $info[0]) || ($image_obj->height !== $info[1])) {
-            throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
+            throw new InvalidInput("The current image size does not match what is set in the database! - Aborting Resize.");
         }
 
         list($new_height, $new_width) = $this->calc_new_size($image_obj, $width, $height);

@@ -9,13 +9,6 @@ use function MicroHTML\{INPUT};
 // TODO Add warning that rotate doesn't support lossless webp output
 
 /**
- * This class is just a wrapper around SCoreException.
- */
-final class ImageRotateException extends SCoreException
-{
-}
-
-/**
  *	This class handles image rotate requests.
  */
 final class RotateImage extends Extension
@@ -59,7 +52,7 @@ final class RotateImage extends Extension
     private function rotate_image(int $image_id, int $deg): void
     {
         if (($deg <= -360) || ($deg >= 360)) {
-            throw new ImageRotateException("Invalid options for rotation angle. ($deg)");
+            throw new InvalidInput("Invalid options for rotation angle. ($deg)");
         }
 
         $image_obj = Post::by_id_ex($image_id);
@@ -67,7 +60,7 @@ final class RotateImage extends Extension
 
         $image_filename  = Filesystem::warehouse_path(Post::MEDIA_DIR, $hash);
         if (!$image_filename->exists()) {
-            throw new ImageRotateException("{$image_filename->str()} does not exist.");
+            throw new InvalidInput("{$image_filename->str()} does not exist.");
         }
 
         $info = \Safe\getimagesize($image_filename->str());
@@ -77,14 +70,14 @@ final class RotateImage extends Extension
         $memory_limit = get_memory_limit();
 
         if ($memory_use > $memory_limit) {
-            throw new ImageRotateException("The image is too large to rotate given the memory limits. ($memory_use > $memory_limit)");
+            throw new InvalidInput("The image is too large to rotate given the memory limits. ($memory_use > $memory_limit)");
         }
 
 
         /* Attempt to load the image */
         $image = imagecreatefromstring(data: $image_filename->get_contents());
         if ($image === false) {
-            throw new ImageRotateException("Could not load image: ".$image_filename->str());
+            throw new InvalidInput("Could not load image: ".$image_filename->str());
         }
 
         $background_color = 0;
@@ -95,12 +88,12 @@ final class RotateImage extends Extension
                 break;
         }
         if ($background_color === false) {
-            throw new ImageRotateException("Unable to allocate transparent color");
+            throw new ServerError("Unable to allocate transparent color");
         }
 
         $image_rotated = imagerotate($image, $deg, $background_color);
         if ($image_rotated === false) {
-            throw new ImageRotateException("Image rotate failed");
+            throw new ServerError("Image rotate failed");
         }
 
         /* Temp storage while we rotate */
@@ -113,11 +106,11 @@ final class RotateImage extends Extension
             IMAGETYPE_PNG => imagepng($image_rotated, $tmp_filename->str(), 9),
             IMAGETYPE_WEBP => imagewebp($image_rotated, $tmp_filename->str()),
             IMAGETYPE_BMP => imagebmp($image_rotated, $tmp_filename->str(), true),
-            default => throw new ImageRotateException("Unsupported image type."),
+            default => throw new InvalidInput("Unsupported image type."),
         };
 
         if ($result === false) {
-            throw new ImageRotateException("Could not save image: ".$tmp_filename->str());
+            throw new ServerError("Could not save image: ".$tmp_filename->str());
         }
 
         $new_hash = $tmp_filename->md5();

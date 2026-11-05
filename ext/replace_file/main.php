@@ -36,7 +36,7 @@ final class ReplaceFile extends Extension
             if ($tmp_filename->filesize() > Ctx::$config->get(UploadConfig::SIZE)) {
                 $size = to_shorthand_int($tmp_filename->filesize());
                 $limit = to_shorthand_int(Ctx::$config->get(UploadConfig::SIZE));
-                throw new UploadException("File too large ($size > $limit)");
+                throw new InvalidInput("File too large ($size > $limit)");
             }
             send_event(new MediaReplaceEvent($image, $tmp_filename));
             if ($event->POST->get("source")) {
@@ -63,7 +63,7 @@ final class ReplaceFile extends Extension
 
         $duplicate = Post::by_hash($event->new_hash);
         if (!is_null($duplicate) && $duplicate->id !== $image->id) {
-            throw new MediaReplaceException("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
+            throw new InvalidInput("A different post >>{$duplicate->id} already has hash {$duplicate->hash}");
         }
 
         $image->delete_media(); // Actually delete the old image file from disk
@@ -72,7 +72,7 @@ final class ReplaceFile extends Extension
         try {
             $event->tmp_filename->copy($target);
         } catch (\Exception $e) {
-            throw new MediaReplaceException("Failed to copy file from uploads ({$event->tmp_filename->str()}) to archive ({$target->str()}): {$e->getMessage()}");
+            throw new ServerError("Failed to copy file from uploads ({$event->tmp_filename->str()}) to archive ({$target->str()}): {$e->getMessage()}");
         }
         $event->tmp_filename->unlink();
 
@@ -80,7 +80,7 @@ final class ReplaceFile extends Extension
         $event->image->hash = $event->new_hash;
         $filesize = $target->filesize();
         if ($filesize === 0) {
-            throw new MediaReplaceException("Replacement file size is zero");
+            throw new InvalidInput("Replacement file size is zero");
         }
         $event->image->filesize = $filesize;
         $event->image->set_mime(MimeType::get_for_file($target));

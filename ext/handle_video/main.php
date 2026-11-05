@@ -46,12 +46,12 @@ final class VideoFileHandler extends DataHandlerExtension
         assert($length >= 0);
 
         if (is_null($video_codec)) {
-            throw new MediaException("Could not determine video codec");
+            throw new InvalidInput("Could not determine video codec");
         }
 
         $container = VideoContainer::fromMimeType($image->get_mime());
         if (!$container->is_codec_supported($video_codec)) {
-            throw new MediaException(
+            throw new InvalidInput(
                 "Unsupported video codec '{$video_codec->name}' for '{$image->get_mime()->base}' container. ".
                 "Supported codecs are " . implode(", ", array_map(fn ($c) => $c->name, VideoContainer::VIDEO_CODEC_SUPPORT[$container->value])) . "."
             );
@@ -69,12 +69,11 @@ final class VideoFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function create_thumb(Post $image): bool
+    protected function create_thumb(Post $image): void
     {
         $inname = $image->get_media_filename();
         $outname = $image->get_thumb_filename();
 
-        $ok = false;
         $tmpname = shm_tempnam("ffmpeg_thumb");
         try {
             $scaled_size = ThumbnailUtil::get_thumbnail_size($image->width, $image->height, true);
@@ -90,11 +89,9 @@ final class VideoFileHandler extends DataHandlerExtension
             $command->execute();
 
             ThumbnailUtil::create_scaled_image($tmpname, $outname, $scaled_size, new MimeType(MimeType::PNG));
-            $ok = true;
         } finally {
             @$tmpname->unlink();
         }
-        return $ok;
     }
 
     protected function check_contents(Path $tmpname): bool

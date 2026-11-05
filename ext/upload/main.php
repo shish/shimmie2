@@ -71,9 +71,6 @@ final class DirectoryUploadEvent extends Event
     }
 }
 
-final class UploadException extends SCoreException
-{
-}
 
 abstract class UploadResult
 {
@@ -154,12 +151,12 @@ final class Upload extends Extension
     public function onDataUpload(DataUploadEvent $event): void
     {
         if ($this->is_full) {
-            throw new UploadException("Upload failed; disk nearly full");
+            throw new UserError("Upload failed; disk nearly full");
         }
         if ($event->size > Ctx::$config->get(UploadConfig::SIZE)) {
             $size = to_shorthand_int($event->size);
             $limit = to_shorthand_int(Ctx::$config->get(UploadConfig::SIZE));
-            throw new UploadException("File too large ($size > $limit)");
+            throw new InvalidInput("File too large ($size > $limit)");
         }
     }
 
@@ -187,7 +184,7 @@ final class Upload extends Extension
                     return $results;
                 });
                 $results = array_merge($results, $more_results);
-            } catch (UploadException $ex) {
+            } catch (UserError $ex) {
                 $results[] = new UploadError($filename, $ex->getMessage());
             }
         }
@@ -322,20 +319,20 @@ final class Upload extends Extension
             try {
                 // check if the upload was successful
                 if ($error !== UPLOAD_ERR_OK) {
-                    throw new UploadException($this->upload_error_message($error));
+                    throw new InvalidInput($this->upload_error_message($error));
                 }
 
                 $new_images = $database->with_savepoint(function () use ($tmp_name, $name, $slot, $metadata) {
                     $event = send_event(new DataUploadEvent($tmp_name, basename($name), $slot, $metadata));
                     if (count($event->posts) === 0) {
-                        throw new UploadException("MIME type not supported: " . $event->mime);
+                        throw new InvalidInput("MIME type not supported: " . $event->mime);
                     }
                     return $event->posts;
                 });
                 foreach ($new_images as $image) {
                     $results[] = new UploadSuccess($name, $image->id);
                 }
-            } catch (UploadException $ex) {
+            } catch (UserError $ex) {
                 $results[] = new UploadError($name, $ex->getMessage());
             }
         }
@@ -357,7 +354,7 @@ final class Upload extends Extension
             try {
                 $headers = Network::fetch_url($url, $tmp_filename);
             } catch (FetchException $e) {
-                throw new UploadException("Error reading from $url: " . $e->getMessage());
+                throw new UserError("Error reading from $url: " . $e->getMessage());
             }
 
             // Parse metadata
@@ -369,14 +366,14 @@ final class Upload extends Extension
             $new_images = Ctx::$database->with_savepoint(function () use ($tmp_filename, $filename, $slot, $metadata) {
                 $event = send_event(new DataUploadEvent($tmp_filename, $filename, $slot, $metadata));
                 if (count($event->posts) === 0) {
-                    throw new UploadException("File type not supported: " . $event->mime);
+                    throw new InvalidInput("File type not supported: " . $event->mime);
                 }
                 return $event->posts;
             });
             foreach ($new_images as $image) {
                 $results[] = new UploadSuccess($url, $image->id);
             }
-        } catch (UploadException $ex) {
+        } catch (UserError $ex) {
             $results[] = new UploadError($url, $ex->getMessage());
         } finally {
             if ($tmp_filename->exists()) {
