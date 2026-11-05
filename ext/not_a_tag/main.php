@@ -72,7 +72,7 @@ final class NotATag extends Extension
             // into [69 => "No sex"]
             // @phpstan-ignore cast.useless
             if (in_array(strtolower((string)$tag), $tags)) {
-                throw new TagSetException("Invalid tag used: $tag", $url);
+                throw new InvalidTag("Invalid tag used: $tag", $url);
             }
         }
     }

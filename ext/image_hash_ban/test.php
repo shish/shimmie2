@@ -34,7 +34,7 @@ final class ImageBanTest extends ShimmiePHPUnitTestCase
         });
 
         // Can't repost
-        self::assertException(UploadException::class, function () {
+        self::assertException(InvalidInput::class, function () {
             $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         });
 

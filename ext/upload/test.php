@@ -65,7 +65,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
     {
         $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
-        $e = self::assertException(UploadException::class, function () {
+        $e = self::assertException(InvalidInput::class, function () {
             $this->create_post("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         });
         self::assertStringContainsString("already has hash", $e->getMessage());
@@ -81,7 +81,7 @@ final class UploadTest extends ShimmiePHPUnitTestCase
     {
         // FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
         file_put_contents("data/huge.jpg", \Safe\file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024 * 1024 * 3));
-        $e = self::assertException(UploadException::class, function () {
+        $e = self::assertException(InvalidInput::class, function () {
             $this->create_post("data/huge.jpg", "test");
         });
         unlink("data/huge.jpg");

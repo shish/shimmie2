@@ -61,7 +61,7 @@ final class SVGFileHandler extends DataHandlerExtension
         );
     }
 
-    protected function create_thumb(Post $image): bool
+    protected function create_thumb(Post $image): void
     {
         try {
             // Normally we require imagemagick, but for unit tests we can use a no-op engine
@@ -70,11 +70,9 @@ final class SVGFileHandler extends DataHandlerExtension
             } else {
                 ThumbnailUtil::create_image_thumb($image, MediaEngine::IMAGICK);
             }
-            return true;
-        } catch (MediaException $e) {
+        } catch (\Exception $e) {
             Log::warning("handle_svg", "Could not generate thumbnail. " . $e->getMessage());
             (new Path("ext/handle_svg/thumb.jpg"))->copy($image->get_thumb_filename());
-            return false;
         }
     }
 

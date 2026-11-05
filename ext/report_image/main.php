@@ -46,9 +46,9 @@ final class ReportImage extends Extension
         if ($event->page_matches("image_report/add", method: "POST", permission: ReportImagePermission::CREATE_IMAGE_REPORT)) {
             $reason = $event->POST->req('reason');
             if (trim($reason) === "") {
-                throw new ReportPostingException("Reports need text...");
+                throw new InvalidInput("Reports need text...");
             } elseif (strlen($reason) > 300) {
-                throw new ReportPostingException("Report too long~");
+                throw new InvalidInput("Report too long~");
             }
             $image_id = int_escape($event->POST->req('image_id'));
             send_event(new AddReportedImageEvent(new ImageReport($image_id, Ctx::$user->id, $reason)));

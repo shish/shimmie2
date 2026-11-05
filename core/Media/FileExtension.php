@@ -81,7 +81,7 @@ final class FileExtension
         if ($data !== null) {
             return $data[MimeMap::MAP_EXT][0];
         }
-        throw new MediaException("No file extension found for mimetype: ".$mime->base);
+        throw new InvalidInput("No file extension found for mimetype: ".$mime->base);
     }
 
     /**

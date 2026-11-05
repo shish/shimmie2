@@ -28,12 +28,12 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
         $image_id = $this->create_post("tests/pbx_screenshot.jpg", "pbx");
         $image = Post::by_id_ex($image_id);
 
-        $e = self::assertException(TagSetException::class, function () use ($image) {
+        $e = self::assertException(InvalidTag::class, function () use ($image) {
             send_event(new TagSetEvent($image, []));
         });
         self::assertSame("Tried to set zero tags", $e->getMessage());
 
-        $e = self::assertException(TagSetException::class, function () use ($image) {
+        $e = self::assertException(InvalidTag::class, function () use ($image) {
             send_event(new TagSetEvent($image, ["*test*"]));
         });
         self::assertSame("Can't set a tag which contains a wildcard (*)", $e->getMessage());
@@ -42,7 +42,7 @@ final class PostTagsTest extends ShimmiePHPUnitTestCase
     public function testTagEdit_tooLong(): void
     {
         self::log_in_as_user();
-        self::assertException(TagSetException::class, function () {
+        self::assertException(InvalidTag::class, function () {
             $this->create_post("tests/pbx_screenshot.jpg", str_repeat("a", 500));
         });
     }

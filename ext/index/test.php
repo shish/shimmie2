@@ -76,11 +76,11 @@ final class IndexTest extends ShimmiePHPUnitTestCase
         self::assertSame("foo", $e->term);
         self::assertTrue($e->negative);
 
-        self::assertException(SearchTermParseException::class, function () {
+        self::assertException(InvalidInput::class, function () {
             new SearchTermParseEvent(1, "", []);
         });
 
-        self::assertException(SearchTermParseException::class, function () {
+        self::assertException(InvalidInput::class, function () {
             new SearchTermParseEvent(1, "*", []);
         });
     }

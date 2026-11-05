@@ -179,7 +179,7 @@ final class GraphQL extends Extension
     private static function handle_upload(int $n, QueryArray $post): array
     {
         if (!empty($post["url$n"])) {
-            throw new UploadException("URLs not handled yet");
+            throw new InvalidInput("URLs not handled yet");
         } else {
             $ec = $_FILES["data$n"]["error"];
             switch ($ec) {
@@ -188,9 +188,9 @@ final class GraphQL extends Extension
                     $filename = $_FILES["data$n"]["name"];
                     break;
                 case UPLOAD_ERR_INI_SIZE:
-                    throw new UploadException("File larger than PHP can handle");
+                    throw new InvalidInput("File larger than PHP can handle");
                 default:
-                    throw new UploadException("Mystery error: ".var_export($ec, true));
+                    throw new ServerError("Mystery error: ".var_export($ec, true));
             }
         }
 

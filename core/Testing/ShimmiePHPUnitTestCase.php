@@ -36,13 +36,9 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
         // Do skipping after creating a savepoint, because even if we skip the
         // test we still call tearDown, which needs a savepoint to roll back to.
-        try {
-            $class = str_replace("Test", "Info", get_class($this));
-            if (defined("$class::KEY") && !ExtensionInfo::get_all()[$class::KEY]->is_supported()) {
-                self::markTestSkipped("$class not supported with this database");
-            }
-        } catch (ExtensionNotFound $e) {
-            // ignore - this is a core test rather than an extension test
+        $class = str_replace("Test", "Info", get_class($this));
+        if (defined("$class::KEY") && !ExtensionInfo::get_all()[$class::KEY]->is_supported()) {
+            self::markTestSkipped("$class not supported with this database");
         }
 
         // Set up a clean environment for each test, except for:

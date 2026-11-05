@@ -57,14 +57,9 @@ final class ImageFileHandler extends DataHandlerExtension
         return $info && in_array($info[2], $valid);
     }
 
-    protected function create_thumb(Post $image): bool
+    protected function create_thumb(Post $image): void
     {
-        try {
-            ThumbnailUtil::create_image_thumb($image);
-            return true;
-        } catch (\Exception $e) {
-            throw new UploadException("Error while creating thumbnail: ".$e->getMessage());
-        }
+        ThumbnailUtil::create_image_thumb($image);
     }
 
     /**
@@ -76,7 +71,7 @@ final class ImageFileHandler extends DataHandlerExtension
     {
         $info = getimagesize($filename->str());
         if (!$info) {
-            throw new MediaException("Could not get image size");
+            throw new InvalidInput("Could not get image size");
         }
         $width = $info[0];
         $height = $info[1];

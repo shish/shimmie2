@@ -66,7 +66,7 @@ final class BulkAddCSV extends Extension
             ])));
 
             if (count($event->posts) === 0) {
-                throw new UploadException("File type not recognised");
+                throw new InvalidInput("File type not recognised");
             } else {
                 if ($thumbfile->exists()) {
                     $thumbfile->copy(Filesystem::warehouse_path(Post::THUMBNAIL_DIR, $event->hash));

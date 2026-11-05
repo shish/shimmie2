@@ -345,7 +345,7 @@ final class Forum extends Extension
     {
         // basic sanity checks
         if (!$user->can(ForumPermission::FORUM_CREATE)) {
-            throw new ForumPostingException("You do not have permission to create forum threads or posts");
+            throw new PermissionDenied("You do not have permission to create forum threads or posts");
         }
 
         $kind = "Title";
@@ -361,9 +361,9 @@ final class Forum extends Extension
         }
 
         if (trim($content) === "") {
-            throw new ForumPostingException("$kind needs text...");
+            throw new InvalidInput("$kind needs text...");
         } elseif (strlen($content) > (is_null($thread_id) ? Ctx::$config->get(ForumConfig::TITLE_SUBSTRING) : Ctx::$config->get(ForumConfig::MAX_CHARS_PER_POST))) {
-            throw new ForumPostingException("$kind too long~");
+            throw new InvalidInput("$kind too long~");
         }
     }
 

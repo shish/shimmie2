@@ -595,17 +595,17 @@ final class Post implements \ArrayAccess
 
         foreach ($tags as $tag) {
             if (mb_strlen($tag, 'UTF-8') > 255) {
-                throw new TagSetException("Can't set a tag longer than 255 characters");
+                throw new InvalidTag("Can't set a tag longer than 255 characters");
             }
             if (str_starts_with($tag, "-")) {
-                throw new TagSetException("Can't set a tag which starts with a minus");
+                throw new InvalidTag("Can't set a tag which starts with a minus");
             }
             if (str_contains($tag, "*")) {
-                throw new TagSetException("Can't set a tag which contains a wildcard (*)");
+                throw new InvalidTag("Can't set a tag which contains a wildcard (*)");
             }
         }
         if (count($tags) <= 0) {
-            throw new TagSetException('Tried to set zero tags');
+            throw new InvalidTag('Tried to set zero tags');
         }
 
         if (strtolower(Tag::implode($tags)) !== strtolower($this->get_tag_list())) {

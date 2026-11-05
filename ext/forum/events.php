@@ -58,7 +58,3 @@ final class ForumPostDeletionEvent extends Event
         parent::__construct();
     }
 }
-
-final class ForumPostingException extends InvalidInput
-{
-}

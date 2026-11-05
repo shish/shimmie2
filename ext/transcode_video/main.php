@@ -4,14 +4,6 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-/*
-* This is used by the image transcoding code when there is an error while transcoding
-*/
-final class VideoTranscodeException extends SCoreException
-{
-}
-
-
 /** @extends Extension<TranscodeVideoTheme> */
 final class TranscodeVideo extends Extension
 {
@@ -131,7 +123,7 @@ final class TranscodeVideo extends Extension
             $image->save_to_db();
         }
         if (empty($image->video_codec)) {
-            throw new VideoTranscodeException("Cannot transcode item $image->id because its video codec is not known");
+            throw new InvalidInput("Cannot transcode item $image->id because its video codec is not known");
         }
 
         $original_file = Filesystem::warehouse_path(Post::MEDIA_DIR, $image->hash);
@@ -144,11 +136,11 @@ final class TranscodeVideo extends Extension
     private function transcode_video(Path $source_file, ?VideoCodec $source_video_codec, string $target_mime, Path $target_file): Path
     {
         if (is_null($source_video_codec)) {
-            throw new VideoTranscodeException("Cannot transcode item because it's video codec is not known");
+            throw new InvalidInput("Cannot transcode item because it's video codec is not known");
         }
 
         if (!VideoContainer::from($target_mime)->is_codec_supported($source_video_codec)) {
-            throw new VideoTranscodeException("Cannot transcode item to $target_mime because it does not support the video codec {$source_video_codec->value}");
+            throw new InvalidInput("Cannot transcode item to $target_mime because it does not support the video codec {$source_video_codec->value}");
         }
 
         $command = new CommandBuilder(Ctx::$config->get(VideoFileHandlerConfig::FFMPEG_PATH));
