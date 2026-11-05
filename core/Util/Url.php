@@ -107,7 +107,10 @@ final readonly class Url
             // that would encode the slashes too, see #1792
             $dir = str_replace(" ", "%20", $dir);
         }
-        if ($dir === "") {
+        if ($dir === "" || $dir === ".") {
+            // eg when running from the CLI, PHP_SELF is just "index.php"
+            // with no directory, so dirname() returns "." - treat that the
+            // same as "no subdirectory" rather than a literal path of "."
             $dir = null;
         }
         return new Url(path: $dir);
