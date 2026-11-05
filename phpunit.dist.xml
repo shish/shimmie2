@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.3/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.4/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          cacheDirectory="data/cache/phpunit.cache"
          colors="true"
-         executionOrder="depends,defects"
+         executionOrder="defects"
+         resolveDependencies="true"
          shortenArraysForExportThreshold="10"
          requireCoverageMetadata="false"
          beStrictAboutCoverageMetadata="false"
