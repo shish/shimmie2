@@ -77,11 +77,26 @@ class WikiTheme extends Themelet
     public function display_page_history(string $title, array $history): void
     {
         $table = TABLE(["class" => "zebra"]);
-        foreach ($history as $row) {
+        foreach ($history as $n => $row) {
             $table->appendChild(TR(
-                TD(INPUT(["type" => "radio", "name" => "r1", "value" => $row['revision']])),
-                TD(INPUT(["type" => "radio", "name" => "r2", "value" => $row['revision']])),
-                TD(A(["href" => make_link("wiki/$title", ["revision" => $row['revision']])], $row['revision'])),
+                TD(INPUT([
+                    "type" => "radio",
+                    "name" => "r1",
+                    "value" => $row['revision'],
+                    "checked" => $n === 1,
+                    "required" => true,
+                ])),
+                TD(INPUT([
+                    "type" => "radio",
+                    "name" => "r2",
+                    "value" => $row['revision'],
+                    "checked" => $n === 0,
+                    "required" => true,
+                ])),
+                TD(A(
+                    ["href" => make_link("wiki/$title", ["revision" => $row['revision']])],
+                    $row['revision']
+                )),
                 TD($row['date'])
             ));
         }
