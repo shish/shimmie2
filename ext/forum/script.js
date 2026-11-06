@@ -1,5 +1,13 @@
 class Forum{}
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".forum_edit").forEach(function (elm) {
+        elm.addEventListener("click", function () {
+            Forum.edit(elm);
+        });
+    });
+});
+
 Forum.edit = function(element) {
     const post_id = element.dataset.post_id;
     const thread_id = element.dataset.thread_id;
