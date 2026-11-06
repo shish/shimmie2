@@ -12,14 +12,13 @@ class TagToolsTheme extends Themelet
 {
     protected function button(string $name, string $action, bool $protected = false): HTMLElement
     {
+        $attrs = ["type" => 'submit', "id" => $action, "value" => $name];
+        if ($protected) {
+            $attrs["data-shm-confirm"] = "Are you sure you want to run: $name?";
+        }
         return SHM_FORM(
             action: make_link("admin/$action"),
-            children: $protected ? [
-                INPUT(["type" => 'submit', "id" => $action, "value" => $name, "disabled" => "disabled"]),
-                INPUT(["type" => 'checkbox', "data-action" => $action, "onclick" => "document.getElementById(this.dataset.action).disabled = !this.checked"])
-            ] : [
-                INPUT(["type" => 'submit', "id" => $action, "value" => $name])
-            ]
+            children: [INPUT($attrs)]
         );
     }
 
