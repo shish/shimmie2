@@ -39,6 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".image_info").forEach((element) => {
         element.classList.add("infomode-view");
     });
+
+    document.querySelectorAll(".image-info-edit-button").forEach((btn) => {
+        btn.addEventListener("click", () => clearViewMode());
+    });
 });
 
 /**
