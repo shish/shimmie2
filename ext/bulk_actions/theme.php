@@ -19,15 +19,15 @@ class BulkActionsTheme extends Themelet
     {
         $header = emptyHTML(
             INPUT(["type" => "hidden", "name" => "bulk_selected_ids", "id" => "bulk_selected_ids"]),
-            INPUT(["type" => "button", "id" => "bulk_selector_activate", "onclick" => 'activate_bulk_selector();' , "value" => "Activate (M)anual Select", "accesskey" => "m"])
+            INPUT(["type" => "button", "id" => "bulk_selector_activate", "class" => "bulk-select-activate", "value" => "Activate (M)anual Select", "accesskey" => "m"])
         );
         $controls = emptyHTML(
-            INPUT(["type" => "button", "onclick" => 'deactivate_bulk_selector();' , "value" => "Deactivate (M)anual Select", "accesskey" => "m"]),
+            INPUT(["type" => "button", "class" => "bulk-select-deactivate", "value" => "Deactivate (M)anual Select", "accesskey" => "m"]),
             "Click on posts to mark them.",
             BR(),
-            INPUT(["type" => "button", "onclick" => 'select_all();' , "value" => "All"]),
-            INPUT(["type" => "button", "onclick" => 'select_invert();' , "value" => "Invert"]),
-            INPUT(["type" => "button", "onclick" => 'select_none();' , "value" => "Clear"])
+            INPUT(["type" => "button", "class" => "bulk-select-all", "value" => "All"]),
+            INPUT(["type" => "button", "class" => "bulk-select-invert", "value" => "Invert"]),
+            INPUT(["type" => "button", "class" => "bulk-select-none", "value" => "Clear"])
         );
 
         $action_html = [];
