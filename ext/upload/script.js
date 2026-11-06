@@ -63,4 +63,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         updateTracker();
     }
+
+    document.querySelectorAll(".upload-cancel").forEach((el) => {
+        el.addEventListener("click", function () {
+            const input = document.getElementById(this.dataset.target);
+            if (input) {
+                input.value = "";
+            }
+            updateTracker();
+        });
+    });
 });
