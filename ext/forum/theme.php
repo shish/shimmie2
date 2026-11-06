@@ -198,7 +198,7 @@ class ForumTheme extends Themelet
 
     protected function edit_button(int $post_id, int $thread_id, string $text): HTMLElement
     {
-        return A(["class" => "forum_edit", "data-post_id" => $post_id, "data-thread_id" => $thread_id, "data-content" => $text, "onclick" => "Forum.edit(this);"], " Edit");
+        return A(["class" => "forum_edit", "data-post_id" => $post_id, "data-thread_id" => $thread_id, "data-content" => $text], " Edit");
     }
 
     public function add_actions_block(int $thread_id): void
