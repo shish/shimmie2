@@ -7,6 +7,14 @@ ShmComment.replyTo = function(imageId, commentId, userId) {
     shm_blink(document.getElementById("c" + commentId));
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".comment_edit").forEach(function (elm) {
+        elm.addEventListener("click", function () {
+            ShmComment.edit(elm);
+        });
+    });
+});
+
 ShmComment.edit = function(element) {
     const comment_id = element.dataset.comment_id;
     const post_id = element.dataset.post_id;

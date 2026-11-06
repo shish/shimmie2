@@ -261,7 +261,7 @@ class CommentListTheme extends Themelet
 
     protected function edit_button(int $comment_id, int $image_id, string $text): HTMLElement
     {
-        return A(["class" => "comment_edit", "data-comment_id" => $comment_id, "data-post_id" => $image_id, "data-content" => $text, "onclick" => "ShmComment.edit(this);"], " Edit");
+        return A(["class" => "comment_edit", "data-comment_id" => $comment_id, "data-post_id" => $image_id, "data-content" => $text], " Edit");
     }
 
     protected function build_postbox(int $image_id): HTMLElement
