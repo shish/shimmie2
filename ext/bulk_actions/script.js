@@ -197,4 +197,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (bulkInput) {
         bulkInput.value = "";
     }
+
+    function bind(selector, handler) {
+        document.querySelectorAll(selector).forEach(function (elm) {
+            elm.addEventListener("click", handler);
+        });
+    }
+
+    bind(".bulk-select-activate", activate_bulk_selector);
+    bind(".bulk-select-deactivate", deactivate_bulk_selector);
+    bind(".bulk-select-all", select_all);
+    bind(".bulk-select-invert", select_invert);
+    bind(".bulk-select-none", select_none);
 });
