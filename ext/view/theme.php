@@ -140,7 +140,7 @@ class ViewPostTheme extends Themelet
         ) {
             $editor_parts[] = TR(TD(
                 ["colspan" => 4],
-                INPUT(["class" => "view", "type" => "button", "value" => "Edit", "onclick" => "clearViewMode()"]),
+                INPUT(["class" => "view image-info-edit-button", "type" => "button", "value" => "Edit"]),
                 INPUT(["class" => "edit", "type" => "submit", "value" => "Set"])
             ));
         }
