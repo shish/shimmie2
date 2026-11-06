@@ -121,8 +121,9 @@ class UploadTheme extends Themelet
                         ["colspan" => 2, "style" => "white-space: nowrap;"],
                         A([
                             "id" => "canceldata{$i}",
+                            "class" => "upload-cancel",
                             "style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;",
-                            "onclick" => "document.getElementById('data{$i}').value='';updateTracker();",
+                            "data-target" => "data{$i}",
                         ], "✖"),
                         INPUT([
                             "type" => "file",
