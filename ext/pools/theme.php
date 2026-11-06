@@ -194,8 +194,8 @@ class PoolsTheme extends Themelet
 
         if ($check_all) {
             $editor->appendChild(
-                INPUT(["type" => "button", "name" => "CheckAll", "value" => "Check All", "onclick" => "document.querySelectorAll('[name=\"check[]\"]').forEach(el => el.checked = true)"]),
-                INPUT(["type" => "button", "name" => "UnCheckAll", "value" => "Uncheck All", "onclick" => "document.querySelectorAll('[name=\"check[]\"]').forEach(el => el.checked = false)"])
+                INPUT(["type" => "button", "name" => "CheckAll", "value" => "Check All", "class" => "pool-check-all"]),
+                INPUT(["type" => "button", "name" => "UnCheckAll", "value" => "Uncheck All", "class" => "pool-uncheck-all"])
             );
         }
 
