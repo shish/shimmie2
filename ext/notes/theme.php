@@ -17,7 +17,7 @@ class NotesTheme extends Themelet
 {
     public function note_button(int $image_id): HTMLElement
     {
-        return FORM(INPUT(["type" => "button", "value" => "Add Note", "onclick" => "Notes.addNewNote()"]));
+        return FORM(INPUT(["type" => "button", "value" => "Add Note", "class" => "note-add-button"]));
     }
 
     public function request_button(int $image_id): HTMLElement

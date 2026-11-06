@@ -37,6 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // clone notes to make a restore point in case we cancel a note edit
         window.notes_last_saved = JSON.parse(JSON.stringify(window.notes));
     }
+
+    document.querySelectorAll(".note-add-button").forEach((btn) => {
+        btn.addEventListener("click", () => Notes.addNewNote());
+    });
 });
 
 Notes.renderNotes = function () {
