@@ -30,16 +30,33 @@ function tageditcloud_toggle_extra(hide) {
         el.style.display !== "none" ? "show fewer tags" : hide_text;
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".tageditcloud-tag").forEach(function (ele) {
+        ele.addEventListener("click", function () {
+            tageditcloud_toggle_tag(ele, ele.dataset.tag);
+        });
+    });
+    document
+        .querySelectorAll(".tageditcloud-toggle-extra")
+        .forEach(function (ele) {
+            ele.addEventListener("click", function () {
+                tageditcloud_toggle_extra(ele);
+            });
+        });
+});
+
 function tageditcloud_toggle_tag(ele, fullTag) {
     var taglist = document.getElementById("tag_editor");
     var tags = taglist.value.split(" ");
 
     if (tags.editcloud_contains(fullTag)) {
         tags = tags.editcloud_remove(fullTag);
-        ele.className = "tag-unselected";
+        ele.classList.remove("tag-selected");
+        ele.classList.add("tag-unselected");
     } else {
         tags.splice(0, 0, fullTag);
-        ele.className = "tag-selected";
+        ele.classList.remove("tag-unselected");
+        ele.classList.add("tag-selected");
     }
 
     taglist.value = tags.join(" ");

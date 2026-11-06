@@ -1,4 +1,4 @@
-.tageditcloud span.tag-selected {
+.tageditcloud .tag-selected {
 	background:#88EE88;
 }
 
@@ -15,6 +15,6 @@
 	font-style:italic;
 }
 
-.tageditcloud div#tagcloud_extra {  
+.tageditcloud div#tagcloud_extra {
         color: #0000FF;
 }
