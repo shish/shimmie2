@@ -119,7 +119,7 @@ class UploadTheme extends Themelet
                 TR(
                     TD(
                         ["colspan" => 2, "style" => "white-space: nowrap;"],
-                        DIV([
+                        A([
                             "id" => "canceldata{$i}",
                             "style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;",
                             "onclick" => "document.getElementById('data{$i}').value='';updateTracker();",

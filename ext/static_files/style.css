@@ -38,7 +38,7 @@ H1, H2, H3 {
     overflow-wrap: anywhere;
 }
 
-*[onclick],
+A,
 H3[class~="shm-toggler"] {
     cursor: pointer;
 }
