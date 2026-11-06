@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{BR, DIV, SPAN, emptyHTML};
+use function MicroHTML\{A, BR, DIV, SPAN, emptyHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -55,10 +55,9 @@ class TagEditCloudTheme extends Themelet
             $size = sprintf("%.2f", max($row['scaled'], 0.5));
 
             if (in_array($row['tag'], $post_tags)) {
-                $entry = SPAN([
-                    'onclick' => 'tageditcloud_toggle_tag(this, this.dataset.tag)',
+                $entry = A([
                     'data-tag' => $full_tag,
-                    'class' => 'tag-selected',
+                    'class' => 'tag-selected tageditcloud-tag',
                     'style' => "font-size: {$size}em$color",
                     'title' => $row['count'],
                 ], $h_tag);
@@ -67,9 +66,9 @@ class TagEditCloudTheme extends Themelet
                     continue;
                 }
             } else {
-                $entry = SPAN([
-                    'onclick' => 'tageditcloud_toggle_tag(this, this.dataset.tag)',
+                $entry = A([
                     'data-tag' => $full_tag,
+                    'class' => 'tageditcloud-tag',
                     'style' => "font-size: {$size}em$color",
                     'title' => $row['count'],
                 ], $h_tag);
@@ -102,7 +101,7 @@ class TagEditCloudTheme extends Themelet
             $html->appendChild(emptyHTML(
                 BR(),
                 "[",
-                SPAN(["onclick" => "tageditcloud_toggle_extra(this);", "style" => "color: #0000EF; font-weight:bold;"], "show {$rem} more tags"),
+                SPAN(["class" => "tageditcloud-toggle-extra", "style" => "color: #0000EF; font-weight:bold;"], "show {$rem} more tags"),
                 "]"
             ));
         }
