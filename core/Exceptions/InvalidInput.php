@@ -6,5 +6,5 @@ namespace Shimmie2;
 
 class InvalidInput extends UserError
 {
-    public int $http_code = 402;
+    public int $http_code = 422;
 }

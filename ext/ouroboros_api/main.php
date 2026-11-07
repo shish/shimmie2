@@ -325,7 +325,7 @@ final class OuroborosAPI extends Extension
             $meta['filename'] = basename($post->file_url);
             try {
                 Network::fetch_url($post->file_url, new Path($meta->req('file')));
-            } catch (FetchException $e) {
+            } catch (UserError $e) {
                 $this->sendResponse(500, "Transloading failed: $e");
                 return;
             }

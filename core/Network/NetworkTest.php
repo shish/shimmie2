@@ -70,7 +70,7 @@ X-Forwarded-For: 1.2.3.4
         Ctx::$config->set(UploadConfig::TRANSLOAD_ENGINE, "none");
         $tmp = shm_tempnam("test_fetch_url");
         try {
-            self::expectException(FetchException::class);
+            self::expectException(InvalidInput::class);
             self::expectExceptionMessage("No transload engine configured");
             Network::fetch_url("https://example.com", $tmp);
         } finally {
@@ -86,9 +86,9 @@ X-Forwarded-For: 1.2.3.4
         $tmp = shm_tempnam("test_fetch_url_https");
         try {
             try {
-                $headers = Network::fetch_url("https://example.com", $tmp);
+                $headers = Network::fetch_url("https://shish.io", $tmp);
                 self::assertTrue($tmp->exists());
-            } catch (FetchException $e) {
+            } catch (ServerError $e) {
                 // Network unavailable in sandbox, just verify curl attempted the request
                 self::assertStringContainsString("cURL failed", $e->getMessage());
             }
@@ -104,7 +104,7 @@ X-Forwarded-For: 1.2.3.4
         Ctx::$config->set(UploadConfig::TRANSLOAD_ENGINE, "curl");
         $tmp = shm_tempnam("test_fetch_url_localhost");
         try {
-            self::expectException(FetchException::class);
+            self::expectException(InvalidInput::class);
             self::expectExceptionMessage("Invalid URL");
             Network::fetch_url("https://localhost", $tmp);
         } finally {
@@ -119,7 +119,7 @@ X-Forwarded-For: 1.2.3.4
         Ctx::$config->set(UploadConfig::TRANSLOAD_ENGINE, "curl");
         $tmp = shm_tempnam("test_fetch_url_file");
         try {
-            self::expectException(FetchException::class);
+            self::expectException(InvalidInput::class);
             self::expectExceptionMessage("Invalid URL");
             $favicon = new Path("tests/favicon.png");
             $file_url = "file://" . $favicon->absolute()->str();
