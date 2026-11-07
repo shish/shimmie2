@@ -62,11 +62,6 @@ class IndexTheme extends Themelet
                     "placeholder" => "Search",
                     "class" => "autocomplete_tags"
                 ]),
-                INPUT([
-                    "type" => "submit",
-                    "value" => "Find",
-                    "style" => "display: none;"
-                ])
             ],
         );
 

@@ -113,11 +113,6 @@ class ViewPostTheme extends Themelet
                     "type" => 'text',
                     "class" => 'autocomplete_tags',
                 ]),
-                INPUT([
-                    "type" => 'submit',
-                    "value" => 'Find',
-                    "style" => 'display: none;'
-                ]),
             ]
         );
 
