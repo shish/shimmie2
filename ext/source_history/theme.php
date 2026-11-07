@@ -100,12 +100,12 @@ class SourceHistoryTheme extends Themelet
         }
 
         return DIV(
-            ["style" => "text-align: left"],
+            ["class" => "history-list"],
             SHM_FORM(
                 action: make_link("source_history/revert"),
                 children: [
                     UL(
-                        ["style" => "list-style-type:none;"],
+                        ["class" => "history-list-entries"],
                         ...$history_list
                     ),
                     SHM_SUBMIT("Revert To")
