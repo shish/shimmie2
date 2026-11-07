@@ -112,22 +112,22 @@ final class Network
     {
         $parsed = parse_url($url);
         if (!$parsed || !isset($parsed['scheme']) || !isset($parsed['host'])) {
-            throw new FetchException("Invalid URL: cannot parse");
+            throw new InvalidInput("Invalid URL: cannot parse");
         }
 
         $scheme = $parsed['scheme'];
         if ($scheme !== 'http' && $scheme !== 'https') {
-            throw new FetchException("Invalid URL: {$scheme} is not allowed");
+            throw new InvalidInput("Invalid URL: '$scheme' is not allowed");
         }
 
         $host = $parsed['host'];
         $ips = self::resolve_hostname($host);
         if (empty($ips)) {
-            throw new FetchException("Invalid URL: cannot resolve hostname");
+            throw new InvalidInput("Invalid URL: cannot resolve hostname '$host'");
         }
         foreach ($ips as $ip) {
             if ($ip->is_private() || $ip->is_localhost()) {
-                throw new FetchException("Invalid URL: connects to a private IP address");
+                throw new InvalidInput("Invalid URL: connects to a private IP address");
             }
         }
         return $ips[0];
@@ -139,6 +139,9 @@ final class Network
      */
     public static function fetch_url(string $url, Path $mfile): array
     {
+        if (Ctx::$config->get(UploadConfig::TRANSLOAD_ENGINE) === "none") {
+            throw new InvalidInput("No transload engine configured");
+        }
         $resolved_ip = (string)self::validate_url_for_fetch($url);
 
         if (Ctx::$config->get(UploadConfig::TRANSLOAD_ENGINE) === "curl" && function_exists("curl_init")) {
@@ -163,10 +166,10 @@ final class Network
 
             $response = curl_exec($ch);
             if ($response === false) {
-                throw new FetchException("cURL failed: ".curl_error($ch));
+                throw new ServerError("cURL failed: ".curl_error($ch));
             }
             if ($response === true) { // we use CURLOPT_RETURNTRANSFER, so this should never happen
-                throw new FetchException("cURL failed successfully??");
+                throw new ServerError("cURL failed successfully??");
             }
 
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -184,7 +187,7 @@ final class Network
             $s_mfile = escapeshellarg($mfile->str());
             system("wget --no-check-certificate $s_url --output-document=$s_mfile");
             if (!$mfile->exists()) {
-                throw new FetchException("wget failed");
+                throw new ServerError("wget failed");
             }
             $headers = [];
         }
@@ -195,7 +198,7 @@ final class Network
             $fp_in = @fopen($url, "r");
             $fp_out = fopen($mfile->str(), "w");
             if (!$fp_in || !$fp_out) {
-                throw new FetchException("fopen failed");
+                throw new ServerError("fopen failed");
             }
             $length = 0;
             while (!feof($fp_in) && $length <= Ctx::$config->get(UploadConfig::SIZE)) {
@@ -209,12 +212,12 @@ final class Network
             $headers = Network::http_parse_headers(implode("\n", http_get_last_response_headers() ?? []));
         }
         */ else {
-            throw new FetchException("No transload engine configured");
+            throw new InvalidInput("No transload engine configured");
         }
 
         if ($mfile->filesize() === 0) {
             @$mfile->unlink();
-            throw new FetchException("No data found in $url -- perhaps the site has hotlink protection?");
+            throw new InvalidInput("No data found in $url -- perhaps the site has hotlink protection?");
         }
 
         return $headers;
