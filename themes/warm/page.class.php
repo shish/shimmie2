@@ -27,7 +27,7 @@ class WarmPage extends Page
                     $left_block_html[] = $this->block_html($block, true);
                     break;
                 case "head":
-                    $head_block_html[] = TD(["style" => "width: 250px;"], SMALL($this->block_html($block, false)));
+                    $head_block_html[] = TD(["class" => "head-block"], SMALL($this->block_html($block, false)));
                     break;
                 case "main":
                     $main_block_html[] = $this->block_html($block, false);
@@ -48,7 +48,6 @@ class WarmPage extends Page
             $this->body_attrs(),
             HEADER(
                 DIV(
-                    ["style" => "text-align: center;"],
                     H1(A(["href" => "$data_href/$main_page"], $site_name))
                     // Navigation links go here
                 ),

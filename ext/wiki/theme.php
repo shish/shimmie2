@@ -143,7 +143,7 @@ class WikiTheme extends Themelet
         return SHM_SIMPLE_FORM(
             make_link("wiki/$u_title/save"),
             INPUT(["type" => "hidden", "name" => "revision", "value" => $page->revision + 1]),
-            TEXTAREA(["name" => "body", "style" => "width: 100%", "rows" => 20], $page->body),
+            TEXTAREA(["name" => "body", "class" => "wiki-edit-body", "rows" => 20], $page->body),
             $lock,
             BR(),
             SHM_SUBMIT("Save", ["class" => "setupsubmit"])

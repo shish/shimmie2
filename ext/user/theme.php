@@ -153,7 +153,7 @@ class UserPageTheme extends Themelet
         $form = SHM_SIMPLE_FORM(
             make_link("user_admin/login"),
             TABLE(
-                ["style" => "width: 100%", "class" => "form"],
+                ["class" => "form wide"],
                 TBODY(
                     TR(
                         TH(LABEL(["for" => "user"], "Name")),

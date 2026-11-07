@@ -16,3 +16,7 @@
 .diff-html TD {
     text-align: left;
 }
+
+.wiki-edit-body {
+    width: 100%;
+}

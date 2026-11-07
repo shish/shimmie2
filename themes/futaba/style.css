@@ -1,19 +1,22 @@
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 :root {
 	font-family: arial,helvetica,sans-serif;
 	font-size: 10pt;
 
 	--danger-color: #000;
 	--danger-background: #FAA;
+
+	--text: #800000;
+	--border: #D9BFB7;
 }
 
 BODY {
 	margin: 0;
 	background: #FFFFEE url(fade.png) top center repeat-x;
-	color: #800000;
+	color: var(--text);
 	padding-left: 5px;
 	padding-right: 5px;
 	margin: 0;
@@ -51,9 +54,11 @@ FOOTER {
 	text-align: center;
 }
 
+.shm-post-link-form BUTTON,
 A, A:visited {text-decoration: none; color: #0000EE;}
+.shm-post-link-form BUTTON:hover,
 A:hover {text-decoration: underline; color: #DD0000;}
-HR {border: none; border-top: 1px solid #D9BFB7; height: 0; clear: both;}
+HR {border: none; border-top: 1px solid var(--border); height: 0; clear: both;}
 CODE {background: #DEDEDE; font-size: 0.9rem;}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -182,7 +187,7 @@ TABLE.tag_list>TBODY>TR>TD:after {
 }
 
 .doubledash {
-	color: #D9BFB7;
+	color: var(--border);
 	vertical-align: top;
 	clear: both;
 	float: left;
@@ -195,8 +200,8 @@ TABLE.tag_list>TBODY>TR>TD:after {
 	margin-bottom: 2px;
 	font-size: 10pt;
 	background: #F0E0D6;
-	color: #800000;
-	border: 1px solid #D9BFB7;
+	color: var(--text);
+	border: 1px solid var(--border);
 	border-left: none;
 	border-top: none;
 	padding: 2px;
@@ -221,4 +226,17 @@ TABLE.tag_list>TBODY>TR>TD:after {
 }
 .greentext {
 	color: green;
+}
+
+.comment-clear {
+	clear: both;
+}
+.comment-area {
+	text-align: left;
+}
+.comment-thumb {
+	float: left;
+}
+.comment-top {
+	margin-top: 8px;
 }

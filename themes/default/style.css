@@ -25,6 +25,8 @@
 
 	--border-radius: 0.75rem;
 	--block-padding: 0.5rem;
+
+	--shadow-color: rgba(0,0,0,0.6);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -56,6 +58,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 :root {
 	font-size: 14px;
 	font-family: sans-serif;
@@ -125,7 +128,7 @@ SECTION>.blockbody {
 	padding: var(--block-padding);
 }
 H1, SECTION, FOOTER {
-	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+	box-shadow: 2px 2px 6px var(--shadow-color);
 }
 FOOTER {
 	grid-column: 1 / 3;
@@ -161,10 +164,12 @@ TABLE.zebra SELECT,
 TABLE.zebra TEXTAREA,
 TABLE.zebra BUTTON {width: 100%;}
 
+.shm-post-link-form BUTTON,
 A {
 	text-decoration: none;
 	color: var(--link-default);
 }
+.shm-post-link-form BUTTON:hover,
 A:hover {
 	text-decoration: underline;
 }
@@ -316,7 +321,7 @@ ARTICLE TABLE {
 	background: var(--block);
 	padding: var(--block-padding);
 	border-radius: var(--border-radius);
-	box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+	box-shadow: 2px 2px 6px var(--shadow-color);
 }
 
 /* example of how to apply specific styles to specific thumbs for specific userclasses */

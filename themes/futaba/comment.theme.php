@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, BUTTON, DIV, HR, INPUT, P, TABLE, TD, TR, emptyHTML, rawHTML};
+use function MicroHTML\{A, DIV, HR, P, TABLE, TD, TR, emptyHTML, rawHTML};
 
 use MicroHTML\HTMLElement;
 
@@ -43,15 +43,15 @@ class FutabaCommentListTheme extends CommentListTheme
             }
 
             $html = emptyHTML(
-                P(["style" => "clear:both"], " "),
+                P(["class" => "comment-clear"], " "),
                 HR(),
                 "File: ",
                 A(["href" => make_link("post/view/{$image->id}")], $image->filename),
                 " - ($h_filesize, {$w}x{$h}) - ",
                 $image->get_tag_list(),
                 DIV(
-                    ["style" => "text-align: left"],
-                    DIV(["style" => "float: left;"], $this->build_thumb($image)),
+                    ["class" => "comment-area"],
+                    DIV(["class" => "comment-thumb"], $this->build_thumb($image)),
                     DIV(["class" => "commentset"], ...$comment_html)
                 )
             );
@@ -93,18 +93,11 @@ class FutabaCommentListTheme extends CommentListTheme
         $del = null;
         if (Ctx::$user->can(CommentPermission::DELETE_COMMENT)) {
             $comment_preview = substr($tfe->stripped, 0, 50);
-            $deleteForm = SHM_SIMPLE_FORM(
+            $deleteForm = SHM_POST_LINK(
                 make_link("comment/delete"),
-                INPUT(["type" => "hidden", "name" => "comment_id", "value" => $i_comment_id]),
-                INPUT(["type" => "hidden", "name" => "image_id", "value" => $i_image_id]),
-                BUTTON(
-                    [
-                        "type" => "submit",
-                        "class" => "shm-button-as-link",
-                        "shm-confirm" => "Delete comment by {$comment->owner->name}:\n$comment_preview",
-                    ],
-                    "Delete"
-                )
+                ["comment_id" => $i_comment_id, "image_id" => $i_image_id],
+                "Delete",
+                confirm: "Delete comment by {$comment->owner->name}:\n$comment_preview",
             );
             $del = emptyHTML(" - [", $deleteForm, "]");
         }
@@ -117,7 +110,7 @@ class FutabaCommentListTheme extends CommentListTheme
 
         if ($inner_id === 0) {
             return DIV(
-                ["class" => "comment", "style" => "margin-top: 8px;"],
+                ["class" => "comment comment-top"],
                 $userlink,
                 $del,
                 $h_date,

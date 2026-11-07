@@ -19,7 +19,7 @@ class BiographyTheme extends Themelet
         $html = SHM_SIMPLE_FORM(
             make_link("user/{$duser->name}/biography"),
             TABLE(
-                ["class" => "form", "style" => "width: 100%"],
+                ["class" => "form wide"],
                 TR(TD(TEXTAREA(["rows" => "6", "name" => "biography"], $bio))),
                 TR(TD(SHM_SUBMIT("Save")))
             ),

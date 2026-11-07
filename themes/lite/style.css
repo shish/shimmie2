@@ -9,9 +9,17 @@
 
 	--danger-color: #000;
 	--danger-background: #FAA;
+
+	--border: #C3D2E0;
+	--border-input: #C8D1DB;
+	--bar-bg: #CEDFF0;
+	--menu-bg: #E3EFFA;
+	--page-bg: #F0F7FF;
+	--hover-bg: #FFFFFF;
+	--tab-text: #000000;
 }
 BODY {
-	background: #F0F7FF;
+	background: var(--page-bg);
 	margin: 0;
 }
 BODY.layout-grid {
@@ -30,18 +38,18 @@ BODY.layout-no-left ARTICLE {
 3                            menu bar                            *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 .menu {
-	border-bottom: 1px solid #C3D2E0;
+	border-bottom: 1px solid var(--border);
 	margin-top: 0;
 	margin-bottom: 0;
 	padding: 4px;
-	background: #E3EFFA;
+	background: var(--menu-bg);
 }
 a.tab, a.tab:visited {
-	color:#000000;
+	color:var(--tab-text);
 	text-decoration:none;
 }
 a.tab:hover, a.tab:active, .tab-selected {
-	color:#000000;
+	color:var(--tab-text);
 	background-color:#FFFFFE;
 	text-decoration:none;
 }
@@ -49,7 +57,7 @@ a.tab:hover, a.tab:active, .tab-selected {
 	display: inline-block;
 }
 .tab, .tab-selected, .tframe, #tips {
-	border:1px solid #C8D1DB;
+	border:1px solid var(--border-input);
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
@@ -63,26 +71,26 @@ a.tab:hover, a.tab:active, .tab-selected {
 3                        secondary bars                          *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 .sbar {
-	border-bottom: 1px solid #C3D2E0;
+	border-bottom: 1px solid var(--border);
 	margin-top: 0;
 	margin-bottom: 16px;
 	padding: 4px;
-	background: #CEDFF0;
+	background: var(--bar-bg);
 	text-align: left;
 }
 .sfoot {
-	border-top: 1px solid #C3D2E0;
+	border-top: 1px solid var(--border);
 	margin-top: 0;
 	margin-bottom: 0;
 	padding: 4px;
-	background: #CEDFF0;
+	background: var(--bar-bg);
 	text-align: center;
 }
 .navside, #comment-list-recent .blockbody {
-	background:none repeat scroll 0 0 #CEDFF0;
+	background:none repeat scroll 0 0 var(--bar-bg);
 	padding:4px;
 	font-size:85%;
-	border:1px solid #C3D2E0;
+	border:1px solid var(--border);
 	margin-bottom:5px;
 }
 .navside.navtop, .shm-image-list, #Statsmain {
@@ -118,6 +126,7 @@ a.tab:hover, a.tab:active, .tab-selected {
 H1 A {
 	color: black;
 }
+.shm-post-link-form BUTTON,
 A, A:hover, A:active, A:visited {
 	color: #2860AD;
 }
@@ -137,24 +146,24 @@ CODE {
 	font-size: 0.8rem;
 }
 
-TABLE.zebra {border-spacing: 0; border: 2px solid #C3D2E0;}
+TABLE.zebra {border-spacing: 0; border: 2px solid var(--border);}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
-TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #C3D2E0;}
-TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #C3D2E0;}
-TABLE.zebra TR TD {border-bottom: 1px solid #C3D2E0;}
-TABLE.zebra TR:nth-child(odd) {background: #CEDFF0;}
-TABLE.zebra TR:nth-child(even) {background: #F0F7FF;}
+TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid var(--border);}
+TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid var(--border);}
+TABLE.zebra TR TD {border-bottom: 1px solid var(--border);}
+TABLE.zebra TR:nth-child(odd) {background: var(--bar-bg);}
+TABLE.zebra TR:nth-child(even) {background: var(--page-bg);}
 TABLE.image_info {margin: auto;}
 
 INPUT, TEXTAREA, button {
-	border:1px solid #C8D1DB;
+	border:1px solid var(--border-input);
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
 }
 
 INPUT:hover, button:hover, TEXTAREA:hover {
-	background-color:#FFFFFF;
+	background-color:var(--hover-bg);
 	text-decoration:none;
 }
 
@@ -165,8 +174,8 @@ FOOTER {
 	padding: 8px;
 	font-size: 0.7rem;
 	text-align: center;
-	border-top: 1px solid #C3D2E0;
-	background: #E3EFFA;
+	border-top: 1px solid var(--border);
+	background: var(--menu-bg);
 }
 
 HEADER {
@@ -174,13 +183,15 @@ HEADER {
 	grid-row: 1;
 }
 
+.shm-post-link-form BUTTON,
 A {text-decoration: none;}
+.shm-post-link-form BUTTON:hover,
 A:hover {text-decoration: underline;}
 
 BLOCKQUOTE {
-	border: 1px solid #C3D2E0;
+	border: 1px solid var(--border);
 	padding: 8px;
-	background: #E3EFFA;
+	background: var(--menu-bg);
 }
 
 UL {
@@ -226,6 +237,9 @@ NAV SELECT {
 .comment {
 	text-align: left;
 }
+.comment .info {
+    background: var(--bar-bg);
+}
 
 TABLE.tag_list {
 	border-collapse: collapse;
@@ -255,18 +269,18 @@ TABLE.tag_list>TBODY>TR>TD:after {
 
 .paginator {
 	padding: 4px;
-	border-right: 1px solid #C3D2E0;
-	border-left: 1px solid #C3D2E0;
+	border-right: 1px solid var(--border);
+	border-left: 1px solid var(--border);
 }
 .paginator A {
 	color: #000;
-	border:1px solid #C8D1DB;
+	border:1px solid var(--border-input);
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
 }
 .paginator A:hover {
-	background-color:#FFFFFF;
+	background-color:var(--hover-bg);
 	text-decoration:none;
 }
 
@@ -334,22 +348,6 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
-/*.rr {text-align: left; background: #E3EFFA; margin: 8px;}
-.rrtop     {background: url("circle-tl.png") no-repeat top left;}
-.rrtop div {background: url("circle-tr.png") no-repeat top right;}
-.rrbot     {background: url("circle-bl.png") no-repeat bottom left;}
-.rrbot div {background: url("circle-br.png") no-repeat bottom right;}
-.rrtop, .rrtop div, .rrbot, .rrbot div {height: 8px; width: 100%;}
-.rrcontent {margin: 0px 8px; text-align: left;}
-
-.hrr {text-align: left; background: #C3D2E0; margin: 8px;}
-.hrrtop     {background: url("circle-tl.png") no-repeat top left;}
-.hrrtop div {background: url("circle-tr.png") no-repeat top right;}
-.hrrbot     {background: url("circle-bl.png") no-repeat bottom left;}
-.hrrbot div {background: url("circle-br.png") no-repeat bottom right;}
-.hrrtop, .hrrtop div, .hrrbot, .hrrbot div {height: 8px; width: 100%;}
-.hrrcontent {margin: 0px 8px;}*/
-
 .setupblock {
 	text-align: center;
 }
@@ -381,4 +379,9 @@ NAV .thumb {
    left:0;
    z-index:3;
    display:none;
+}
+
+.menu-logo {
+   position: relative;
+   top: 3px;
 }

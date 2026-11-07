@@ -1,4 +1,3 @@
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -6,6 +5,11 @@
 :root {
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
+
+	--border: #B89F7C;
+	--block-bg: #FCD9A9;
+	--block-bg-dark: #DABC92;
+	--link: #665844;
 }
 * {
     box-sizing: border-box;
@@ -32,11 +36,11 @@ HEADER {
 	grid-template-columns: auto 250px 250px;
 	grid-column: 1 / 3;
 	grid-row: 1;
-	border-bottom: 1px solid #B89F7C;
+	border-bottom: 1px solid var(--border);
 	margin-top: 0;
 	margin-bottom: 0;
 	padding: 8px;
-	background: #FCD9A9;
+	background: var(--block-bg);
 	text-align: center;
 }
 H1 {
@@ -63,13 +67,13 @@ CODE {
 	font-size: 0.8rem;
 }
 
-TABLE.zebra {border-spacing: 0; border: 1px solid #B89F7C; }
+TABLE.zebra {border-spacing: 0; border: 1px solid var(--border); }
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
-TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #B89F7C;}
-TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #B89F7C;}
-TABLE.zebra TD {border-top: 1px solid #B89F7C;}
-TABLE.zebra TR:nth-child(odd) {background: #FCD9A9;}
-TABLE.zebra TR:nth-child(even) {background: #DABC92;}
+TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid var(--border);}
+TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid var(--border);}
+TABLE.zebra TD {border-top: 1px solid var(--border);}
+TABLE.zebra TR:nth-child(odd) {background: var(--block-bg);}
+TABLE.zebra TR:nth-child(even) {background: var(--block-bg-dark);}
 
 FOOTER {
 	grid-column: 1 / 3;
@@ -78,14 +82,16 @@ FOOTER {
 	padding: 8px;
 	font-size: 0.7rem;
 	text-align: center;
-	border-top: 1px solid #B89F7C;
-	background: #FCD9A9;
+	border-top: 1px solid var(--border);
+	background: var(--block-bg);
 }
 
-A         {color: #665844; text-decoration: none; font-weight: bold;}
-A:hover   {color: #665844; text-decoration: underline;}
-A:visited {color: #665844; text-decoration: none}
-A:active  {color: #665844; text-decoration: underline;}
+.shm-post-link-form BUTTON,
+A         {color: var(--link); text-decoration: none; font-weight: bold;}
+.shm-post-link-form BUTTON:hover,
+A:hover   {color: var(--link); text-decoration: underline;}
+A:visited {color: var(--link); text-decoration: none}
+A:active  {color: var(--link); text-decoration: underline;}
 
 BLOCKQUOTE {
 	border: 1px solid black;
@@ -97,9 +103,9 @@ UL {
 	text-align: left;
 }
 
-SECTION>H3, SECTION>.blockbody, .comment, .setupblock {margin: 8px; padding: 8px; border: 1px solid #B89F7C;}
-SECTION>.blockbody, .comment, .setupblock {background: #FCD9A9;}
-SECTION>H3 {background: #DABC92;}
+SECTION>H3, SECTION>.blockbody, .comment {margin: 8px; padding: 8px; border: 1px solid var(--border);}
+SECTION>.blockbody, .comment, .comment .info {background: var(--block-bg);}
+SECTION>H3 {background: var(--block-bg-dark);}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -241,7 +247,35 @@ ARTICLE TABLE {
 	text-align: center;
 }
 .thumb IMG {
-	border: 1px solid #B89F7C;
-	background: #FCD9A9;
+	border: 1px solid var(--border);
+	background: var(--block-bg);
 	padding: 8px;
+}
+
+.head-block {
+	width: 250px;
+}
+
+.blockbody:has(.blockbody) {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+#comment-list-list .blockbody,
+#comment-list-user .blockbody,
+#comment-list-image .blockbody,
+#comment-list-recent .blockbody {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+#comment-list-list .blockbody .comment,
+#comment-list-user .blockbody .comment,
+#comment-list-image .blockbody .comment,
+#comment-list-recent .blockbody .comment {
+    margin-left: 0;
+    margin-right: 0;
 }
