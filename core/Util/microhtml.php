@@ -44,8 +44,16 @@ function SHM_IP(string $ip, string $ban_reason): ?HTMLElement
  * @param array<string|HTMLElement|null> $children
  * @param array<literal-string, mixed> $extra_attrs
  */
-function SHM_FORM(Url $action, bool $multipart = false, string $id = "", string $onsubmit = "", string $name = "", string $method = "POST", array $children = [], array $extra_attrs = []): HTMLElement
-{
+function SHM_FORM(
+    Url $action,
+    bool $multipart = false,
+    string $id = "",
+    string $onsubmit = "",
+    string $name = "",
+    string $method = "POST",
+    array $children = [],
+    array $extra_attrs = [],
+): HTMLElement {
     $attrs = array_merge($extra_attrs, [
         "action" => $action,
         "method" => $method,
