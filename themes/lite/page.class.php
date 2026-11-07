@@ -29,7 +29,7 @@ class LitePage extends Page
             ["class" => "menu"],
             A(
                 ["href" => make_link()],
-                IMG(["title" => "Home", "src" => "{$data_href}/favicon.ico", "style" => "position: relative; top: 3px;"])
+                IMG(["title" => "Home", "src" => "{$data_href}/favicon.ico", "class" => "menu-logo"])
             ),
             B($site_name)
         );

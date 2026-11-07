@@ -39,6 +39,7 @@ class Danbooru2IndexTheme extends IndexTheme
         return SHM_FORM(
             action: search_link(),
             method: 'GET',
+            extra_attrs: ["class" => "danbooru2-search"],
             children: [
                 P(),
                 INPUT([
@@ -46,12 +47,10 @@ class Danbooru2IndexTheme extends IndexTheme
                     "type" => 'text',
                     "value" => SearchTerm::implode($search_terms),
                     "class" => 'autocomplete_tags',
-                    "style" => 'width:75%'
                 ]),
                 INPUT([
                     "type" => 'submit',
                     "value" => 'Go',
-                    "style" => 'width:20%'
                 ]),
             ]
         );

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{A, CODE, DIV, FORM, INPUT, OPTION, P, SELECT, SPAN, TIME};
+use function MicroHTML\{A, BUTTON, CODE, DIV, FORM, INPUT, OPTION, P, SELECT, SPAN, TIME};
 use function MicroHTML\{emptyHTML};
 
 use MicroHTML\HTMLElement;
@@ -94,6 +94,38 @@ function SHM_SIMPLE_FORM(Url $action, ...$children): HTMLElement
 {
     $form = SHM_FORM($action);
     $form->appendChild(emptyHTML(...$children));
+    return $form;
+}
+
+/**
+ * Creates a POST link with a form and hidden fields
+ *
+ * @param Url $action
+ * @param array<literal-string, string|int> $fields
+ * @param string $text
+ * @param string|null $confirm
+ * @return HTMLElement
+ */
+function SHM_POST_LINK(
+    Url $action,
+    array $fields,
+    string $text,
+    ?string $confirm = null,
+): HTMLElement {
+    $extra_attrs = $confirm ? ["data-shm-confirm" => $confirm] : [];
+    $form = SHM_FORM(
+        action: $action,
+        extra_attrs: ["class" => "shm-post-link-form"],
+        children: [
+            BUTTON(
+                array_merge(["type" => "submit"], $extra_attrs),
+                $text
+            ),
+        ]
+    );
+    foreach ($fields as $k => $v) {
+        $form->appendChild(INPUT(["type" => "hidden", "name" => $k, "value" => $v]));
+    }
     return $form;
 }
 

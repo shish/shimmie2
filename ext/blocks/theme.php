@@ -16,7 +16,7 @@ class BlocksTheme extends Themelet
      */
     public function display_blocks(array $blocks): void
     {
-        $html = TABLE(["class" => "form", "style" => "width: 100%;"]);
+        $html = TABLE(["class" => "form wide"]);
         foreach ($blocks as $block) {
             $html->appendChild(SHM_SIMPLE_FORM(
                 make_link("blocks/update"),

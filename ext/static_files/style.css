@@ -22,6 +22,7 @@ INPUT, TEXTAREA, SELECT, BUTTON {
 
 TABLE.form {width: 300px;}
 TABLE.zebra {width: 100%;}
+TABLE.form.wide {width: 100%;}
 
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}
 TABLE.form TBODY TR TD {text-align: left;}
@@ -91,7 +92,11 @@ H3[class~="shm-toggler"] {
     width: 2em;
 }
 
-.shm-button-as-link {
+.shm-post-link-form {
+    display: inline;
+}
+.shm-post-link-form BUTTON {
+    display: inline;
     background: none;
     border: none;
     padding: 0;

@@ -31,13 +31,12 @@ class Danbooru2ViewPostTheme extends ViewPostTheme
                 INPUT([
                     "name" => 'search',
                     "type" => 'text',
-                    "class" => 'autocomplete_tags',
-                    "style" => 'width:75%'
+                    "class" => 'autocomplete_tags search-box-input'
                 ]),
                 INPUT([
                     "type" => 'submit',
                     "value" => 'Go',
-                    "style" => 'width:20%'
+                    "class" => 'search-box-submit'
                 ]),
             ]
         );

@@ -71,8 +71,8 @@ class Danbooru2CommentListTheme extends CommentListTheme
 
             $html = TABLE(
                 TR(
-                    TD(["style" => "width: 220px;"], $this->build_thumb($image)),
-                    TD(["style" => "text-align: left;"], $comment_html)
+                    TD(["class" => "comment-thumb-cell"], $this->build_thumb($image)),
+                    TD(["class" => "comment-body-cell"], $comment_html)
                 )
             );
 
