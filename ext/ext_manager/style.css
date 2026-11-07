@@ -1,4 +1,4 @@
-/* checkbox, title, doc link */
+/* checkbox, title, doc link, description */
 .ext-list TD:nth-child(1) {
     width: 1em;
 }
@@ -7,4 +7,18 @@
 }
 .ext-list TD:nth-child(3) {
     width: 1em;
+}
+.ext-list TD:nth-child(4) {
+    text-align: left;
+}
+
+.ext-support {
+    color: var(--danger-color);
+    background: var(--danger-background);
+}
+
+.ext-doc {
+    margin: auto;
+    text-align: left;
+    width: 512px;
 }
