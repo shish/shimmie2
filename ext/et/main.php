@@ -109,17 +109,6 @@ final class ET extends Extension
             ],
         ];
 
-        $changed_config = [];
-        foreach (ConfigGroup::get_all_metas() as $key => $meta) {
-            $value = $config->get($key);
-            if ($value !== $meta->default && !$meta->sensitive) {
-                $changed_config[$key] = $value;
-            }
-        }
-        if (!empty($changed_config)) {
-            $info['config'] = $changed_config;
-        }
-
         if (file_exists(".git")) {
             try {
                 $commitHash = trim(\Safe\exec('git log --pretty="%h" -n1 HEAD', result_code: $r1));
@@ -173,7 +162,16 @@ final class ET extends Extension
      */
     private function get_system_info(): array
     {
+        $changed_config = [];
+        foreach (ConfigGroup::get_all_metas() as $key => $meta) {
+            $value = Ctx::$config->get($key);
+            if ($value !== $meta->default && !$meta->sensitive) {
+                $changed_config[$key] = $value;
+            }
+        }
+
         $info = [
+            "config" => $changed_config,
             "server" => $_SERVER,
             "env" => $_ENV,
             "get" => $_GET,
