@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-use function MicroHTML\{FORM, INPUT, TEXTAREA};
+use function MicroHTML\{FORM, INPUT, TABLE, TD, TEXTAREA, TR};
 
 class ETTheme extends Themelet
 {
@@ -17,10 +17,16 @@ class ETTheme extends Themelet
         $page->set_title("System Info");
         $this->display_navigation();
         $page->add_block(new Block("Site Information", $this->build_data_form($yaml)));
-        $page->add_block(new Block("System Information", TEXTAREA(
-            ["name" => 'data', "style" => "width: 100%; height: 20em;"],
-            $extra
-        )));
+        $page->add_block(new Block(
+            "System Information",
+            TABLE(
+                ["class" => "form wide"],
+                TR(TD(TEXTAREA(
+                    ["name" => 'data', "style" => "width: 100%;", "rows" => "20"],
+                    $extra
+                )))
+            )
+        ));
     }
 
     protected function build_data_form(string $yaml): \MicroHTML\HTMLElement
@@ -30,12 +36,15 @@ class ETTheme extends Themelet
             INPUT(["type" => "hidden", "name" => "registration_api", "value" => "2"]),
             "Your stats are useful so that I know which combinations of ".
                 "web servers / databases / etc I need to support :)",
-            TEXTAREA(
-                ["name" => 'data', "style" => "width: 100%; height: 20em;"],
-                $yaml
-            ),
-            INPUT(
-                ["type" => 'submit', "value" => 'Click to send to Shish', "style" => "width: 100%; padding: 1em;"]
+            TABLE(
+                ["class" => "form wide"],
+                TR(TD(TEXTAREA(
+                    ["name" => 'data', "rows" => "20"],
+                    $yaml
+                ))),
+                TR(TD(INPUT(
+                    ["type" => 'submit', "value" => 'Click to send to Shish', "class" => "setupsubmit"]
+                ))),
             ),
         );
     }
