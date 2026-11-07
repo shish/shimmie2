@@ -34,7 +34,7 @@
         "shish/microhtml": "^2.8",
         "shish/microotlp": "^1.0",
         "shish/gqla": "^1.2",
-        "thecodingmachine/safe": "^3.4",
+        "thecodingmachine/safe": "^3.5.0-beta1",
         "enshrined/svg-sanitize": "^1.0",
         "bower-asset/js-cookie": "^2.1",
         "psr/simple-cache": "^1.0.1",
