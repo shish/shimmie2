@@ -74,7 +74,6 @@ class NumericScoreTheme extends Themelet
 
         $html = emptyHTML(
             H3(
-                ["style" => "text-align: center;"],
                 A(["href" => $b_dte], "<<"),
                 " $current ",
                 A(["href" => $f_dte], ">>")
