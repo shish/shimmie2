@@ -101,7 +101,7 @@ class TagEditCloudTheme extends Themelet
             $html->appendChild(emptyHTML(
                 BR(),
                 "[",
-                SPAN(["class" => "tageditcloud-toggle-extra", "style" => "color: #0000EF; font-weight:bold;"], "show {$rem} more tags"),
+                SPAN(["class" => "tageditcloud-toggle-extra"], "show {$rem} more tags"),
                 "]"
             ));
         }

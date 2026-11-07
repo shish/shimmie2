@@ -18,3 +18,8 @@
 .tageditcloud div#tagcloud_extra {
         color: #0000FF;
 }
+
+.tageditcloud-toggle-extra {
+	color: #0000EF;
+	font-weight: bold;
+}
