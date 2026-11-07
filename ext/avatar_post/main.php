@@ -88,17 +88,17 @@ final class AvatarPost extends AvatarExtension
         $h = min(ceil(abs($thumb_height * $scale / $ar)), $thumb_height);
         $w = min(ceil(abs($thumb_width * $scale * $ar)), $thumb_width);
 
-        $style = "--pavatar-height:{$h}px;--pavatar-width:{$w}px;";
-
-        $url = $image->get_thumb_link();
         return DIV(
-            ["class" => "avatar-container", "style" => $style],
+            [
+                "class" => "avatar-container",
+                "style" => "--pavatar-height:{$h}px; --pavatar-width:{$w}px;",
+            ],
             IMG([
                 "alt" => "avatar",
                 "id" => "pavatar",
                 "class" => "avatar pavatar",
-                "style" => "transform:scale($scale);translate:$x% $y%;",
-                "src" => $url
+                "style" => "transform:scale($scale); translate:$x% $y%;",
+                "src" => $image->get_thumb_link()
             ])
         );
     }
