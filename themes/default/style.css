@@ -15,9 +15,6 @@
 	--block: #DDD;
 	--block-border: #CCC;
 
-	--danger-color: #000;
-	--danger-background: #FAA;
-
 	--zebra-border: #CCC;
 	--zebra-header: #DDD;
 	--zebra-odd: #EFEFEF;
@@ -46,9 +43,6 @@
 
 		--block: #555;
 		--block-border: #777;
-
-		--danger-color: #CCC;
-		--danger-background: #955;
 
 		--zebra-border: #777;
 		--zebra-header: #444;
