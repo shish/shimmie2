@@ -73,10 +73,9 @@ class ExtManagerTheme extends Themelet
                             null
                     ),
                     TD(
-                        ["style" => 'text-align: left;'],
                         $extension->description,
                         " ",
-                        B(["style" => 'color:red'], $extension->get_support_info())
+                        B(["class" => 'ext-support'], $extension->get_support_info())
                     ),
                 ));
             }
@@ -112,7 +111,7 @@ class ExtManagerTheme extends Themelet
         }
 
         $html = DIV(
-            ["style" => 'margin: auto; text-align: left; width: 512px;'],
+            ["class" => 'ext-doc'],
             $author,
             ($info->link ? emptyHTML(BR(), B("Home Page"), A(["href" => $info->link], "Link")) : null),
             P(\MicroHTML\rawHTML($info->documentation ?? "(This extension has no documentation)")),
