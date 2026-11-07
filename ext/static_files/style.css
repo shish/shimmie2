@@ -6,12 +6,18 @@
 	--flash-border: #660;
 	--blink-base-color: #FF70;
 	--blink-blink-color: #FF7F;
+
+	--danger-color: #000;
+	--danger-background: #FAA;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
 		--added-background: green;
 		--removed-background: coral;
+
+		--danger-color: #CCC;
+		--danger-background: #955;
 	}
 }
 
