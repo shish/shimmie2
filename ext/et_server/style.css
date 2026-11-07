@@ -7,3 +7,8 @@ TABLE.zebra.et-stats TH {
 TABLE.et-stats TD {
     text-align: left;
 }
+PRE.et-registration {
+    text-align: left;
+    max-width: 75vw;
+    overflow: scroll;
+}
