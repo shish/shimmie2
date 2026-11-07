@@ -116,12 +116,12 @@ class PoolsTheme extends Themelet
             INPUT([
                 "name" => "search",
                 "type" => "text",
-                "style" => "width:75%"
+                "class" => "pool_search_input"
             ]),
             INPUT([
                 "type" => "submit",
                 "value" => "Go",
-                "style" => "width:20%"
+                "class" => "pool_search_submit"
             ])
         );
 
@@ -242,7 +242,7 @@ class PoolsTheme extends Themelet
             $image_list->appendChild(SPAN(
                 ["class" => "thumb"],
                 $this->build_thumb($image),
-                INPUT(["type" => "number", "name" => "order_{$image->id}", "value" => $image['image_order'], "style" => "max-width: 50px;"]),
+                INPUT(["type" => "number", "name" => "order_{$image->id}", "value" => $image['image_order'], "class" => "pool_order_input"]),
             ));
         }
         $form->appendChild($image_list);
