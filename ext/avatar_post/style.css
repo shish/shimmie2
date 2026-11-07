@@ -1,4 +1,6 @@
 .avatar-editor .avatar-container {
+    --pavatar-width: 192px;
+    --pavatar-height: 192px;
     border: 2px solid var(--text);
 }
 

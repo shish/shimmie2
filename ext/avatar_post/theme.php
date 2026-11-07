@@ -33,7 +33,7 @@ class AvatarPostTheme extends Themelet
             LABEL("drag the image to move, slide to zoom"),
             BR(),
             DIV(
-                ["class" => "avatar-container", "style" => "--pavatar-width:192px;--pavatar-height:192px;"],
+                ["class" => "avatar-container"],
                 IMG(["alt" => "avatar", "id" => "avatar-edit", "class" => "avatar gravatar", "src" => $url])
             ),
             DIV(
