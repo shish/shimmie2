@@ -152,7 +152,16 @@ final class Pools extends Extension
             // add it if needed.
             $cols = $database->raw_db()->describe("pools");
             if (!array_key_exists("lastupdated", $cols)) {
-                $database->execute("ALTER TABLE pools ADD COLUMN lastupdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+                if ($database->get_driver_id() === DatabaseDriverID::SQLITE) {
+                    // SQLite can't ADD COLUMN with a non-constant default
+                    // (eg CURRENT_TIMESTAMP), so add it with a constant default
+                    // and then backfill existing rows. New rows get their
+                    // lastupdated set explicitly in onPoolCreation().
+                    $database->execute("ALTER TABLE pools ADD COLUMN lastupdated TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00'");
+                    $database->execute("UPDATE pools SET lastupdated = CURRENT_TIMESTAMP");
+                } else {
+                    $database->execute("ALTER TABLE pools ADD COLUMN lastupdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+                }
             }
             $this->set_version(5);
         }
@@ -605,8 +614,8 @@ final class Pools extends Extension
         }
 
         Ctx::$database->execute("
-			INSERT INTO pools (user_id, public, title, description, date)
-			VALUES (:uid, :public, :title, :desc, now())
+			INSERT INTO pools (user_id, public, title, description, date, lastupdated)
+			VALUES (:uid, :public, :title, :desc, now(), now())
 		", [
             "uid" => $event->user->id,
             "public" => $event->public,
