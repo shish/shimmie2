@@ -16,7 +16,7 @@ class DowntimeTheme extends Themelet
     {
         Ctx::$page->add_block(new Block(
             "Downtime",
-            SPAN(["style" => "font-size: 1.5rem; text-align: center;"], B("DOWNTIME MODE IS ON!")),
+            SPAN(["class" => "downtime_notification"], B("DOWNTIME MODE IS ON!")),
             "left",
             0
         ));
@@ -37,7 +37,7 @@ class DowntimeTheme extends Themelet
         $body = DIV(
             ["id" => "downtime"],
             SECTION(
-                H3(["style" => "text-align: center;"], "Down for Maintenance"),
+                H3("Down for Maintenance"),
                 DIV(["id" => "message", "class" => "blockbody"], $message)
             ),
             SECTION(
