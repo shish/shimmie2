@@ -9,6 +9,6 @@ final class OTLPCommonConfig extends ConfigGroup
     public const KEY = "otlp_common";
     public ?string $title = "OTLP";
 
-    #[ConfigMeta("Collector", ConfigType::STRING, default: "http://localhost:4318")]
+    #[ConfigMeta("Collector", ConfigType::STRING, default: "http://localhost:4318", sensitive: true)]
     public const HOST = "otlp_collector";
 }
