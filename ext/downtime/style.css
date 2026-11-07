@@ -1,10 +1,19 @@
-#downtime #message, #downtime #login {
-	text-align: center;
-}
-#downtime H3 {
-	margin-top: 32px;
-}
-#downtime #login_table {
-	margin: auto;
+/* page for end-users */
+#downtime {
+    #message,
+    #login {
+        text-align: center;
+    }
+    H3 {
+        margin-top: 32px;
+    }
+    #login_table {
+        margin: auto;
+    }
 }
 
+/* notification for admins */
+.downtime_notification {
+	font-size: 1.5rem;
+	text-align: center;
+}
