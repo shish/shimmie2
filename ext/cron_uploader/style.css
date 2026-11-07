@@ -1,3 +1,12 @@
 table.cron_uploader_log th {
 	width: 200px;
 }
+
+.cron_uploader_running {
+	color: var(--danger-color);
+	background: var(--danger-background);
+}
+
+.cron_uploader_usage {
+	text-align: left;
+}

@@ -30,7 +30,7 @@ class CronUploaderTheme extends Themelet
         $info_html = emptyHTML();
 
         $info_html->appendChild(TABLE(
-            $running ? TR(TD(["colspan" => '4'], B(["style" => "color:red"], "Cron upload is currently running"))) : null,
+            $running ? TR(TD(["colspan" => '4'], B(["class" => "cron_uploader_running"], "Cron upload is currently running"))) : null,
             TR(
                 TH("Directory"),
                 TH("Files"),
@@ -59,7 +59,7 @@ class CronUploaderTheme extends Themelet
         $page->add_block(new Block("Information", $info_html, "main", 10));
 
         $usage_html = DIV(
-            ["style" => "text-align:left;"],
+            ["class" => "cron_uploader_usage"],
             "Upload your images you want to be uploaded to the queue directory using your FTP client or other means.",
             BR(),
             CODE($queue_dirinfo['path']->absolute()->str()),
