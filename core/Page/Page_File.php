@@ -39,7 +39,7 @@ trait Page_File
         try {
             $this->add_http_header("Content-Security-Policy: sandbox; default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline';");
             // Check If-Modified-Since and return early if appropriate
-            if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+            if (isset($_SERVER["HTTP_IF_MODIFIED_SINCE"]) && is_string($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
                 $if_modified_since = \Safe\preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
             } else {
                 $if_modified_since = "";
