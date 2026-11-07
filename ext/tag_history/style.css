@@ -1,2 +1,9 @@
 .added-tag{background:var(--added-background);}
 .deleted-tag{background:var(--removed-background);text-decoration:line-through;}
+
+.history-list {
+	text-align: left;
+}
+.history-list-entries {
+	list-style-type: none;
+}
