@@ -113,7 +113,7 @@ class NotesTheme extends Themelet
 
         return DIV(
             TABLE(
-                ["class" => "zebra", "style" => "text-align: left"],
+                ["class" => "zebra notes-history"],
                 THEAD(
                     TR(
                         TH("Post"),
