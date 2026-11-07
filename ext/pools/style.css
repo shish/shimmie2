@@ -11,3 +11,15 @@
 	text-align: left;
 	float: left;
 }
+
+.pool_search_input {
+	width: 75%;
+}
+
+.pool_search_submit {
+	width: 20%;
+}
+
+.pool_order_input {
+	max-width: 50px;
+}
