@@ -9,3 +9,7 @@
 #permission_table .inherited {
     opacity: 0.2;
 }
+
+#permission_table .help {
+    text-align: left;
+}

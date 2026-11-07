@@ -209,7 +209,7 @@ class PermManagerTheme extends Themelet
                     $row->appendChild(TD($cell));
                 }
 
-                $row->appendChild(TD(["style" => "text-align: left;"], $meta->help));
+                $row->appendChild(TD(["class" => "help"], $meta->help));
                 $tbody->appendChild($row);
             }
         }
