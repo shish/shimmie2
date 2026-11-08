@@ -54,12 +54,13 @@ abstract class BaseConfigGroup extends Enablable
     }
 
     /**
+     * @param bool $all return all metas, or only enabled metas
      * @return array<string, ConfigMeta>
      */
-    public static function get_all_metas(): array
+    public static function get_all_metas(bool $all = true): array
     {
         $metas = [];
-        foreach (self::get_subclasses(true) as $class) {
+        foreach (self::get_subclasses($all) as $class) {
             $obj = $class->newInstance();
             $metas = array_merge($metas, $obj->get_config_fields());
         }

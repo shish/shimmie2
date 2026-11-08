@@ -17,8 +17,9 @@ abstract class Enablable
     public static function get_subclasses(bool $all = false): array
     {
         $result = [];
+        $called_class = get_called_class();
         foreach (get_declared_classes() as $class) {
-            if (is_subclass_of($class, get_called_class())) {
+            if ($class === $called_class || is_subclass_of($class, $called_class)) {
                 $rclass = new \ReflectionClass($class);
                 if (!$rclass->isAbstract()) {
                     if ($all || $class::is_enabled()) {
