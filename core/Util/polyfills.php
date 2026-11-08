@@ -262,7 +262,7 @@ function clamp(int $val, ?int $min = null, ?int $max = null): int
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  */
-function parse_shorthand_int(string $limit): ?int
+function parse_shorthand_int(string $limit): int
 {
     if (\Safe\preg_match('/^(-?[\d\.]+)([tgmk])?b?$/i', $limit, $m)) {
         $value = (float)$m[1];
@@ -288,7 +288,7 @@ function parse_shorthand_int(string $limit): ?int
         }
         return (int)$value;
     } else {
-        return null;
+        throw new InvalidInput("Invalid filesize: $limit");
     }
 }
 
