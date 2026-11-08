@@ -24,8 +24,9 @@ final class ExtraImageFileHandler extends Extension
     ];
 
     public const OUTPUT_MIMES = [
-        // postToSettings converts empty string to null, and Config::get converts
-        // null to default, so "Don't convert" needs to be its own distinct value
+        // ConfigType::fromPost converts empty string to null, and
+        // Config::get converts null to default, so "Don't convert"
+        // needs to be its own distinct value
         "Don't convert" => "-",
         "JPEG" => MimeType::JPEG,
         "PNG" => MimeType::PNG,

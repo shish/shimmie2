@@ -23,83 +23,6 @@ final class ConfigSaveEvent extends Event
     ) {
         parent::__construct();
     }
-
-    /**
-     * Convert POST data to settings data, eg
-     *
-     *     $_POST = [
-     *         "_type_mynull" => "string",
-     *         "_type_mystring" => "string",
-     *         "_config_mystring" => "hello world!",
-     *         "_type_myint" => "int",
-     *         "_config_myint" => "42KB",
-     *     ]
-     *
-     * becomes
-     *
-     *     $config = [
-     *         "mynull" => null,
-     *         "mystring" => "hello world!",
-     *         "myint" => 43008,
-     *     ]
-     *
-     * @return array<string, null|string|int|boolean|array<string>>
-     */
-    public static function postToSettings(QueryArray $post): array
-    {
-        $settings = [];
-        $post = $post->toArray();
-        $all_metas = ConfigGroup::get_all_metas();
-
-        foreach ($post as $key => $type) {
-            if (str_starts_with($key, "_type_")) {
-                $key = str_replace("_type_", "", $key);
-                if (is_array($type)) {
-                    throw new InvalidInput("Invalid value for '_type_$key'");
-                }
-                $string_value = $post["_config_$key"] ?? null;
-                if ($string_value === "") {
-                    $string_value = null;
-                }
-
-                // Validate against known configuration metadata options
-                if (isset($all_metas[$key]) && $all_metas[$key]->options !== null && $string_value !== null) {
-                    $options = $all_metas[$key]->options;
-                    // Options can either be an array, or a callable that returns an array -
-                    // we check for "!is_array()" instead of "is_callable()" because the latter
-                    // can return true for both cases, eg the array `["ClassName", "method_name"]`
-                    if (!is_array($options)) {
-                        $options = $options();
-                    }
-                    $string_values = is_array($string_value) ? $string_value : [$string_value];
-                    foreach ($string_values as $tv) {
-                        if (!in_array($tv, $options)) {
-                            throw new InvalidInput("Invalid value '$tv' for '$key' - select from " . implode(", ", $options));
-                        }
-                    }
-                }
-
-                if ($type === "string") {
-                    $typed_value = $string_value;
-                } elseif ($type === "int") {
-                    assert(!is_array($string_value));
-                    $typed_value = $string_value !== null ? parse_shorthand_int($string_value) : null;
-                } elseif ($type === "bool") {
-                    $typed_value = $string_value === "on";
-                } elseif ($type === "array") {
-                    $typed_value = $string_value;
-                } else {
-                    if (is_array($string_value)) {
-                        $string_value = implode(", ", $string_value);
-                    }
-                    throw new InvalidInput("Can't cast '$string_value' to $type for '$key'");
-                }
-
-                $settings[$key] = $typed_value;
-            }
-        }
-        return $settings;
-    }
 }
 
 /** @extends Extension<SetupTheme> */
@@ -142,7 +65,7 @@ final class Setup extends Extension
             }
             $this->theme->display_page($blocks);
         } elseif ($event->page_matches("setup/save", method: "POST", permission: SetupPermission::CHANGE_SETTING)) {
-            send_event(new ConfigSaveEvent($config, ConfigSaveEvent::postToSettings($event->POST)));
+            send_event(new ConfigSaveEvent($config, ConfigGroup::fromPost($event->POST)));
             $page->flash("Config saved");
             $page->set_redirect(Url::referer_or(make_link("setup")));
         }

@@ -6,60 +6,6 @@ namespace Shimmie2;
 
 final class SetupTest extends ShimmiePHPUnitTestCase
 {
-    public function testParseSettings(): void
-    {
-        self::assertSame(
-            [
-                "mynull" => null,
-                "mystring" => "hello world!",
-                "myint" => 42 * 1024,
-                "mybool_true" => true,
-                "mybool_false" => false,
-                "myarray" => ["hello", "world"],
-                "emptystring" => null,
-                "emptyint" => null,
-                "emptyarray" => null,
-                "zero" => 0,
-            ],
-            ConfigSaveEvent::postToSettings(new QueryArray([
-                // keys in POST that don't start with _type or _config are ignored
-                "some_post" => "value",
-                // _type with no _config means the value is null
-                "_type_mynull" => "string",
-                // strings left as-is
-                "_type_mystring" => "string",
-                "_config_mystring" => "hello world!",
-                // ints parsed from human-readable form
-                "_type_myint" => "int",
-                "_config_myint" => "42KB",
-                // HTML booleans (HTML checkboxes are "on" or undefined, there is no "off")
-                "_type_mybool_true" => "bool",
-                "_config_mybool_true" => "on",
-                "_type_mybool_false" => "bool",
-                // Arrays are... passed as arrays? Does this work?
-                "_type_myarray" => "array",
-                "_config_myarray" => ["hello", "world"],
-                // Empty things should be null
-                "_type_emptystring" => "string",
-                "_config_emptystring" => "",
-                "_type_emptyint" => "int",
-                "_config_emptyint" => "",
-                "_type_emptyarray" => "array",
-                "_config_emptyarray" => "",
-                // "0" should not be null
-                "_type_zero" => "int",
-                "_config_zero" => "0",
-            ]))
-        );
-
-        self::assertException(InvalidInput::class, function () {
-            ConfigSaveEvent::postToSettings(new QueryArray([
-                "_type_myint" => "cake",
-                "_config_myint" => "tasty",
-            ]));
-        });
-    }
-
     public function testNiceUrlsTest(): void
     {
         # XXX: this only checks that the text is "ok", to check
@@ -117,27 +63,5 @@ final class SetupTest extends ShimmiePHPUnitTestCase
         self::get_page('setup', ['advanced' => 'on']);
         self::assert_title("Shimmie Setup");
         self::assert_text("Minimum free space");
-    }
-
-    public function testConfigOptionsValidation(): void
-    {
-        // Test that valid option values are accepted
-        $validThemes = SetupConfig::get_theme_options();
-        if (!empty($validThemes)) {
-            $validThemeKey = $validThemes[array_key_last($validThemes)];
-            $validResult = ConfigSaveEvent::postToSettings(new QueryArray([
-                "_type_theme" => "string",
-                "_config_theme" => $validThemeKey,
-            ]));
-            self::assertSame(["theme" => $validThemeKey], $validResult);
-        }
-
-        // Test that invalid option values are rejected
-        self::assertException(InvalidInput::class, function () {
-            ConfigSaveEvent::postToSettings(new QueryArray([
-                "_type_theme" => "string",
-                "_config_theme" => "invalid_theme_that_does_not_exist",
-            ]));
-        });
     }
 }
