@@ -79,12 +79,14 @@ final class PolyfillsTest extends TestCase
 
     public function test_parse_shorthand_int(): void
     {
-        self::assertSame(null, parse_shorthand_int("foo"));
         self::assertSame(-1, parse_shorthand_int("-1"));
         self::assertSame(0, parse_shorthand_int("0"));
         self::assertSame(33554432, parse_shorthand_int("32M"));
         self::assertSame(44441, parse_shorthand_int("43.4KB"));
         self::assertSame(1231231231, parse_shorthand_int("1231231231"));
+
+        self::expectException(InvalidInput::class);
+        parse_shorthand_int("foo");
     }
 
     public function test_format_milliseconds(): void
