@@ -58,24 +58,18 @@ function get_memory_limit(): int
         8 * 1024 * 1024 // don't go below 8MB
     );
 
-    /*
-    Get PHP's configured memory limit.
-    Note that this is set to -1 for NO memory limit.
-
-    https://ca2.php.net/manual/en/ini.core.php#ini.memory-limit
-    */
-    $php_limit = parse_shorthand_int(ini_get("memory_limit"));
-
     // If there's no system limit, or the system limit is higher
     // than what shimmie needs, use shimmie's limit as a soft max
-    if ($php_limit === -1 || $php_limit === null || $php_limit >= $shimmie_limit) {
+    $php_limit = ini_parse_quantity(\Safe\ini_get("memory_limit"));
+    if ($php_limit === -1 || $php_limit >= $shimmie_limit) {
         return $shimmie_limit;
     }
 
     // If the system limit is less than Shimmie needs, try to
     // raise the limit
     if (ini_set("memory_limit", "$shimmie_limit") !== false) {
-        $php_limit = parse_shorthand_int(ini_get("memory_limit")) ?? $shimmie_limit;
+        // If the limit was raised, update $php_limit
+        $php_limit = ini_parse_quantity(\Safe\ini_get("memory_limit"));
     }
 
     // Whether we managed to raise the limit, or we're stuck with
@@ -97,9 +91,9 @@ function get_upload_limits(): array
     $ini_filesize = ini_get('upload_max_filesize');
     $ini_post = ini_get('post_max_size');
 
-    $sys_files = empty($ini_files) ? null : parse_shorthand_int($ini_files);
-    $sys_filesize = empty($ini_filesize) ? null : parse_shorthand_int($ini_filesize);
-    $sys_post = empty($ini_post) ? null : parse_shorthand_int($ini_post);
+    $sys_files = empty($ini_files) ? null : ini_parse_quantity($ini_files);
+    $sys_filesize = empty($ini_filesize) ? null : ini_parse_quantity($ini_filesize);
+    $sys_post = empty($ini_post) ? null : ini_parse_quantity($ini_post);
 
     $conf_files = Ctx::$config->get(UploadConfig::COUNT);
     $conf_filesize = Ctx::$config->get(UploadConfig::SIZE);
