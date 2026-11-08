@@ -50,7 +50,7 @@ final class UserConfigEditor extends Extension
                 throw new PermissionDenied("You do not have permission to change other user's settings");
             }
 
-            send_event(new ConfigSaveEvent($duser->get_config(), ConfigSaveEvent::postToSettings($event->POST)));
+            send_event(new ConfigSaveEvent($duser->get_config(), UserConfigGroup::fromPost($event->POST)));
             Ctx::$page->flash("Config saved");
             Ctx::$page->set_redirect(make_link("user_config"));
         }
