@@ -119,6 +119,11 @@ abstract class BaseConfigGroup extends Enablable
                     }
                 }
 
+                // Check permissions
+                if ($meta->permission !== null && !Ctx::$user->can($meta->permission)) {
+                    throw new PermissionDenied("You do not have permission to set '$key'");
+                }
+
                 $settings[$key] = $meta->type->fromPost($string_value);
             }
         }

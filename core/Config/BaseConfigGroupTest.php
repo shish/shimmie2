@@ -98,6 +98,16 @@ class TypedOptionsMockConfigGroup extends BaseConfigGroup
     public const ARRAY_OPTION = "array_option";
 }
 
+class PermissionedConfigGroup extends BaseConfigGroup
+{
+    #[ConfigMeta(
+        "Permissioned Option",
+        ConfigType::STRING,
+        permission: PermManagerPermission::MANAGE_USER_PERMISSIONS,
+    )]
+    public const PERMISSIONED_OPTION = "permissioned_option";
+}
+
 final class BaseConfigGroupTest extends TestCase
 {
     public function testTitle(): void
@@ -213,5 +223,28 @@ final class BaseConfigGroupTest extends TestCase
             "_config_array_option" => ["webp", "mp4"],
         ]));
     }
+}
 
+final class BaseConfigGroupShimmieTest extends ShimmiePHPUnitTestCase
+{
+    public function testConfigOptionsPermissionAllowed(): void
+    {
+        Ctx::$user = User::by_name("admin");
+        self::assertSame(
+            "foo",
+            PermissionedConfigGroup::fromPost(new QueryArray([
+                "_type_permissioned_option" => "*",
+                "_config_permissioned_option" => "foo",
+            ])),
+        );
+    }
+
+    public function testConfigOptionsPermissionDenied(): void
+    {
+        self::expectException(PermissionDenied::class);
+        PermissionedConfigGroup::fromPost(new QueryArray([
+            "_type_permissioned_option" => "*",
+            "_config_permissioned_option" => "foo",
+        ]));
+    }
 }
