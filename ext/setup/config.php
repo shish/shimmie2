@@ -50,7 +50,6 @@ final class SetupConfig extends ConfigGroup
     {
         $themes = [];
         foreach (\Safe\glob("themes/*") as $theme_dirname) {
-            assert(is_string($theme_dirname));
             $name = str_replace("themes/", "", $theme_dirname);
             $human = str_replace("_", " ", $name);
             $human = ucwords($human);

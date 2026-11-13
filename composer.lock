@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1533d56d79f191b1dd67166b354104b8",
+    "content-hash": "047adc33ff18e6bee33ae4d8ca2f6828",
     "packages": [
         {
             "name": "automattic/akismet-sdk",
@@ -6675,25 +6675,25 @@
         },
         {
             "name": "thecodingmachine/phpstan-safe-rule",
-            "version": "v1.4.7",
+            "version": "v1.5.0-rc1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thecodingmachine/phpstan-safe-rule.git",
-                "reference": "51fa2a35a270f683fc9ea53384a03e892b4d7b51"
+                "reference": "73ed2def293e6e29ca13d155a51ed134f5d3bffb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thecodingmachine/phpstan-safe-rule/zipball/51fa2a35a270f683fc9ea53384a03e892b4d7b51",
-                "reference": "51fa2a35a270f683fc9ea53384a03e892b4d7b51",
+                "url": "https://api.github.com/repos/thecodingmachine/phpstan-safe-rule/zipball/73ed2def293e6e29ca13d155a51ed134f5d3bffb",
+                "reference": "73ed2def293e6e29ca13d155a51ed134f5d3bffb",
                 "shasum": ""
             },
             "require": {
-                "nikic/php-parser": "^5",
                 "php": "^8.1",
                 "phpstan/phpstan": "^2.2.2",
                 "thecodingmachine/safe": "^3.1"
             },
             "require-dev": {
+                "nikic/php-parser": "^5",
                 "php-coveralls/php-coveralls": "^2.1",
                 "phpunit/phpunit": "^10.4",
                 "squizlabs/php_codesniffer": "^3.4"
@@ -6727,14 +6727,16 @@
             "description": "A PHPStan rule to detect safety issues. Must be used in conjunction with thecodingmachine/safe",
             "support": {
                 "issues": "https://github.com/thecodingmachine/phpstan-safe-rule/issues",
-                "source": "https://github.com/thecodingmachine/phpstan-safe-rule/tree/v1.4.7"
+                "source": "https://github.com/thecodingmachine/phpstan-safe-rule/tree/v1.5.0-rc1"
             },
-            "time": "2026-06-21T07:55:55+00:00"
+            "time": "2026-11-14T19:10:56+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "thecodingmachine/phpstan-safe-rule": 5
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

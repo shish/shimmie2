@@ -106,10 +106,6 @@ final class Media extends Extension
         switch ($event->engine) {
             case MediaEngine::GD:
                 $info = \Safe\getimagesize($event->input_path->str());
-                if ($info === null) {
-                    throw new ServerError("Couldn't get dimensions of {$event->input_path->str()}");
-                }
-
                 self::image_resize_gd(
                     $event->input_path,
                     $info,

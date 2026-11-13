@@ -91,6 +91,7 @@ final class BulkAddCSV extends Extension
         $csvhandle = \Safe\fopen($csvfile->str(), "r");
 
         while (($csvdata = \Safe\fgetcsv($csvhandle, 0, ",")) !== false) {
+            $csvdata = array_filter($csvdata, fn ($v) => !is_null($v));
             if (count($csvdata) !== 5) {
                 $results->appendChild(LI("Line $linenum: Malformed data"));
                 break;
