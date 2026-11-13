@@ -1,5 +1,5 @@
 :root {
-	color-scheme: light dark;
+	color-scheme: light;
 
 	--page: #FFFFFF;
 	--text: black;
@@ -29,6 +29,8 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
+		color-scheme: dark;
+
 		--page: #1E1E2C;
 		--text: #E8E8EC;
 
