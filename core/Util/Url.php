@@ -62,6 +62,7 @@ final readonly class Url
             port: $parsed['port'] ?? null,
             path: $parsed['path'] ?? null,
             query: new QueryArray($query_array),
+            // @phpstan-ignore argument.type
             fragment: $parsed['fragment'] ?? null
         );
     }

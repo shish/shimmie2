@@ -168,7 +168,6 @@ final class ResizeImage extends Extension
         $image_filename  = Filesystem::warehouse_path(Post::MEDIA_DIR, $hash);
 
         $info = \Safe\getimagesize($image_filename->str());
-        assert(!is_null($info));
         if (($image_obj->width !== $info[0]) || ($image_obj->height !== $info[1])) {
             throw new InvalidInput("The current image size does not match what is set in the database! - Aborting Resize.");
         }

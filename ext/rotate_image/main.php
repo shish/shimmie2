@@ -64,7 +64,6 @@ final class RotateImage extends Extension
         }
 
         $info = \Safe\getimagesize($image_filename->str());
-        assert(!is_null($info));
 
         $memory_use = Media::calc_memory_use($info);
         $memory_limit = get_memory_limit();

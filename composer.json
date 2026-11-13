@@ -48,7 +48,7 @@
         "phpunit/phpunit": "^13.4",
         "friendsofphp/php-cs-fixer": "^3.89",
         "phpstan/phpstan": "^2.1",
-        "thecodingmachine/phpstan-safe-rule": "^1.4",
+        "thecodingmachine/phpstan-safe-rule": "^1.5.0-rc1",
         "phpstan/phpstan-strict-rules": "^2.0",
         "shish/phpstan-matchy-string": "^0.0.0"
     },
