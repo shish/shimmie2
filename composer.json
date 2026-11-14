@@ -15,18 +15,6 @@
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "ifixit/php-akismet",
-                "version": "1.1",
-                "source": {
-                    "url": "https://github.com/iFixit/php-akismet.git",
-                    "type": "git",
-                    "reference": "fd4ff50eb577457c1b7b887401663e91e77625ae"
-                }
-            }
         }
     ],
     "require": {
@@ -34,7 +22,8 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-fileinfo": "*",
-        "ifixit/php-akismet": "^1.0",
+        "automattic/akismet-sdk": "^1.5",
+        "guzzlehttp/guzzle": "^7.10",
         "google/recaptcha": "^2.1",
         "shish/ffsphp": "^1.6",
         "shish/microbundler": "^1.1.0",

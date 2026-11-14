@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Shimmie2;
 
-require_once "vendor/ifixit/php-akismet/akismet.class.php";
+use Automattic\Akismet\Akismet as AkismetClient;
+use Automattic\Akismet\DTO\Content;
+use Automattic\Akismet\Enum\ContentType;
+use Automattic\Akismet\Exception\AkismetException;
 
 final class Akismet extends Extension
 {
@@ -27,22 +30,26 @@ final class Akismet extends Extension
             return;
         }
 
-        // @phpstan-ignore argument.type (the Akismet docstring is wrong?)
-        $akismet = new \Akismet($_SERVER['SERVER_NAME'], $key, [
-            'author'       => Ctx::$user->name,
-            'email'        => Ctx::$user->email,
-            'website'      => '',
-            'body'         => $event->content,
-            'permalink'    => '',
-            'referrer'     => $_SERVER['HTTP_REFERER'] ?? 'none',
-            'user_agent'   => $_SERVER['HTTP_USER_AGENT'] ?? 'none',
-        ]);
-
-        if ($akismet->errorsExist()) {
+        try {
+            $akismet = AkismetClient::create(
+                apiKey: $key,
+                site: (string) Url::base()->asAbsolute(),
+            );
+            $result = $akismet->check(new Content(
+                userIp: (string)Network::get_real_ip(),
+                userAgent: $_SERVER['HTTP_USER_AGENT'] ?? null,
+                body: $event->content,
+                authorName: Ctx::$user->name,
+                authorEmail: Ctx::$user->email,
+                type: ContentType::Comment,
+                referrer: $_SERVER['HTTP_REFERER'] ?? null,
+            ));
+        } catch (AkismetException $e) {
+            Log::warning("akismet", "Akismet exception: " . $e->getMessage());
             return;
         }
 
-        if ($akismet->isSpam()) {
+        if ($result->isSpam()) {
             throw new ContentDenied("Akismet thinks that your {$event->type->value} is spam. Try rewriting the {$event->type->value}, or logging in.");
         }
     }
