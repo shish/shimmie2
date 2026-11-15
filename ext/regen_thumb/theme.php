@@ -24,7 +24,7 @@ class RegenThumbTheme extends Themelet
 
     public function bulk_html(): HTMLElement
     {
-        return LABEL(INPUT(["type" => 'checkbox', "name" => 'bulk_regen_thumb_missing_only', "id" => 'bulk_regen_thumb_missing_only', "style" => 'width:13px', "value" => 'true']), "Only missing thumbs");
+        return LABEL(INPUT(["type" => 'checkbox', "name" => 'bulk_regen_thumb_missing_only', "id" => 'bulk_regen_thumb_missing_only', "value" => 'true']), "Only missing thumbs");
     }
 
     public function display_admin_block(): void
