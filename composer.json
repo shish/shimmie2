@@ -4,7 +4,7 @@
     "description": "A tag-based image gallery",
     "type": "project",
     "license": "GPL-2.0-or-later",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "config": {
         "platform": {
@@ -60,8 +60,7 @@
         "ext-apcu": "cache - apc",
         "ext-redis": "cache - redis",
         "ext-curl": "some extensions",
-        "ext-json": "some extensions",
-        "ext-zip": "self-updater extension, bulk import/export",
+        "ext-zip": "bulk import/export",
         "ext-zlib": "anti-spam",
         "ext-xml": "some extensions",
         "ext-gd": "GD-based thumbnailing"

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fee8221b450cea68c2e0872916244d9d",
+    "content-hash": "1533d56d79f191b1dd67166b354104b8",
     "packages": [
         {
             "name": "automattic/akismet-sdk",
@@ -6733,7 +6733,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
