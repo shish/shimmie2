@@ -17,7 +17,5 @@ final class CustomHtmlHeadersInfo extends ExtensionInfo
 <br>In that block you can simply place any thing you can place within &lt;head&gt;&lt;/head&gt;
 <br>
 <br>This can be useful if you want to add website tracking code or other javascript.
-<br>NOTE: Only use if you know what you're doing.
-<br>
-<br>You can also add your website name as prefix or suffix to the title of each page on your website.";
+<br>NOTE: Only use if you know what you're doing.";
 }
