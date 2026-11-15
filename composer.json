@@ -9,6 +9,9 @@
     "config": {
         "platform": {
             "php": "8.5.0"
+        },
+        "allow-plugins": {
+            "php-http/discovery": true
         }
     },
     "repositories": [
