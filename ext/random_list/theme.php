@@ -40,11 +40,6 @@ class RandomListTheme extends Themelet
                     "placeholder" => "Search random list",
                     "class" => "autocomplete_tags"
                 ]),
-                INPUT([
-                    "type" => "submit",
-                    "value" => "Find",
-                    "style" => "display: none;"
-                ])
             ]
         ));
     }
