@@ -118,13 +118,13 @@ class UploadTheme extends Themelet
             $upload_list->appendChild(
                 TR(
                     TD(
-                        ["colspan" => 2, "style" => "white-space: nowrap;"],
+                        ["colspan" => 2],
                         A([
                             "id" => "canceldata{$i}",
                             "class" => "upload-cancel",
-                            "style" => "display:inline;margin-right:5px;font-size:15px;visibility:hidden;",
+                            "style" => "visibility:hidden;",
                             "data-target" => "data{$i}",
-                        ], "✖"),
+                        ], "✖ "),
                         INPUT([
                             "type" => "file",
                             "id" => "data{$i}",

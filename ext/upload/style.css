@@ -1,6 +1,9 @@
 TABLE#large_upload_form.form {
 	width: 100%;
 }
+TABLE#large_upload_form.form TD:nth-child(1) {
+	white-space: nowrap;
+}
 
 .mini_upload INPUT:not([type="checkbox"]):not([type="radio"]),
 .mini_upload TEXTAREA,
