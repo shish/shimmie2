@@ -165,13 +165,15 @@ class PoolsTheme extends Themelet
                 INPUT(["type" => "text", "name" => "pool_tag", "id" => "edit_pool_tag", "placeholder" => "Please enter a tag", "class" => "autocomplete_tags"]),
                 SHM_SUBMIT("Import", ["name" => "edit", "id" => "edit_pool_import_btn"])
             ),
-            SHM_SIMPLE_FORM(
+            SHM_FORM(
                 make_link("pool/edit/{$pool->id}"),
-                SHM_SUBMIT("Edit Pool", ["name" => "edit", "id" => "edit_pool_btn"]),
+                method: "GET",
+                children: [SHM_SUBMIT("Edit Pool")],
             ),
-            SHM_SIMPLE_FORM(
+            SHM_FORM(
                 make_link("pool/order/{$pool->id}"),
-                SHM_SUBMIT("Order Pool", ["name" => "edit", "id" => "edit_pool_order_btn"])
+                method: "GET",
+                children: [SHM_SUBMIT("Order Pool")]
             ),
             SHM_SIMPLE_FORM(
                 make_link("pool/reverse/{$pool->id}"),
