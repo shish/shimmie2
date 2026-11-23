@@ -594,7 +594,7 @@ final class Pools extends Extension
         $pools = array_map(fn ($row) => new Pool($row), $rows);
         $totalPages = (int) ceil((int) Ctx::$database->get_one(
             "SELECT COUNT(*) FROM pools WHERE SCORE_ILIKE(title, :search)",
-            ["search" => $search]
+            ["search" => "%$search%"]
         ) / $poolsPerPage);
 
         $this->theme->list_pools($pools, $search, $pageNumber + 1, $totalPages);
