@@ -195,7 +195,7 @@ final class Pools extends Extension
             || $event->page_matches("pool/list/{search}", method: "GET", paged: true)
         ) { //index
             if ($event->GET->get('search')) {
-                $page->set_redirect(make_link('pool/list/'. url_escape($event->GET->get('search') . "/1")));
+                $page->set_redirect(make_link('pool/list/' . url_escape($event->GET->get('search')) . '/1'));
                 return;
             }
             $search = $event->get_arg('search', "");

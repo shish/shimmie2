@@ -111,18 +111,21 @@ class PoolsTheme extends Themelet
             A(["href" => make_link("pool/updated")], "Pool Changes")
         );
 
-        $search = SHM_SIMPLE_FORM(
+        $search = SHM_FORM(
             make_link('pool/list'),
-            INPUT([
-                "name" => "search",
-                "type" => "text",
-                "class" => "pool_search_input"
-            ]),
-            INPUT([
-                "type" => "submit",
-                "value" => "Go",
-                "class" => "pool_search_submit"
-            ])
+            method: "GET",
+            children: [
+                INPUT([
+                    "name" => "search",
+                    "type" => "text",
+                    "class" => "pool_search_input"
+                ]),
+                INPUT([
+                    "type" => "submit",
+                    "value" => "Go",
+                    "class" => "pool_search_submit"
+                ])
+            ]
         );
 
         $page = Ctx::$page;
