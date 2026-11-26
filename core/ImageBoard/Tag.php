@@ -145,6 +145,11 @@ final class Tag
         return $tag;
     }
 
+    public static function is_wildcard(string $tag): bool
+    {
+        return str_contains($tag, "*");
+    }
+
     /**
      * @param string[] $tags1
      * @param string[] $tags2
