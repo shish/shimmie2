@@ -600,7 +600,7 @@ final class Post implements \ArrayAccess
             if (str_starts_with($tag, "-")) {
                 throw new InvalidTag("Can't set a tag which starts with a minus");
             }
-            if (str_contains($tag, "*")) {
+            if (Tag::is_wildcard($tag)) {
                 throw new InvalidTag("Can't set a tag which contains a wildcard (*)");
             }
         }
