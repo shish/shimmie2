@@ -36,7 +36,7 @@ final class Index extends Extension
             if (Ctx::$config->get(IndexConfig::SIMPLE_BOTS_ONLY) && Network::is_bot()) {
                 // Bots aren't allowed to use negative tags or wildcards at all
                 foreach ($search_terms as $term) {
-                    if ($term[0] === "-" || str_contains($term[0], "*")) {
+                    if ($term[0] === "-" || Tag::is_wildcard($term)) {
                         throw new PermissionDenied("Bots are not allowed to use negative tags or wildcards");
                     }
                 }
