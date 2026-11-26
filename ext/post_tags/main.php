@@ -263,7 +263,9 @@ final class PostTags extends Extension
     #[EventListener]
     public function onAddAlias(AddAliasEvent $event): void
     {
-        $this->mass_tag_edit($event->oldtag, $event->newtag, false);
+        if (!Tag::is_wildcard($event->oldtag)) {
+            $this->mass_tag_edit($event->oldtag, $event->newtag, false);
+        }
     }
 
     #[EventListener]

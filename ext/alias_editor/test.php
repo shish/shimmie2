@@ -87,4 +87,23 @@ final class AliasEditorTest extends ShimmiePHPUnitTestCase
         self::assert_title("Alias List");
         self::assert_no_text("test1");
     }
+
+    public function testAliasWildcard(): void
+    {
+        self::log_in_as_admin();
+
+        $foo_id = $this->create_post("tests/pbx_screenshot.jpg", "foo");
+        $bar_id = $this->create_post("tests/bedroom_workshop.jpg", "bar");
+        $baz_id = $this->create_post("tests/favicon.png", "baz");
+        send_event(new AddAliasEvent("ba*", "foo"));
+
+        self::assertSame(["foo"], Post::by_id_ex($foo_id)->get_tag_array());
+        self::assertSame(["bar"], Post::by_id_ex($bar_id)->get_tag_array());
+        self::assertSame(["baz"], Post::by_id_ex($baz_id)->get_tag_array());
+        self::assert_search_results(SearchTerm::explode("ba*"), [$foo_id]);
+
+        $this->delete_post($foo_id);
+        $this->delete_post($bar_id);
+        $this->delete_post($baz_id);
+    }
 }
