@@ -97,6 +97,59 @@ final class AdminPage extends Extension
                 $output->writeln(Ctx::$user->get_auth_token());
                 return Command::SUCCESS;
             });
+        $event->app->register('site:backup')
+            ->setDescription('Write data / metadata / configuration into a .zip file')
+            ->addArgument('output', InputArgument::REQUIRED)
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $output = $input->getArgument('output');
+
+                // dump database to folder
+                $db_engine = Ctx::$database->get_driver_id();
+                $dump_cmd = match($db_engine) {
+                    DatabaseDriverID::MYSQL => "mysqldump -u root -p shimmie2",
+                    DatabaseDriverID::PGSQL => "pg_dump -U postgres shimmie2",
+                    DatabaseDriverID::SQLITE => "sqlite3 shimmie2.db .dump",
+                };
+                $dump_file = shm_tempnam("backup-sql");
+                // FIXME: run $dump_cmd with output into $dump_file
+                $dump_file->put_contents("TODO: sql dump");
+
+                // create archive
+                $zip = new \ZipArchive();
+                $zip->open($output, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+                // special files
+                $zip->addFile($dump_file->str(), "database.sql");
+                $zip->addFromString("backup.json", \Safe\json_encode([
+                    "db_engine" => $db_engine->value,
+                ]));
+                // FIXME: add everything else in data/ (minus data/cache and data/shimmie.*.sqlite?)
+                foreach (Filesystem::get_files_recursively(new Path("data")) as $path) {
+                    $internal = $path->relative_to(new Path("data"))->str();
+                    if (
+                        str_contains($internal, "data/temp/")
+                        || str_contains($internal, "data/phpunit.cache/")
+                        || str_contains($internal, "data/coverage/")
+                        || str_contains($internal, "data/cache/")
+                        || fnmatch("data/*.sqlite", $internal)
+                    ) {
+                        continue;
+                    }
+                    $zip->addFile($path->str(), $internal);
+                }
+                $zip->close();
+
+                return Command::SUCCESS;
+            });
+        $event->app->register('site:restore')
+            ->setDescription('Read data / metadata / configuration from a .zip file')
+            ->addArgument('output', InputArgument::REQUIRED)
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                // if data/ is empty, then Installer.php should intercept this command
+                // and do the restoration - if we're here, it means that we are already
+                // in a live instance
+                $output->writeln("Backups can only be restored into an empty instance (no database, no data/ folder)");
+                return Command::FAILURE;
+            });
         $event->app->register('cache:get')
             ->addArgument('key', InputArgument::REQUIRED)
             ->setDescription("Get a cache value")
